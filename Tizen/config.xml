@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://windkracht8.com/RugbyReferee" version="1.0.0" viewmodes="maximized">
+    <tizen:application id="iuoFzIZwBo.RugbyReferee" package="iuoFzIZwBo" required_version="4.0"/>
+    <author href="http://windkracht8.com" email="rr@windkracht8.com">Bart Vullings</author>
+    <content src="index.html"/>
+    <description>Time and score keeping for rugby</description>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <icon src="icon.png"/>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">GPLv3</license>
+    <tizen:metadata key="AccessoryServicesLocation" value="res/xml/accessoryservices.xml"/>
+    <name>RugbyReferee</name>
+    <tizen:privilege name="http://developer.samsung.com/privilege/accessoryprotocol"/>
+    <tizen:privilege name="http://tizen.org/privilege/power"/>
+    <tizen:profile name="wearable"/>
+    <tizen:setting background-support="disable" encryption="disable" hwkey-event="enable"/>
+</widget>

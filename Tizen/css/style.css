@@ -1,0 +1,136 @@
+/* PC mode, show screen als round on a PC */
+/*
+html{
+	background-color: white !important;
+}
+body{
+	position: fixed;
+	left: -1px;
+	top: -1px;
+	border-radius: 100%;
+	border: solid white 1px;
+}
+*/
+/* END PCmode */
+
+.overlay{
+	width: 100vw;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+html, body{
+	margin: 0;
+	height: 100vh;
+	width: 100vw;
+	font-size: 10vh;
+	text-align: center;
+	background-color: black;
+	color: white;
+	overflow: hidden auto;
+    font-family: Tizen, Samsung Sans, Helvetica;
+}
+select, input, button{
+	border: none;
+	background: transparent;
+	color: white;
+	font-size: 10vh;
+}
+#battery{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	font-size: 10vh;
+}
+#time{
+	position: fixed;
+	top: 10vh;
+	left: 0;
+	width: 100vw;
+	font-size: 20vh;
+}
+#home, #away{
+	position: fixed;
+	z-index: 1;
+	top: 30vh;
+	width: 50vw;
+}
+#home{
+	left: 0;
+	background: green;
+}
+#away{
+	right: 0;
+	background: red;
+}
+.redtext{
+	color: red;
+}
+#timer{
+	position: fixed;
+	left: 0;
+	top: 47vh;
+	width: 100vw;
+	font-size: 30vh;
+	z-index: 1;
+}
+#timermil{
+	font-size: 15vh;
+}
+#timerstatus{
+	position: fixed;
+	left: 0;
+	top: 72vh;
+	width: 100vw;
+	font-size: 15vh;
+}
+.bottombutton{
+	display: none;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100vw;
+}
+#bconf{
+	display: block;
+	bottom: 7vh;
+}
+
+.overlay{
+	position: absolute;
+	z-index: 2;
+	display: none;
+	width: 100vw;
+	min-height: 80vh;
+	top: 0;
+	left: 0;
+	padding-top: 20vh;
+	background: black;
+	font-size: 15vh;
+}
+#card{
+	font-size: 10vw;
+}
+#card_red, #card_yellow{
+	width: 100vw;
+	font-size: 30vh;
+}
+#card_red{
+	color: red;
+}
+#card_yellow{
+	color: yellow;
+	padding-bottom: 20vh;
+}
+#conf input{
+	text-align: right;
+}
+#events{
+	font-size: 5vw;
+	padding: 10vh 0;
+}
+#correct{
+	font-size: 10vw;
+}

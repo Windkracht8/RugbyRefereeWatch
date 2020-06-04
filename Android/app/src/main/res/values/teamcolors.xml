@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="teamcolors">
+        <item>black</item>
+        <item>blue</item>
+        <item>gold</item>
+        <item>green</item>
+        <item>red</item>
+        <item>white</item>
+    </string-array>
+</resources>
