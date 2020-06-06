@@ -59,7 +59,6 @@ window.onload = function () {
 		}
 	});
 	document.addEventListener("rotarydetent", function(e){
-		//TODO: if in settings input, change value
 		if(e.detail.direction === "CW"){
 			$('body').scrollTop($('body').scrollTop() + 50);
 		}else{
@@ -352,6 +351,9 @@ function correctClick(){
 		html += '</span><br>';
 	});
 
+	if(html === ""){
+		html = "nothing to correct for " + team_edit.team;
+	}
 	$('#correct').html(html);
 	$('#correct').show();
 	$('#score').hide();

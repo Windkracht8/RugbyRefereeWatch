@@ -12,22 +12,24 @@ var communicationListener = {
 		var dataOnReceive = function dataOnReceive(channelId, requestMessage){
 			console.log("dataOnReceive", requestMessage);
 			var requestMessage_js = JSON.parse(requestMessage);
-			var responseMessage = "";
+			var responseMessage = '{"requestType":"' + requestMessage_js.requestType + '","responseData":';
 			switch(requestMessage_js.requestType){
 				case "getMatch":
-					responseMessage = '{"requestType":"getMatch","responseData":' + JSON.stringify(match) + '}';
+					responseMessage += JSON.stringify(match);
 					break;
 				case "setSettings":
+				case "prepare":
 					if(incomingSettings(requestMessage_js.requestData)){
-						responseMessage = '{"requestType":"setSettings","responseData":"okilly dokilly"}';
+						responseMessage = '"okilly dokilly"';
 					}else{
-						responseMessage = '{"requestType":"setSettings","responseData":"no no no"}';
+						responseMessage = '"match ongoing"';
 					}
 					break;
 				default:
-					showMessage("Did not understand message '" + requestMessage_js.requestType + "'");
+					responseMessage += "Did not understand message";
 					return;
 			}
+			responseMessage += '}';
 			console.log("sendData", responseMessage);
 			socket.sendData(channelId, responseMessage);
 		};
