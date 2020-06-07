@@ -20,16 +20,15 @@ public class communication extends SAAgent {
         FINDING_PEERS,
         CONNECTED,
         GETTING_MATCH,
-        GETTING_SETTINGS,
-        SETTING_SETTINGS
+        PREPARE
     }
     public Status status = Status.DISCONNECTED;
 
     private ServiceConnection mConnectionHandler = null;
     Handler mHandler = new Handler();
     private final IBinder mBinder = new LocalBinder();
-    public class LocalBinder extends Binder {
-        public communication getService() {
+    class LocalBinder extends Binder {
+        communication getService() {
             Log.i("communication", "LocalBinder.getService");
             return communication.this;
         }
@@ -67,7 +66,7 @@ public class communication extends SAAgent {
                 requestServiceConnection(peerAgent);
         } else if (result == SAAgent.FINDPEER_DEVICE_NOT_CONNECTED) {
             updateStatus(Status.ERROR);
-            gotError("FINDPEER_DEVICE_NOT_CONNECTED");
+            gotError("Watch not found");
         } else if (result == SAAgent.FINDPEER_SERVICE_NOT_FOUND) {
             updateStatus(Status.ERROR);
             gotError("FINDPEER_SERVICE_NOT_FOUND");
@@ -112,7 +111,7 @@ public class communication extends SAAgent {
     @Override
     protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result) {
         Log.i("communication", "onPeerAgentsUpdated: " + result);
-        //TODO: do I need this, it is never called
+        //TODO: do we need this, it is never called
         final SAPeerAgent[] peers = peerAgents;
         final int status = result;
         mHandler.post(new Runnable() {
@@ -147,7 +146,6 @@ public class communication extends SAAgent {
         public void onReceive(int channelId, byte[] data) {
             try {
                 String sData = new String(data);
-                //{"requestType":"setSettings","responseData":"okilly dokilly"}
                 Log.i("communication", "ServiceConnection.onReceive: " + sData);
                 JSONObject responseMessage = new JSONObject(sData);
                 gotResponse(responseMessage);

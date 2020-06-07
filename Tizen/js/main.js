@@ -279,16 +279,31 @@ function updateBattery(){
 var team_edit = match.home;
 function score_homeClick(){
 	team_edit = match.home;
-	$('#try').html(team_edit.trys);
-	$('#con').html(team_edit.cons);
-	$('#goal').html(team_edit.goals);
-	$('#score').show();
+	score_show();
 }
 function score_awayClick(){
 	team_edit = match.away;
-	$('#try').html(team_edit.trys);
-	$('#con').html(team_edit.cons);
-	$('#goal').html(team_edit.goals);
+	score_show();
+}
+function score_show(){
+	if(match.settings.points_try === 0){
+		$('#try').hide();
+	}else{
+		$('#try').show();
+		$('#try').html(team_edit.trys);
+	}
+	if(match.settings.points_con === 0){
+		$('#con').hide();
+	}else{
+		$('#con').show();
+		$('#con').html(team_edit.cons);
+	}
+	if(match.settings.points_goal === 0){
+		$('#goal').hide();
+	}else{
+		$('#goal').show();
+		$('#goal').html(team_edit.goals);
+	}
 	$('#score').show();
 }
 function tryClick(){
@@ -451,6 +466,8 @@ function incomingSettings(settings){
 		console.log("not ready for settings");
 		return false;
 	}
+	//TODO: also receive match_type
+	//"15s", "10s", "7s", "beach 7s", "beach 5s"
 	
 	match.home.team = settings.home_name;
 	match.away.team = settings.away_name;

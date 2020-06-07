@@ -1,53 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="120dip"
+        android:layout_height="120dip"
+        android:contentDescription="@string/icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/disconnected"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/space"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivIcon"
+        app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
+
+    <Button
+        android:id="@+id/bConnect"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="223dp"
+        android:onClick="bConnectClick"
+        android:text="@string/bConnect_text"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvError" />
+
     <LinearLayout
+        android:id="@+id/llTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/ivIcon"
+        >
+
         <TextView
-            android:id="@+id/tvStatus"
-            android:text="@string/disconnected"
-            android:textAlignment="center"
-            android:layout_width="match_parent"
+            android:id="@+id/tabReport"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:background="@drawable/tab_active"
+            android:onClick="tabReportClick"
+            android:text="@string/report"
+            android:textAlignment="center" />
+
         <TextView
-            android:id="@+id/tvError"
-            android:text="@string/space"
-            android:textAlignment="center"
-            android:layout_width="match_parent"
+            android:id="@+id/tabPrepare"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/bConnect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="bConnectClick"
-            android:text="@string/bConnect_text"
-            android:textAlignment="center"
-            android:textAllCaps="false" />
-        <Button
-            android:id="@+id/bGetMatch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:onClick="bGetMatchClick"
-            android:text="@string/bGetMatch_text"
-            android:textAlignment="center"
-            android:textAllCaps="false" />
-        <com.windkracht8.rugbyreferee.tlMatch
-            android:id="@+id/tlMatch"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-        <com.windkracht8.rugbyreferee.tlSettings
-            android:id="@+id/tlSettings"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_weight="1"
+            android:onClick="tabPrepareClick"
+            android:text="@string/prepare"
+            android:textAlignment="center" />
     </LinearLayout>
-</ScrollView>
+
+    <com.windkracht8.rugbyreferee.report
+        android:id="@+id/report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+
+    <com.windkracht8.rugbyreferee.prepare
+        android:id="@+id/prepare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

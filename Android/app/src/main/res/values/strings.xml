@@ -10,13 +10,12 @@
     <string name="_0">0</string>
     <string name="goals">Goals</string>
     <string name="settings">Settings</string>
-    <string name="bGetSettings_text">Get settings</string>
     <string name="home_color">Home color</string>
     <string name="away_color">Away color</string>
     <string name="time_split">Time/split</string>
     <string name="split_count">Split count</string>
     <string name="sinbin">Sinbin</string>
-    <string name="bSetSettings_text">Send settings</string>
+    <string name="bSetSettings_text">Send to watch</string>
     <string name="space" />
     <string name="bConnect_text">Connnect</string>
     <string name="home_name">Home name</string>
@@ -24,4 +23,13 @@
     <string name="points_for_try">Points for Try</string>
     <string name="points_for_conversion">Points for Conversion</string>
     <string name="points_for_goal">Points for Goal</string>
+    <string name="icon">icon</string>
+    <string name="report">Report</string>
+    <string name="prepare">Prepare</string>
+    <string name="_40">40</string>
+    <string name="_2">2</string>
+    <string name="_10">10</string>
+    <string name="_3">3</string>
+    <string name="_5">5</string>
+    <string name="match_type">Match type</string>
 </resources>

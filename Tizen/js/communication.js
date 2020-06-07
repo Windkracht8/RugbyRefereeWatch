@@ -17,7 +17,7 @@ var communicationListener = {
 				case "getMatch":
 					responseMessage += JSON.stringify(match);
 					break;
-				case "setSettings":
+				case "setSettings"://TODO: deprecate
 				case "prepare":
 					if(incomingSettings(requestMessage_js.requestData)){
 						responseMessage = '"okilly dokilly"';

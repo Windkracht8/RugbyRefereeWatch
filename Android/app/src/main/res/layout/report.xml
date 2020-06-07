@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <Button
+        android:id="@+id/bGetMatch"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="bGetMatchClick"
+        android:text="@string/bGetMatch_text"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dip"
+        android:paddingEnd="20dip"
+        android:stretchColumns="*" >
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/tvHomeName"
+                android:layout_marginEnd="20dp"
+                android:layout_span="2"
+                android:gravity="center"
+                android:text="@string/home"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvAwayName"
+                android:layout_marginStart="20dp"
+                android:layout_span="2"
+                android:gravity="center"
+                android:text="@string/away"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView android:text="@string/trys" />
+
+            <TextView
+                android:id="@+id/tvHomeTrys"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/trys" />
+
+            <TextView
+                android:id="@+id/tvAwayTrys"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView android:text="@string/conversions" />
+
+            <TextView
+                android:id="@+id/tvHomeCons"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/conversions" />
+
+            <TextView
+                android:id="@+id/tvAwayCons"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView android:text="@string/goals" />
+
+            <TextView
+                android:id="@+id/tvHomeGoals"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/goals" />
+
+            <TextView
+                android:id="@+id/tvAwayGoals"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+
+        <TableRow>
+
+            <Space />
+
+            <TextView
+                android:id="@+id/tvHomeTot"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/table_tot_line"
+                android:gravity="end"
+                android:text="@string/_0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Space />
+
+            <TextView
+                android:id="@+id/tvAwayTot"
+                android:background="@drawable/table_tot_line"
+                android:gravity="end"
+                android:text="@string/_0"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableLayout
+            android:id="@+id/tlEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dip"
+            android:paddingTop="20dip"
+            android:paddingEnd="20dip" />
+    </ScrollView>
+</LinearLayout>

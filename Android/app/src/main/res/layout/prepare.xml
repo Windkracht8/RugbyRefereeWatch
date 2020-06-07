@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*" >
+        <TableRow>
+            <TextView
+                android:text="@string/home_name"
+                android:labelFor="@+id/etHomeName"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/etHomeName"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:text="@string/home" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/away_name"
+                android:labelFor="@+id/etAwayName"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etAwayName"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/away" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/home_color"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/sHomeColor"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/away_color"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:textSize="18sp" />
+            <Spinner
+                android:id="@+id/sAwayColor"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/match_type"
+                android:labelFor="@+id/sMatchType"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:textSize="18sp" />
+            <Spinner
+                android:id="@+id/sMatchType"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip" />
+        </TableRow>
+        <TableRow>
+
+            <TextView
+                android:labelFor="@+id/etTimeSplit"
+                android:text="@string/time_split"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etTimeSplit"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_40" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/split_count"
+                android:labelFor="@+id/etSplitCount"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etSplitCount"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_2" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/sinbin"
+                android:labelFor="@+id/etSinbin"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etSinbin"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_10" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/points_for_try"
+                android:labelFor="@+id/etPointsTry"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etPointsTry"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_5" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/points_for_conversion"
+                android:labelFor="@+id/etPointsCon"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etPointsCon"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_2" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/points_for_goal"
+                android:labelFor="@+id/etPointsGoal"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/etPointsGoal"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:importantForAutofill="no"
+                android:text="@string/_3" />
+        </TableRow>
+    </TableLayout>
+    <Button
+        android:id="@+id/bPrepare"
+        android:onClick="bSetSettingsClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/bSetSettings_text"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
+</LinearLayout>
