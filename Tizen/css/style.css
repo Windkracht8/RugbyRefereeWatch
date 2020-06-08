@@ -1,5 +1,5 @@
 /* PC mode, show screen als round on a PC */
-
+/*
 html{
 	background-color: white !important;
 }
@@ -10,7 +10,7 @@ body{
 	border-radius: 100%;
 	border: solid white 1px;
 }
-
+*/
 /* END PCmode */
 
 .overlay{
@@ -95,7 +95,7 @@ select, input, button{
 	height: 38vh;
 	z-index: 2;
 	color: #2bd2e3;
-	background-color: #0009;
+	background-color: rgba(0,0,0,.7);
 }
 #bstart{
 	width: 100vw;

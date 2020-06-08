@@ -50,7 +50,7 @@ window.onload = function () {
 					}
 				});
 				if(backdone === false){
-					if(timer.status !== "conf" || timer.status !== "finished"){
+					if(timer.status !== "conf" && timer.status !== "finished"){
 						correctShow();
 					}else{
 						tizen.power.release("SCREEN");
@@ -361,7 +361,7 @@ function card_redClick(){
 }
 
 function correctShow(){
-	var html = "";
+	var html = "Tab event to remove<br>";
 	$.each(match.events, function(index, value){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
