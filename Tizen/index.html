@@ -27,24 +27,27 @@
 <div id="time">00:00:00</div>
 <div id="home">
 	<div id="score_home" onclick="score_homeClick()">0</div>
-	<div id="sinbins_home" onclick="sinbins_homeClick()"></div>
+	<div id="sinbins_home"></div>
 </div>
 <div id="away">
 	<div id="score_away" onclick="score_awayClick()">0</div>
-	<div id="sinbins_away" onclick="sinbins_awayClick()"></div>
+	<div id="sinbins_away"></div>
 </div>
 <div id="timer" onclick="timerClick()"><span id="timersec">0:00</span><span id="timermil">.0</span></div>
 <div id="timerstatus"></div>
-<button id="pause" class="bottombutton" onclick="pauseClick()">pause</button>
-<button id="stop" class="bottombutton" onclick="stopClick()">stop</button>
-<button id="clear" class="bottombutton" onclick="clearClick()">clear</button>
+<button id="bstart" class="bottombutton" onclick="bresumeClick()">start</button>
+<button id="bresume" class="bottombutton" onclick="bresumeClick()">resume</button>
+<button id="bnext" class="bottombutton" onclick="bresumeClick()">next</button>
+<button id="brest" class="bottombutton" onclick="brestClick()">rest</button>
+<button id="bfinish" class="bottombutton" onclick="bfinishClick()">finish</button>
+<button id="breport" class="bottombutton" onclick="showReport()">report</button>
+<button id="bclear" class="bottombutton" onclick="bclearClick()">clear</button>
 
 <div id="score" class="overlay">
-	<span onclick="tryClick()">try <span id="try">0</span></span><br>
-	<span onclick="conversionClick()">conversion <span id="con">0</span></span><br>
-	<span onclick="goalClick()">goal <span id="goal">0</span></span><br>
+	<span id="score_try" onclick="tryClick()">try <span id="try">0</span></span><br>
+	<span id="score_con" onclick="conversionClick()">conversion <span id="con">0</span></span><br>
+	<span id="score_goal" onclick="goalClick()">goal <span id="goal">0</span></span><br>
 	<span onclick="cardsClick()">card</span><br>
-	<button id="score_correct" onclick="correctClick()">correct</button>
 </div>
 <div id="card" class="overlay">
 	player
@@ -68,7 +71,7 @@
 </div>
 <button id="bconf" class="bottombutton" onclick="bconfClick()">configure</button>
 <div id="conf" class="overlay">
-	Home
+	Home<br>
 	<select id="color_home" onchange="color_homeChange()">
 		<option>black</option>
 		<option>blue</option>
@@ -80,7 +83,7 @@
 		<option>red</option>
 		<option value="lightgray">white</option>
 	</select><br>
-	Away
+	Away<br>
 	<select id="color_away" onchange="color_awayChange()">
 		<option>black</option>
 		<option>blue</option>
@@ -92,8 +95,13 @@
 		<option>red</option>
 		<option value="lightgray">white</option>
 	</select><br>
-	Time/split<br>
-	<select id="split_time" onchange="split_timeChange()">
+	Match type<br>
+	<select id="match_type" onchange="match_typeChange()">
+		<option selected>15s</option><option>10s</option><option>7s</option>
+		<option>beach 7s</option><option>beach 5s</option>
+	</select><br>
+	Time/period<br>
+	<select id="period_time" onchange="period_timeChange()">
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 		<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
 		<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
@@ -105,8 +113,8 @@
 		<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
 		<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
 	</select><br>
-	Split count<br>
-	<select id="split_count" onchange="split_countChange()">
+	Period count<br>
+	<select id="period_count" onchange="period_countChange()">
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 	</select><br>
 	Sinbin<br>
@@ -116,8 +124,23 @@
 		<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
 		<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
 	</select><br>
+	Points try<br>
+	<select id="points_try" onchange="points_tryChange()">
+		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+	</select><br>
+	Points conversion<br>
+	<select id="points_con" onchange="points_conChange()">
+		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+	</select><br>
+	Points goal<br>
+	<select id="points_goal" onchange="points_goalChange()">
+		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+	</select><br>
 </div>
-<div id="events" class="overlay" onclick="this.style.display='none'"></div>
+<div id="report" class="overlay" onclick="this.style.display='none'"></div>
 <div id="message" class="overlay" onclick="this.innerHTML='';this.style.display='none';"></div>
 </body>
 </html>

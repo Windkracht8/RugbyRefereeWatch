@@ -1,5 +1,5 @@
 /* PC mode, show screen als round on a PC */
-/*
+
 html{
 	background-color: white !important;
 }
@@ -10,7 +10,7 @@ body{
 	border-radius: 100%;
 	border: solid white 1px;
 }
-*/
+
 /* END PCmode */
 
 .overlay{
@@ -82,25 +82,41 @@ select, input, button{
 #timerstatus{
 	position: fixed;
 	left: 0;
-	top: 72vh;
+	top: 78vh;
 	width: 100vw;
 	font-size: 15vh;
+	z-index: 3;
 }
 .bottombutton{
 	display: none;
 	position: fixed;
-	left: 0;
-	bottom: 0;
+	bottom: 20vh;
+	width: 50vw;
+	height: 38vh;
+	z-index: 2;
+	color: #2bd2e3;
+	background-color: #0009;
+}
+#bstart{
 	width: 100vw;
+	left: 0;
 }
 #bconf{
 	display: block;
-	bottom: 7vh;
+	width: 100vw;
+	height: 22vh;
+	bottom: 0;
+}
+#bresume, #breport, #bnext{
+	left: 0;
+}
+#brest{
+	right: 0;
 }
 
 .overlay{
 	position: absolute;
-	z-index: 2;
+	z-index: 5;
 	display: none;
 	width: 100vw;
 	min-height: 80vh;
@@ -127,7 +143,7 @@ select, input, button{
 #conf input{
 	text-align: right;
 }
-#events{
+#report{
 	font-size: 5vw;
 	padding: 10vh 0;
 }

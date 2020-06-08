@@ -26,7 +26,7 @@ var communicationListener = {
 					}
 					break;
 				default:
-					responseMessage += "Did not understand message";
+					responseMessage += '"Did not understand message"';
 					return;
 			}
 			responseMessage += '}';
