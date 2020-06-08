@@ -154,11 +154,13 @@ function bclearClick(){
 	timer.period = 0;
 	timer.start = 0;
 	timer.start_timeoff = 0;
+	match.home.team = "home";
 	match.home.tot = 0;
 	match.home.trys = 0;
 	match.home.cons = 0;
 	match.home.goals = 0;
 	match.home.sinbins = [];
+	match.away.team = "away";
 	match.away.tot = 0;
 	match.away.trys = 0;
 	match.away.cons = 0;

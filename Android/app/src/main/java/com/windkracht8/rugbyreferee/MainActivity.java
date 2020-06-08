@@ -12,8 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -48,11 +46,6 @@ public class MainActivity extends AppCompatActivity {
         rReport = findViewById(R.id.report);
         pPrepare = findViewById(R.id.prepare);
         bPrepare = findViewById(R.id.bPrepare);
-
-        EditText etHomeName = findViewById(R.id.etHomeName);
-        Spinner sMatchType = findViewById(R.id.sMatchType);
-        Log.i("prepare", "etHomeName.getHeight: " + etHomeName.getTextSize());
-
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.windkracht8.rugbyreferee;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -115,12 +114,6 @@ public class prepare extends LinearLayout {
                 break;
             }
         }
-        Log.i("prepare", "etHomeName.getHeight: " + etHomeName.getHeight());
-        Log.i("prepare", "sMatchType.getHeight: " + sMatchType.getHeight());
-        sMatchType.setMinimumHeight(etHomeName.getHeight());
-        Log.i("prepare", "sMatchType.getHeight: " + sMatchType.getHeight());
-        sHomeColor.setMinimumHeight(etHomeName.getHeight());
-        sAwayColor.setMinimumHeight(etHomeName.getHeight());
     }
 
     public JSONObject getSettings(){
