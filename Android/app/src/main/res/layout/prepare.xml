@@ -71,11 +71,11 @@
         <TableRow>
 
             <TextView
-                android:labelFor="@+id/etTimeSplit"
-                android:text="@string/time_split"
+                android:labelFor="@+id/etTimePeriod"
+                android:text="@string/time_period"
                 android:textSize="18sp" />
             <EditText
-                android:id="@+id/etTimeSplit"
+                android:id="@+id/etTimePeriod"
                 android:inputType="number"
                 android:textAlignment="center"
                 android:importantForAutofill="no"
@@ -83,11 +83,11 @@
         </TableRow>
         <TableRow>
             <TextView
-                android:text="@string/split_count"
-                android:labelFor="@+id/etSplitCount"
+                android:text="@string/period_count"
+                android:labelFor="@+id/etPeriodCount"
                 android:textSize="18sp" />
             <EditText
-                android:id="@+id/etSplitCount"
+                android:id="@+id/etPeriodCount"
                 android:inputType="number"
                 android:textAlignment="center"
                 android:importantForAutofill="no"

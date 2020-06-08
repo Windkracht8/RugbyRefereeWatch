@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject getMatchResponse = responseMessage.getJSONObject("responseData");
                     ma.rReport.gotMatch(getMatchResponse);
                     break;
-                case "setSettings"://TODO: deprecate
                 case "prepare":
                     Log.i("MainActivity.gotResult", "prepare");
                     String responseString = responseMessage.getString("responseData");

@@ -12,8 +12,8 @@
     <string name="settings">Settings</string>
     <string name="home_color">Home color</string>
     <string name="away_color">Away color</string>
-    <string name="time_split">Time/split</string>
-    <string name="split_count">Split count</string>
+    <string name="time_period">Time/period</string>
+    <string name="period_count">Period count</string>
     <string name="sinbin">Sinbin</string>
     <string name="bSetSettings_text">Send to watch</string>
     <string name="space" />

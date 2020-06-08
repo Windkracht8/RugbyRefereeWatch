@@ -19,8 +19,8 @@ public class prepare extends LinearLayout {
     private Spinner sHomeColor;
     private Spinner sAwayColor;
     private Spinner sMatchType;
-    private EditText etTimeSplit;
-    private EditText etSplitCount;
+    private EditText etTimePeriod;
+    private EditText etPeriodCount;
     private EditText etSinbin;
     private EditText etPointsTry;
     private EditText etPointsCon;
@@ -37,8 +37,8 @@ public class prepare extends LinearLayout {
         sHomeColor = findViewById(R.id.sHomeColor);
         sAwayColor = findViewById(R.id.sAwayColor);
         sMatchType = findViewById(R.id.sMatchType);
-        etTimeSplit = findViewById(R.id.etTimeSplit);
-        etSplitCount = findViewById(R.id.etSplitCount);
+        etTimePeriod = findViewById(R.id.etTimePeriod);
+        etPeriodCount = findViewById(R.id.etPeriodCount);
         etSinbin = findViewById(R.id.etSinbin);
         etPointsTry = findViewById(R.id.etPointsTry);
         etPointsCon = findViewById(R.id.etPointsCon);
@@ -53,40 +53,40 @@ public class prepare extends LinearLayout {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 switch(position){
                     case 0://15s
-                        etTimeSplit.setText("40");
-                        etSplitCount.setText("2");
+                        etTimePeriod.setText("40");
+                        etPeriodCount.setText("2");
                         etSinbin.setText("10");
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
                         break;
                     case 1://10s
-                        etTimeSplit.setText("10");
-                        etSplitCount.setText("2");
+                        etTimePeriod.setText("10");
+                        etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
                         break;
                     case 2://7s
-                        etTimeSplit.setText("7");
-                        etSplitCount.setText("2");
+                        etTimePeriod.setText("7");
+                        etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
                         break;
                     case 3://beach 7s
-                        etTimeSplit.setText("7");
-                        etSplitCount.setText("2");
+                        etTimePeriod.setText("7");
+                        etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("1");
                         etPointsCon.setText("0");
                         etPointsGoal.setText("0");
                         break;
                     case 4://beach 5s
-                        etTimeSplit.setText("5");
-                        etSplitCount.setText("2");
+                        etTimePeriod.setText("5");
+                        etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("1");
                         etPointsCon.setText("0");
@@ -137,8 +137,8 @@ public class prepare extends LinearLayout {
                 temp = "lightgray";
             settings.put("away_color", temp);
             settings.put("match_type", sMatchType.getSelectedItem().toString());
-            settings.put("split_time", Integer.parseInt(etTimeSplit.getText().toString()));
-            settings.put("split_count", Integer.parseInt(etSplitCount.getText().toString()));
+            settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
+            settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
             settings.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
