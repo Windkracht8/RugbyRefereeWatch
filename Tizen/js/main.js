@@ -90,7 +90,7 @@ function timerClick(){
 		//time off
 		timer.status = "timeoff";
 		timer.start_timeoff = getCurrentTimestamp();
-		logEvent("Time off");
+		logEvent("Time off", null, null);
 		update();
 	}
 }
@@ -103,21 +103,21 @@ function bresumeClick(){
 			timer.status = "running";
 			timer.period++;
 			timer.start = getCurrentTimestamp();
-			logEvent("Start " + getPeriodName());
+			logEvent("Start " + getPeriodName(), null, null);
 			update();
 			break;
 		case "timeoff":
 			//resume running
 			timer.status = "running";
 			timer.start += (getCurrentTimestamp() - timer.start_timeoff);
-			logEvent("Resume time");
+			logEvent("Resume time", null, null);
 			update();
 			break;
 		case "rest":
 			//get ready for next period
 			timer.status = "ready";
 			updateTimer(0);
-			logEvent("Rest over");
+			logEvent("Rest over", null, null);
 			break;
 	}	
 }
@@ -137,8 +137,8 @@ function brestClick(){
 	if(match.events[match.events.length-1].what === "Time off"){
 		match.events.splice(match.events.length-1, 1);
 	}
-	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot);
-	logEvent("Rest start");
+	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
+	logEvent("Rest start", null, null);
 }
 function bfinishClick(){
 	timer.status = "finished";
@@ -315,19 +315,19 @@ function tryClick(){
 	team_edit.trys++;
 	updateScore();
 	$('#score').hide();
-	logEvent("TRY", team_edit);
+	logEvent("TRY", team_edit, null);
 }
 function conversionClick(){
 	team_edit.cons++;
 	updateScore();
 	$('#score').hide();
-	logEvent("CONVERSION", team_edit);
+	logEvent("CONVERSION", team_edit, null);
 }
 function goalClick(){
 	team_edit.goals++;
 	updateScore();
 	$('#score').hide();
-	logEvent("GOAL", team_edit);
+	logEvent("GOAL", team_edit, null);
 }
 function updateScore(){
 	match.home.tot = match.home.trys*match.settings.points_try + 
@@ -525,15 +525,15 @@ function getPeriodName(){
 	return "period " + timer.period;
 }
 
-function logEvent(what, team = false, who = false){
+function logEvent(what, team, who){
 	var id = Date.now();
 	var currenttimer = timer.timer + ((timer.period-1)*match.settings.period_time*60000);
 	var temp = '{"time":"' + $('#time').html() + '",' +
 				'"timer":"' + prettyTimer(currenttimer) + '",';
-	if(team !== false){
+	if(team !== null){
 		temp +=	'"team":"' + team.team + '",';
 	}
-	if(who !== false){
+	if(who !== null){
 		temp +=	'"who":"' + who + '",';
 	}
 	temp +=	'"what":"' + what + '",';

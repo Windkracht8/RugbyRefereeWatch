@@ -1,0 +1,13 @@
+Tizen/.settings
+Tizen/.sign
+Tizen/*.wgt
+Tizen/.project
+Tizen/.tproject
+
+Android/.gradle
+Android/.idea
+Android/build
+Android/gradle
+Android/*.jks
+Android/*.apk
+

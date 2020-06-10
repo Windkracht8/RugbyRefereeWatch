@@ -13,13 +13,6 @@ body{
 */
 /* END PCmode */
 
-.overlay{
-	width: 100vw;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
 html, body{
 	margin: 0;
 	height: 100vh;
@@ -28,7 +21,8 @@ html, body{
 	text-align: center;
 	background-color: black;
 	color: white;
-	overflow: hidden auto;
+	overflow-x: hidden;
+	overflow-y: auto;
     font-family: Tizen, Samsung Sans, Helvetica;
 }
 select, input, button{
