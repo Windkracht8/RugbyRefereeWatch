@@ -1,4 +1,4 @@
-package com.windkracht8.rugbyreferee;
+package com.windkracht8.rugbyrefereewatch;
 
 import androidx.appcompat.app.AppCompatActivity;
 

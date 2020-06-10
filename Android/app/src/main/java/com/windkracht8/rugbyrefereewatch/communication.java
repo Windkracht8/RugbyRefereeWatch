@@ -1,4 +1,4 @@
-package com.windkracht8.rugbyreferee;
+package com.windkracht8.rugbyrefereewatch;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ public class communication extends SAAgent {
     }
 
     public communication() {
-        super("RugbyReferee", ServiceConnection.class);
+        super("RugbyRefereeWatch", ServiceConnection.class);
     }
 
     @Override

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RugbyReferee</string>
+    <string name="app_name">RugbyRefereeWatch</string>
     <string name="disconnected">Disconnected</string>
     <string name="match">Match</string>
     <string name="bGetMatch_text">Get match</string>

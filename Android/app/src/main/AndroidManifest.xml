@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.windkracht8.rugbyreferee">
+    package="com.windkracht8.rugbyrefereewatch">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.windkracht8.rugbyreferee.communication" />
+        <service android:name="com.windkracht8.rugbyrefereewatch.communication" />
 
         <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" >
             <intent-filter>
