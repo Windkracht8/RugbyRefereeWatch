@@ -53,6 +53,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvError" />
 
+    <Button
+        android:id="@+id/bExit"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="223dp"
+        android:onClick="bExitClick"
+        android:text="@string/exit"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvError" />
+
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"

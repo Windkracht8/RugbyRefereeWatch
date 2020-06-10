@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tabReport;
     private TextView tabPrepare;
     private Button bConnect;
+    private Button bExit;
     private Button bGetMatch;
     private report rReport;
     private prepare pPrepare;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         tabReport = findViewById(R.id.tabReport);
         tabPrepare = findViewById(R.id.tabPrepare);
         bConnect = findViewById(R.id.bConnect);
+        bExit = findViewById(R.id.bExit);
         bGetMatch = findViewById(R.id.bGetMatch);
         rReport = findViewById(R.id.report);
         pPrepare = findViewById(R.id.prepare);
@@ -70,8 +72,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public void bExitClick(View view) {
+        finish();
+        System.exit(0);
+    }
     public void bConnectClick(View view) {
-        bConnect.setVisibility(View.INVISIBLE);
+        bConnect.setVisibility(View.GONE);
         if(comms == null || comms.status == communication.Status.DISCONNECTED) {
             mIsBound = bindService(new Intent(MainActivity.this, communication.class), mConnection, Context.BIND_AUTO_CREATE);
         }else if(comms.status == communication.Status.CONNECTION_LOST) {
@@ -101,12 +107,14 @@ public class MainActivity extends AppCompatActivity {
             case CONNECTION_LOST:
                 status = "Connection lost";
                 ma.bConnect.setVisibility(View.VISIBLE);
+                ma.bExit.setVisibility(View.GONE);
                 ma.bGetMatch.setVisibility(View.INVISIBLE);
                 ma.bPrepare.setVisibility(View.INVISIBLE);
                 break;
             case CONNECTED:
                 ma.tvError.setText("");
                 status = "Connected";
+                ma.bExit.setVisibility(View.VISIBLE);
                 ma.bGetMatch.setVisibility(View.VISIBLE);
                 ma.bPrepare.setVisibility(View.VISIBLE);
                 break;
@@ -124,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 status = "error";
                 ma.bConnect.setVisibility(View.VISIBLE);
+                ma.bExit.setVisibility(View.GONE);
                 ma.bGetMatch.setVisibility(View.INVISIBLE);
                 ma.bPrepare.setVisibility(View.INVISIBLE);
         }
