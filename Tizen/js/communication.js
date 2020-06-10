@@ -2,7 +2,7 @@ var SAAgent;
 
 var communicationListener = {
 	onrequest: function(peerAgent){
-		if(peerAgent.appName === "RugbyReferee"){
+		if(peerAgent.appName === "RugbyRefereeWatch"){
 			SAAgent.acceptServiceConnectionRequest(peerAgent);
 		}else{
 			SAAgent.rejectServiceConnectionRequest(peerAgent);

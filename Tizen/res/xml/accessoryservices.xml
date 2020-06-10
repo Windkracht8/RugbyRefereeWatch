@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <application name="RugbyReferee" >
+    <application name="RugbyRefereeWatch" >
         <serviceProfile
-            id="/com/windkracht8/rugbyreferee"
+            id="/com/windkracht8/rugbyrefereewatch"
             name="rugbyreferee"
-            autoLaunchAppId="iuoFzIZwBo.RugbyReferee"
+            autoLaunchAppId="lTZ15rKyhY.RugbyRefereeWatch"
             role="provider"
             version="1.0"
             serviceLimit="ANY"
