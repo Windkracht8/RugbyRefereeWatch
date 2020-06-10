@@ -155,12 +155,14 @@ function bclearClick(){
 	timer.start = 0;
 	timer.start_timeoff = 0;
 	match.home.team = "home";
+	match.home.color = "green";
 	match.home.tot = 0;
 	match.home.trys = 0;
 	match.home.cons = 0;
 	match.home.goals = 0;
 	match.home.sinbins = [];
 	match.away.team = "away";
+	match.away.color = "red";
 	match.away.tot = 0;
 	match.away.trys = 0;
 	match.away.cons = 0;
@@ -170,6 +172,8 @@ function bclearClick(){
 	update();
 	$('#sinbins_home').html("");
 	$('#sinbins_away').html("");
+	$('#home').css('background', match.home.color);
+	$('#away').css('background', match.away.color);
 	match.events = [];
 	$('#bconf').show();
 }
