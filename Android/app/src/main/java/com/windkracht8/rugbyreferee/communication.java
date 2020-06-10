@@ -69,7 +69,7 @@ public class communication extends SAAgent {
             gotError("Watch not found");
         } else if (result == SAAgent.FINDPEER_SERVICE_NOT_FOUND) {
             updateStatus(Status.ERROR);
-            gotError("FINDPEER_SERVICE_NOT_FOUND");
+            gotError("App not found on the watch");
         } else {
             updateStatus(Status.ERROR);
             gotError("No peers found");

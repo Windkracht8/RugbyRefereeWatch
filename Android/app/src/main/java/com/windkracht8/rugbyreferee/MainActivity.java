@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void bSetSettingsClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError("First connect with watch");return;}
-        comms.sendRequest("setSettings", pPrepare.getSettings());
+        comms.sendRequest("prepare", pPrepare.getSettings());
     }
     public static void updateStatus() {
         String status;
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         ma.tvStatus.setText(status);
     }
     public static void gotResponse(final JSONObject responseMessage){
-        Log.i("MainActivity.gotResult", responseMessage.toString());
+        Log.i("MainActivity.gotResponse", responseMessage.toString());
         try {
             String requestType = responseMessage.getString("requestType");
             switch (requestType) {
