@@ -3,6 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
         rReport = findViewById(R.id.report);
         pPrepare = findViewById(R.id.prepare);
         bPrepare = findViewById(R.id.bPrepare);
+
+        try{
+            getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
+            bConnect.setVisibility(View.VISIBLE);
+        }catch(PackageManager.NameNotFoundException e){
+            tvStatus.setVisibility(View.GONE);
+            tvError.setText(R.string.tvFatal);
+        }
     }
 
     @Override

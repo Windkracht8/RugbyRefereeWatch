@@ -33,4 +33,5 @@
     <string name="_5">5</string>
     <string name="match_type">Match type</string>
     <string name="exit">exit</string>
+    <string name="tvFatal">You need to install the Samsung Accessory Service first</string>
 </resources>
