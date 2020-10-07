@@ -13,6 +13,20 @@
         android:textAlignment="center"
         android:textAllCaps="false"
         android:visibility="invisible" />
+    <EditText
+        android:id="@+id/etHomeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:visibility="gone" />
+    <EditText
+        android:id="@+id/etAwayName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:visibility="gone" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -20,20 +34,19 @@
         android:paddingStart="20dip"
         android:paddingEnd="20dip"
         android:stretchColumns="*" >
-
         <TableRow>
-
             <TextView
                 android:id="@+id/tvHomeName"
+                android:labelFor="@+id/etHomeName"
                 android:layout_marginEnd="20dp"
                 android:layout_span="2"
                 android:gravity="center"
                 android:text="@string/home"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/tvAwayName"
+                android:labelFor="@+id/etAwayName"
                 android:layout_marginStart="20dp"
                 android:layout_span="2"
                 android:gravity="center"
@@ -41,9 +54,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </TableRow>
-
         <TableRow>
-
             <TextView android:text="@string/trys" />
 
             <TextView
@@ -137,4 +148,13 @@
             android:layout_height="wrap_content"
             />
     </ScrollView>
+    <Button
+        android:id="@+id/bShare"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bShare_text"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:visibility="invisible" />
 </LinearLayout>

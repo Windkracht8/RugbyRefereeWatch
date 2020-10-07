@@ -141,14 +141,23 @@
                 android:importantForAutofill="no"
                 android:text="@string/_3" />
         </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/record_player"
+                android:labelFor="@+id/etRecordPlayer"
+                android:textSize="18sp" />
+            <CheckBox
+                android:id="@+id/cbRecordPlayer"
+                android:importantForAutofill="no" />
+        </TableRow>
     </TableLayout>
     <Button
         android:id="@+id/bPrepare"
-        android:onClick="bSetSettingsClick"
+        android:onClick="bPrepareClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="@string/bSetSettings_text"
+        android:text="@string/bPrepare_text"
         android:textAllCaps="false"
         android:visibility="invisible" />
 </LinearLayout>

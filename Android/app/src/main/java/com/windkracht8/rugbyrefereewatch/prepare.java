@@ -1,11 +1,13 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.LinearLayout;
@@ -24,6 +26,7 @@ public class prepare extends LinearLayout {
     private EditText etPointsTry;
     private EditText etPointsCon;
     private EditText etPointsGoal;
+    private CheckBox cbRecordPlayer;
 
     public prepare(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,12 +45,14 @@ public class prepare extends LinearLayout {
         etPointsTry = findViewById(R.id.etPointsTry);
         etPointsCon = findViewById(R.id.etPointsCon);
         etPointsGoal = findViewById(R.id.etPointsGoal);
+        cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
 
         String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s"};
-        ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, aMatchTypes);
+        ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 switch(position){
@@ -122,12 +127,10 @@ public class prepare extends LinearLayout {
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
             String temp = sHomeColor.getSelectedItem().toString();
-            if(temp.equals("white"))
-                temp = "lightgray";
+            if(temp.equals("white")){temp = "lightgray";}
             settings.put("home_color", temp);
             temp = sAwayColor.getSelectedItem().toString();
-            if(temp.equals("white"))
-                temp = "lightgray";
+            if(temp.equals("white")){temp = "lightgray";}
             settings.put("away_color", temp);
             settings.put("match_type", sMatchType.getSelectedItem().toString());
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
@@ -136,6 +139,7 @@ public class prepare extends LinearLayout {
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
+            settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
         }catch(Exception e){
             //TODO: handle error
             return null;

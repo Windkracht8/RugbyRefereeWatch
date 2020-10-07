@@ -30,10 +30,11 @@
 
     <TextView
         android:id="@+id/tvError"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/space"
         android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,6 +51,7 @@
         android:text="@string/bConnect_text"
         android:textAlignment="center"
         android:textAllCaps="false"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvError" />
 
@@ -76,14 +78,25 @@
         >
 
         <TextView
-            android:id="@+id/tabReport"
+            android:id="@+id/tabHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/tab_active"
+            android:onClick="tabHistoryClick"
+            android:text="@string/history"
+            android:textAlignment="center"
+            android:textAllCaps="true" />
+
+        <TextView
+            android:id="@+id/tabReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="tabReportClick"
             android:text="@string/report"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAllCaps="true" />
 
         <TextView
             android:id="@+id/tabPrepare"
@@ -92,11 +105,12 @@
             android:layout_weight="1"
             android:onClick="tabPrepareClick"
             android:text="@string/prepare"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textAllCaps="true" />
     </LinearLayout>
 
-    <com.windkracht8.rugbyrefereewatch.report
-        android:id="@+id/report"
+    <com.windkracht8.rugbyrefereewatch.history
+        android:id="@+id/hHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
@@ -105,8 +119,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
 
+    <com.windkracht8.rugbyrefereewatch.report
+        android:id="@+id/rReport"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+
     <com.windkracht8.rugbyrefereewatch.prepare
-        android:id="@+id/prepare"
+        android:id="@+id/pPrepare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -116,5 +141,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

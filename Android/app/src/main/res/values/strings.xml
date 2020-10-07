@@ -2,9 +2,10 @@
     <string name="app_name">RugbyRefereeWatch</string>
     <string name="disconnected">Disconnected</string>
     <string name="match">Match</string>
-    <string name="bGetMatch_text">Get match</string>
-    <string name="home">Home</string>
-    <string name="away">Away</string>
+    <string name="bGetMatch_text">Get match from watch</string>
+    <string name="bGetMatches_text">Get matches from watch</string>
+    <string name="home">home</string>
+    <string name="away">away</string>
     <string name="trys">Trys</string>
     <string name="conversions">Conversions</string>
     <string name="_0">0</string>
@@ -15,7 +16,7 @@
     <string name="time_period">Time/period</string>
     <string name="period_count">Period count</string>
     <string name="sinbin">Sinbin</string>
-    <string name="bSetSettings_text">Send to watch</string>
+    <string name="bPrepare_text">Send to watch</string>
     <string name="space" />
     <string name="bConnect_text">Connnect</string>
     <string name="home_name">Home name</string>
@@ -33,4 +34,13 @@
     <string name="_5">5</string>
     <string name="match_type">Match type</string>
     <string name="exit">exit</string>
+    <string name="tvFatal">You need to install the Samsung Accessory Service first</string>
+    <string name="record_player">Record player #</string>
+    <string name="bDelete_text">Delete selected matches</string>
+    <string name="no_card_reason">reason not entered</string>
+    <string name="bShare_text">share report</string>
+    <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="did_not_understand_message">Did not understand message</string>
+    <string name="first_connect">First connect with watch</string>
+    <string name="history">History</string>
 </resources>
