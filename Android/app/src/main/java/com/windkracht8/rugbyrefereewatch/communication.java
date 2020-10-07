@@ -3,7 +3,6 @@ package com.windkracht8.rugbyrefereewatch;
 import java.io.IOException;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -19,13 +18,13 @@ public class communication extends SAAgent {
         CONNECTION_LOST,
         FINDING_PEERS,
         CONNECTED,
+        GETTING_MATCHES,
         GETTING_MATCH,
         PREPARE
     }
     public Status status = Status.DISCONNECTED;
 
     private ServiceConnection mConnectionHandler = null;
-    Handler mHandler = new Handler();
     private final IBinder mBinder = new LocalBinder();
     class LocalBinder extends Binder {
         communication getService() {
@@ -108,28 +107,6 @@ public class communication extends SAAgent {
         gotError(errorMessage);
     }
 
-    @Override
-    protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result) {
-        Log.i("communication", "onPeerAgentsUpdated: " + result);
-        //TODO: do we need this, it is never called
-        final SAPeerAgent[] peers = peerAgents;
-        final int status = result;
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (peers != null) {
-                    if (status == SAAgent.PEER_AGENT_AVAILABLE) {
-                        Log.i("communication", "onPeerAgentsUpdated.post PEER_AGENT_AVAILABLE");
-                        //Toast.makeText(getApplicationContext(), "PEER_AGENT_AVAILABLE", Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.i("communication", "onPeerAgentsUpdated.post PEER_AGENT_UNAVAILABLE");
-                        //Toast.makeText(getApplicationContext(), "PEER_AGENT_UNAVAILABLE", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-    }
-
     public class ServiceConnection extends SASocket {
         public ServiceConnection() {
             super(ServiceConnection.class.getName());
@@ -200,7 +177,7 @@ public class communication extends SAAgent {
     private void updateStatus(final Status newstatus) {
         Log.i("communication", "updateStatus: " + newstatus);
         this.status = newstatus;
-        mHandler.post(new Runnable() {
+        MainActivity.mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 MainActivity.updateStatus();
@@ -209,7 +186,7 @@ public class communication extends SAAgent {
     }
     private void gotError(final String error) {
         Log.e("communication", "gotError: " + error);
-        mHandler.post(new Runnable() {
+        MainActivity.mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 MainActivity.gotError(error);
@@ -217,7 +194,7 @@ public class communication extends SAAgent {
         });
     }
     private void gotResponse(final JSONObject responseMessage){
-        mHandler.post(new Runnable() {
+        MainActivity.mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
                 MainActivity.gotResponse(responseMessage);
