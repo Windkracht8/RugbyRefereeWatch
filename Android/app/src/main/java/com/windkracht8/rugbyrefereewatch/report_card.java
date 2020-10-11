@@ -6,14 +6,14 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.EditText;
 
 import org.json.JSONObject;
 
 
-public class report_card extends LinearLayout{
+public class report_card extends LinearLayout {
     private long matchid;
     private long eventid;
     private TextView tvReason;

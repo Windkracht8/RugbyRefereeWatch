@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +19,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class history extends LinearLayout {
-    private TableLayout tlMatches;
+    private LinearLayout llMatches;
     private Button bDelete;
     final String filename = "matches.json";
     ArrayList<JSONObject> matches;
@@ -32,7 +31,7 @@ public class history extends LinearLayout {
             inflater.inflate(R.layout.history, this, true);
         }
 
-        tlMatches = findViewById(R.id.tlMatches);
+        llMatches = findViewById(R.id.llMatches);
         bDelete = findViewById(R.id.bDelete);
 
         bDelete.setOnClickListener(new View.OnClickListener() {
@@ -102,11 +101,11 @@ public class history extends LinearLayout {
 
     private void showMatches(){
         try {
-            if(tlMatches.getChildCount() > 0)
-                tlMatches.removeAllViews();
+            if(llMatches.getChildCount() > 0)
+                llMatches.removeAllViews();
             Context context = getContext();
             for (int i = 0; i < matches.size(); i++) {
-                tlMatches.addView(new history_match(context, matches.get(i), this));
+                llMatches.addView(new history_match(context, matches.get(i), this));
             }
         }catch (Exception e){
             Log.e("history", "showMatches: " + e.getMessage());
@@ -129,8 +128,8 @@ public class history extends LinearLayout {
     }
 
     public void unselect(){
-        for (int i=0; i < tlMatches.getChildCount(); i++) {
-            View child = tlMatches.getChildAt(i);
+        for (int i=0; i < llMatches.getChildCount(); i++) {
+            View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 tmp.unselect();
@@ -138,14 +137,14 @@ public class history extends LinearLayout {
         }
     }
     public void deleteSelected(){
-        for (int i=tlMatches.getChildCount()-1; i >=0; i--) {
-            View child = tlMatches.getChildAt(i);
+        for (int i=llMatches.getChildCount()-1; i >=0; i--) {
+            View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){
                     Log.i("history", "delete match: " + i);
                     matches.remove(i);
-                    tlMatches.removeViewAt(i);
+                    llMatches.removeViewAt(i);
                 }
             }
         }
@@ -154,8 +153,8 @@ public class history extends LinearLayout {
     }
     public void selectionChanged(){
         bDelete.setVisibility(View.GONE);
-        for (int i=0; i < tlMatches.getChildCount(); i++) {
-            View child = tlMatches.getChildAt(i);
+        for (int i=0; i < llMatches.getChildCount(); i++) {
+            View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){

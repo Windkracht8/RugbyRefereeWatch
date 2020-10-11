@@ -9,9 +9,9 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 
-public class report_event extends LinearLayout{
+public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, JSONObject match) {
+    public report_event(Context context, JSONObject event, JSONObject match, int timewidth, int timerwidth) {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -21,9 +21,11 @@ public class report_event extends LinearLayout{
 
         try {
             TextView tvTime = findViewById(R.id.tvTime);
+            tvTime.setWidth(timewidth);
             tvTime.setText(event.getString("time"));
 
             TextView tvTimer = findViewById(R.id.tvTimer);
+            tvTimer.setWidth(timerwidth);
             tvTimer.setText(event.getString("timer"));
 
             TextView tvWhat = findViewById(R.id.tvWhat);

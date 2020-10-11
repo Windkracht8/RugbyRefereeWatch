@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="5sp"
-        android:textAlignment="center"
-        android:textSize="20sp" />
-
-</TableRow>
+    android:orientation="horizontal" >
+	<TextView
+		android:id="@+id/tvName"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingBottom="5sp"
+		android:textAlignment="center"
+		android:textSize="20sp" />
+</LinearLayout>

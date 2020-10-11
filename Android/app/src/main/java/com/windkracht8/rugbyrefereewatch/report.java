@@ -11,7 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,17 +30,22 @@ public class report extends LinearLayout {
     private EditText etAwayName;
     private TextView tvHomeTrys;
     private TextView tvAwayTrys;
+    private TableRow trCons;
     private TextView tvHomeCons;
     private TextView tvAwayCons;
+    private TableRow trGoals;
     private TextView tvHomeGoals;
     private TextView tvAwayGoals;
     private TextView tvHomeTot;
     private TextView tvAwayTot;
-    private TableLayout tlEvents;
+    private LinearLayout llEvents;
     private Button bShare;
 
     private JSONObject match;
     private long matchid;
+
+    private int timewidth;
+    private int timerwidth;
 
     public report(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,19 +54,29 @@ public class report extends LinearLayout {
             inflater.inflate(R.layout.report, this, true);
         }
 
+        //Yes this is very ugly, TableLayout does not work when you add TableRows as a separate class
+        TextView tvTime = findViewById(R.id.tvTime);
+        tvTime.measure(0, 0);
+        timewidth = tvTime.getMeasuredWidth();
+        TextView tvTimer = findViewById(R.id.tvTimer);
+        tvTimer.measure(0, 0);
+        timerwidth = tvTimer.getMeasuredWidth();
+
         tvHomeName = findViewById(R.id.tvHomeName);
         etHomeName = findViewById(R.id.etHomeName);
         tvAwayName = findViewById(R.id.tvAwayName);
         etAwayName = findViewById(R.id.etAwayName);
         tvHomeTrys = findViewById(R.id.tvHomeTrys);
         tvAwayTrys = findViewById(R.id.tvAwayTrys);
+        trCons = findViewById(R.id.trCons);
         tvHomeCons = findViewById(R.id.tvHomeCons);
         tvAwayCons = findViewById(R.id.tvAwayCons);
+        trGoals = findViewById(R.id.trGoals);
         tvHomeGoals = findViewById(R.id.tvHomeGoals);
         tvAwayGoals = findViewById(R.id.tvAwayGoals);
         tvHomeTot = findViewById(R.id.tvHomeTot);
         tvAwayTot = findViewById(R.id.tvAwayTot);
-        tlEvents = findViewById(R.id.tlEvents);
+        llEvents = findViewById(R.id.llEvents);
         bShare = findViewById(R.id.bShare);
 
         bShare.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +143,7 @@ public class report extends LinearLayout {
         this.match = match;
         try {
             this.matchid = match.has("matchid") ? match.getLong("matchid") : 0;//TODO: matchid is present from version 1.1 of watch app
+            JSONObject settings = match.getJSONObject("settings");
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
@@ -135,24 +151,35 @@ public class report extends LinearLayout {
             tvAwayName.setText(MainActivity.getTeamName(away));
             tvHomeTrys.setText(home.getString("trys"));
             tvAwayTrys.setText(away.getString("trys"));
+
+            if(settings.has("points_con") && settings.getInt("points_con") == 0) {
+                trCons.setVisibility(View.GONE);
+            }else{
+                trCons.setVisibility(View.VISIBLE);
+            }
             tvHomeCons.setText(home.getString("cons"));
             tvAwayCons.setText(away.getString("cons"));
+            if(settings.has("points_goal") && settings.getInt("points_goal") == 0) {
+                trGoals.setVisibility(View.GONE);
+            }else{
+                trGoals.setVisibility(View.VISIBLE);
+            }
             tvHomeGoals.setText(home.getString("goals"));
             tvAwayGoals.setText(away.getString("goals"));
             tvHomeTot.setText(home.getString("tot"));
             tvAwayTot.setText(away.getString("tot"));
 
-            if(tlEvents.getChildCount() > 0)
-                tlEvents.removeAllViews();
+            if(llEvents.getChildCount() > 0)
+                llEvents.removeAllViews();
 
             JSONArray events = match.getJSONArray("events");
             Context context = getContext();
             for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
-                tlEvents.addView(new report_event(context, event, match));
+                llEvents.addView(new report_event(context, event, match, timewidth, timerwidth));
                 //TODO: CARD uppercase from version 1.1 of watch app
                 if(event.getString("what").toUpperCase().contains("CARD")) {
-                    tlEvents.addView(new report_card(context, event, matchid));
+                    llEvents.addView(new report_card(context, event, matchid));
                 }
             }
 

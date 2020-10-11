@@ -17,13 +17,14 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TableLayout
-            android:id="@+id/tlMatches"
+        android:layout_height="wrap_content"
+		>
+        <LinearLayout
+            android:id="@+id/llMatches"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:orientation="vertical" >
+        </LinearLayout>
     </ScrollView>
 
     <Button

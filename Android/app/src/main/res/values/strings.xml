@@ -43,4 +43,6 @@
     <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
     <string name="history">History</string>
+    <string name="tvTime_placeholder">00:00:00</string>
+    <string name="tvTimer_placeholder">00:00</string>
 </resources>
