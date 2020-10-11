@@ -116,7 +116,7 @@ select, input, button{
 	min-height: 80vh;
 	top: 0;
 	left: 0;
-	padding-top: 20vh;
+	padding: 20vh 0;
 	background: black;
 	font-size: 15vh;
 }
@@ -139,7 +139,7 @@ select, input, button{
 }
 #report{
 	font-size: 5vw;
-	padding: 10vh 0;
+	padding: 15vh 0 20vh;
 }
 #correct{
 	font-size: 10vw;
