@@ -180,7 +180,7 @@ public class communication extends SAAgent {
         MainActivity.mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                MainActivity.updateStatus();
+                MainActivity.updateStatus(newstatus);
             }
         });
     }

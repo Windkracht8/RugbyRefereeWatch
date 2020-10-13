@@ -85,7 +85,7 @@
             android:background="@drawable/tab_active"
             android:onClick="tabHistoryClick"
             android:text="@string/history"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textAllCaps="true" />
 
         <TextView
@@ -95,7 +95,7 @@
             android:layout_weight="1"
             android:onClick="tabReportClick"
             android:text="@string/report"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textAllCaps="true" />
 
         <TextView
@@ -105,16 +105,15 @@
             android:layout_weight="1"
             android:onClick="tabPrepareClick"
             android:text="@string/prepare"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textAllCaps="true" />
     </LinearLayout>
 
     <com.windkracht8.rugbyrefereewatch.history
         android:id="@+id/hHistory"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
@@ -122,22 +121,19 @@
     <com.windkracht8.rugbyrefereewatch.report
         android:id="@+id/rReport"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
 
     <com.windkracht8.rugbyrefereewatch.prepare
         android:id="@+id/pPrepare"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />

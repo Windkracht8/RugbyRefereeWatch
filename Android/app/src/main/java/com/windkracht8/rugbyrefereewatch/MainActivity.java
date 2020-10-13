@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private prepare pPrepare;
     private Button bPrepare;
-    private communication comms;
+    private static communication comms;
     private boolean mIsBound = false;
 
     private long backpresstime;
@@ -201,18 +201,18 @@ public class MainActivity extends AppCompatActivity {
         ma.tabReportClick(null);
     }
 
-    public static void updateStatus() {
+    public static void updateStatus(final communication.Status newstatus) {
         String status;
         ma.tvError.setText("");
-        switch(ma.comms.status){
+        switch(newstatus){
             case DISCONNECTED:
-                status = "Disconnected";
+                status = ma.getString(R.string.status_DISCONNECTED);
                 break;
             case FINDING_PEERS:
-                status = "Connecting";
+                status = ma.getString(R.string.status_CONNECTING);
                 break;
             case CONNECTION_LOST:
-                status = "Connection lost";
+                status = ma.getString(R.string.status_CONNECTION_LOST);
                 ma.bConnect.setVisibility(View.VISIBLE);
                 ma.bExit.setVisibility(View.GONE);
                 ma.bGetMatches.setVisibility(View.INVISIBLE);
@@ -221,33 +221,33 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case CONNECTED:
                 ma.tvError.setText("");
-                status = "Connected";
+                status = ma.getString(R.string.status_CONNECTED);
                 ma.bExit.setVisibility(View.VISIBLE);
                 ma.bGetMatches.setVisibility(View.VISIBLE);
                 ma.bGetMatch.setVisibility(View.VISIBLE);
                 ma.bPrepare.setVisibility(View.VISIBLE);
                 break;
             case GETTING_MATCHES:
-                status = "Getting matches";
+                status = ma.getString(R.string.status_GETTING_MATCHES);
                 ma.bGetMatches.setVisibility(View.INVISIBLE);
                 ma.bGetMatch.setVisibility(View.INVISIBLE);
                 ma.bPrepare.setVisibility(View.INVISIBLE);
                 break;
             case GETTING_MATCH:
-                status = "Getting match";
+                status = ma.getString(R.string.status_GETTING_MATCH);
                 ma.bGetMatches.setVisibility(View.INVISIBLE);
                 ma.bGetMatch.setVisibility(View.INVISIBLE);
                 ma.bPrepare.setVisibility(View.INVISIBLE);
                 break;
             case PREPARE:
-                status = "Sending prepare";
+                status = ma.getString(R.string.status_PREPARE);
                 ma.bGetMatches.setVisibility(View.INVISIBLE);
                 ma.bGetMatch.setVisibility(View.INVISIBLE);
                 ma.bPrepare.setVisibility(View.INVISIBLE);
                 break;
             case ERROR:
             default:
-                status = "error";
+                status = ma.getString(R.string.status_ERROR);
                 ma.bConnect.setVisibility(View.VISIBLE);
                 ma.bExit.setVisibility(View.GONE);
                 ma.bGetMatches.setVisibility(View.INVISIBLE);

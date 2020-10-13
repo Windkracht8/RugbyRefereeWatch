@@ -45,4 +45,12 @@
     <string name="history">History</string>
     <string name="tvTime_placeholder">00:00:00</string>
     <string name="tvTimer_placeholder">00:00</string>
+    <string name="status_DISCONNECTED">Disconnected</string>
+    <string name="status_CONNECTION_LOST">Connection lost</string>
+    <string name="status_CONNECTED">Connected</string>
+    <string name="status_GETTING_MATCHES">Getting matches</string>
+    <string name="status_GETTING_MATCH">Getting match</string>
+    <string name="status_PREPARE">Sending prepare</string>
+    <string name="status_ERROR">error</string>
+    <string name="status_CONNECTING">Connecting</string>
 </resources>
