@@ -19,9 +19,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class history extends LinearLayout {
-    private LinearLayout llMatches;
-    private Button bDelete;
-    final String filename = "matches.json";
+    private final LinearLayout llMatches;
+    private final Button bDelete;
     ArrayList<JSONObject> matches;
 
     public history(Context context, AttributeSet attrs) {
@@ -77,7 +76,7 @@ public class history extends LinearLayout {
 
     private void loadMatches() {
         try {
-            FileInputStream fis = getContext().openFileInput(filename);
+            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
 
@@ -118,7 +117,7 @@ public class history extends LinearLayout {
             for (int i=0; i < matches.size(); i++) {
                 jsonaMatches.put(matches.get(i));
             }
-            FileOutputStream fos = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
             osr.write(jsonaMatches.toString());
             osr.close();

@@ -24,28 +24,28 @@ import java.util.Locale;
 
 
 public class report extends LinearLayout {
-    private TextView tvHomeName;
-    private EditText etHomeName;
-    private TextView tvAwayName;
-    private EditText etAwayName;
-    private TextView tvHomeTrys;
-    private TextView tvAwayTrys;
-    private TableRow trCons;
-    private TextView tvHomeCons;
-    private TextView tvAwayCons;
-    private TableRow trGoals;
-    private TextView tvHomeGoals;
-    private TextView tvAwayGoals;
-    private TextView tvHomeTot;
-    private TextView tvAwayTot;
-    private LinearLayout llEvents;
-    private Button bShare;
+    private final TextView tvHomeName;
+    private final EditText etHomeName;
+    private final TextView tvAwayName;
+    private final EditText etAwayName;
+    private final TextView tvHomeTrys;
+    private final TextView tvAwayTrys;
+    private final TableRow trCons;
+    private final TextView tvHomeCons;
+    private final TextView tvAwayCons;
+    private final TableRow trGoals;
+    private final TextView tvHomeGoals;
+    private final TextView tvAwayGoals;
+    private final TextView tvHomeTot;
+    private final TextView tvAwayTot;
+    private final LinearLayout llEvents;
+    private final Button bShare;
 
     private JSONObject match;
     private long matchid;
 
-    private int timewidth;
-    private int timerwidth;
+    private final int timewidth;
+    private final int timerwidth;
 
     public report(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,6 +61,8 @@ public class report extends LinearLayout {
         TextView tvTimer = findViewById(R.id.tvTimer);
         tvTimer.measure(0, 0);
         timerwidth = tvTimer.getMeasuredWidth();
+        llEvents = findViewById(R.id.llEvents);
+        llEvents.removeAllViews();
 
         tvHomeName = findViewById(R.id.tvHomeName);
         etHomeName = findViewById(R.id.etHomeName);
@@ -76,7 +78,6 @@ public class report extends LinearLayout {
         tvAwayGoals = findViewById(R.id.tvAwayGoals);
         tvHomeTot = findViewById(R.id.tvHomeTot);
         tvAwayTot = findViewById(R.id.tvAwayTot);
-        llEvents = findViewById(R.id.llEvents);
         bShare = findViewById(R.id.bShare);
 
         bShare.setOnClickListener(new View.OnClickListener() {

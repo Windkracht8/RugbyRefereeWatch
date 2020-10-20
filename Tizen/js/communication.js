@@ -1,3 +1,4 @@
+/* global match, matches, showMessage, incomingSettings */
 var SAAgent;
 
 var communicationListener = {
@@ -41,7 +42,7 @@ var communicationListener = {
 	onerror: function(errorCode){
 		showMessage("Communication error: " + errorCode);
 	}
-}
+};
 
 function requestOnSuccess(agents){
 	for(var i = 0; i < agents.length; i += 1) {

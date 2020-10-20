@@ -1,3 +1,4 @@
+/* global $ */
 var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || null;
 var timer = {
 	status: "conf",
@@ -16,8 +17,8 @@ var match = {
 		points_con: 2,
 		points_goal: 3,
 		record_player: 0
-	}
-	,home: {
+	},
+	home: {
 		id: "home",
 		team: "home",
 		color: "green",
@@ -27,8 +28,8 @@ var match = {
 		goals: 0,
 		sinbins: [],
 		kickoff: 0
-	}
-	,away: {
+	},
+	away: {
 		id: "away",
 		team: "away",
 		color: "red",
@@ -38,34 +39,17 @@ var match = {
 		goals: 0,
 		sinbins: [],
 		kickoff: 0
-	}
-	,events: []
-	,matchid: 0
+	},
+	events: [],
+	matchid: 0
 };
 var matches = [];
 
 window.onload = function () {
+	//TODO: check if hardware has backbutton, if so, hide bback class
 	document.addEventListener('tizenhwkey', function(e){
 		if(e.keyName === "back"){
-			try {
-				var backdone = false;
-				$('.overlay').each(function(){
-					if($(this).is(":visible")){
-						$(this).hide();
-						backdone = true;
-						return false;
-					}
-				});
-				if(backdone === false){
-					if(timer.status !== "conf" && timer.status !== "finished"){
-						correctShow();
-					}else{
-						tizen.power.release("SCREEN");
-						tizen.application.getCurrentApplication().exit();
-					}
-				}
-			} catch (ignore) {
-			}
+			back();
 		}
 	});
 	document.addEventListener("rotarydetent", function(e){
@@ -81,12 +65,35 @@ window.onload = function () {
 	}else{
 		$('#battery').hide();
 	}
-	
+
 	updateTime();
 	update();
 	tizen.power.request("SCREEN", "SCREEN_NORMAL");
+	tizen.power.request("CPU", "CPU_AWAKE");
 };
 
+function back(){
+	try {
+		var backdone = false;
+		$('.overlay').each(function(){
+			if($(this).is(":visible")){
+				$(this).hide();
+				backdone = true;
+				return false;
+			}
+		});
+		if(backdone === false){
+			if(timer.status !== "conf" && timer.status !== "finished"){
+				correctShow();
+			}else{
+				tizen.power.release("SCREEN");
+				tizen.power.release("CPU");
+				tizen.application.getCurrentApplication().exit();
+			}
+		}
+	} catch (ignore) {
+	}
+}
 function getCurrentTimestamp(){
 	var d = new Date();
 	return d.getTime();
@@ -126,13 +133,8 @@ function bresumeClick(){
 			//get ready for next period
 			timer.status = "ready";
 			updateTimer(0);
-			//logEvent("Rest over", null, null);
-			kickoffTeam = getKickoffTeam();
-			if(kickoffTeam !== null){
-				$('#score_' + kickoffTeam.id).html(kickoffTeam.tot + " KICK");
-			}
 			break;
-	}	
+	}
 }
 function brestClick(){
 	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
@@ -148,11 +150,14 @@ function brestClick(){
 		value.end = value.end - timer.timer;
 	});
 	update();
-	
+
 	if(match.events[match.events.length-1].what === "Time off"){
 		match.events.splice(match.events.length-1, 1);
 	}
-	//logEvent("Rest start", null, null);
+	var kickoffTeam = getKickoffTeam();
+	if(kickoffTeam !== null){
+		$('#score_' + kickoffTeam.id).html(kickoffTeam.tot + " KICK");
+	}
 }
 function bfinishClick(){
 	timer.status = "finished";
@@ -176,6 +181,7 @@ function bclearClick(){
 	match.home.cons = 0;
 	match.home.goals = 0;
 	match.home.sinbins = [];
+	match.home.kickoff = 0;
 	match.away.team = match.away.id;
 	match.away.color = "red";
 	match.away.tot = 0;
@@ -183,6 +189,7 @@ function bclearClick(){
 	match.away.cons = 0;
 	match.away.goals = 0;
 	match.away.sinbins = [];
+	match.away.kickoff = 0;
 	updateScore();
 	update();
 	$('#sinbins_home').html("");
@@ -196,7 +203,7 @@ function bclearClick(){
 
 function update(){
 	var timerstatus = "";
-	$('.bottombutton').each(function (){$(this).hide();});
+	$('.bottombutton, .overtimerbutton').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
 			$('#bconf').show();
@@ -242,7 +249,7 @@ function updateTime(){
 	result += mins + ":";
 	if(secs < 10){result += "0";}
 	result += secs;
-	
+
 	$('#time').html(result);
 	setTimeout(updateTime, 100);
 }
@@ -284,19 +291,12 @@ function getSinbins(sinbins){
 
 function prettyTimer(millisec){
 	var sec = Math.floor(millisec / 1000);
-	var hours = Math.floor(sec / 3600);
-	sec = sec % 3600;
 	var mins = Math.floor(sec / 60);
 	sec = sec % 60;
-	
+
 	var pretty = sec;
 	if(sec < 10){pretty = "0" + pretty;}
-	if(hours > 0 && mins < 10){
-		pretty = "0" + mins + ":" + pretty;
-	}else{
-		pretty = mins + ":" + pretty;
-	}
-	if(hours > 0){pretty = hours + ":" + pretty;}
+	pretty = mins + ":" + pretty;
 
 	return pretty;
 }
@@ -349,10 +349,10 @@ function score_show(){
 	$('#con').html(team_edit.cons);
 	$('#goal').html(team_edit.goals);
 
-	match.settings.points_try === 0 ? $('#score_try').hide() : $('#score_try').show();
-	match.settings.points_con === 0 ? $('#score_con').hide() : $('#score_con').show();
-	match.settings.points_goal === 0 ? $('#score_goal').hide() : $('#score_goal').show();
-	
+	$('#score_try').css('display', match.settings.points_try === 0 ? 'none' : 'block');
+	$('#score_con').css('display', match.settings.points_con === 0 ? 'none' : 'block');
+	$('#score_goal').css('display', match.settings.points_goal === 0 ? 'none' : 'block');
+
 	if(match.settings.record_player === 1){
 		$('#score_player_wrap').show();
 	}else{
@@ -364,21 +364,21 @@ function tryClick(){
 	team_edit.trys++;
 	updateScore();
 	$('#score').hide();
-	player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("TRY", team_edit, player);
 }
 function conversionClick(){
 	team_edit.cons++;
 	updateScore();
 	$('#score').hide();
-	player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("CONVERSION", team_edit, player);
 }
 function goalClick(){
 	team_edit.goals++;
 	updateScore();
 	$('#score').hide();
-	player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("GOAL", team_edit, player);
 }
 function updateScore(){
@@ -419,11 +419,12 @@ function correctShow(){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
 			value.what !== "GOAL" &&
-			value.what !== "yellow card"
-			//TODO: also support cancel of timer status changes
+			value.what !== "YELLOW CARD" &&
+			value.what !== "RED CARD" 
 		){
 			return;
 		}
+
 		html += '<span onclick="removeEvent(\'' + index + '\')">';
 		html += value.timer;
 		html += ' ' + value.what;
@@ -454,7 +455,7 @@ function removeEvent(index){
 		case "GOAL":
 			team_edit.goals--;
 			break;
-		case "yellow card":
+		case "YELLOW CARD":
 			var id = match.events[index].id;
 			$.each(team_edit.sinbins, function (index, value){
 				if(value.id === id){
@@ -462,9 +463,11 @@ function removeEvent(index){
 				}
 			});
 			break;
+		case "RED CARD":
+			break;
 	}
 	match.events.splice(index, 1);
-	
+
 	updateScore();
 	$('#correct').hide();
 }
@@ -481,9 +484,9 @@ function bconfClick(){
 	$('#points_try').val(match.settings.points_try);
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
-	
+
 	$('#record_player').val(match.settings.record_player);
-	
+
 	$('#conf').show();
 }
 function color_homeChange(){
@@ -566,7 +569,10 @@ function points_goalChange(){
 }
 function record_playerChange(){
 	match.settings.record_player = parseInt($('#record_player').val());
-	if(match.settings.record_player == 1){
+	record_playerChanged();
+}
+function record_playerChanged(){
+	if(match.settings.record_player === 1){
 		$('#score').css('padding', '');
 		$('#score_player_wrap').show();
 		$('#card').css('padding', '');
@@ -619,25 +625,25 @@ function getTeamName(id){
 function logEvent(what, team, who){
 	var id = Date.now();
 	var currenttimer = timer.timer + ((timer.period-1)*match.settings.period_time*60000);
-	var temp = '{"time":"' + $('#time').html() + '",' +
-				'"timer":"' + prettyTimer(currenttimer) + '",';
+	var temp = '{"id":' + id +
+				',"time":"' + $('#time').html() + '"' +
+				',"timer":"' + prettyTimer(currenttimer) + '"' +
+				',"what":"' + what + '"';
 	if(team !== null){
-		temp +=	'"team":"' + team.id + '",';
+		temp +=	',"team":"' + team.id + '"';
+		if(who !== null && who !== "0"){
+			temp +=	',"who":"' + who + '"';
+		}
 	}
-	if(who !== null){
-		temp +=	'"who":"' + who + '",';
-	}
-	temp +=	'"what":"' + what + '",';
-	temp +=	'"id":' + id;
 	temp += '}';
-	
+
 	if(match.events.length > 1 && 
 			what !== "Resume time" && 
 			match.events[match.events.length-1].what === "Time off"
 	){
 		match.events.splice(match.events.length-1, 1);
 	}
-	
+
 	console.log(JSON.parse(temp));
 	match.events.push(JSON.parse(temp));
 	return id;
@@ -656,7 +662,7 @@ function showReport(){
 		}
 		html += "<br>";
 	});
-	
+
 	$('#report').html(html);
 	$('#report').show();
 }
@@ -666,7 +672,7 @@ function incomingSettings(settings){
 		console.log("not ready for settings");
 		return false;
 	}
-	
+
 	match.home.team = settings.home_name;
 	match.away.team = settings.away_name;
 	match.home.color = settings.home_color;
@@ -678,9 +684,10 @@ function incomingSettings(settings){
 	match.settings.points_con = settings.points_con;
 	match.settings.points_goal = settings.points_goal;
 	match.settings.record_player = settings.record_player;
-	
+
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
+	record_playerChanged();
 
 	return true;
 }

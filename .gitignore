@@ -14,3 +14,6 @@ Android/app/debug
 *.jks
 *.aab
 *.apk
+*gradle*
+*.iml
+local.properties

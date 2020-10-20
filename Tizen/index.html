@@ -35,15 +35,17 @@
 </div>
 <div id="timer" onclick="timerClick()"><span id="timersec">0:00</span><span id="timermil">.0</span></div>
 <div id="timerstatus"></div>
-<button id="bstart" class="bottombutton" onclick="bresumeClick()">start</button>
-<button id="bresume" class="bottombutton" onclick="bresumeClick()">resume</button>
-<button id="bnext" class="bottombutton" onclick="bresumeClick()">next</button>
+<button id="bconf" class="bottombutton" onclick="bconfClick()">configure</button>
+<button id="bstart" class="overtimerbutton" onclick="bresumeClick()">start</button>
+<button id="bresume" class="overtimerbutton" onclick="bresumeClick()">resume</button>
 <button id="brest" class="bottombutton" onclick="brestClick()">rest</button>
+<button id="bnext" class="overtimerbutton" onclick="bresumeClick()">next</button>
 <button id="bfinish" class="bottombutton" onclick="bfinishClick()">finish</button>
-<button id="breport" class="bottombutton" onclick="showReport()">report</button>
+<button id="breport" class="overtimerbutton" onclick="showReport()">report</button>
 <button id="bclear" class="bottombutton" onclick="bclearClick()">clear</button>
 
 <div id="score" class="overlay">
+	<button class="bback" onclick="back()">back</button>
 	<div id="score_player_wrap">player <select id="score_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -63,6 +65,7 @@
 	<div onclick="cardsClick()">card</div>
 </div>
 <div id="card" class="overlay">
+	<button class="bback" onclick="back()">back</button>
 	<div id="card_player_wrap">player <select id="card_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -76,17 +79,18 @@
 		<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
 		<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
 	</select></div>
-	<button id="card_red" onclick="card_redClick()">red</button>
 	<button id="card_yellow" onclick="card_yellowClick()">yellow</button>
+	<button id="card_red" onclick="card_redClick()">red</button>
 </div>
 <div id="correct" class="overlay">
 </div>
-<button id="bconf" class="bottombutton" onclick="bconfClick()">configure</button>
 <div id="conf" class="overlay">
+	<button class="bback" onclick="back()">back</button>
 	Home<br>
 	<select id="color_home" onchange="color_homeChange()">
 		<option>black</option>
 		<option>blue</option>
+		<option>brown</option>
 		<option>gold</option>
 		<option>green</option>
 		<option>orange</option>
@@ -99,6 +103,7 @@
 	<select id="color_away" onchange="color_awayChange()">
 		<option>black</option>
 		<option>blue</option>
+		<option>brown</option>
 		<option>gold</option>
 		<option>green</option>
 		<option>orange</option>

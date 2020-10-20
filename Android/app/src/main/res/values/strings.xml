@@ -53,4 +53,5 @@
     <string name="status_PREPARE">Sending prepare</string>
     <string name="status_ERROR">error</string>
     <string name="status_CONNECTING">Connecting</string>
+    <string name="matches_filename">matches.json</string>
 </resources>

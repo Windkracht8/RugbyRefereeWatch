@@ -3,6 +3,7 @@
     <string-array name="teamcolors">
         <item>black</item>
         <item>blue</item>
+        <item>brown</item>
         <item>gold</item>
         <item>green</item>
         <item>orange</item>

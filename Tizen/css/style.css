@@ -60,7 +60,7 @@ select, input, button{
 	background: red;
 }
 .redtext{
-	color: red;
+	color: darkred;
 }
 #timer{
 	position: fixed;
@@ -81,15 +81,31 @@ select, input, button{
 	font-size: 15vh;
 	z-index: 3;
 }
+button{
+	width: 100vw;
+	color: #2bd2e3;
+	background-color: rgba(0,0,0,.7);
+}
+.overtimerbutton{
+	display: none;
+	position: fixed;
+	left: 0;
+	bottom: 20vh;
+	height: 38vh;
+	z-index: 5;
+}
 .bottombutton{
 	display: none;
 	position: fixed;
-	bottom: 20vh;
-	width: 50vw;
-	height: 38vh;
-	z-index: 2;
-	color: #2bd2e3;
-	background-color: rgba(0,0,0,.7);
+	left: 0;
+	bottom: 0;
+	height: 20vh;
+	z-index: 5;
+}
+.bback{
+	position: fixed;
+	left: 0;
+	top: 0;
 }
 #bstart{
 	width: 100vw;
@@ -123,16 +139,20 @@ select, input, button{
 #card{
 	font-size: 10vw;
 }
-#card_red, #card_yellow{
+#card_yellow, #card_red{
 	width: 100vw;
-	font-size: 30vh;
-}
-#card_red{
-	color: red;
+	font-size: 25vh;
+	position: fixed;
+	left: 0;
+	background: transparent;
 }
 #card_yellow{
 	color: yellow;
-	padding-bottom: 20vh;
+	bottom: 35vh;
+}
+#card_red{
+	color: red;
+	bottom: 5vh;
 }
 #conf input{
 	text-align: right;

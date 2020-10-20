@@ -1,6 +1,8 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -36,21 +38,25 @@ public class report_card extends LinearLayout {
                 tvReasonClick(view);
             }
         });
-        etReason.setOnKeyListener(new View.OnKeyListener() {
+        etReason.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER){
-                    newReason(view);
-                    return true;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(s.toString().contains("\n")){
+                    newReason(etReason);
                 }
-                return false;
             }
         });
         try {
             eventid = event.getLong("id");
 
             if(event.has("reason")){
-                tvReason.setText(event.getString("reason"));
+                tvReason.setText(event.getString("reason").replace("\n", " "));
             }
 
         } catch (Exception e) {
@@ -72,6 +78,7 @@ public class report_card extends LinearLayout {
     public void newReason(View view){
         if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         String reason = etReason.getText().toString();
+        reason = reason.replace("\n", "");
         tvReason.setText(reason);
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
