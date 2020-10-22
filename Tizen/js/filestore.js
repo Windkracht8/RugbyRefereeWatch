@@ -1,5 +1,6 @@
 /* global getCurrentTimestamp */
 /* exported file_storeMatch, file_deletedMatches */
+var useFileHandle = typeof(tizen.filesystem.pathExists) === "function";
 var matches_dirname = "wgt-private";
 var matches_filename = "matches.json";
 var matches_path = matches_dirname + "/" + matches_filename;
@@ -20,15 +21,24 @@ function file_storeMatch(match){
 
 function file_storeMatches(newmatches){
 	matches = newmatches;
+
+	if(useFileHandle){
+		try {
+			file = tizen.filesystem.openFile(matches_path, "w");
+			file.write(JSON.stringify(newmatches));
+			file.close();
+		}catch(e){
+			console.log("file_storeMatches exception " + e.message);
+		}
+		return;
+	}
+
 	if(typeof(file) === "undefined"){return;}
 	try {
-		//TODO: File.openStream() is deprecated since Tizen 5.0. Use FileHandle interface to read/write operations instead.
 		file.openStream(
 			"w",
 			function(fs){
-				//TODO: FileStream.write() is deprecated since Tizen 5.0. Use FileHandle.writeString() or FileHandle.writeStringNonBlocking() instead.
 				fs.write(JSON.stringify(newmatches));
-				//TODO: FileStream.close() is deprecated since Tizen 5.0. Use FileHandle.close() instead.
 				fs.close();
 			},
 			function(e){
@@ -44,9 +54,26 @@ function file_storeMatches(newmatches){
 
 //Return an array of stored matches
 function file_readMatches(callback){
+	if(useFileHandle){
+		try {
+			file = tizen.filesystem.openFile(matches_path, "r");
+			var str = file.readString();
+			if(str.length > 10){
+				callback(JSON.parse(str));
+			}else{
+				callback([]);
+			}
+			file.close();
+		}catch(e){
+			console.log("file_readMatches exception " + e.message);
+			callback([]);
+		}
+		return;
+	}
+	
 	if(typeof(file) === "undefined"){callback([]);}
+	
 	try {
-		//TODO: File.readAsText() is deprecated since Tizen 5.0. Use FileHandle.readString() or FileHandle.readStringNonBlocking() instead.
 		file.readAsText(
 			function(str){
 				if(str.length > 10){
@@ -97,21 +124,17 @@ function file_deletedMatches(requestData){
 }
 
 function file_getFile(){
+	if(useFileHandle){return;}
+	
 	try{
-		//TODO: FileSystemManager.resolve() is deprecated since Tizen 5.0. Use FileHandle and FileSystemManager interfaces instead.
 		tizen.filesystem.resolve(matches_dirname,
 			function(dir){
-				console.log("file_getFile found dir");
-				//TODO: FileSystemManager.resolve() is deprecated since Tizen 5.0. Use FileHandle and FileSystemManager interfaces instead.
 				tizen.filesystem.resolve(matches_path,
 					function(foundfile){
-						console.log("file_getFile found file");
 						file = foundfile;
 						file_cleanMatches();
 					},
 					function(){
-						console.log("file_getFile create file");
-						//TODO: File.createFile() is deprecated since Tizen 5.0. Use FileSystemManager.createFile() instead.
 						file = dir.createFile(matches_filename);
 						file_cleanMatches();
 						if(typeof(file) === "undefined"){

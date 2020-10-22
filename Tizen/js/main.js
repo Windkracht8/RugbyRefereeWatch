@@ -1,7 +1,6 @@
 /* global $, file_storeMatch */
 /* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, removeEvent, record_playerChange, showReport, showMessage */
-var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || null;
-//TODO: navigator.battery is depricated, use navigator.getBattery(), but that does not accept an addEventListener
+
 var timer = {
 	status: "conf",
 	timer: 0,
@@ -59,13 +58,9 @@ window.onload = function () {
 			$('body').scrollTop($('body').scrollTop() - 50);
 		}
 	});
-	if(battery !== null){
-		battery.addEventListener('levelchange', updateBattery);
-		updateBattery();
-	}else{
-		$('#battery').hide();
-	}
+	tizen.systeminfo.addPropertyValueChangeListener("BATTERY", updateBattery);
 
+	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
 	updateTime();
 	update();
 	tizen.power.request("SCREEN", "SCREEN_NORMAL");
@@ -299,7 +294,7 @@ function prettyTimer(millisec){
 
 	return pretty;
 }
-function updateBattery(){
+function updateBattery(battery){
 	var batlevelperc = Math.floor(battery.level * 100);
 	$('#battery_perc').html(batlevelperc);
 	if(batlevelperc < 25){
