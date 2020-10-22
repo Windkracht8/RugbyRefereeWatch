@@ -1,4 +1,4 @@
-/* global match, matches, showMessage, incomingSettings */
+/* global match, matches, showMessage, incomingSettings, file_deletedMatches */
 var SAAgent;
 
 var communicationListener = {
@@ -17,6 +17,7 @@ var communicationListener = {
 			switch(requestMessage_js.requestType){
 				case "getMatches":
 					responseData = JSON.stringify(matches);
+					file_deletedMatches(requestMessage_js.requestData);
 					break;
 				case "getMatch":
 					responseData = JSON.stringify(match);

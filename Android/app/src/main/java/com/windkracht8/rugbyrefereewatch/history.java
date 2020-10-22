@@ -22,6 +22,7 @@ public class history extends LinearLayout {
     private final LinearLayout llMatches;
     private final Button bDelete;
     ArrayList<JSONObject> matches;
+    ArrayList<Long> deleted_matches;
 
     public history(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,6 +41,7 @@ public class history extends LinearLayout {
             }
         });
         matches = new ArrayList<>();
+        deleted_matches = new ArrayList<>();
         loadMatches();
     }
 
@@ -54,10 +56,14 @@ public class history extends LinearLayout {
         }
         showMatches();
         storeMatches();
+		cleanDeletedMatches(newmatches);
     }
-    private void insertMatch(JSONObject newmatch){
+    private void insertMatch(final JSONObject newmatch){
         try {
             long newmatchid = newmatch.getLong("matchid");
+            if(deleted_matches.contains(newmatchid)){
+                return;
+            }
             for (int i = 0; i < matches.size(); i++) {
                 long matchid = matches.get(i).getLong("matchid");
                 if(newmatchid < matchid){
@@ -72,6 +78,36 @@ public class history extends LinearLayout {
         } catch (Exception e) {
             Log.e("history", "insertMatch: " + e.getMessage());
         }
+    }
+    public void cleanDeletedMatches(final JSONArray newmatches){
+        ArrayList<Long> new_matches = new ArrayList<>();
+        try {
+			for (int i = 0; i < newmatches.length(); i++) {
+				JSONObject newmatch = new JSONObject(newmatches.getString(i));
+                new_matches.add(newmatch.getLong("matchid"));
+            }
+        } catch (Exception e) {
+            Log.e("history", "cleanDeletedMatches: " + e.getMessage());
+        }
+        for (int i = deleted_matches.size()-1; i >= 0; i--) {
+            if(!new_matches.contains(deleted_matches.get(i))){
+                deleted_matches.remove(i);
+            }
+        }
+    }
+    public JSONObject getDeletedMatches(){
+        try {
+            JSONArray jsonaDeletedMatches = new JSONArray();
+            for (int i=0; i < deleted_matches.size(); i++) {
+                jsonaDeletedMatches.put(deleted_matches.get(i));
+            }
+            JSONObject jsonoDeletedMatches = new JSONObject();
+            jsonoDeletedMatches.put("deleted_matches", jsonaDeletedMatches);
+            return jsonoDeletedMatches;
+        } catch (Exception e) {
+            Log.e("history", "getDeletedMatches: " + e.getMessage());
+        }
+        return null;
     }
 
     private void loadMatches() {
@@ -92,19 +128,37 @@ public class history extends LinearLayout {
                 matches.add(jsonMatches.getJSONObject(i));
             }
         } catch (Exception e) {
-            Log.e("history", "loadMatches: " + e.getMessage());
+            Log.e("history", "loadMatches matches: " + e.getMessage());
         }
-
         showMatches();
-    }
 
+        try {
+            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.deletedmatches_filename));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+
+            StringBuilder text = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+            }
+            br.close();
+            String sDeletedMatches = text.toString();
+            JSONArray jsonDeletedMatches = new JSONArray(sDeletedMatches);
+            for (int i = 0; i < jsonDeletedMatches.length(); i++) {
+                deleted_matches.add(jsonDeletedMatches.getLong(i));
+            }
+        } catch (Exception e) {
+            Log.e("history", "loadMatches deletedmatches: " + e.getMessage());
+        }
+    }
     private void showMatches(){
         try {
             if(llMatches.getChildCount() > 0)
                 llMatches.removeAllViews();
             Context context = getContext();
             for (int i = 0; i < matches.size(); i++) {
-                llMatches.addView(new history_match(context, matches.get(i), this));
+                llMatches.addView(new history_match(context, matches.get(i), this, i == matches.size()-1));
             }
         }catch (Exception e){
             Log.e("history", "showMatches: " + e.getMessage());
@@ -122,7 +176,19 @@ public class history extends LinearLayout {
             osr.write(jsonaMatches.toString());
             osr.close();
         } catch (Exception e) {
-            Log.e("history", "storeMatches: " + e.getMessage());
+            Log.e("history", "storeMatches matches: " + e.getMessage());
+        }
+        try {
+            JSONArray jsonaDeletedMatches = new JSONArray();
+            for (int i=0; i < deleted_matches.size(); i++) {
+                jsonaDeletedMatches.put(deleted_matches.get(i));
+            }
+            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.deletedmatches_filename), Context.MODE_PRIVATE);
+            OutputStreamWriter osr = new OutputStreamWriter(fos);
+            osr.write(jsonaDeletedMatches.toString());
+            osr.close();
+        } catch (Exception e) {
+            Log.e("history", "storeMatches deleted_matches: " + e.getMessage());
         }
     }
 
@@ -142,6 +208,11 @@ public class history extends LinearLayout {
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){
                     Log.i("history", "delete match: " + i);
+                    try {
+                        deleted_matches.add(matches.get(i).getLong("matchid"));
+                    }catch(Exception e){
+                        Log.e("history", "delete match exception: " + e.getMessage());
+                    }
                     matches.remove(i);
                     llMatches.removeViewAt(i);
                 }
@@ -199,4 +270,5 @@ public class history extends LinearLayout {
             Log.e("history", "updateTeamName: " + e.getMessage());
         }
     }
+
 }

@@ -23,7 +23,7 @@ public class history_match extends LinearLayout{
     public boolean isselected = false;
 
     public history_match(Context context){super(context);}
-    public history_match(Context context, JSONObject match, history hParent) {
+    public history_match(Context context, JSONObject match, history hParent, boolean last) {
         super(context);
         this.hParent = hParent;
         this.match = match;
@@ -33,6 +33,9 @@ public class history_match extends LinearLayout{
         }
         tvName = findViewById(R.id.tvName);
 
+        if(last){
+            tvName.setBackgroundResource(0);
+        }
         try {
             Date dMatchdate = new Date(match.getLong("matchid"));
             String sMatchdate = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(dMatchdate);

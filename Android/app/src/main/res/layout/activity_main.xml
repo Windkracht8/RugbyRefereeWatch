@@ -32,11 +32,11 @@
         android:id="@+id/tvError"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/space"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/llTabs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
@@ -46,36 +46,33 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="223dp"
         android:onClick="bConnectClick"
         android:text="@string/bConnect_text"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvError" />
+        app:layout_constraintBottom_toTopOf="@+id/llTabs"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/bExit"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="223dp"
         android:onClick="bExitClick"
         android:text="@string/exit"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvError" />
+        app:layout_constraintBottom_toTopOf="@+id/llTabs"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/ivIcon"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/ivIcon">
 
         <TextView
             android:id="@+id/tabHistory"
@@ -83,9 +80,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/tab_active"
+            android:gravity="center"
             android:onClick="tabHistoryClick"
             android:text="@string/history"
-            android:gravity="center"
             android:textAllCaps="true" />
 
         <TextView
@@ -93,9 +90,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="tabReportClick"
             android:text="@string/report"
-            android:gravity="center"
             android:textAllCaps="true" />
 
         <TextView
@@ -103,9 +100,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:onClick="tabPrepareClick"
             android:text="@string/prepare"
-            android:gravity="center"
             android:textAllCaps="true" />
     </LinearLayout>
 

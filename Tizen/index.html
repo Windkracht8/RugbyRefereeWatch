@@ -10,15 +10,8 @@
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <script src="js/jquery-3.4.1.min.js"></script>
 	<script src="lib/tau/wearable/js/tau.min.js"></script>
-	<script>
-	if(typeof webapis !== 'undefined'){
-		var communicationjs = document.createElement("script");
-		var att = document.createAttribute("src");
-		att.value = "js/communication.js";
-		communicationjs.setAttributeNode(att);
-		$('head').append(communicationjs);
-	}
-	</script>
+    <script src="js/filestore.js"></script>
+    <script src="js/communication.js"></script>
     <script src="js/main.js"></script>
 </head>
 
@@ -45,7 +38,6 @@
 <button id="bclear" class="bottombutton" onclick="bclearClick()">clear</button>
 
 <div id="score" class="overlay">
-	<button class="bback" onclick="back()">back</button>
 	<div id="score_player_wrap">player <select id="score_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -65,7 +57,6 @@
 	<div onclick="cardsClick()">card</div>
 </div>
 <div id="card" class="overlay">
-	<button class="bback" onclick="back()">back</button>
 	<div id="card_player_wrap">player <select id="card_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -85,7 +76,6 @@
 <div id="correct" class="overlay">
 </div>
 <div id="conf" class="overlay">
-	<button class="bback" onclick="back()">back</button>
 	Home<br>
 	<select id="color_home" onchange="color_homeChange()">
 		<option>black</option>

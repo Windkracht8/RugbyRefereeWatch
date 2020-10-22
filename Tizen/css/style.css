@@ -1,18 +1,3 @@
-/* PC mode, show screen als round on a PC */
-/*
-html{
-	background-color: white !important;
-}
-body{
-	position: fixed;
-	left: -1px;
-	top: -1px;
-	border-radius: 100%;
-	border: solid white 1px;
-}
-*/
-/* END PCmode */
-
 html, body{
 	margin: 0;
 	height: 100vh;
@@ -76,7 +61,7 @@ select, input, button{
 #timerstatus{
 	position: fixed;
 	left: 0;
-	top: 78vh;
+	top: 72vh;
 	width: 100vw;
 	font-size: 15vh;
 	z-index: 3;
@@ -101,11 +86,6 @@ button{
 	bottom: 0;
 	height: 20vh;
 	z-index: 5;
-}
-.bback{
-	position: fixed;
-	left: 0;
-	top: 0;
 }
 #bstart{
 	width: 100vw;
@@ -139,8 +119,14 @@ button{
 #card{
 	font-size: 10vw;
 }
+#card_player_wrap{
+	position: fixed;
+	width: 100vw;
+	height: 33vh;
+}
 #card_yellow, #card_red{
 	width: 100vw;
+	height: 33vh;
 	font-size: 25vh;
 	position: fixed;
 	left: 0;
@@ -156,6 +142,9 @@ button{
 }
 #conf input{
 	text-align: right;
+}
+#conf select{
+	text-align: center;
 }
 #report{
 	font-size: 5vw;

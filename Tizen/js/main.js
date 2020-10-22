@@ -1,5 +1,7 @@
-/* global $ */
+/* global $, file_storeMatch */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, removeEvent, record_playerChange, showReport, showMessage */
 var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery || null;
+//TODO: navigator.battery is depricated, use navigator.getBattery(), but that does not accept an addEventListener
 var timer = {
 	status: "conf",
 	timer: 0,
@@ -43,10 +45,8 @@ var match = {
 	events: [],
 	matchid: 0
 };
-var matches = [];
 
 window.onload = function () {
-	//TODO: check if hardware has backbutton, if so, hide bback class
 	document.addEventListener('tizenhwkey', function(e){
 		if(e.keyName === "back"){
 			back();
@@ -166,7 +166,7 @@ function bfinishClick(){
 	if(match.events[match.events.length-1].what === "Rest start"){
 		match.events.splice(match.events.length-1, 1);
 	}
-	matches.push(JSON.stringify(match));
+	file_storeMatch(match);
 }
 function bclearClick(){
 	updateTimer(0);
@@ -255,7 +255,6 @@ function updateTime(){
 }
 function updateTimer(millisec){
 	timer.timer = millisec;
-	var result = prettyTimer(millisec);
 
 	$('#timersec').html(prettyTimer(millisec));
 	$('#timermil').html('.' + Math.floor((millisec % 1000) / 100));

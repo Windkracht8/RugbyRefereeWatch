@@ -9,5 +9,6 @@
 		android:layout_height="wrap_content"
 		android:paddingBottom="5sp"
 		android:textAlignment="center"
-		android:textSize="20sp" />
+		android:textSize="20sp"
+		android:background="@drawable/match_underline" />
 </LinearLayout>

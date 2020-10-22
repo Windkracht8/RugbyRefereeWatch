@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +18,9 @@ import android.content.ServiceConnection;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     @SuppressLint("StaticFieldLeak")
     private static MainActivity ma;
+    private ImageView ivIcon;
     private TextView tvStatus;
     private TextView tvError;
     private TextView tabHistory;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         ma = this;
         setContentView(R.layout.activity_main);
 
+        ivIcon = findViewById(R.id.ivIcon);
         tvStatus = findViewById(R.id.tvStatus);
         tvError = findViewById(R.id.tvError);
         tabHistory = findViewById(R.id.tabHistory);
@@ -70,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         bGetMatch = findViewById(R.id.bGetMatch);
         pPrepare = findViewById(R.id.pPrepare);
         bPrepare = findViewById(R.id.bPrepare);
+
+        handleOrientation();
 
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
@@ -87,6 +96,22 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        handleOrientation();
+    }
+
+    private void handleOrientation(){
+        Resources r = getResources();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, r.getDisplayMetrics()));
+            ivIcon.getLayoutParams().height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, r.getDisplayMetrics()));
+        }else {
+            ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
+            ivIcon.getLayoutParams().height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
+        }
+    }
     @Override
     public void onBackPressed() {
         Date date = new Date();
@@ -186,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void bGetMatchesClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
-        comms.sendRequest("getMatches", null);
+        comms.sendRequest("getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
@@ -204,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
     public static void updateStatus(final communication.Status newstatus) {
         String status;
         ma.tvError.setText("");
+        gotError("");
         switch(newstatus){
             case DISCONNECTED:
                 status = ma.getString(R.string.status_DISCONNECTED);
