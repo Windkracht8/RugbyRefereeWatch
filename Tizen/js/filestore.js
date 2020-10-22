@@ -1,6 +1,6 @@
 /* global getCurrentTimestamp */
 /* exported file_storeMatch, file_deletedMatches */
-var useFileHandle = typeof(tizen.filesystem.pathExists) === "function";
+var useFileHandle = typeof(tizen.filesystem.readString) === "function";
 var matches_dirname = "wgt-private";
 var matches_filename = "matches.json";
 var matches_path = matches_dirname + "/" + matches_filename;
@@ -72,7 +72,6 @@ function file_readMatches(callback){
 	}
 	
 	if(typeof(file) === "undefined"){callback([]);}
-	
 	try {
 		file.readAsText(
 			function(str){
