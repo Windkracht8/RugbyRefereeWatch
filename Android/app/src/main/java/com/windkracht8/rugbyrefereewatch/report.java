@@ -348,13 +348,13 @@ public class report extends LinearLayout {
                 shareBody.append("    ").append(event.getString("what"));
                 if(event.has("team")) {
                     if(event.getString("team").equals("home")){
-                        shareBody.append("    ").append(MainActivity.getTeamName(home));
+                        shareBody.append(" ").append(MainActivity.getTeamName(home));
                     }else{
-                        shareBody.append("    ").append(MainActivity.getTeamName(away));
+                        shareBody.append(" ").append(MainActivity.getTeamName(away));
                     }
                 }
                 if(event.has("who")) {
-                    shareBody.append("    ").append(event.getString("who"));
+                    shareBody.append(" ").append(event.getString("who"));
                 }
                 if(event.has("reason")) {
                     shareBody.append("\n").append(event.getString("reason")).append("\n");
