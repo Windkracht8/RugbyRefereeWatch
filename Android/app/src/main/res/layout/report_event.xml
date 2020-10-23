@@ -14,15 +14,36 @@
     <TextView
         android:id="@+id/tvTimer"
         android:gravity="end"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10sp"
+        android:layout_marginEnd="5sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         />
+
+    <TextView
+        android:id="@+id/tvScore"
+        android:gravity="center"
+        android:layout_marginEnd="5sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
          />
 
     <TextView
         android:id="@+id/tvWhat"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         />
+
+    <TextView
+        android:id="@+id/tvTeam"
+        android:layout_marginStart="5sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         />
+
+    <TextView
+        android:id="@+id/tvWho"
+        android:layout_marginStart="5sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
 

@@ -46,6 +46,7 @@ public class report extends LinearLayout {
 
     private final int timewidth;
     private final int timerwidth;
+    private final int scorewidth;
 
     public report(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,6 +62,9 @@ public class report extends LinearLayout {
         TextView tvTimer = findViewById(R.id.tvTimer);
         tvTimer.measure(0, 0);
         timerwidth = tvTimer.getMeasuredWidth();
+        TextView tvScore = findViewById(R.id.tvScore);
+        tvScore.measure(0, 0);
+        scorewidth = tvScore.getMeasuredWidth();
         llEvents = findViewById(R.id.llEvents);
         llEvents.removeAllViews();
 
@@ -142,6 +146,7 @@ public class report extends LinearLayout {
 
     public void gotMatch(final JSONObject match) {
         this.match = match;
+        addScores();
         try {
             this.matchid = match.has("matchid") ? match.getLong("matchid") : 0;//TODO: matchid is present from version 1.1 of watch app
             JSONObject settings = match.getJSONObject("settings");
@@ -177,7 +182,7 @@ public class report extends LinearLayout {
             Context context = getContext();
             for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
-                llEvents.addView(new report_event(context, event, match, timewidth, timerwidth));
+                llEvents.addView(new report_event(context, event, match, timewidth, timerwidth, scorewidth));
                 //TODO: CARD uppercase from version 1.1 of watch app
                 if(event.getString("what").toUpperCase().contains("CARD")) {
                     llEvents.addView(new report_card(context, event, matchid));
@@ -188,6 +193,42 @@ public class report extends LinearLayout {
             Log.e("report", "gotMatch: " + e.getMessage());
         }
         bShare.setVisibility(VISIBLE);
+    }
+    private void addScores(){
+        try {
+            int scoreh = 0;
+            int scorea = 0;
+            JSONObject settings = match.getJSONObject("settings");
+            int points_try = settings.getInt("points_try");
+            int points_con = settings.getInt("points_con");
+            int points_goal = settings.getInt("points_goal");
+            JSONArray events = match.getJSONArray("events");
+            for (int i = 0; i < events.length(); i++) {
+                JSONObject event = events.getJSONObject(i);
+                if (event.has("team")) {
+                    int points = 0;
+                    switch (event.getString("what")) {
+                        case "TRY":
+                            points = points_try;
+                            break;
+                        case "CONVERSION":
+                            points = points_con;
+                            break;
+                        case "GOAL":
+                            points = points_goal;
+                            break;
+                    }
+                    if(event.getString("team").equals("home")){
+                        scoreh += points;
+                    }else{
+                        scorea += points;
+                    }
+                }
+                event.put("score",  scoreh + ":" + scorea);
+            }
+        }catch(Exception e){
+            Log.e("report", "getScore: " + e.getMessage());
+        }
     }
 
     public void tvHomeNameClick(View view){
@@ -233,28 +274,6 @@ public class report extends LinearLayout {
 
     public void bShareClick(View view){
         Context context = view.getContext();
-        /*
-        TODO: create a screenshot for the nice overview, but fix permission issue first
-        View screenView = view.getRootView();
-        screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
-        screenView.setDrawingCacheEnabled(false);
-
-        ContextWrapper cw = new ContextWrapper(screenView.getContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File file = new File(directory, "screenshot.png");
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fos);
-            fos.flush();
-            fos.close();
-        } catch (Exception e) {
-            Log.e("report", "bShareClick: " + e.getMessage());
-            Toast.makeText(context, "Failed to store image", Toast.LENGTH_SHORT).show();
-        }
-        Uri uri = Uri.fromFile(file);
-        */
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
@@ -308,7 +327,6 @@ public class report extends LinearLayout {
             shareBody.append("  Conversions: ").append(home.getString("cons")).append("\n");
             shareBody.append("  Goals: ").append(home.getString("goals")).append("\n");
             shareBody.append("  Total: ").append(home.getString("tot")).append("\n");
-            //TODO: count cards
             shareBody.append("\n");
 
             JSONObject away = match.getJSONObject("away");
@@ -317,7 +335,6 @@ public class report extends LinearLayout {
             shareBody.append("  Conversions: ").append(away.getString("cons")).append("\n");
             shareBody.append("  Goals: ").append(away.getString("goals")).append("\n");
             shareBody.append("  Total: ").append(away.getString("tot")).append("\n");
-            //TODO: count cards
             shareBody.append("\n");
 
             JSONArray events = match.getJSONArray("events");
@@ -325,6 +342,9 @@ public class report extends LinearLayout {
                 JSONObject event = events.getJSONObject(i);
                 shareBody.append(event.getString("time"));
                 shareBody.append("    ").append(event.getString("timer"));
+                if(event.has("score")) {
+                    shareBody.append("    ").append(event.getString("score"));
+                }
                 shareBody.append("    ").append(event.getString("what"));
                 if(event.has("team")) {
                     if(event.getString("team").equals("home")){

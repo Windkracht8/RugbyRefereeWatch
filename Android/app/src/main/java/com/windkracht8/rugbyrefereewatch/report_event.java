@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, JSONObject match, int timewidth, int timerwidth) {
+    public report_event(Context context, JSONObject event, JSONObject match, int timewidth, int timerwidth, int scorewidth) {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -28,18 +28,26 @@ public class report_event extends LinearLayout {
             tvTimer.setWidth(timerwidth);
             tvTimer.setText(event.getString("timer"));
 
+            if(event.has("score")) {
+                TextView tvScore = findViewById(R.id.tvScore);
+                tvScore.setWidth(scorewidth);
+                tvScore.setText(event.getString("score"));
+            }
+
             TextView tvWhat = findViewById(R.id.tvWhat);
-            String sWhat = event.getString("what");
+            tvWhat.setText(event.getString("what"));
 
             if(event.has("team")) {
+                TextView tvTeam = findViewById(R.id.tvTeam);
                 String team = event.getString("team");
-                sWhat += " ";
-                sWhat += match.has(team) ? MainActivity.getTeamName(match.getJSONObject(team)) : team;
-                if(event.has("who")) {
-                    sWhat += " " + event.getString("who");
-                }
+                team = match.has(team) ? MainActivity.getTeamName(match.getJSONObject(team)) : team;
+                tvTeam.setText(team);
             }
-            tvWhat.setText(sWhat);
+
+            if(event.has("who")) {
+                TextView tvWho = findViewById(R.id.tvWho);
+                tvWho.setText(event.getString("who"));
+            }
         } catch (Exception e) {
             Log.e("report_event", "report_event: " + e.getMessage());
         }

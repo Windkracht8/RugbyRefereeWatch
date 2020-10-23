@@ -141,7 +141,6 @@ public class prepare extends LinearLayout {
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
             settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
         }catch(Exception e){
-            //TODO: handle error
             return null;
         }
         return settings;

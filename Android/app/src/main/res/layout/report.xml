@@ -173,6 +173,16 @@
                     android:text="@string/tvTimer_placeholder"
                     />
 
+                <TextView
+                    android:id="@+id/tvScore"
+                    android:gravity="end"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tvTimer_placeholder"
+                    />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

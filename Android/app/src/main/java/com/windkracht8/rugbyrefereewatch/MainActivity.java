@@ -18,7 +18,6 @@ import android.content.ServiceConnection;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -219,7 +218,12 @@ public class MainActivity extends AppCompatActivity {
     }
     public void bPrepareClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
-        comms.sendRequest("prepare", pPrepare.getSettings());
+        JSONObject requestData = pPrepare.getSettings();
+        if(requestData == null){
+            gotError("Error with settings");
+            return;
+        }
+        comms.sendRequest("prepare", requestData);
     }
     public static void historyMatchClick(JSONObject match) {
         ma.rReport.gotMatch(match);
