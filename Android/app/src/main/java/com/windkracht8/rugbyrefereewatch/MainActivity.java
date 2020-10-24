@@ -245,9 +245,9 @@ public class MainActivity extends AppCompatActivity {
                 status = ma.getString(R.string.status_CONNECTION_LOST);
                 ma.bConnect.setVisibility(View.VISIBLE);
                 ma.bExit.setVisibility(View.GONE);
-                ma.bGetMatches.setVisibility(View.INVISIBLE);
-                ma.bGetMatch.setVisibility(View.INVISIBLE);
-                ma.bPrepare.setVisibility(View.INVISIBLE);
+                ma.bGetMatches.setVisibility(View.GONE);
+                ma.bGetMatch.setVisibility(View.GONE);
+                ma.bPrepare.setVisibility(View.GONE);
                 break;
             case CONNECTED:
                 ma.tvError.setText("");
@@ -280,9 +280,9 @@ public class MainActivity extends AppCompatActivity {
                 status = ma.getString(R.string.status_ERROR);
                 ma.bConnect.setVisibility(View.VISIBLE);
                 ma.bExit.setVisibility(View.GONE);
-                ma.bGetMatches.setVisibility(View.INVISIBLE);
-                ma.bGetMatch.setVisibility(View.INVISIBLE);
-                ma.bPrepare.setVisibility(View.INVISIBLE);
+                ma.bGetMatches.setVisibility(View.GONE);
+                ma.bGetMatch.setVisibility(View.GONE);
+                ma.bPrepare.setVisibility(View.GONE);
         }
         ma.tvStatus.setText(status);
     }
