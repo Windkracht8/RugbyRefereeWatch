@@ -11,6 +11,7 @@ var timer = {
 };
 var match = {
 	settings: {
+		match_type: "15s",
 		period_time: 40,
 		period_count: 2,
 		sinbin: 10,
@@ -63,10 +64,16 @@ window.onload = function () {
 	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
 	updateTime();
 	update();
-	tizen.power.request("SCREEN", "SCREEN_NORMAL");
-	tizen.power.request("CPU", "CPU_AWAKE");
+	tizen.power.request("SCREEN", "SCREEN_DIM");
+	document.addEventListener("visibilitychange", function() {
+		if (document.visibilityState === 'visible') {
+			tizen.power.request("SCREEN", "SCREEN_DIM");
+		} else {
+			tizen.power.release("SCREEN");
+		}
+	});
 };
-
+ 
 function back(){
 	try {
 		var backdone = false;
@@ -82,7 +89,6 @@ function back(){
 				correctShow();
 			}else{
 				tizen.power.release("SCREEN");
-				tizen.power.release("CPU");
 				tizen.application.getCurrentApplication().exit();
 			}
 		}
@@ -105,7 +111,6 @@ function timerClick(){
 }
 
 function bresumeClick(){
-	updateScore();
 	switch(timer.status){
 		case "conf":
 			match.matchid = getCurrentTimestamp();
@@ -116,6 +121,7 @@ function bresumeClick(){
 			timer.start = getCurrentTimestamp();
 			logEvent("Start " + getPeriodName(), getKickoffTeam(), null);
 			update();
+			updateScore();
 			break;
 		case "timeoff":
 			//resume running
@@ -157,6 +163,7 @@ function brestClick(){
 function bfinishClick(){
 	timer.status = "finished";
 	update();
+	updateScore();
 
 	if(match.events[match.events.length-1].what === "Rest start"){
 		match.events.splice(match.events.length-1, 1);
@@ -471,6 +478,7 @@ function bconfClick(){
 	$('#color_away').css('background', match.away.color);
 	$('#color_away').val(match.away.color);
 
+	$('#match_type').val(match.settings.match_type);
 	$('#period_time').val(match.settings.period_time);
 	$('#period_count').val(match.settings.period_count);
 	$('#sinbin').val(match.settings.sinbin);
@@ -494,6 +502,7 @@ function color_awayChange(){
 	$('#away').css('background', match.away.color);
 }
 function match_typeChange(){
+	match.settings.match_type = $('#match_type').val();
 	switch($('#match_type').val()){
 		case "15s":
 			$('#period_time').val("40");
@@ -671,6 +680,7 @@ function incomingSettings(settings){
 	match.away.team = settings.away_name;
 	match.home.color = settings.home_color;
 	match.away.color = settings.away_color;
+	match.settings.match_type = settings.match_type;
 	match.settings.period_time = settings.period_time;
 	match.settings.period_count = settings.period_count;
 	match.settings.sinbin = settings.sinbin;

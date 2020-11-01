@@ -1,5 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         handleOrientation();
     }
@@ -131,10 +132,8 @@ public class MainActivity extends AppCompatActivity {
         return gestureDetector.onTouchEvent(event);
     }
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
@@ -199,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         System.exit(0);
     }
     public void bConnectClick(View view) {
+        gotError("");
         bConnect.setVisibility(View.GONE);
         if(comms == null || comms.status == communication.Status.DISCONNECTED) {
             mIsBound = bindService(new Intent(MainActivity.this, communication.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -210,14 +210,17 @@ public class MainActivity extends AppCompatActivity {
     }
     public void bGetMatchesClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
+        gotError("");
         comms.sendRequest("getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
+        gotError("");
         comms.sendRequest("getMatch", null);
     }
     public void bPrepareClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
+        gotError("");
         JSONObject requestData = pPrepare.getSettings();
         if(requestData == null){
             gotError("Error with settings");
