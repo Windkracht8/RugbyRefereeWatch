@@ -1,1 +1,1 @@
-We don't store your data, period.
+We at Windkracht8's Rugby Referee Watch don't store your data, period.
