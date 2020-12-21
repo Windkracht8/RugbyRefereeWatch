@@ -1,5 +1,5 @@
-/* global $, file_storeMatch */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, removeEvent, record_playerChange, showReport, showMessage */
+/* global $, file_storeMatch, file_storeSettings */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, countdownChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -17,8 +17,7 @@ var match = {
 		sinbin: 10,
 		points_try: 5,
 		points_con: 2,
-		points_goal: 3,
-		record_player: 0
+		points_goal: 3
 	},
 	home: {
 		id: "home",
@@ -44,6 +43,10 @@ var match = {
 	},
 	events: [],
 	matchid: 0
+};
+var settings = {
+	record_player: 0,
+	countdown: 0
 };
 
 window.onload = function () {
@@ -258,10 +261,14 @@ function updateTime(){
 function updateTimer(millisec){
 	timer.timer = millisec;
 
+	if(settings.countdown === 1){
+		millisec = (match.settings.period_time * 60000) - millisec;
+	}
 	$('#timersec').html(prettyTimer(millisec));
+	if(millisec < 0){millisec-=millisec*2;}
 	$('#timermil').html('.' + Math.floor((millisec % 1000) / 100));
 
-	if(!timer.periodended && timer.status === "running" && millisec > match.settings.period_time * 60000){
+	if(!timer.periodended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
 		timer.periodended = true;
 		$('#timer').css('color', "red");
 		beep();
@@ -294,6 +301,7 @@ function prettyTimer(millisec){
 	var sec = Math.floor(millisec / 1000);
 	var mins = Math.floor(sec / 60);
 	sec = sec % 60;
+	if(sec < 0){sec-=sec*2;}
 
 	var pretty = sec;
 	if(sec < 10){pretty = "0" + pretty;}
@@ -354,7 +362,7 @@ function score_show(){
 	$('#score_con').css('display', match.settings.points_con === 0 ? 'none' : 'block');
 	$('#score_goal').css('display', match.settings.points_goal === 0 ? 'none' : 'block');
 
-	if(match.settings.record_player === 1){
+	if(settings.record_player === 1){
 		$('#score_player_wrap').show();
 	}else{
 		$('#score_player_wrap').hide();
@@ -365,21 +373,21 @@ function tryClick(){
 	team_edit.trys++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("TRY", team_edit, player);
 }
 function conversionClick(){
 	team_edit.cons++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("CONVERSION", team_edit, player);
 }
 function goalClick(){
 	team_edit.goals++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("GOAL", team_edit, player);
 }
 function updateScore(){
@@ -487,7 +495,8 @@ function bconfClick(){
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
 
-	$('#record_player').val(match.settings.record_player);
+	$('#record_player').val(settings.record_player);
+	$('#countdown').val(settings.countdown);
 
 	$('#conf').show();
 }
@@ -571,11 +580,17 @@ function points_goalChange(){
 	match.settings.points_goal = parseInt($('#points_goal').val());
 }
 function record_playerChange(){
-	match.settings.record_player = parseInt($('#record_player').val());
+	settings.record_player = parseInt($('#record_player').val());
+	file_storeSettings(settings);
 	record_playerChanged();
 }
+function countdownChange(){
+	settings.countdown = parseInt($('#countdown').val());
+	file_storeSettings(settings);
+	updateTimer(0);
+}
 function record_playerChanged(){
-	if(match.settings.record_player === 1){
+	if(settings.record_player === 1){
 		$('#score').css('padding', '');
 		$('#score_player_wrap').show();
 		$('#card').css('padding', '');
@@ -687,13 +702,19 @@ function incomingSettings(settings){
 	match.settings.points_try = settings.points_try;
 	match.settings.points_con = settings.points_con;
 	match.settings.points_goal = settings.points_goal;
-	match.settings.record_player = settings.record_player;
+	settings.record_player = settings.record_player;
 
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
 	record_playerChanged();
 
 	return true;
+}
+function settingsRead(newsettings){
+	settings = newsettings;
+	if(timer.status === "conf"){
+		updateTimer(0);
+	}
 }
 function beep(){
 	console.log("beep");

@@ -150,6 +150,10 @@
 	<select id="record_player" onchange="record_playerChange()">
 		<option value="0">no</option><option value="1">yes</option>
 	</select><br>
+	Timer type<br>
+	<select id="countdown" onchange="countdownChange()">
+		<option value="0">Count up</option><option value="1">Count down</option>
+	</select><br>
 </div>
 <div id="report" class="overlay" onclick="this.style.display='none'"></div>
 <div id="message" class="overlay" onclick="this.innerHTML='';this.style.display='none';"></div>
