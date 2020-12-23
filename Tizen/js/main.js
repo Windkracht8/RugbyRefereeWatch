@@ -81,6 +81,9 @@ function back(){
 		$('.overlay').each(function(){
 			if($(this).is(":visible")){
 				$(this).hide();
+				if($(this).attr("id") === "conf"){
+					file_storeSettings(match.settings);
+				}
 				backdone = true;
 				return false;
 			}
@@ -259,11 +262,16 @@ function updateTime(){
 function updateTimer(millisec){
 	timer.timer = millisec;
 
+	var temp = "";
 	if(match.settings.countdown === 1){
 		millisec = (match.settings.period_time * 60000) - millisec;
 	}
-	$('#timersec').html(prettyTimer(millisec));
-	if(millisec < 0){millisec-=millisec*2;}
+	if(millisec < 0){
+		millisec -= millisec * 2;
+		temp = "-";
+	}
+
+	$('#timersec').html(temp + prettyTimer(millisec));
 	$('#timermil').html('.' + Math.floor((millisec % 1000) / 100));
 
 	if(!timer.periodended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
@@ -272,6 +280,18 @@ function updateTimer(millisec){
 		beep();
 	}
 }
+function prettyTimer(millisec){
+	var sec = Math.floor(millisec / 1000);
+	var mins = Math.floor(sec / 60);
+	sec = sec % 60;
+
+	var pretty = sec;
+	if(sec < 10){pretty = "0" + pretty;}
+	pretty = mins + ":" + pretty;
+
+	return pretty;
+}
+
 function updateSinbins(){
 	$('#sinbins_home').html(getSinbins(match.home.sinbins));
 	$('#sinbins_away').html(getSinbins(match.away.sinbins));
@@ -295,18 +315,6 @@ function getSinbins(sinbins){
 	return html;
 }
 
-function prettyTimer(millisec){
-	var sec = Math.floor(millisec / 1000);
-	var mins = Math.floor(sec / 60);
-	sec = sec % 60;
-	if(sec < 0){sec-=sec*2;}
-
-	var pretty = sec;
-	if(sec < 10){pretty = "0" + pretty;}
-	pretty = mins + ":" + pretty;
-
-	return pretty;
-}
 function updateBattery(battery){
 	var batlevelperc = Math.floor(battery.level * 100);
 	$('#battery_perc').html(batlevelperc);
@@ -561,6 +569,7 @@ function match_typeChange(){
 }
 function period_timeChange(){
 	match.settings.period_time = parseInt($('#period_time').val());
+	updateTimer(0);
 }
 function period_countChange(){
 	match.settings.period_count = parseInt($('#period_count').val());
@@ -579,13 +588,7 @@ function points_goalChange(){
 }
 function record_playerChange(){
 	match.settings.record_player = parseInt($('#record_player').val());
-	file_storeSettings(match.settings);
 	record_playerChanged();
-}
-function countdownChange(){
-	match.settings.countdown = parseInt($('#countdown').val());
-	file_storeSettings(match.settings);
-	updateTimer(0);
 }
 function record_playerChanged(){
 	if(match.settings.record_player === 1){
@@ -599,6 +602,13 @@ function record_playerChanged(){
 		$('#card').css('padding', '5vh 0 0');
 		$('#card_player_wrap').hide();
 	}
+}
+function countdownChange(){
+	match.settings.countdown = parseInt($('#countdown').val());
+	countdownChanged();
+}
+function countdownChanged(){
+	updateTimer(0);
 }
 
 
@@ -705,17 +715,20 @@ function incomingSettings(newsettings){
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
 	record_playerChanged();
-
+	countdownChanged();
+	
+	file_storeSettings(match.settings);
 	return true;
 }
 function settingsRead(newsettings){
+	if(timer.status !== "conf"){
+		console.log("Ignore stored settings, game already started");
+		return;
+	}
 	match.settings = newsettings;
 
 	record_playerChanged();
-	if(timer.status === "conf"){
-		//when countdown changes, we need to update the timer
-		updateTimer(0);
-	}
+	countdownChanged();
 }
 function beep(){
 	console.log("beep");
