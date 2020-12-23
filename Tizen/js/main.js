@@ -17,7 +17,9 @@ var match = {
 		sinbin: 10,
 		points_try: 5,
 		points_con: 2,
-		points_goal: 3
+		points_goal: 3,
+		record_player: 0,
+		countdown: 0
 	},
 	home: {
 		id: "home",
@@ -43,10 +45,6 @@ var match = {
 	},
 	events: [],
 	matchid: 0
-};
-var settings = {
-	record_player: 0,
-	countdown: 0
 };
 
 window.onload = function () {
@@ -261,7 +259,7 @@ function updateTime(){
 function updateTimer(millisec){
 	timer.timer = millisec;
 
-	if(settings.countdown === 1){
+	if(match.settings.countdown === 1){
 		millisec = (match.settings.period_time * 60000) - millisec;
 	}
 	$('#timersec').html(prettyTimer(millisec));
@@ -362,7 +360,7 @@ function score_show(){
 	$('#score_con').css('display', match.settings.points_con === 0 ? 'none' : 'block');
 	$('#score_goal').css('display', match.settings.points_goal === 0 ? 'none' : 'block');
 
-	if(settings.record_player === 1){
+	if(match.settings.record_player === 1){
 		$('#score_player_wrap').show();
 	}else{
 		$('#score_player_wrap').hide();
@@ -373,21 +371,21 @@ function tryClick(){
 	team_edit.trys++;
 	updateScore();
 	$('#score').hide();
-	var player = settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("TRY", team_edit, player);
 }
 function conversionClick(){
 	team_edit.cons++;
 	updateScore();
 	$('#score').hide();
-	var player = settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("CONVERSION", team_edit, player);
 }
 function goalClick(){
 	team_edit.goals++;
 	updateScore();
 	$('#score').hide();
-	var player = settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
 	logEvent("GOAL", team_edit, player);
 }
 function updateScore(){
@@ -495,8 +493,8 @@ function bconfClick(){
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
 
-	$('#record_player').val(settings.record_player);
-	$('#countdown').val(settings.countdown);
+	$('#record_player').val(match.settings.record_player);
+	$('#countdown').val(match.settings.countdown);
 
 	$('#conf').show();
 }
@@ -580,17 +578,17 @@ function points_goalChange(){
 	match.settings.points_goal = parseInt($('#points_goal').val());
 }
 function record_playerChange(){
-	settings.record_player = parseInt($('#record_player').val());
-	file_storeSettings(settings);
+	match.settings.record_player = parseInt($('#record_player').val());
+	file_storeSettings(match.settings);
 	record_playerChanged();
 }
 function countdownChange(){
-	settings.countdown = parseInt($('#countdown').val());
-	file_storeSettings(settings);
+	match.settings.countdown = parseInt($('#countdown').val());
+	file_storeSettings(match.settings);
 	updateTimer(0);
 }
 function record_playerChanged(){
-	if(settings.record_player === 1){
+	if(match.settings.record_player === 1){
 		$('#score').css('padding', '');
 		$('#score_player_wrap').show();
 		$('#card').css('padding', '');
@@ -685,24 +683,24 @@ function showReport(){
 	$('#report').show();
 }
 
-function incomingSettings(settings){
+function incomingSettings(newsettings){
 	if(timer.status !== "conf"){
 		console.log("not ready for settings");
 		return false;
 	}
 
-	match.home.team = settings.home_name;
-	match.away.team = settings.away_name;
-	match.home.color = settings.home_color;
-	match.away.color = settings.away_color;
-	match.settings.match_type = settings.match_type;
-	match.settings.period_time = settings.period_time;
-	match.settings.period_count = settings.period_count;
-	match.settings.sinbin = settings.sinbin;
-	match.settings.points_try = settings.points_try;
-	match.settings.points_con = settings.points_con;
-	match.settings.points_goal = settings.points_goal;
-	settings.record_player = settings.record_player;
+	match.home.team = newsettings.home_name;
+	match.away.team = newsettings.away_name;
+	match.home.color = newsettings.home_color;
+	match.away.color = newsettings.away_color;
+	match.settings.match_type = newsettings.match_type;
+	match.settings.period_time = newsettings.period_time;
+	match.settings.period_count = newsettings.period_count;
+	match.settings.sinbin = newsettings.sinbin;
+	match.settings.points_try = newsettings.points_try;
+	match.settings.points_con = newsettings.points_con;
+	match.settings.points_goal = newsettings.points_goal;
+	match.settings.record_player = newsettings.record_player;
 
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
@@ -711,8 +709,11 @@ function incomingSettings(settings){
 	return true;
 }
 function settingsRead(newsettings){
-	settings = newsettings;
+	match.settings = newsettings;
+
+	record_playerChanged();
 	if(timer.status === "conf"){
+		//when countdown changes, we need to update the timer
 		updateTimer(0);
 	}
 }
