@@ -107,11 +107,6 @@ public class communication extends SAAgent {
         gotError(errorMessage);
     }
 
-    @Override
-    protected void onPeerAgentUpdated(SAPeerAgent peerAgent, int result) {
-        super.onPeerAgentUpdated(peerAgent, result);
-    }
-
     public class ServiceConnection extends SASocket {
         public ServiceConnection() {
             super(ServiceConnection.class.getName());
