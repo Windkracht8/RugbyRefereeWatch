@@ -14,14 +14,11 @@ import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.samsung.android.sdk.accessory.SAAgentV2;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -49,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private prepare pPrepare;
     private Button bPrepare;
-    private static communication comms;
-    private boolean mIsBound = false;
+    private static communication comms = null;
 
     private long backpresstime;
 
@@ -79,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
         bPrepare = findViewById(R.id.bPrepare);
 
         handleOrientation();
-
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
+            SAAgentV2.requestAgent(getApplicationContext(), communication.class.getName(), mAgentCallback1);
             bConnect.setVisibility(View.VISIBLE);
         }catch(PackageManager.NameNotFoundException e){
             tvStatus.setVisibility(View.GONE);
@@ -91,7 +87,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy(){
-        if(mIsBound){unbindService(mConnection);}
+        if (comms != null) {
+            comms.closeConnection();
+            comms.releaseAgent();
+            comms = null;
+        }
         ma = null;
         super.onDestroy();
     }
@@ -178,18 +178,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private final ServiceConnection mConnection = new ServiceConnection(){
+    private final SAAgentV2.RequestAgentCallback mAgentCallback1 = new SAAgentV2.RequestAgentCallback() {
         @Override
-        public void onServiceConnected(ComponentName className, IBinder service){
-            Log.i("MainActivity", "mConnection.onServiceConnected");
-            comms = ((communication.LocalBinder) service).getService();
-            comms.findPeers();
+        public void onAgentAvailable(SAAgentV2 agent) {
+            comms = (communication) agent;
+            bConnect.setVisibility(View.VISIBLE);
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName className){
-            Log.i("MainActivity", "mConnection.onServiceDisconnected");
-            mIsBound = false;
+        public void onError(int errorCode, String errorMessage) {
+            Log.e("MainActivity", "Agent initialization error: " + errorCode + ". ErrorMsg: " + errorMessage);
+            gotError(errorMessage);
         }
     };
 
@@ -200,11 +199,14 @@ public class MainActivity extends AppCompatActivity {
     public void bConnectClick(View view) {
         gotError("");
         bConnect.setVisibility(View.GONE);
-        if(comms == null || comms.status == communication.Status.DISCONNECTED) {
-            mIsBound = bindService(new Intent(MainActivity.this, communication.class), mConnection, Context.BIND_AUTO_CREATE);
-        }else if(comms.status == communication.Status.CONNECTION_LOST) {
-            comms.findPeers();
-        }else if(comms.status == communication.Status.ERROR) {
+        if(comms == null) {
+            gotError("Watch not found");
+            return;
+        }
+        if(comms.status == communication.Status.DISCONNECTED ||
+            comms.status == communication.Status.CONNECTION_LOST ||
+            comms.status == communication.Status.ERROR
+        ) {
             comms.findPeers();
         }
     }
@@ -238,6 +240,10 @@ public class MainActivity extends AppCompatActivity {
         ma.tvError.setText("");
         gotError("");
         switch(newstatus){
+            case FATAL:
+                ma.bConnect.setVisibility(View.GONE);
+                ma.tvStatus.setVisibility(View.GONE);
+                return;
             case DISCONNECTED:
                 status = ma.getString(R.string.status_DISCONNECTED);
                 break;

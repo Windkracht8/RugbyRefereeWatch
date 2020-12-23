@@ -1,20 +1,16 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import java.io.IOException;
-
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
+import android.content.Context;
 import android.util.Log;
-
 import com.samsung.android.sdk.accessory.*;
-
 import org.json.JSONObject;
 
-public class communication extends SAAgent {
+public class communication extends SAAgentV2 {
     public enum Status {
         DISCONNECTED,
         ERROR,
+        FATAL,
         CONNECTION_LOST,
         FINDING_PEERS,
         CONNECTED,
@@ -25,36 +21,18 @@ public class communication extends SAAgent {
     public Status status = Status.DISCONNECTED;
 
     private ServiceConnection mConnectionHandler = null;
-    private final IBinder mBinder = new LocalBinder();
-    class LocalBinder extends Binder {
-        communication getService() {
-            Log.i("communication", "LocalBinder.getService");
-            return communication.this;
-        }
-    }
 
-    public communication() {
-        super("RugbyRefereeWatch", ServiceConnection.class);
-    }
-
-    @Override
-    public void onCreate() {
-        Log.i("communication", "onCreate");
-        super.onCreate();
+    public communication(Context context) {
+        super("RugbyRefereeWatch", context, ServiceConnection.class);
         SA mAccessory = new SA();
         try {
-            mAccessory.initialize(this);
+            mAccessory.initialize(context);
         } catch (Exception e) {
-            updateStatus(Status.ERROR);
-            gotError("Cannot load: " + e.getMessage());
-            stopSelf();
+            Log.e("communication", "construct: " + e);
+            updateStatus(Status.FATAL);
+            gotError(e.getMessage());
+            releaseAgent();
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.i("communication", "onBind");
-        return mBinder;
     }
 
     @Override
@@ -173,6 +151,7 @@ public class communication extends SAAgent {
             mConnectionHandler = null;
         }
     }
+
 
     private void updateStatus(final Status newstatus) {
         Log.i("communication", "updateStatus: " + newstatus);
