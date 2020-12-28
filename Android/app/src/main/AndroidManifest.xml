@@ -27,7 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.windkracht8.rugbyrefereewatch.communication" />
+        <service android:name="com.samsung.android.sdk.accessory.SAService" />
 
         <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" >
             <intent-filter>
