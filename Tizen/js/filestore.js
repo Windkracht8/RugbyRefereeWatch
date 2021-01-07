@@ -13,10 +13,8 @@ var file_settings;
 
 file_getFile();
 
-
 //Append a new match
 function file_storeMatch(match){
-	if(typeof(file) === "undefined"){return;}
 	file_readMatches(function(newmatches){
 		newmatches.push(JSON.parse(JSON.stringify(match)));
 		file_storeMatches(newmatches);
@@ -63,6 +61,7 @@ function file_readMatches(callback){
 			file_matches = tizen.filesystem.openFile(matches_path, "r");
 			var str = file_matches.readString();
 			if(str.length > 10){
+				matches = JSON.parse(str);
 				callback(JSON.parse(str));
 			}else{
 				callback([]);
@@ -80,6 +79,7 @@ function file_readMatches(callback){
 		file_matches.readAsText(
 			function(str){
 				if(str.length > 10){
+					matches = JSON.parse(str);
 					callback(JSON.parse(str));
 				}else{
 					callback([]);

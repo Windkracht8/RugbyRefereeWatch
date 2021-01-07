@@ -36,6 +36,10 @@ public class communication extends SAAgentV2 {
     }
 
     @Override
+    protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result) {
+    }
+
+    @Override
     protected void onFindPeerAgentsResponse(SAPeerAgent[] peerAgents, int result) {
         Log.i("communication", "onFindPeerAgentsResponse");
         if ((result == SAAgent.PEER_AGENT_FOUND) && (peerAgents != null)) {
