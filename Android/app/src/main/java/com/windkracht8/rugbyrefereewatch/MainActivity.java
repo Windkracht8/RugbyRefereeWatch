@@ -3,18 +3,15 @@ package com.windkracht8.rugbyrefereewatch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,26 +23,8 @@ import org.json.JSONArray;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    public static Handler mainThreadHandler;
     private GestureDetector gestureDetector;
-    @SuppressLint("StaticFieldLeak")
     private static MainActivity ma;
-    private ImageView ivIcon;
-    private TextView tvStatus;
-    private TextView tvError;
-    private TextView tabHistory;
-    private TextView tabReport;
-    private TextView tabPrepare;
-    private Button bConnect;
-    private Button bExit;
-    private history hHistory;
-    private Button bGetMatches;
-
-    private report rReport;
-    private Button bGetMatch;
-
-    private prepare pPrepare;
-    private Button bPrepare;
     private static communication comms = null;
 
     private long backpresstime;
@@ -53,34 +32,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainThreadHandler = new Handler();
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         ma = this;
         setContentView(R.layout.activity_main);
-
-        ivIcon = findViewById(R.id.ivIcon);
-        tvStatus = findViewById(R.id.tvStatus);
-        tvError = findViewById(R.id.tvError);
-        tabHistory = findViewById(R.id.tabHistory);
-        tabReport = findViewById(R.id.tabReport);
-        tabPrepare = findViewById(R.id.tabPrepare);
-        bConnect = findViewById(R.id.bConnect);
-        bExit = findViewById(R.id.bExit);
-
-        hHistory = findViewById(R.id.hHistory);
-        bGetMatches = findViewById(R.id.bGetMatches);
-        rReport = findViewById(R.id.rReport);
-        bGetMatch = findViewById(R.id.bGetMatch);
-        pPrepare = findViewById(R.id.pPrepare);
-        bPrepare = findViewById(R.id.bPrepare);
 
         handleOrientation();
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
             SAAgentV2.requestAgent(getApplicationContext(), communication.class.getName(), mAgentCallback1);
-            bConnect.setVisibility(View.VISIBLE);
+            findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }catch(PackageManager.NameNotFoundException e){
-            tvStatus.setVisibility(View.GONE);
+            findViewById(R.id.tvStatus).setVisibility(View.GONE);
+            TextView tvError = findViewById(R.id.tvError);
             tvError.setText(R.string.tvFatal);
         }
     }
@@ -103,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleOrientation(){
+        ImageView ivIcon = findViewById(R.id.ivIcon);
         Resources r = getResources();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, r.getDisplayMetrics()));
@@ -119,11 +83,12 @@ public class MainActivity extends AppCompatActivity {
             bExitClick(null);
         }
         backpresstime = date.getTime();
-        if(hHistory.getVisibility() == View.VISIBLE){
+        if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
+            history hHistory = findViewById(R.id.hHistory);
             hHistory.unselect();
-        }else if(rReport.getVisibility() == View.VISIBLE){
+        }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
             tabHistoryClick(null);
-        }else if(pPrepare.getVisibility() == View.VISIBLE){
+        }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
             tabReportClick(null);
         }
     }
@@ -163,17 +128,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSwipeRight() {
-        if(rReport.getVisibility() == View.VISIBLE){
+        if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
             tabHistoryClick(null);
-        }else if(pPrepare.getVisibility() == View.VISIBLE){
+        }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
             tabReportClick(null);
         }
     }
 
     public void onSwipeLeft() {
-        if(hHistory.getVisibility() == View.VISIBLE){
+        if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
             tabReportClick(null);
-        }else if(rReport.getVisibility() == View.VISIBLE){
+        }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
             tabPrepareClick(null);
         }
     }
@@ -182,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onAgentAvailable(SAAgentV2 agent) {
             comms = (communication) agent;
-            bConnect.setVisibility(View.VISIBLE);
+            findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -198,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void bConnectClick(View view) {
         gotError("");
-        bConnect.setVisibility(View.GONE);
+        findViewById(R.id.bConnect).setVisibility(View.GONE);
         if(comms == null) {
             gotError("Watch not found");
             return;
@@ -213,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     public void bGetMatchesClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
         gotError("");
+        history hHistory = findViewById(R.id.hHistory);
         comms.sendRequest("getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick(View view) {
@@ -223,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
     public void bPrepareClick(View view) {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
         gotError("");
+        prepare pPrepare = findViewById(R.id.pPrepare);
         JSONObject requestData = pPrepare.getSettings();
         if(requestData == null){
             gotError("Error with settings");
@@ -231,18 +198,31 @@ public class MainActivity extends AppCompatActivity {
         comms.sendRequest("prepare", requestData);
     }
     public static void historyMatchClick(JSONObject match) {
-        ma.rReport.gotMatch(match);
+        report rReport = ma.findViewById(R.id.rReport);
+        rReport.gotMatch(match);
         ma.tabReportClick(null);
     }
 
-    public static void updateStatus(final communication.Status newstatus) {
+    private static communication.Status updateStatus_status;
+    public static void updateStatus_runOnUiThread(final communication.Status newstatus){
+        updateStatus_status = newstatus;
+        ma.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ma.updateStatus(updateStatus_status);
+            }
+        });
+    }
+    private void updateStatus(final communication.Status newstatus) {
+        TextView tvStatus = findViewById(R.id.tvStatus);
+        TextView tvError = findViewById(R.id.tvError);
+        tvError.setText("");
+
         String status;
-        ma.tvError.setText("");
-        gotError("");
         switch(newstatus){
             case FATAL:
-                ma.bConnect.setVisibility(View.GONE);
-                ma.tvStatus.setVisibility(View.GONE);
+                findViewById(R.id.bConnect).setVisibility(View.GONE);
+                tvStatus.setVisibility(View.GONE);
                 return;
             case DISCONNECTED:
                 status = ma.getString(R.string.status_DISCONNECTED);
@@ -252,50 +232,60 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case CONNECTION_LOST:
                 status = ma.getString(R.string.status_CONNECTION_LOST);
-                ma.bConnect.setVisibility(View.VISIBLE);
-                ma.bExit.setVisibility(View.GONE);
-                ma.bGetMatches.setVisibility(View.GONE);
-                ma.bGetMatch.setVisibility(View.GONE);
-                ma.bPrepare.setVisibility(View.GONE);
+                findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
+                findViewById(R.id.bExit).setVisibility(View.GONE);
+                findViewById(R.id.bGetMatches).setVisibility(View.GONE);
+                findViewById(R.id.bGetMatch).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case CONNECTED:
-                ma.tvError.setText("");
                 status = ma.getString(R.string.status_CONNECTED);
-                ma.bExit.setVisibility(View.VISIBLE);
-                ma.bGetMatches.setVisibility(View.VISIBLE);
-                ma.bGetMatch.setVisibility(View.VISIBLE);
-                ma.bPrepare.setVisibility(View.VISIBLE);
+                findViewById(R.id.bExit).setVisibility(View.VISIBLE);
+                findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
+                findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
+                findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 break;
             case GETTING_MATCHES:
                 status = ma.getString(R.string.status_GETTING_MATCHES);
-                ma.bGetMatches.setVisibility(View.INVISIBLE);
-                ma.bGetMatch.setVisibility(View.INVISIBLE);
-                ma.bPrepare.setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatches).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatch).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bPrepare).setVisibility(View.INVISIBLE);
                 break;
             case GETTING_MATCH:
                 status = ma.getString(R.string.status_GETTING_MATCH);
-                ma.bGetMatches.setVisibility(View.INVISIBLE);
-                ma.bGetMatch.setVisibility(View.INVISIBLE);
-                ma.bPrepare.setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatches).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatch).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bPrepare).setVisibility(View.INVISIBLE);
                 break;
             case PREPARE:
                 status = ma.getString(R.string.status_PREPARE);
-                ma.bGetMatches.setVisibility(View.INVISIBLE);
-                ma.bGetMatch.setVisibility(View.INVISIBLE);
-                ma.bPrepare.setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatches).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bGetMatch).setVisibility(View.INVISIBLE);
+                findViewById(R.id.bPrepare).setVisibility(View.INVISIBLE);
                 break;
             case ERROR:
             default:
                 status = ma.getString(R.string.status_ERROR);
-                ma.bConnect.setVisibility(View.VISIBLE);
-                ma.bExit.setVisibility(View.GONE);
-                ma.bGetMatches.setVisibility(View.GONE);
-                ma.bGetMatch.setVisibility(View.GONE);
-                ma.bPrepare.setVisibility(View.GONE);
+                findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
+                findViewById(R.id.bExit).setVisibility(View.GONE);
+                findViewById(R.id.bGetMatches).setVisibility(View.GONE);
+                findViewById(R.id.bGetMatch).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
         }
-        ma.tvStatus.setText(status);
+        tvStatus.setText(status);
     }
-    public static void gotResponse(final JSONObject responseMessage){
+
+    private static JSONObject gotResponse_msg;
+    public static void gotResponse_runOnUiThread(final JSONObject msg){
+        gotResponse_msg = msg;
+        ma.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ma.gotResponse(gotResponse_msg);
+            }
+        });
+    }
+    private void gotResponse(final JSONObject responseMessage){
         Log.i("MainActivity.gotResponse", responseMessage.toString());
         try {
             String requestType = responseMessage.getString("requestType");
@@ -303,12 +293,14 @@ public class MainActivity extends AppCompatActivity {
                 case "getMatches":
                     Log.i("MainActivity.gotResult", "getMatches");
                     JSONArray getMatchesResponse = responseMessage.getJSONArray("responseData");
-                    ma.hHistory.gotMatches(getMatchesResponse);
+                    history hHistory = findViewById(R.id.hHistory);
+                    hHistory.gotMatches(getMatchesResponse);
                     break;
                 case "getMatch":
                     Log.i("MainActivity.gotResult", "getMatch");
                     JSONObject getMatchResponse = responseMessage.getJSONObject("responseData");
-                    ma.rReport.gotMatch(getMatchResponse);
+                    report rReport = findViewById(R.id.rReport);
+                    rReport.gotMatch(getMatchResponse);
                     break;
                 case "prepare":
                     Log.i("MainActivity.gotResult", "prepare");
@@ -322,44 +314,57 @@ public class MainActivity extends AppCompatActivity {
             gotError("gotResponse exception: " + e.getMessage());
         }
     }
-    public static void gotError(String error) {
+    private static String gotError_error;
+    public static void gotError_runOnUiThread(String error){
+        gotError_error = error;
+        ma.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ma.gotError(gotError_error);
+            }
+        });
+    }
+    private void gotError(String error) {
         Log.i("MainActivity.gotError", error);
         if(error.equals(ma.getString(R.string.did_not_understand_message))) {
             error = ma.getString(R.string.update_watch_app);
         }
-        ma.tvError.setText(error);
+        TextView tvError = findViewById(R.id.tvError);
+        tvError.setText(error);
     }
 
     public void tabHistoryClick(View view) {
-        tabHistory.setBackgroundResource(R.drawable.tab_active);
-        tabReport.setBackgroundResource(0);
-        tabPrepare.setBackgroundResource(0);
-        hHistory.setVisibility(View.VISIBLE);
-        rReport.setVisibility(View.GONE);
-        pPrepare.setVisibility(View.GONE);
+        findViewById(R.id.tabHistory).setBackgroundResource(R.drawable.tab_active);
+        findViewById(R.id.tabReport).setBackgroundResource(0);
+        findViewById(R.id.tabPrepare).setBackgroundResource(0);
+        findViewById(R.id.hHistory).setVisibility(View.VISIBLE);
+        findViewById(R.id.rReport).setVisibility(View.GONE);
+        findViewById(R.id.pPrepare).setVisibility(View.GONE);
     }
     public void tabReportClick(View view) {
-        tabHistory.setBackgroundResource(0);
-        tabReport.setBackgroundResource(R.drawable.tab_active);
-        tabPrepare.setBackgroundResource(0);
-        hHistory.setVisibility(View.GONE);
-        rReport.setVisibility(View.VISIBLE);
-        pPrepare.setVisibility(View.GONE);
+        findViewById(R.id.tabHistory).setBackgroundResource(0);
+        findViewById(R.id.tabReport).setBackgroundResource(R.drawable.tab_active);
+        findViewById(R.id.tabPrepare).setBackgroundResource(0);
+        findViewById(R.id.hHistory).setVisibility(View.GONE);
+        findViewById(R.id.rReport).setVisibility(View.VISIBLE);
+        findViewById(R.id.pPrepare).setVisibility(View.GONE);
     }
     public void tabPrepareClick(View view) {
-        tabHistory.setBackgroundResource(0);
-        tabReport.setBackgroundResource(0);
-        tabPrepare.setBackgroundResource(R.drawable.tab_active);
-        hHistory.setVisibility(View.GONE);
-        rReport.setVisibility(View.GONE);
-        pPrepare.setVisibility(View.VISIBLE);
+        findViewById(R.id.tabHistory).setBackgroundResource(0);
+        findViewById(R.id.tabReport).setBackgroundResource(0);
+        findViewById(R.id.tabPrepare).setBackgroundResource(R.drawable.tab_active);
+        findViewById(R.id.hHistory).setVisibility(View.GONE);
+        findViewById(R.id.rReport).setVisibility(View.GONE);
+        findViewById(R.id.pPrepare).setVisibility(View.VISIBLE);
     }
 
     public static void updateCardReason(String reason, long matchid, long eventid){
-        ma.hHistory.updateCardReason(reason, matchid, eventid);
+        history hHistory = ma.findViewById(R.id.hHistory);
+        hHistory.updateCardReason(reason, matchid, eventid);
     }
     public static void updateTeamName(String name, String teamid, long matchid){
-        ma.hHistory.updateTeamName(name, teamid, matchid);
+        history hHistory = ma.findViewById(R.id.hHistory);
+        hHistory.updateTeamName(name, teamid, matchid);
     }
 
     public static String getTeamName(JSONObject team) {

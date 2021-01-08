@@ -156,32 +156,16 @@ public class communication extends SAAgentV2 {
         }
     }
 
-
     private void updateStatus(final Status newstatus) {
         Log.i("communication", "updateStatus: " + newstatus);
         this.status = newstatus;
-        MainActivity.mainThreadHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.updateStatus(newstatus);
-            }
-        });
+        MainActivity.updateStatus_runOnUiThread(newstatus);
     }
     private void gotError(final String error) {
         Log.e("communication", "gotError: " + error);
-        MainActivity.mainThreadHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.gotError(error);
-            }
-        });
+        MainActivity.gotError_runOnUiThread(error);
     }
     private void gotResponse(final JSONObject responseMessage){
-        MainActivity.mainThreadHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.gotResponse(responseMessage);
-            }
-        });
+        MainActivity.gotResponse_runOnUiThread(responseMessage);
     }
 }

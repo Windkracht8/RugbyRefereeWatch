@@ -1,6 +1,8 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -89,7 +91,7 @@ public class history_match extends LinearLayout{
     }
 
     private void longpress() {
-        MainActivity.mainThreadHandler.post(new Runnable() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 if(isselected) {

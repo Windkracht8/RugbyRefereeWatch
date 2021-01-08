@@ -15,18 +15,18 @@ import android.widget.LinearLayout;
 import org.json.JSONObject;
 
 public class prepare extends LinearLayout {
-	private EditText etHomeName;
-    private EditText etAwayName;
-    private Spinner sHomeColor;
-    private Spinner sAwayColor;
-    private Spinner sMatchType;
-    private EditText etTimePeriod;
-    private EditText etPeriodCount;
-    private EditText etSinbin;
-    private EditText etPointsTry;
-    private EditText etPointsCon;
-    private EditText etPointsGoal;
-    private CheckBox cbRecordPlayer;
+    private final EditText etHomeName;
+    private final EditText etAwayName;
+    private final Spinner sHomeColor;
+    private final Spinner sAwayColor;
+    private final Spinner sMatchType;
+    private final EditText etTimePeriod;
+    private final EditText etPeriodCount;
+    private final EditText etSinbin;
+    private final EditText etPointsTry;
+    private final EditText etPointsCon;
+    private final EditText etPointsGoal;
+    private final CheckBox cbRecordPlayer;
 
     public prepare(Context context, AttributeSet attrs) {
         super(context, attrs);
