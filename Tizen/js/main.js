@@ -65,14 +65,7 @@ window.onload = function () {
 	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
 	updateTime();
 	update();
-	tizen.power.request("SCREEN", "SCREEN_DIM");
-	document.addEventListener("visibilitychange", function() {
-		if (document.visibilityState === 'visible') {
-			tizen.power.request("SCREEN", "SCREEN_DIM");
-		} else {
-			tizen.power.release("SCREEN");
-		}
-	});
+	tizen.power.request("SCREEN", "SCREEN_NORMAL");
 };
  
 function back(){
@@ -670,7 +663,7 @@ function logEvent(what, team, who){
 		match.events.splice(match.events.length-1, 1);
 	}
 
-	console.log(JSON.parse(temp));
+	console.log(temp);
 	match.events.push(JSON.parse(temp));
 	return id;
 }
