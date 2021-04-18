@@ -65,6 +65,13 @@ window.onload = function () {
 	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
 	updateTime();
 	update();
+	function onScreenStateChanged(previousState, changedState) {
+	    if(changedState === 'SCREEN_NORMAL'){
+	    	tizen.power.request("SCREEN", "SCREEN_NORMAL");
+	    }
+	}
+	tizen.power.setScreenStateChangeListener(onScreenStateChanged);
+	
 	tizen.power.request("SCREEN", "SCREEN_NORMAL");
 };
  
@@ -422,7 +429,8 @@ function card_redClick(){
 }
 
 function correctShow(){
-	var html = "Tab event to remove<br>";
+	var items = "";
+	var item = "";
 	$.each(match.events, function(index, value){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
@@ -433,22 +441,20 @@ function correctShow(){
 			return;
 		}
 
-		html += '<span onclick="removeEvent(\'' + index + '\')">';
-		html += value.timer;
-		html += ' ' + value.what;
+		item = '<span onclick="removeEvent(\'' + index + '\')">';
+		item += value.timer;
+		item += ' ' + value.what;
 		if(value.team){
-			html += ' ' + getTeamName(value.team);
+			item += ' ' + getTeamName(value.team);
 		}
 		if(value.who){
-			html += ' ' + value.who;
+			item += ' ' + value.who;
 		}
-		html += '</span><br>';
+		item += '</span><br>';
+		items = item + items;
 	});
 
-	if(html === ""){
-		html = "nothing to correct ";
-	}
-	$('#correct').html(html);
+	$('#correct').html("Tab event to remove<br>" + items);
 	$('#correct').show();
 }
 function removeEvent(index){
