@@ -202,7 +202,7 @@ public class report extends LinearLayout {
                 if(view_full) {
                     llEvents.addView(new report_event_full(context, event, match, timewidth, timerwidth, scorewidth));
                 }else{
-                    llEvents.addView(new report_event(context, event, match, scorewidth));
+                    llEvents.addView(new report_event(context, event, scorewidth));
                 }
                 if(event.getString("what").contains("CARD")) {
                     llEvents.addView(new report_card(context, event, matchid));

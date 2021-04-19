@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, JSONObject match, int scorewidth) {
+    public report_event(Context context, JSONObject event, int scorewidth) {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
