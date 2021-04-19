@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +33,12 @@ public class report_event_full extends LinearLayout {
             if(event.has("score")) {
                 TextView tvScore = findViewById(R.id.tvScore);
                 tvScore.setWidth(scorewidth);
-                tvScore.setText(event.getString("score"));
+                String score = event.getString("score");
+                tvScore.setText(score);
+                if(score.length() == 4){
+                    //even number of characters will mess up the alignment
+                    tvScore.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
+                }
             }
 
             TextView tvWhat = findViewById(R.id.tvWhat);

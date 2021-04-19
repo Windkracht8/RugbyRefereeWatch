@@ -2,7 +2,9 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,53 +23,65 @@ public class report_event extends LinearLayout {
         }
         inflater.inflate(R.layout.report_event, this, true);
 
+        TextView tvLeft = findViewById(R.id.tvLeft);
+        TextView tvLeftTime = findViewById(R.id.tvLeftTime);
+        TextView tvMiddle = findViewById(R.id.tvMiddle);
+        TextView tvRightTime = findViewById(R.id.tvRightTime);
+        TextView tvRight = findViewById(R.id.tvRight);
+
         try {
-            String what = event.getString("what");
-            if(what.startsWith("Start") || what.startsWith("Result")){
-                //TODO: remove score from string what
-                TextView tvAll = findViewById(R.id.tvAll);
-                String text = what;
-                if(event.has("score")) {
-                    String[] scores = event.getString("score").split(":");
-                    text = scores[0] + " " + text + " " + scores[1];
+            String text = event.getString("what");
+            if(text.startsWith("Start") || text.startsWith("Result")){
+                if(text.contains(":")){
+                    text = text.substring(0, text.lastIndexOf(" "));
                 }
-                tvAll.setText(text);
-                tvAll.setVisibility(android.view.View.VISIBLE);
+                if(text.startsWith("Result") && event.has("score")) {
+                    String[] scores = event.getString("score").split(":");
+                    tvLeft.setText(scores[0]);
+                    tvRight.setText(scores[1]);
+                }
+                tvMiddle.setText(text);
+                int width = (this.getWidth()-tvMiddle.getWidth())/2;
+                tvLeft.setWidth(width);
+                tvRight.setWidth(width);
             }else{
-                switch(what){
+                switch(text){
                     case "TRY":
                     case "CONVERSION":
                     case "GOAL":
-                        TextView tvScore = findViewById(R.id.tvScore);
-                        tvScore.setText(event.getString("score"));
-                        tvScore.setVisibility(android.view.View.VISIBLE);
+                        String score = event.getString("score");
+                        tvMiddle.setText(score);
+                        tvMiddle.setWidth(scorewidth);
+                        if(score.length() == 4){
+                            //even number of characters will mess up the alignment
+                            tvMiddle.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
+                        }
                     case "YELLOW CARD":
                     case "RED CARD":
-                        //show item for the team
-                        //time + what + who
-                        String team = event.getString("team");
-                        TextView tvTeam;
-                        if(team == "home"){
-                            tvTeam = findViewById(R.id.tvHome);
-                        }else{
-                            tvTeam = findViewById(R.id.tvAway);
-                        }
-                        String text = event.getString("timer").replace(":", "'");
-                        text += " " + what;
+                        String timer = event.getString("timer").replace(":", "'");
                         if(event.has("who")) {
                             text += " " + event.getString("who");
                         }
 
-                        tvTeam.setText(text);
-                        tvTeam.setVisibility(android.view.View.VISIBLE);
+                        String team = event.getString("team");
+                        if(team.equals("home")) {
+                            tvLeft.setText(text);
+                            tvLeftTime.setText(timer);
+                        }else{
+                            tvRightTime.setText(timer);
+                            tvRight.setText(text);
+                        }
+
+                        int width = (this.getWidth()-scorewidth)/2-scorewidth;
+                        tvLeft.setWidth(width);
+                        tvLeftTime.setWidth(scorewidth);
+                        tvRightTime.setWidth(scorewidth);
+                        tvRight.setWidth(width);
                         break;
+                    default:
+                        this.setVisibility(View.GONE);
                 }
             }
-
-            TextView tvWhat = findViewById(R.id.tvWhat);
-            tvWhat.setText(event.getString("what"));
-
-
 
         } catch (Exception e) {
             Log.e("report_event", "report_event: " + e.getMessage());

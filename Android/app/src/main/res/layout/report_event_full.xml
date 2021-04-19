@@ -21,11 +21,10 @@
 
     <TextView
         android:id="@+id/tvScore"
-        android:gravity="center"
-        android:layout_marginEnd="5sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         />
+        android:layout_marginEnd="5sp"
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/tvWhat"

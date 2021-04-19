@@ -17,3 +17,10 @@ Android/app/debug
 *gradle*
 *.iml
 local.properties
+*.pepk
+*.crt
+*.csr
+*.p12
+*.pri
+*.pub
+*.pwd
