@@ -7,7 +7,7 @@ var timer = {
 	start: 0,
 	start_timeoff: 0,
 	periodended: false,
-	period: 0,
+	period: 0
 };
 var match = {
 	settings: {
@@ -176,34 +176,17 @@ function bfinishClick(){
 }
 function bclearClick(){
 	updateTimer(0);
-	timer.status = "conf";
-	timer.period = 0;
-	timer.start = 0;
-	timer.start_timeoff = 0;
-	match.home.team = match.home.id;
-	match.home.color = "green";
-	match.home.tot = 0;
-	match.home.trys = 0;
-	match.home.cons = 0;
-	match.home.goals = 0;
-	match.home.sinbins = [];
-	match.home.kickoff = 0;
-	match.away.team = match.away.id;
-	match.away.color = "red";
-	match.away.tot = 0;
-	match.away.trys = 0;
-	match.away.cons = 0;
-	match.away.goals = 0;
-	match.away.sinbins = [];
-	match.away.kickoff = 0;
+	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
+	match.home = {id:"home",team:"home",color:"green",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
+	match.away = {id:"away",team:"away",color:"red",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
+	match.events = [];
+	match.matchid = 0;
 	updateScore();
 	update();
 	$('#sinbins_home').html("");
 	$('#sinbins_away').html("");
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
-	match.events = [];
-	match.matchid = 0;
 	$('#bconf').show();
 }
 
@@ -677,6 +660,11 @@ function logEvent(what, team, who){
 function showReport(){
 	var html = "";
 	$.each(match.events, function(index, value){
+		if(value.what === "Resume time" ||
+			value.what === "Time off"
+		){
+			return;
+		}
 		html += value.timer;
 		html += " " + value.what;
 		if(value.team){
