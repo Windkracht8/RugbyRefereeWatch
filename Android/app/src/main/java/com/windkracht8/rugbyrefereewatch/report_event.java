@@ -11,43 +11,64 @@ import org.json.JSONObject;
 
 public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, JSONObject match, int timewidth, int timerwidth, int scorewidth) {
+    public report_event(Context context, JSONObject event, JSONObject match, int scorewidth) {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater != null) {
-            inflater.inflate(R.layout.report_event, this, true);
+        if (inflater == null) {
+            Log.e("report_event", "No inflater");
+            return;
         }
+        inflater.inflate(R.layout.report_event, this, true);
 
         try {
-            TextView tvTime = findViewById(R.id.tvTime);
-            tvTime.setWidth(timewidth);
-            tvTime.setText(event.getString("time"));
+            String what = event.getString("what");
+            if(what.startsWith("Start") || what.startsWith("Result")){
+                //TODO: remove score from string what
+                TextView tvAll = findViewById(R.id.tvAll);
+                String text = what;
+                if(event.has("score")) {
+                    String[] scores = event.getString("score").split(":");
+                    text = scores[0] + " " + text + " " + scores[1];
+                }
+                tvAll.setText(text);
+                tvAll.setVisibility(android.view.View.VISIBLE);
+            }else{
+                switch(what){
+                    case "TRY":
+                    case "CONVERSION":
+                    case "GOAL":
+                        TextView tvScore = findViewById(R.id.tvScore);
+                        tvScore.setText(event.getString("score"));
+                        tvScore.setVisibility(android.view.View.VISIBLE);
+                    case "YELLOW CARD":
+                    case "RED CARD":
+                        //show item for the team
+                        //time + what + who
+                        String team = event.getString("team");
+                        TextView tvTeam;
+                        if(team == "home"){
+                            tvTeam = findViewById(R.id.tvHome);
+                        }else{
+                            tvTeam = findViewById(R.id.tvAway);
+                        }
+                        String text = event.getString("timer").replace(":", "'");
+                        text += " " + what;
+                        if(event.has("who")) {
+                            text += " " + event.getString("who");
+                        }
 
-            TextView tvTimer = findViewById(R.id.tvTimer);
-            tvTimer.setWidth(timerwidth);
-            tvTimer.setText(event.getString("timer"));
-
-            if(event.has("score")) {
-                TextView tvScore = findViewById(R.id.tvScore);
-                tvScore.setWidth(scorewidth);
-                tvScore.setText(event.getString("score"));
+                        tvTeam.setText(text);
+                        tvTeam.setVisibility(android.view.View.VISIBLE);
+                        break;
+                }
             }
 
             TextView tvWhat = findViewById(R.id.tvWhat);
             tvWhat.setText(event.getString("what"));
 
-            if(event.has("team")) {
-                TextView tvTeam = findViewById(R.id.tvTeam);
-                String team = event.getString("team");
-                team = match.has(team) ? MainActivity.getTeamName(match.getJSONObject(team)) : team;
-                tvTeam.setText(team);
-            }
 
-            if(event.has("who")) {
-                TextView tvWho = findViewById(R.id.tvWho);
-                tvWho.setText(event.getString("who"));
-            }
+
         } catch (Exception e) {
             Log.e("report_event", "report_event: " + e.getMessage());
         }

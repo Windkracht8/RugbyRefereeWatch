@@ -39,6 +39,7 @@ public class report extends LinearLayout {
     private final TextView tvHomeTot;
     private final TextView tvAwayTot;
     private final LinearLayout llEvents;
+    private final Button bView;
     private final Button bShare;
 
     private JSONObject match;
@@ -47,6 +48,8 @@ public class report extends LinearLayout {
     private final int timewidth;
     private final int timerwidth;
     private final int scorewidth;
+
+    private boolean view_full = false;
 
     public report(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,8 +85,15 @@ public class report extends LinearLayout {
         tvAwayGoals = findViewById(R.id.tvAwayGoals);
         tvHomeTot = findViewById(R.id.tvHomeTot);
         tvAwayTot = findViewById(R.id.tvAwayTot);
+        bView = findViewById(R.id.bView);
         bShare = findViewById(R.id.bShare);
 
+        bView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bViewClick(view);
+            }
+        });
         bShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,7 +158,7 @@ public class report extends LinearLayout {
         this.match = match;
         addScores();
         try {
-            this.matchid = match.has("matchid") ? match.getLong("matchid") : 0;//TODO: matchid is present from version 1.1 of watch app
+            this.matchid = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
@@ -175,24 +185,32 @@ public class report extends LinearLayout {
             tvHomeTot.setText(home.getString("tot"));
             tvAwayTot.setText(away.getString("tot"));
 
-            if(llEvents.getChildCount() > 0)
-                llEvents.removeAllViews();
-
+            showEvents();
+        }catch (Exception e){
+            Log.e("report", "gotMatch: " + e.getMessage());
+        }
+        bView.setVisibility(VISIBLE);
+        bShare.setVisibility(VISIBLE);
+    }
+    private void showEvents(){
+        if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
+        try {
             JSONArray events = match.getJSONArray("events");
             Context context = getContext();
             for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
-                llEvents.addView(new report_event(context, event, match, timewidth, timerwidth, scorewidth));
-                //TODO: CARD uppercase from version 1.1 of watch app
-                if(event.getString("what").toUpperCase().contains("CARD")) {
+                if(view_full) {
+                    llEvents.addView(new report_event_full(context, event, match, timewidth, timerwidth, scorewidth));
+                }else{
+                    llEvents.addView(new report_event(context, event, match, scorewidth));
+                }
+                if(event.getString("what").contains("CARD")) {
                     llEvents.addView(new report_card(context, event, matchid));
                 }
             }
-
         }catch (Exception e){
-            Log.e("report", "gotMatch: " + e.getMessage());
+            Log.e("report", "showEvents: " + e.getMessage());
         }
-        bShare.setVisibility(VISIBLE);
     }
     private void addScores(){
         try {
@@ -232,7 +250,6 @@ public class report extends LinearLayout {
     }
 
     public void tvHomeNameClick(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         etHomeName.setText(tvHomeName.getText());
         tvHomeName.setVisibility(View.INVISIBLE);
         etHomeName.setVisibility(View.VISIBLE);
@@ -241,7 +258,6 @@ public class report extends LinearLayout {
         imm.showSoftInput(etHomeName, InputMethodManager.SHOW_IMPLICIT);
     }
     private void newHomeName(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         String name = etHomeName.getText().toString();
         tvHomeName.setText(name);
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -252,7 +268,6 @@ public class report extends LinearLayout {
         MainActivity.updateTeamName(name, "home", matchid);
     }
     public void tvAwayNameClick(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         etAwayName.setText(tvAwayName.getText());
         tvAwayName.setVisibility(View.INVISIBLE);
         etAwayName.setVisibility(View.VISIBLE);
@@ -261,7 +276,6 @@ public class report extends LinearLayout {
         imm.showSoftInput(etAwayName, InputMethodManager.SHOW_IMPLICIT);
     }
     private void newAwayName(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         String name = etAwayName.getText().toString();
         tvAwayName.setText(name);
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -272,6 +286,10 @@ public class report extends LinearLayout {
         MainActivity.updateTeamName(name, "away", matchid);
     }
 
+    public void bViewClick(View view){
+        view_full = !view_full;
+        showEvents();
+    }
     public void bShareClick(View view){
         Context context = view.getContext();
 
@@ -293,11 +311,9 @@ public class report extends LinearLayout {
         Log.i("report", "match: " + match.toString());
 
         try {
-            String sMatchdate = "";
-            if(matchid > 0){//TODO: matchid is present from version 1.1 of watch app
-                Date dMatchdate = new Date(matchid);
-                sMatchdate = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(dMatchdate);
-            }
+            Date dMatchdate = new Date(matchid);
+            String sMatchdate = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(dMatchdate);
+
             shareSubject += " " + sMatchdate;
 
             JSONObject home = match.getJSONObject("home");

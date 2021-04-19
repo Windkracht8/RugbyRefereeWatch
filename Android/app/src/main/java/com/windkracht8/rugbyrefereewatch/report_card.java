@@ -64,7 +64,6 @@ public class report_card extends LinearLayout {
 
     }
     public void tvReasonClick(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         CharSequence reason = tvReason.getText() == view.getContext().getResources().getString(R.string.no_card_reason) ? "" : tvReason.getText();
         etReason.setText(reason);
         tvReason.setVisibility(View.GONE);
@@ -75,7 +74,6 @@ public class report_card extends LinearLayout {
     }
 
     public void newReason(View view){
-        if(matchid == 0){return;}//TODO: matchid is present from version 1.1 of watch app
         String reason = etReason.getText().toString();
         reason = reason.replace("\n", "");
         tvReason.setText(reason);

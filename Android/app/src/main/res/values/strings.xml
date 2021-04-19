@@ -38,7 +38,8 @@
     <string name="record_player">Record player #</string>
     <string name="bDelete_text">Delete selected matches</string>
     <string name="no_card_reason">reason not entered</string>
-    <string name="bShare_text">share report</string>
+    <string name="bView_text">view</string>
+    <string name="bShare_text">share</string>
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
