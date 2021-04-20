@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.windkracht8.rugbyrefereewatch">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.windkracht8.rugbyrefereewatch">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -25,29 +24,23 @@
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="file" android:mimeType="application/json" android:host="*" />
+                <data android:scheme="content" android:mimeType="application/json" />
+            </intent-filter>
         </activity>
+
+
         <service android:name="com.samsung.android.sdk.accessory.SAService" />
-
-        <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" >
-            <intent-filter>
-                <action android:name="com.samsung.accessory.action.REGISTER_AGENT" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="com.samsung.accessory.action.SERVICE_CONNECTION_REQUESTED" />
-            </intent-filter>
-        </receiver>
-
-        <meta-data
-            android:name="AccessoryServicesLocation"
-            android:value="/res/xml/accessoryservices.xml" />
-        <meta-data
-            android:name="GearAppType"
-            android:value="wgt" />
+        <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" />
+        <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver" />
+        <meta-data android:name="AccessoryServicesLocation" android:value="/res/xml/accessoryservices.xml" />
+        <meta-data android:name="GearAppType" android:value="wgt" />
     </application>
 
 </manifest>

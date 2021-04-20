@@ -3,9 +3,13 @@ package com.windkracht8.rugbyrefereewatch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -20,12 +24,19 @@ import com.samsung.android.sdk.accessory.SAAgentV2;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private static MainActivity ma;
     private static communication comms = null;
+    private static final int EXPORT_REQUEST_CODE = 2;
 
     private long backpresstime;
 
@@ -45,6 +56,38 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             TextView tvError = findViewById(R.id.tvError);
             tvError.setText(R.string.tvFatal);
+        }
+
+        handleIntent();
+    }
+    private void handleIntent(){
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (action.compareTo(Intent.ACTION_VIEW) != 0) return;
+
+        String scheme = intent.getScheme();
+        if (scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0) {
+            Log.e("MainActivity" , "Non supported scheme: " + scheme);
+            return;
+        }
+        try {
+            ContentResolver cr = getContentResolver();
+            InputStream is = cr.openInputStream(intent.getData());
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+
+            StringBuilder text = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+            }
+            br.close();
+            String sNewmatches = text.toString();
+            JSONArray newmatches = new JSONArray(sNewmatches);
+            history hHistory = findViewById(R.id.hHistory);
+            hHistory.gotMatches(newmatches);
+        } catch (Exception e) {
+            Log.e("MainActivity", "handleIntent read file: " + e.getMessage());
         }
     }
 
@@ -381,5 +424,34 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity", "getTeamName: " + e.getMessage());
         }
         return name;
+    }
+
+    public static void exportMatches() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        intent.putExtra(Intent.EXTRA_TITLE, "matches.json");
+
+        ma.startActivityForResult(intent, EXPORT_REQUEST_CODE);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
+        if (requestCode == EXPORT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (resultData != null) {
+                Uri uri = resultData.getData();
+                OutputStream outputStream;
+                try {
+                    outputStream = getContentResolver().openOutputStream(uri);
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
+                    history hHistory = findViewById(R.id.hHistory);
+                    bw.write(hHistory.export_matches.toString());
+                    bw.flush();
+                    bw.close();
+                } catch (Exception e) {
+                    Log.e("MainActivity", "onActivityResult: " + e.getMessage());
+                }
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ import java.util.TimerTask;
 
 public class history_match extends LinearLayout{
     history hParent;
-    private JSONObject match;
+    public JSONObject match;
     private TextView tvName;
     public boolean isselected = false;
 

@@ -20,9 +20,11 @@ import java.util.ArrayList;
 
 public class history extends LinearLayout {
     private final LinearLayout llMatches;
+    private final Button bExport;
     private final Button bDelete;
     ArrayList<JSONObject> matches;
     ArrayList<Long> deleted_matches;
+    JSONArray export_matches;
 
     public history(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,8 +34,14 @@ public class history extends LinearLayout {
         }
 
         llMatches = findViewById(R.id.llMatches);
+        bExport = findViewById(R.id.bExport);
+        bExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportSelected();
+            }
+        });
         bDelete = findViewById(R.id.bDelete);
-
         bDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,7 +136,7 @@ public class history extends LinearLayout {
                 matches.add(jsonMatches.getJSONObject(i));
             }
         } catch (Exception e) {
-            Log.e("history", "loadMatches matches: " + e.getMessage());
+            Log.e("history", "loadMatches process json: " + e.getMessage());
         }
         showMatches();
 
@@ -222,12 +230,14 @@ public class history extends LinearLayout {
         selectionChanged();
     }
     public void selectionChanged(){
+        bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
         for (int i=0; i < llMatches.getChildCount(); i++) {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){
+                    bExport.setVisibility(View.VISIBLE);
                     bDelete.setVisibility(View.VISIBLE);
                     return;
                 }
@@ -270,5 +280,19 @@ public class history extends LinearLayout {
             Log.e("history", "updateTeamName: " + e.getMessage());
         }
     }
-
+    public void exportSelected(){
+        export_matches = new JSONArray();
+        for (int i=llMatches.getChildCount()-1; i >=0; i--) {
+            View child = llMatches.getChildAt(i);
+            if(child.getClass().getSimpleName().equals("history_match")){
+                history_match tmp = (history_match)child;
+                if(tmp.isselected){
+                    Log.i("history", "export match: " + i);
+                    export_matches.put(tmp.match);
+                }
+            }
+        }
+        unselect();
+        MainActivity.exportMatches();
+    }
 }
