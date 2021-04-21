@@ -22,9 +22,10 @@ public class history extends LinearLayout {
     private final LinearLayout llMatches;
     private final Button bExport;
     private final Button bDelete;
-    ArrayList<JSONObject> matches;
-    ArrayList<Long> deleted_matches;
+    final ArrayList<JSONObject> matches;
+    final ArrayList<Long> deleted_matches;
     JSONArray export_matches;
+    public boolean selecting = false;
 
     public history(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -232,6 +233,7 @@ public class history extends LinearLayout {
     public void selectionChanged(){
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
+        selecting = false;
         for (int i=0; i < llMatches.getChildCount(); i++) {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
@@ -239,6 +241,7 @@ public class history extends LinearLayout {
                 if(tmp.isselected){
                     bExport.setVisibility(View.VISIBLE);
                     bDelete.setVisibility(View.VISIBLE);
+                    selecting = true;
                     return;
                 }
             }

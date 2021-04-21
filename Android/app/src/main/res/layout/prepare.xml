@@ -6,7 +6,6 @@
     <Button
         android:id="@+id/bPrepare"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:onClick="bPrepareClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"

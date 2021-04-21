@@ -46,6 +46,54 @@ public class MainActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         ma = this;
         setContentView(R.layout.activity_main);
+        findViewById(R.id.bConnect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bConnectClick();
+            }
+        });
+        findViewById(R.id.bExit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bExitClick();
+            }
+        });
+        findViewById(R.id.tabHistory).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tabHistoryClick();
+            }
+        });
+        findViewById(R.id.tabReport).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tabReportClick();
+            }
+        });
+        findViewById(R.id.tabPrepare).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tabPrepareClick();
+            }
+        });
+        findViewById(R.id.bGetMatches).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bGetMatchesClick();
+            }
+        });
+        findViewById(R.id.bGetMatch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bGetMatchClick();
+            }
+        });
+        findViewById(R.id.bPrepare).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bPrepareClick();
+            }
+        });
 
         handleOrientation();
         try{
@@ -123,16 +171,16 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         Date date = new Date();
         if(date.getTime() - backpresstime < 1000){
-            bExitClick(null);
+            bExitClick();
         }
         backpresstime = date.getTime();
         if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
             history hHistory = findViewById(R.id.hHistory);
             hHistory.unselect();
         }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
-            tabHistoryClick(null);
+            tabHistoryClick();
         }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
-            tabReportClick(null);
+            tabReportClick();
         }
     }
     @Override
@@ -172,17 +220,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSwipeRight() {
         if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
-            tabHistoryClick(null);
+            tabHistoryClick();
         }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
-            tabReportClick(null);
+            tabReportClick();
         }
     }
 
     public void onSwipeLeft() {
         if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
-            tabReportClick(null);
+            tabReportClick();
         }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
-            tabPrepareClick(null);
+            tabPrepareClick();
         }
     }
 
@@ -200,11 +248,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void bExitClick(View view) {
+    public void bExitClick() {
         finish();
         System.exit(0);
     }
-    public void bConnectClick(View view) {
+    public void bConnectClick() {
         gotError("");
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         if(comms == null) {
@@ -218,18 +266,18 @@ public class MainActivity extends AppCompatActivity {
             comms.findPeers();
         }
     }
-    public void bGetMatchesClick(View view) {
+    public void bGetMatchesClick() {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
         gotError("");
         history hHistory = findViewById(R.id.hHistory);
         comms.sendRequest("getMatches", hHistory.getDeletedMatches());
     }
-    public void bGetMatchClick(View view) {
+    public void bGetMatchClick() {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
         gotError("");
         comms.sendRequest("getMatch", null);
     }
-    public void bPrepareClick(View view) {
+    public void bPrepareClick() {
         if(comms == null || comms.status != communication.Status.CONNECTED){gotError(getString(R.string.first_connect));return;}
         gotError("");
         prepare pPrepare = findViewById(R.id.pPrepare);
@@ -243,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
     public static void historyMatchClick(JSONObject match) {
         report rReport = ma.findViewById(R.id.rReport);
         rReport.gotMatch(match);
-        ma.tabReportClick(null);
+        ma.tabReportClick();
     }
 
     private static communication.Status updateStatus_status;
@@ -376,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
         tvError.setText(error);
     }
 
-    public void tabHistoryClick(View view) {
+    public void tabHistoryClick() {
         findViewById(R.id.tabHistory).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
@@ -384,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.rReport).setVisibility(View.GONE);
         findViewById(R.id.pPrepare).setVisibility(View.GONE);
     }
-    public void tabReportClick(View view) {
+    public void tabReportClick() {
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
@@ -392,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.rReport).setVisibility(View.VISIBLE);
         findViewById(R.id.pPrepare).setVisibility(View.GONE);
     }
-    public void tabPrepareClick(View view) {
+    public void tabPrepareClick() {
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(R.drawable.tab_active);

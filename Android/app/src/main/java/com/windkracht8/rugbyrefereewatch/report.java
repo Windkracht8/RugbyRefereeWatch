@@ -91,7 +91,7 @@ public class report extends LinearLayout {
         bView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bViewClick(view);
+                bViewClick();
             }
         });
         bShare.setOnClickListener(new View.OnClickListener() {
@@ -286,7 +286,7 @@ public class report extends LinearLayout {
         MainActivity.updateTeamName(name, "away", matchid);
     }
 
-    public void bViewClick(View view){
+    public void bViewClick(){
         view_full = !view_full;
         showEvents();
     }
