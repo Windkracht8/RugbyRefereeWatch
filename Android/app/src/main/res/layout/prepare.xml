@@ -12,7 +12,6 @@
         android:text="@string/bPrepare_text"
         android:textAllCaps="false"
         android:visibility="gone" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -20,19 +19,15 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         >
-
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="*">
-
             <TableRow>
-
                 <TextView
                     android:labelFor="@+id/etHomeName"
                     android:text="@string/home_name"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etHomeName"
                     android:importantForAutofill="no"
@@ -40,14 +35,22 @@
                     android:text="@string/home"
                     android:textAlignment="center" />
             </TableRow>
-
             <TableRow>
-
+                <TextView
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip"
+                    android:text="@string/home_color"
+                    android:textSize="18sp" />
+                <Spinner
+                    android:id="@+id/sHomeColor"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip" />
+            </TableRow>
+            <TableRow>
                 <TextView
                     android:labelFor="@+id/etAwayName"
                     android:text="@string/away_name"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etAwayName"
                     android:importantForAutofill="no"
@@ -55,57 +58,36 @@
                     android:text="@string/away"
                     android:textAlignment="center" />
             </TableRow>
-
             <TableRow>
-
-                <TextView
-                    android:layout_marginTop="10dip"
-                    android:layout_marginBottom="10dip"
-                    android:text="@string/home_color"
-                    android:textSize="18sp" />
-
-                <Spinner
-                    android:id="@+id/sHomeColor"
-                    android:layout_marginTop="10dip"
-                    android:layout_marginBottom="10dip" />
-            </TableRow>
-
-            <TableRow>
-
                 <TextView
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip"
                     android:text="@string/away_color"
                     android:textSize="18sp" />
-
                 <Spinner
                     android:id="@+id/sAwayColor"
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip" />
             </TableRow>
-
             <TableRow>
-
                 <TextView
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip"
                     android:labelFor="@+id/sMatchType"
                     android:text="@string/match_type"
                     android:textSize="18sp" />
-
                 <Spinner
                     android:id="@+id/sMatchType"
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trTimePeriod"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etTimePeriod"
                     android:text="@string/time_period"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etTimePeriod"
                     android:importantForAutofill="no"
@@ -113,14 +95,13 @@
                     android:text="@string/_40"
                     android:textAlignment="center" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trPeriodCount"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etPeriodCount"
                     android:text="@string/period_count"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etPeriodCount"
                     android:importantForAutofill="no"
@@ -128,14 +109,13 @@
                     android:text="@string/_2"
                     android:textAlignment="center" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trSinbin"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etSinbin"
                     android:text="@string/sinbin"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etSinbin"
                     android:importantForAutofill="no"
@@ -143,14 +123,13 @@
                     android:text="@string/_10"
                     android:textAlignment="center" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trPointsTry"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etPointsTry"
                     android:text="@string/points_for_try"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etPointsTry"
                     android:importantForAutofill="no"
@@ -158,14 +137,13 @@
                     android:text="@string/_5"
                     android:textAlignment="center" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trPointsCon"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etPointsCon"
                     android:text="@string/points_for_conversion"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etPointsCon"
                     android:importantForAutofill="no"
@@ -173,14 +151,13 @@
                     android:text="@string/_2"
                     android:textAlignment="center" />
             </TableRow>
-
-            <TableRow>
-
+            <TableRow
+                android:id="@+id/trPointsGoal"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etPointsGoal"
                     android:text="@string/points_for_goal"
                     android:textSize="18sp" />
-
                 <EditText
                     android:id="@+id/etPointsGoal"
                     android:importantForAutofill="no"
@@ -188,17 +165,54 @@
                     android:text="@string/_3"
                     android:textAlignment="center" />
             </TableRow>
-
             <TableRow>
-
+                <Button
+                    android:id="@+id/bWatchSettings"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:text="@string/bWatchSettings"
+                    android:textSize="18sp"
+                    android:layout_span="2" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trRecordPlayer"
+                android:visibility="gone">
                 <TextView
                     android:labelFor="@+id/etRecordPlayer"
                     android:text="@string/record_player"
                     android:textSize="18sp" />
-
                 <CheckBox
                     android:id="@+id/cbRecordPlayer"
                     android:importantForAutofill="no" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trScreenOn"
+                android:visibility="gone">
+                <TextView
+                    android:labelFor="@+id/cbScreenOn"
+                    android:text="@string/cbScreenOn"
+                    android:textSize="18sp" />
+
+                <CheckBox
+                    android:id="@+id/cbScreenOn"
+                    android:checked="true"
+                    android:importantForAutofill="no" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trCountDown"
+                android:visibility="gone">
+                <TextView
+                    android:labelFor="@+id/cbCountDown"
+                    android:layout_marginTop="10dip"
+                    android:text="@string/cbCountDown"
+                    android:textSize="18sp" />
+                <Spinner
+                    android:id="@+id/sCountDown"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip" />
             </TableRow>
         </TableLayout>
     </ScrollView>

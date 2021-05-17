@@ -1,5 +1,5 @@
 /* global $, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, countdownChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -19,6 +19,7 @@ var match = {
 		points_con: 2,
 		points_goal: 3,
 		record_player: 0,
+		screen_on: 1,
 		countdown: 0
 	},
 	home: {
@@ -65,14 +66,14 @@ window.onload = function () {
 	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
 	updateTime();
 	update();
-	function onScreenStateChanged(previousState, changedState) {
-	    if(changedState === 'SCREEN_NORMAL'){
-	    	tizen.power.request("SCREEN", "SCREEN_NORMAL");
+
+	function onScreenStateChanged(previousState, newState) {
+	    if(newState === 'SCREEN_NORMAL'){
+	    	requestScreen_on();
 	    }
 	}
 	tizen.power.setScreenStateChangeListener(onScreenStateChanged);
-	
-	tizen.power.request("SCREEN", "SCREEN_NORMAL");
+
 };
  
 function back(){
@@ -111,9 +112,20 @@ function timerClick(){
 		timer.start_timeoff = getCurrentTimestamp();
 		logEvent("Time off", null, null);
 		update();
+		startTimeOffBuzz();
 	}
 }
 
+function startTimeOffBuzz(){
+	setTimeout(timeOffBuzz, 15000);
+}
+function timeOffBuzz(){
+	if(timer.status === "timeoff"){
+		beep();
+		startTimeOffBuzz();
+	}
+	
+}
 function bresumeClick(){
 	switch(timer.status){
 		case "conf":
@@ -484,6 +496,7 @@ function bconfClick(){
 	$('#points_goal').val(match.settings.points_goal);
 
 	$('#record_player').val(match.settings.record_player);
+	$('#screen_on').val(match.settings.screen_on);
 	$('#countdown').val(match.settings.countdown);
 
 	$('#conf').show();
@@ -499,6 +512,7 @@ function color_awayChange(){
 	$('#away').css('background', match.away.color);
 }
 function match_typeChange(){
+	$('#custom_match').hide();
 	match.settings.match_type = $('#match_type').val();
 	switch($('#match_type').val()){
 		case "15s":
@@ -541,6 +555,9 @@ function match_typeChange(){
 			$('#points_con').val("0");
 			$('#points_goal').val("0");
 			break;
+		case "custom":
+			$('#custom_match').show();
+			break;
 	}
 	period_timeChange();
 	period_countChange();
@@ -572,6 +589,10 @@ function record_playerChange(){
 	match.settings.record_player = parseInt($('#record_player').val());
 	record_playerChanged();
 }
+function screen_onChange(){
+	match.settings.screen_on = parseInt($('#screen_on').val());
+	screen_onChanged();
+}
 function record_playerChanged(){
 	if(match.settings.record_player === 1){
 		$('#score').css('padding', '');
@@ -583,6 +604,18 @@ function record_playerChanged(){
 		$('#score_player_wrap').hide();
 		$('#card').css('padding', '5vh 0 0');
 		$('#card_player_wrap').hide();
+	}
+}
+function screen_onChanged(){
+	if(match.settings.screen_on === 1){
+		requestScreen_on();
+	}else{
+		tizen.power.release("SCREEN");
+	}
+}
+function requestScreen_on(){
+	if(match.settings.screen_on === 1){
+		tizen.power.request("SCREEN", "SCREEN_NORMAL");
 	}
 }
 function countdownChange(){
@@ -687,9 +720,26 @@ function incomingSettings(newsettings){
 	}
 
 	match.home.team = newsettings.home_name;
-	match.away.team = newsettings.away_name;
 	match.home.color = newsettings.home_color;
+	$('#home').css('background', match.home.color);
+	match.away.team = newsettings.away_name;
 	match.away.color = newsettings.away_color;
+	$('#away').css('background', match.away.color);
+	setNewSettings(newsettings);
+	
+	file_storeSettings(match.settings);
+	return true;
+}
+
+function settingsRead(newsettings){
+	if(timer.status !== "conf"){
+		console.log("Ignore stored settings, game already started");
+		return;
+	}
+	setNewSettings(newsettings);
+}
+
+function setNewSettings(newsettings){
 	match.settings.match_type = newsettings.match_type;
 	match.settings.period_time = newsettings.period_time;
 	match.settings.period_count = newsettings.period_count;
@@ -697,25 +747,18 @@ function incomingSettings(newsettings){
 	match.settings.points_try = newsettings.points_try;
 	match.settings.points_con = newsettings.points_con;
 	match.settings.points_goal = newsettings.points_goal;
-	match.settings.record_player = newsettings.record_player;
-
-	$('#home').css('background', match.home.color);
-	$('#away').css('background', match.away.color);
-	record_playerChanged();
-	countdownChanged();
-	
-	file_storeSettings(match.settings);
-	return true;
-}
-function settingsRead(newsettings){
-	if(timer.status !== "conf"){
-		console.log("Ignore stored settings, game already started");
-		return;
+	if(newsettings.hasOwnProperty('record_player')){
+		match.settings.record_player = newsettings.record_player;
+		record_playerChanged();
 	}
-	match.settings = newsettings;
-
-	record_playerChanged();
-	countdownChanged();
+	if(newsettings.hasOwnProperty('screen_on')){
+		match.settings.screen_on = newsettings.screen_on;
+		screen_onChanged();
+	}
+	if(newsettings.hasOwnProperty('countdown')){
+		match.settings.countdown = newsettings.countdown;
+		countdownChanged();
+	}
 }
 function beep(){
 	console.log("beep");

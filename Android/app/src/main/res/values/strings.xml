@@ -31,7 +31,7 @@
     <string name="_5">5</string>
     <string name="match_type">Match type</string>
     <string name="exit">exit</string>
-    <string name="tvFatal">You need to install the Samsung Accessory Service first</string>
+    <string name="tvFatal">Click here to install the Samsung Accessory Service</string>
     <string name="record_player">Record player #</string>
     <string name="bDelete_text">Delete selected</string>
     <string name="no_card_reason">reason not entered</string>
@@ -54,4 +54,8 @@
     <string name="matches_filename">matches.json</string>
     <string name="deletedmatches_filename">deleted_matches.json</string>
     <string name="bExport_text">Export selected</string>
+    <string name="cbScreenOn">Keep screen on</string>
+    <string name="bWatchSettings">Watch settings</string>
+    <string name="bWatchSettings2">No watch settings</string>
+    <string name="cbCountDown">Count</string>
 </resources>

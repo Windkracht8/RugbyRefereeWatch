@@ -146,6 +146,9 @@ button{
 #conf select{
 	text-align: center;
 }
+#custom_match{
+	display: none;
+}
 #report{
 	font-size: 5vw;
 	padding: 15vh 0 20vh;

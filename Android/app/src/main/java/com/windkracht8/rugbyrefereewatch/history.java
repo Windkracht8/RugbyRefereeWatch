@@ -36,19 +36,9 @@ public class history extends LinearLayout {
 
         llMatches = findViewById(R.id.llMatches);
         bExport = findViewById(R.id.bExport);
-        bExport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                exportSelected();
-            }
-        });
+        bExport.setOnClickListener(view -> exportSelected());
         bDelete = findViewById(R.id.bDelete);
-        bDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteSelected();
-            }
-        });
+        bDelete.setOnClickListener(view -> deleteSelected());
         matches = new ArrayList<>();
         deleted_matches = new ArrayList<>();
         loadMatches();
@@ -290,7 +280,6 @@ public class history extends LinearLayout {
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){
-                    Log.i("history", "export match: " + i);
                     export_matches.put(tmp.match);
                 }
             }

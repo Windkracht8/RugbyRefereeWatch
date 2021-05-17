@@ -96,12 +96,7 @@ public class history_match extends LinearLayout{
     }
 
     private void longpress() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                toggleSelect();
-            }
-        });
+        new Handler(Looper.getMainLooper()).post(this::toggleSelect);
     }
 
     private void toggleSelect(){

@@ -105,50 +105,56 @@
 	Match type<br>
 	<select id="match_type" onchange="match_typeChange()">
 		<option selected>15s</option><option>10s</option><option>7s</option>
-		<option>beach 7s</option><option>beach 5s</option>
+		<option>beach 7s</option><option>beach 5s</option><option>custom</option>
 	</select><br>
-	Time/period<br>
-	<select id="period_time" onchange="period_timeChange()">
-		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-		<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-		<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-		<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
-		<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
-		<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
-		<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
-		<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
-		<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
-		<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
-	</select><br>
-	Period count<br>
-	<select id="period_count" onchange="period_countChange()">
-		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-	</select><br>
-	Sinbin<br>
-	<select id="sinbin" onchange="sinbinChange()">
-		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-		<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-		<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-		<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
-	</select><br>
-	Points try<br>
-	<select id="points_try" onchange="points_tryChange()">
-		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-	</select><br>
-	Points conversion<br>
-	<select id="points_con" onchange="points_conChange()">
-		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-	</select><br>
-	Points goal<br>
-	<select id="points_goal" onchange="points_goalChange()">
-		<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-		<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-	</select><br>
+	<div id="custom_match">
+		Time/period<br>
+		<select id="period_time" onchange="period_timeChange()">
+			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+			<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+			<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+			<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+			<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+			<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
+			<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
+			<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
+			<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
+			<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
+		</select><br>
+		Period count<br>
+		<select id="period_count" onchange="period_countChange()">
+			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+		</select><br>
+		Sinbin<br>
+		<select id="sinbin" onchange="sinbinChange()">
+			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+			<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+			<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+			<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+		</select><br>
+		Points try<br>
+		<select id="points_try" onchange="points_tryChange()">
+			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+		</select><br>
+		Points conversion<br>
+		<select id="points_con" onchange="points_conChange()">
+			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+		</select><br>
+		Points goal<br>
+		<select id="points_goal" onchange="points_goalChange()">
+			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+		</select>
+	</div>
 	Record player<br>
 	<select id="record_player" onchange="record_playerChange()">
 		<option value="0">no</option><option value="1">yes</option>
+	</select><br>
+	Screen on<br>
+	<select id="screen_on" onchange="screen_onChange()">
+		<option value="1">yes</option><option value="0">no</option>
 	</select><br>
 	Timer type<br>
 	<select id="countdown" onchange="countdownChange()">

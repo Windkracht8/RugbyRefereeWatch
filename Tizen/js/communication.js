@@ -59,4 +59,6 @@ function requestOnError(e){
 	showMessage("Communication error" + e.name + "<br />" + e.message);
 }
 
-webapis.sa.requestSAAgent(requestOnSuccess, requestOnError);
+if(typeof webapis !== "undefined"){
+	webapis.sa.requestSAAgent(requestOnSuccess, requestOnError);
+}

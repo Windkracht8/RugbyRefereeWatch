@@ -46,54 +46,14 @@ public class MainActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         ma = this;
         setContentView(R.layout.activity_main);
-        findViewById(R.id.bConnect).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bConnectClick();
-            }
-        });
-        findViewById(R.id.bExit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bExitClick();
-            }
-        });
-        findViewById(R.id.tabHistory).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tabHistoryClick();
-            }
-        });
-        findViewById(R.id.tabReport).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tabReportClick();
-            }
-        });
-        findViewById(R.id.tabPrepare).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tabPrepareClick();
-            }
-        });
-        findViewById(R.id.bGetMatches).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bGetMatchesClick();
-            }
-        });
-        findViewById(R.id.bGetMatch).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bGetMatchClick();
-            }
-        });
-        findViewById(R.id.bPrepare).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bPrepareClick();
-            }
-        });
+        findViewById(R.id.bConnect).setOnClickListener(view -> bConnectClick());
+        findViewById(R.id.bExit).setOnClickListener(view -> bExitClick());
+        findViewById(R.id.tabHistory).setOnClickListener(view -> tabHistoryClick());
+        findViewById(R.id.tabReport).setOnClickListener(view -> tabReportClick());
+        findViewById(R.id.tabPrepare).setOnClickListener(view -> tabPrepareClick());
+        findViewById(R.id.bGetMatches).setOnClickListener(view -> bGetMatchesClick());
+        findViewById(R.id.bGetMatch).setOnClickListener(view -> bGetMatchClick());
+        findViewById(R.id.bPrepare).setOnClickListener(view -> bPrepareClick());
 
         handleOrientation();
         try{
@@ -104,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             TextView tvError = findViewById(R.id.tvError);
             tvError.setText(R.string.tvFatal);
+            findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.samsung.accessory"))));
         }
 
         handleIntent();
@@ -252,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
         System.exit(0);
     }
+
     public void bConnectClick() {
         gotError("");
         findViewById(R.id.bConnect).setVisibility(View.GONE);
@@ -297,12 +259,7 @@ public class MainActivity extends AppCompatActivity {
     private static communication.Status updateStatus_status;
     public static void updateStatus_runOnUiThread(final communication.Status newstatus){
         updateStatus_status = newstatus;
-        ma.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ma.updateStatus(updateStatus_status);
-            }
-        });
+        ma.runOnUiThread(() -> ma.updateStatus(updateStatus_status));
     }
     private void updateStatus(final communication.Status newstatus) {
         TextView tvStatus = findViewById(R.id.tvStatus);
@@ -369,12 +326,7 @@ public class MainActivity extends AppCompatActivity {
     private static JSONObject gotResponse_msg;
     public static void gotResponse_runOnUiThread(final JSONObject msg){
         gotResponse_msg = msg;
-        ma.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ma.gotResponse(gotResponse_msg);
-            }
-        });
+        ma.runOnUiThread(() -> ma.gotResponse(gotResponse_msg));
     }
     private void gotResponse(final JSONObject responseMessage){
         Log.i("MainActivity.gotResponse", responseMessage.toString());
@@ -408,12 +360,7 @@ public class MainActivity extends AppCompatActivity {
     private static String gotError_error;
     public static void gotError_runOnUiThread(String error){
         gotError_error = error;
-        ma.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ma.gotError(gotError_error);
-            }
-        });
+        ma.runOnUiThread(() -> ma.gotError(gotError_error));
     }
     private void gotError(String error) {
         Log.i("MainActivity.gotError", error);
