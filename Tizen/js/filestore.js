@@ -1,6 +1,6 @@
 /* global getCurrentTimestamp, settingsRead */
-/* exported file_storeMatch, file_deletedMatches */
-var useFileHandle = typeof(tizen.filesystem.readString) === "function";
+/* exported fil_init, file_storeMatch, file_deletedMatches */
+var useFileHandle = typeof(tizen.filesystem.openFile) === "function";
 var dirname = "wgt-private";
 var matches_filename = "matches.json";
 var matches_path = dirname + "/" + matches_filename;
@@ -11,7 +11,53 @@ var settings_filename = "settings.json";
 var settings_path = dirname + "/" + settings_filename;
 var file_settings;
 
-file_getFile();
+function file_init(){
+	if(useFileHandle){
+		file_readSettings();
+		file_cleanMatches();
+	}else{
+		try{
+			tizen.filesystem.resolve(dirname,
+				function(dir){
+					tizen.filesystem.resolve(settings_path,
+						function(foundfile){
+							file_settings = foundfile;
+							file_readSettings();
+						},
+						function(){
+							file_settings = dir.createFile(settings_filename);
+							file_storeSettings();
+							if(typeof(file_settings) === "undefined"){
+								console.log("file_init failed to create settings file");
+							}
+						},
+						"rw"
+					);
+					tizen.filesystem.resolve(matches_path,
+						function(foundfile){
+							file_matches = foundfile;
+							file_cleanMatches();
+						},
+						function(){
+							file_matches = dir.createFile(matches_filename);
+							file_cleanMatches();
+							if(typeof(file_matches) === "undefined"){
+								console.log("file_init failed to create matches file");
+							}
+						},
+						"rw"
+					);
+				},
+				function(e){
+					console.log("file_init error " + e.message);
+				},
+				"rw"
+			);
+		}catch(e){
+			console.log("file_init exception " + e.message);
+		}
+	}
+}
 
 //Append a new match
 function file_storeMatch(match){
@@ -126,60 +172,11 @@ function file_deletedMatches(requestData){
 	file_storeMatches(matches);
 }
 
-function file_getFile(){
-	if(useFileHandle){
-		file_readSettings();
-		file_cleanMatches();
-		return;
-	}
-
-	try{
-		tizen.filesystem.resolve(dirname,
-			function(dir){
-				tizen.filesystem.resolve(settings_path,
-					function(foundfile){
-						file_settings = foundfile;
-						file_readSettings();
-					},
-					function(){
-						file_settings = dir.createFile(settings_filename);
-						file_storeSettings();
-						if(typeof(file_settings) === "undefined"){
-							console.log("file_getFile failed to create settings file");
-						}
-					},
-					"rw"
-				);
-				tizen.filesystem.resolve(matches_path,
-					function(foundfile){
-						file_matches = foundfile;
-						file_cleanMatches();
-					},
-					function(){
-						file_matches = dir.createFile(matches_filename);
-						file_cleanMatches();
-						if(typeof(file_matches) === "undefined"){
-							console.log("file_getFile failed to create matches file");
-						}
-					},
-					"rw"
-				);
-			},
-			function(e){
-				console.log("file_getFile error " + e.message);
-			},
-			"rw"
-		);
-	}catch(e){
-		console.log("file_getFile exception " + e.message);
-	}
-}
-
 function file_storeSettings(newsettings){
 	if(useFileHandle){
 		try {
 			file_settings = tizen.filesystem.openFile(settings_path, "w");
-			file_settings.write(JSON.stringify(newsettings));
+			file_settings.writeString(JSON.stringify(newsettings));
 			file_settings.close();
 		}catch(e){
 			console.log("file_storeSettings exception " + e.message);
@@ -220,7 +217,7 @@ function file_readSettings(){
 		}
 		return;
 	}
-	
+
 	if(typeof(file_settings) === "undefined"){return;}
 	try {
 		file_settings.readAsText(

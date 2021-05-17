@@ -1,4 +1,4 @@
-/* global $, file_storeMatch, file_storeSettings */
+/* global $, file_init file_storeMatch, file_storeSettings */
 /* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
 
 var timer = {
@@ -20,7 +20,7 @@ var match = {
 		points_goal: 3,
 		record_player: 0,
 		screen_on: 1,
-		countdown: 0
+		countdown: 1
 	},
 	home: {
 		id: "home",
@@ -64,6 +64,8 @@ window.onload = function () {
 	tizen.systeminfo.addPropertyValueChangeListener("BATTERY", updateBattery);
 
 	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
+	file_init();
+
 	updateTime();
 	update();
 
@@ -726,7 +728,9 @@ function incomingSettings(newsettings){
 	match.away.color = newsettings.away_color;
 	$('#away').css('background', match.away.color);
 	setNewSettings(newsettings);
-	
+
+	updateTimer(0);
+
 	file_storeSettings(match.settings);
 	return true;
 }
