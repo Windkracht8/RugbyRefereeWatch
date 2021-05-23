@@ -28,12 +28,12 @@ select, input, button{
 	top: 10vh;
 	left: 0;
 	width: 100vw;
-	font-size: 20vh;
+	font-size: 15vh;
 }
 #home, #away{
 	position: fixed;
 	z-index: 1;
-	top: 30vh;
+	top: 25vh;
 	width: 50vw;
 }
 #home{
@@ -49,8 +49,11 @@ select, input, button{
 }
 #timer{
 	position: fixed;
+	background-color: rgba(0,0,0,.3);
+	margin-top: 3vh;
+	line-height: 0.9;
 	left: 0;
-	top: 47vh;
+	top: 45vh;
 	width: 100vw;
 	font-size: 30vh;
 	z-index: 1;
@@ -76,7 +79,7 @@ button{
 	position: fixed;
 	left: 0;
 	bottom: 20vh;
-	height: 38vh;
+	height: 43vh;
 	z-index: 5;
 }
 .bottombutton{

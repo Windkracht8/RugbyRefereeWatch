@@ -73,7 +73,7 @@ function file_storeMatches(newmatches){
 	if(useFileHandle){
 		try {
 			file_matches = tizen.filesystem.openFile(matches_path, "w");
-			file_matches.write(JSON.stringify(newmatches));
+			file_matches.writeString(JSON.stringify(newmatches));
 			file_matches.close();
 		}catch(e){
 			console.log("file_storeMatches exception " + e.message);
@@ -103,18 +103,18 @@ function file_storeMatches(newmatches){
 //Return an array of stored matches
 function file_readMatches(callback){
 	if(useFileHandle){
+		var str = "";
 		try {
-			file_matches = tizen.filesystem.openFile(matches_path, "r");
-			var str = file_matches.readString();
-			if(str.length > 10){
-				matches = JSON.parse(str);
-				callback(JSON.parse(str));
-			}else{
-				callback([]);
-			}
-			file_matches.close();
+			var tempfile = tizen.filesystem.openFile(matches_path, "r");
+			str = tempfile.readString();
+			tempfile.close();
 		}catch(e){
 			console.log("file_readMatches exception " + e.message);
+		}
+		if(str.length > 10){
+			matches = JSON.parse(str);
+			callback(JSON.parse(str));
+		}else{
 			callback([]);
 		}
 		return;

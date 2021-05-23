@@ -1,4 +1,4 @@
-/* global $, file_init file_storeMatch, file_storeSettings */
+/* global $, file_init, file_storeMatch, file_storeSettings */
 /* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
 
 var timer = {
@@ -260,7 +260,7 @@ function updateTimer(millisec){
 	timer.timer = millisec;
 
 	var temp = "";
-	if(match.settings.countdown === 1){
+	if(match.settings.countdown === 1 && timer.status !== "rest"){
 		millisec = (match.settings.period_time * 60000) - millisec;
 	}
 	if(millisec < 0){
