@@ -98,7 +98,6 @@ function file_readMatches(callback){
 
 //Go through stored matches and remove old ones 
 function file_cleanMatches(){
-	if(typeof(file_matches) === "undefined"){return;}
 	file_readMatches(function(newmatches){
 		for(var i = newmatches.length-1; i >=0; i--){
 			if(newmatches[i].matchid < getCurrentTimestamp() - (1000*60*60*24*14)){
