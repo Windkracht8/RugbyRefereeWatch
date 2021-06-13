@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -27,6 +28,10 @@ public class prepare extends LinearLayout {
     private final EditText etPointsCon;
     private final EditText etPointsGoal;
     private final CheckBox cbRecordPlayer;
+    private final CheckBox cbScreenOn;
+    private final Button bWatchSettings;
+    private final Spinner sCountDown;
+    private boolean watchsettings = false;
 
     public prepare(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,8 +51,11 @@ public class prepare extends LinearLayout {
         etPointsCon = findViewById(R.id.etPointsCon);
         etPointsGoal = findViewById(R.id.etPointsGoal);
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
+        cbScreenOn = findViewById(R.id.cbScreenOn);
+        bWatchSettings = findViewById(R.id.bWatchSettings);
+        sCountDown = findViewById(R.id.sCountDown);
 
-        String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s"};
+        String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
@@ -96,6 +104,22 @@ public class prepare extends LinearLayout {
                         etPointsCon.setText("0");
                         etPointsGoal.setText("0");
                         break;
+                    case 5://custom
+                        findViewById(R.id.trTimePeriod).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsTry).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
+                        break;
+                }
+                if(position != 5){
+                    findViewById(R.id.trTimePeriod).setVisibility(View.GONE);
+                    findViewById(R.id.trPeriodCount).setVisibility(View.GONE);
+                    findViewById(R.id.trSinbin).setVisibility(View.GONE);
+                    findViewById(R.id.trPointsTry).setVisibility(View.GONE);
+                    findViewById(R.id.trPointsCon).setVisibility(View.GONE);
+                    findViewById(R.id.trPointsGoal).setVisibility(View.GONE);
                 }
             }
             @Override
@@ -119,8 +143,29 @@ public class prepare extends LinearLayout {
                 break;
             }
         }
+
+        String[] aCountType = new String[] {"down", "up"};
+        ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
+        aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sCountDown.setAdapter(aaCountType);
+
+        bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
     }
 
+    private void bWatchSettingsClick(){
+        if(watchsettings){
+            findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
+            findViewById(R.id.trScreenOn).setVisibility(View.GONE);
+            findViewById(R.id.trCountDown).setVisibility(View.GONE);
+            bWatchSettings.setText(R.string.bWatchSettings);
+        }else {
+            findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
+            findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
+            findViewById(R.id.trCountDown).setVisibility(View.VISIBLE);
+            bWatchSettings.setText(R.string.bWatchSettings2);
+        }
+        watchsettings = !watchsettings;
+    }
     public JSONObject getSettings(){
         JSONObject settings = new JSONObject();
         try {
@@ -139,7 +184,11 @@ public class prepare extends LinearLayout {
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
-            settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
+            if(watchsettings) {
+                settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
+                settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
+                settings.put("countdown", sCountDown.getSelectedItem().toString().equals("down") ? 1 : 0);
+            }
         }catch(Exception e){
             return null;
         }

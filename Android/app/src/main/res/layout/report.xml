@@ -9,7 +9,6 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="bGetMatchClick"
         android:text="@string/bGetMatch_text"
         android:textAlignment="center"
         android:textAllCaps="false"

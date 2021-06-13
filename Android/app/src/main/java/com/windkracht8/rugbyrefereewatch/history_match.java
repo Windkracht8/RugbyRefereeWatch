@@ -36,7 +36,7 @@ public class history_match extends LinearLayout{
         tvName = findViewById(R.id.tvName);
 
         if(last){
-            tvName.setBackgroundResource(0);
+            findViewById(R.id.llHistoryMatch).setBackgroundResource(0);
         }
         try {
             Date dMatchdate = new Date(match.getLong("matchid"));
@@ -77,33 +77,36 @@ public class history_match extends LinearLayout{
             case (MotionEvent.ACTION_UP):
                 timer.cancel();
                 if(event.getEventTime() - event.getDownTime() < 500) {
-                    MainActivity.historyMatchClick(match);
-                    performClick();
+                    if(hParent.selecting){
+                        toggleSelect();
+                    }else {
+                        MainActivity.historyMatchClick(match);
+                        performClick();
+                    }
                 }
                 return true;
             default:
                 return super.onTouchEvent(event);
         }
     }
-    @Override
+
+    @SuppressWarnings("EmptyMethod")
     public boolean performClick() {
         return super.performClick();
     }
 
     private void longpress() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                if(isselected) {
-                    tvName.setBackgroundColor(0);
-                    isselected = false;
-                }else{
-                    tvName.setBackgroundColor(R.attr.boxBackgroundColor);
-                    isselected = true;
-                }
-                hParent.selectionChanged();
-            }
-        });
+        new Handler(Looper.getMainLooper()).post(this::toggleSelect);
+    }
+
+    private void toggleSelect(){
+        if(isselected) {
+            unselect();
+        }else{
+            tvName.setBackgroundColor(R.attr.boxBackgroundColor);
+            isselected = true;
+        }
+        hParent.selectionChanged();
     }
 
     public void unselect(){

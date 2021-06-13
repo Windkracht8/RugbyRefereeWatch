@@ -22,9 +22,10 @@ public class history extends LinearLayout {
     private final LinearLayout llMatches;
     private final Button bExport;
     private final Button bDelete;
-    ArrayList<JSONObject> matches;
-    ArrayList<Long> deleted_matches;
+    final ArrayList<JSONObject> matches;
+    final ArrayList<Long> deleted_matches;
     JSONArray export_matches;
+    public boolean selecting = false;
 
     public history(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,19 +36,9 @@ public class history extends LinearLayout {
 
         llMatches = findViewById(R.id.llMatches);
         bExport = findViewById(R.id.bExport);
-        bExport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                exportSelected();
-            }
-        });
+        bExport.setOnClickListener(view -> exportSelected());
         bDelete = findViewById(R.id.bDelete);
-        bDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteSelected();
-            }
-        });
+        bDelete.setOnClickListener(view -> deleteSelected());
         matches = new ArrayList<>();
         deleted_matches = new ArrayList<>();
         loadMatches();
@@ -232,6 +223,7 @@ public class history extends LinearLayout {
     public void selectionChanged(){
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
+        selecting = false;
         for (int i=0; i < llMatches.getChildCount(); i++) {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
@@ -239,6 +231,7 @@ public class history extends LinearLayout {
                 if(tmp.isselected){
                     bExport.setVisibility(View.VISIBLE);
                     bDelete.setVisibility(View.VISIBLE);
+                    selecting = true;
                     return;
                 }
             }
@@ -287,7 +280,6 @@ public class history extends LinearLayout {
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
                 if(tmp.isselected){
-                    Log.i("history", "export match: " + i);
                     export_matches.put(tmp.match);
                 }
             }

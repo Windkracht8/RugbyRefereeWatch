@@ -31,12 +31,7 @@ public class report_card extends LinearLayout {
 
         tvReason = findViewById(R.id.tvReason);
         etReason = findViewById(R.id.etReason);
-        tvReason.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tvReasonClick(view);
-            }
-        });
+        tvReason.setOnClickListener(this::tvReasonClick);
         etReason.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
