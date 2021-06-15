@@ -16,8 +16,8 @@ var communicationListener = {
 			var responseData = "";
 			switch(requestMessage_js.requestType){
 				case "getMatches":
-					responseData = JSON.stringify(matches);
 					file_deletedMatches(requestMessage_js.requestData);
+					responseData = JSON.stringify(matches);
 					break;
 				case "getMatch":
 					responseData = JSON.stringify(match);
