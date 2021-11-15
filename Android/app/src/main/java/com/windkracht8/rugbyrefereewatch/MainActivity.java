@@ -1,5 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private static MainActivity ma;
     private static communication comms = null;
-    private static final int EXPORT_REQUEST_CODE = 2;
 
     private long backpresstime;
 
@@ -427,26 +428,27 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("application/json");
         intent.putExtra(Intent.EXTRA_TITLE, "matches.json");
 
-        ma.startActivityForResult(intent, EXPORT_REQUEST_CODE);
+        ma.exportMatchesActivityResultLauncher.launch(intent);
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,Intent resultData) {
-        super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == EXPORT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (resultData != null) {
-                Uri uri = resultData.getData();
-                OutputStream outputStream;
-                try {
-                    outputStream = getContentResolver().openOutputStream(uri);
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-                    history hHistory = findViewById(R.id.hHistory);
-                    bw.write(hHistory.export_matches.toString());
-                    bw.flush();
-                    bw.close();
-                } catch (Exception e) {
-                    Log.e("MainActivity", "onActivityResult: " + e.getMessage());
+    ActivityResultLauncher<Intent> exportMatchesActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        OutputStream outputStream;
+                        try {
+                            outputStream = getContentResolver().openOutputStream(uri);
+                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
+                            history hHistory = findViewById(R.id.hHistory);
+                            bw.write(hHistory.export_matches.toString());
+                            bw.flush();
+                            bw.close();
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "onActivityResult: " + e.getMessage());
+                        }
+                    }
                 }
-            }
-        }
-    }
+            });
 }

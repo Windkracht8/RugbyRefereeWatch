@@ -88,68 +88,36 @@ public class report extends LinearLayout {
         bView = findViewById(R.id.bView);
         bShare = findViewById(R.id.bShare);
 
-        bView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bViewClick();
+        bView.setOnClickListener(view -> bViewClick());
+        bShare.setOnClickListener(this::bShareClick);
+        tvHomeName.setOnClickListener(this::tvHomeNameClick);
+        etHomeName.setOnKeyListener((view, keyCode, event) -> {
+            if(keyCode == KeyEvent.KEYCODE_ENTER){
+                newHomeName(view);
+                return true;
+            }
+            return false;
+        });
+        etHomeName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                etHomeName.setVisibility(View.GONE);
+                tvHomeName.setVisibility(View.VISIBLE);
+                etHomeName.setText(tvHomeName.getText());
             }
         });
-        bShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bShareClick(view);
+        tvAwayName.setOnClickListener(this::tvAwayNameClick);
+        etAwayName.setOnKeyListener((view, keyCode, event) -> {
+            if(keyCode == KeyEvent.KEYCODE_ENTER){
+                newAwayName(view);
+                return true;
             }
+            return false;
         });
-        tvHomeName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tvHomeNameClick(view);
-            }
-        });
-        etHomeName.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER){
-                    newHomeName(view);
-                    return true;
-                }
-                return false;
-            }
-        });
-        etHomeName.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    etHomeName.setVisibility(View.GONE);
-                    tvHomeName.setVisibility(View.VISIBLE);
-                    etHomeName.setText(tvHomeName.getText());
-                }
-            }
-        });
-        tvAwayName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tvAwayNameClick(view);
-            }
-        });
-        etAwayName.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                if(keyCode == KeyEvent.KEYCODE_ENTER){
-                    newAwayName(view);
-                    return true;
-                }
-                return false;
-            }
-        });
-        etAwayName.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    etAwayName.setVisibility(View.GONE);
-                    tvAwayName.setVisibility(View.VISIBLE);
-                    etAwayName.setText(tvAwayName.getText());
-                }
+        etAwayName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                etAwayName.setVisibility(View.GONE);
+                tvAwayName.setVisibility(View.VISIBLE);
+                etAwayName.setText(tvAwayName.getText());
             }
         });
     }

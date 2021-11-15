@@ -295,14 +295,14 @@ function updateSinbins(){
 }
 function getSinbins(sinbins){
 	var html = "";
-	$.each(sinbins, function(index, value){
-		var remaining = value.end - timer.timer;
-		if(sinbins.hide === true || remaining < -(match.settings.sinbin / 2 * 60000)){
-			sinbins.hide = true;
-		}else if(sinbins.ended === true || remaining < 0){
-			if(sinbins.ended !== true){
+	$.each(sinbins, function(index, sinbin){
+		var remaining = sinbin.end - timer.timer;
+		if(sinbin.hide === true || remaining < -(match.settings.sinbin / 2 * 60000)){
+			sinbin.hide = true;
+		}else if(sinbin.ended === true || remaining < 0){
+			if(sinbin.ended !== true){
 				beep();
-				sinbins.ended = true;
+				sinbin.ended = true;
 			}
 			html += '<span class="redtext">' + prettyTimer(0) + "</span><br>";
 		}else{

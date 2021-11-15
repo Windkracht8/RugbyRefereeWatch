@@ -1,5 +1,5 @@
 /* global getCurrentTimestamp, settingsRead */
-/* exported fil_init, file_storeMatch, file_deletedMatches */
+/* exported file_init, file_storeMatch, file_deletedMatches */
 var useFileHandle = typeof(tizen.filesystem.openFile) === "function";
 var dirname = "wgt-private";
 var matches_filename = "matches.json";

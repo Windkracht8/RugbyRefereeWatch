@@ -192,6 +192,8 @@ public class history extends LinearLayout {
     }
 
     public void unselect(){
+        bExport.setVisibility(View.GONE);
+        bDelete.setVisibility(View.GONE);
         for (int i=0; i < llMatches.getChildCount(); i++) {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
