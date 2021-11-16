@@ -27,7 +27,7 @@
 </div>
 <div id="timer" onclick="timerClick()"><span id="timersec">40:00</span><span id="timermil">.0</span></div>
 <div id="timerstatus"></div>
-<button id="bconf" class="bottombutton" onclick="bconfClick()">configure</button>
+<div id="bconf" class="button bottombutton" onclick="bconfClick()"><img src="res/gear.png" onclick="bconfClick()"></div>
 <button id="bstart" class="overtimerbutton" onclick="bresumeClick()">start</button>
 <button id="bresume" class="overtimerbutton" onclick="bresumeClick()">resume</button>
 <button id="brest" class="bottombutton" onclick="brestClick()">rest</button>
@@ -72,80 +72,87 @@
 	<button id="card_yellow" onclick="card_yellowClick()">yellow</button>
 	<button id="card_red" onclick="card_redClick()">red</button>
 </div>
-<div id="correct" class="overlay">
+<div id="correct_overlay" class="overlay">
+	<div id="bconf2" class="" onclick="bconf2Click()">
+		<img src="res/gear.png" onclick="bconf2Click()">
+	</div>
+	Tab event to remove<br>
+	<div id="correct"></div>
 </div>
 <div id="conf" class="overlay">
-	Home<br>
-	<select id="color_home" onchange="color_homeChange()">
-		<option>black</option>
-		<option>blue</option>
-		<option>brown</option>
-		<option>gold</option>
-		<option>green</option>
-		<option>orange</option>
-		<option>pink</option>
-		<option>purple</option>
-		<option>red</option>
-		<option value="lightgray">white</option>
-	</select><br>
-	Away<br>
-	<select id="color_away" onchange="color_awayChange()">
-		<option>black</option>
-		<option>blue</option>
-		<option>brown</option>
-		<option>gold</option>
-		<option>green</option>
-		<option>orange</option>
-		<option>pink</option>
-		<option>purple</option>
-		<option>red</option>
-		<option value="lightgray">white</option>
-	</select><br>
-	Match type<br>
-	<select id="match_type" onchange="match_typeChange()">
-		<option selected>15s</option><option>10s</option><option>7s</option>
-		<option>beach 7s</option><option>beach 5s</option><option>custom</option>
-	</select><br>
-	<div id="custom_match">
-		Time/period<br>
-		<select id="period_time" onchange="period_timeChange()">
-			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-			<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-			<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-			<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
-			<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
-			<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
-			<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
-			<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
-			<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
-			<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
+	<div id="conf1">
+		Home<br>
+		<select id="color_home" onchange="color_homeChange()">
+			<option>black</option>
+			<option>blue</option>
+			<option>brown</option>
+			<option>gold</option>
+			<option>green</option>
+			<option>orange</option>
+			<option>pink</option>
+			<option>purple</option>
+			<option>red</option>
+			<option value="lightgray">white</option>
 		</select><br>
-		Period count<br>
-		<select id="period_count" onchange="period_countChange()">
-			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+		Away<br>
+		<select id="color_away" onchange="color_awayChange()">
+			<option>black</option>
+			<option>blue</option>
+			<option>brown</option>
+			<option>gold</option>
+			<option>green</option>
+			<option>orange</option>
+			<option>pink</option>
+			<option>purple</option>
+			<option>red</option>
+			<option value="lightgray">white</option>
 		</select><br>
-		Sinbin<br>
-		<select id="sinbin" onchange="sinbinChange()">
-			<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-			<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-			<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-			<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+		Match type<br>
+		<select id="match_type" onchange="match_typeChange()">
+			<option selected>15s</option><option>10s</option><option>7s</option>
+			<option>beach 7s</option><option>beach 5s</option><option>custom</option>
 		</select><br>
-		Points try<br>
-		<select id="points_try" onchange="points_tryChange()">
-			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-		</select><br>
-		Points conversion<br>
-		<select id="points_con" onchange="points_conChange()">
-			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-		</select><br>
-		Points goal<br>
-		<select id="points_goal" onchange="points_goalChange()">
-			<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-			<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-		</select>
+		<div id="custom_match">
+			Time/period<br>
+			<select id="period_time" onchange="period_timeChange()">
+				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+				<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+				<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+				<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
+				<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
+				<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
+				<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
+				<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
+			</select><br>
+			Period count<br>
+			<select id="period_count" onchange="period_countChange()">
+				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+			</select><br>
+			Sinbin<br>
+			<select id="sinbin" onchange="sinbinChange()">
+				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+				<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+			</select><br>
+			Points try<br>
+			<select id="points_try" onchange="points_tryChange()">
+				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+			</select><br>
+			Points conversion<br>
+			<select id="points_con" onchange="points_conChange()">
+				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+			</select><br>
+			Points goal<br>
+			<select id="points_goal" onchange="points_goalChange()">
+				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+			</select>
+		</div>
 	</div>
 	Record player<br>
 	<select id="record_player" onchange="record_playerChange()">

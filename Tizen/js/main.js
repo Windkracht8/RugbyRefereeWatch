@@ -61,9 +61,12 @@ window.onload = function () {
 			$('body').scrollTop($('body').scrollTop() - 50);
 		}
 	});
-	tizen.systeminfo.addPropertyValueChangeListener("BATTERY", updateBattery);
-
-	tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
+	try{
+		tizen.systeminfo.addPropertyValueChangeListener("BATTERY", updateBattery);
+		tizen.systeminfo.getPropertyValue("BATTERY", updateBattery);
+	}catch(e){
+		console.log("tizen.systeminfo exception " + e.message);
+	}
 	file_init();
 
 	updateTime();
@@ -74,8 +77,11 @@ window.onload = function () {
 	    	requestScreen_on();
 	    }
 	}
-	tizen.power.setScreenStateChangeListener(onScreenStateChanged);
-
+	try{
+		tizen.power.setScreenStateChangeListener(onScreenStateChanged);
+	}catch(e){
+		console.log("setScreenStateChangeListener exception " + e.message);
+	}
 };
  
 function back(){
@@ -99,7 +105,8 @@ function back(){
 				tizen.application.getCurrentApplication().exit();
 			}
 		}
-	} catch (ignore) {
+	} catch (e) {
+		console.log("back exception " + e.message);
 	}
 }
 function getCurrentTimestamp(){
@@ -151,7 +158,7 @@ function bresumeClick(){
 		case "rest":
 			//get ready for next period
 			timer.status = "ready";
-			updateTimer(0);
+			updateTimer();
 			break;
 	}
 }
@@ -189,8 +196,8 @@ function bfinishClick(){
 	file_storeMatch(match);
 }
 function bclearClick(){
-	updateTimer(0);
 	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
+	updateTimer();
 	match.home = {id:"home",team:"home",color:"green",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
 	match.away = {id:"away",team:"away",color:"red",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
 	match.events = [];
@@ -201,6 +208,7 @@ function bclearClick(){
 	$('#sinbins_away').html("");
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
+	$('#conf1').show();
 	$('#bconf').show();
 }
 
@@ -214,7 +222,7 @@ function update(){
 			$('#bstart').show();
 			break;
 		case "running":
-			updateTimer(getCurrentTimestamp() - timer.start);
+			updateTimer();
 			updateSinbins();
 			setTimeout(update, 50);
 			break;
@@ -226,7 +234,7 @@ function update(){
 		case "rest":
 			$('#bnext').show();
 			$('#bfinish').show();
-			updateTimer(getCurrentTimestamp() - timer.start);
+			updateTimer();
 			timerstatus = "rest";
 			setTimeout(update, 50);
 			break;
@@ -256,7 +264,14 @@ function updateTime(){
 	$('#time').html(result);
 	setTimeout(updateTime, 100);
 }
-function updateTimer(millisec){
+function updateTimer(){
+	var millisec = 0;
+	if(timer.status === "running" || timer.status === "rest"){
+		millisec = getCurrentTimestamp() - timer.start;
+	}
+	if(timer.status === "timeoff"){
+		millisec = timer.start_timeoff - timer.start;
+	}
 	timer.timer = millisec;
 
 	var temp = "";
@@ -451,8 +466,8 @@ function correctShow(){
 		items = item + items;
 	});
 
-	$('#correct').html("Tab event to remove<br>" + items);
-	$('#correct').show();
+	$('#correct').html(items);
+	$('#correct_overlay').show();
 }
 function removeEvent(index){
 	team_edit = match.events[index].team === match.home.id ? match.home : match.away;
@@ -480,7 +495,12 @@ function removeEvent(index){
 	match.events.splice(index, 1);
 
 	updateScore();
-	$('#correct').hide();
+	$('#correct_overlay').hide();
+}
+function bconf2Click(){
+	$('#correct_overlay').hide();
+	$('#conf1').hide();
+	bconfClick();
 }
 function bconfClick(){
 	$('#color_home').css('background', match.home.color);
@@ -570,7 +590,7 @@ function match_typeChange(){
 }
 function period_timeChange(){
 	match.settings.period_time = parseInt($('#period_time').val());
-	updateTimer(0);
+	updateTimer();
 }
 function period_countChange(){
 	match.settings.period_count = parseInt($('#period_count').val());
@@ -625,9 +645,8 @@ function countdownChange(){
 	countdownChanged();
 }
 function countdownChanged(){
-	updateTimer(0);
+	updateTimer();
 }
-
 
 function getPeriodName(){
 	if(match.settings.period_count === 2){
@@ -729,7 +748,7 @@ function incomingSettings(newsettings){
 	$('#away').css('background', match.away.color);
 	setNewSettings(newsettings);
 
-	updateTimer(0);
+	updateTimer();
 
 	file_storeSettings(match.settings);
 	return true;

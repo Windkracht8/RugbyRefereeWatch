@@ -69,42 +69,28 @@ select, input, button{
 	font-size: 15vh;
 	z-index: 3;
 }
-button{
+button, .button{
 	width: 100vw;
 	color: #2bd2e3;
 	background-color: rgba(0,0,0,.7);
+	z-index: 5;
+}
+.bottombutton img{
+	height: 20vh;
 }
 .overtimerbutton{
 	display: none;
 	position: fixed;
 	left: 0;
-	bottom: 20vh;
-	height: 43vh;
-	z-index: 5;
+	bottom: 22vh;
+	height: 41vh;
 }
 .bottombutton{
 	display: none;
 	position: fixed;
 	left: 0;
 	bottom: 0;
-	height: 20vh;
-	z-index: 5;
-}
-#bstart{
-	width: 100vw;
-	left: 0;
-}
-#bconf{
-	display: block;
-	width: 100vw;
 	height: 22vh;
-	bottom: 0;
-}
-#bresume, #breport, #bnext{
-	left: 0;
-}
-#brest{
-	right: 0;
 }
 
 .overlay{
@@ -156,6 +142,14 @@ button{
 	font-size: 5vw;
 	padding: 15vh 0 20vh;
 }
-#correct{
+#correct_overlay{
 	font-size: 10vw;
+}
+#bconf2{
+	position: absolute;
+	top: 0;
+	width: 100vw;
+}
+#bconf2 img{
+	height: 20vh;
 }
