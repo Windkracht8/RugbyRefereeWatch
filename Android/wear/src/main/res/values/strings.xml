@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Rugby Referee Watch</string>
+    <string name="matches_filename" translatable="false">matches.json</string>
+    <string name="settings_filename" translatable="false">settings.json</string>
+</resources>

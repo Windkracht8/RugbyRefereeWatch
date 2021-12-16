@@ -11,6 +11,9 @@ Android/gradle
 Android/app/build
 Android/app/release
 Android/app/debug
+Android/wear/build
+Android/wear/release
+Android/wear/debug
 *.jks
 *.aab
 *.apk
