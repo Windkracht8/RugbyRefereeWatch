@@ -17,7 +17,7 @@ public class Score extends ScrollView {
     private final TextView score_try;
     private final TextView score_con;
     private final TextView score_goal;
-    private Spinner player;
+    private final Spinner player;
 
     public Score(Context context, AttributeSet attrs) {
         super(context, attrs);

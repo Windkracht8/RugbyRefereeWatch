@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
+//TODO: 2nd conf button
 public class MainActivity extends Activity {
     private TextView battery;
     private TextView time;
@@ -56,9 +58,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        heightPixels = displayMetrics.heightPixels;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
+        }else {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            heightPixels = displayMetrics.heightPixels;
+        }
         setContentView(R.layout.activity_main);
 
         mainhandler = new Handler(Looper.getMainLooper());
@@ -528,10 +534,14 @@ public class MainActivity extends Activity {
     static long[] buzzpattern = {300,500,300,500,300,500};
     public static void beep(Context c){
         Log.i("MainActivity", "buzz buzz");
-        final Vibrator vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator vibrator;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
+        }else {
+            vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
+        }
         final VibrationEffect ve = VibrationEffect.createWaveform(buzzpattern, -1);
         vibrator.cancel();
         vibrator.vibrate(ve);
     }
-    //TODO: public void showMessage(String message){}
 }
