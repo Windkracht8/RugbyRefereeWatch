@@ -2,6 +2,8 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -11,6 +13,7 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -19,20 +22,44 @@ import com.google.android.gms.wearable.WearableListenerService;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.List;
 
 public class communication_wear extends WearableListenerService implements DataClient.OnDataChangedListener {
     private DataClient dataClient;
     public String status;
+    private Handler mainhandler;
 
     @SuppressWarnings("unused")
     public communication_wear(){}
     public communication_wear(Context context){
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
-        status = "DISCONNECTED";
+        status = "STARTING";
+        checkIfConnected();
+    }
+    private void checkIfConnected(){
+        Task<List<Node>> nodeListTask = Wearable.getNodeClient(getBaseContext()).getConnectedNodes();
+        nodeListTask.addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (Node node : task.getResult()) {
+                    if(node.isNearby()) {
+                        status = "CONNECTED";
+                        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+                        intent.putExtra("intentType", "updateStatus");
+                        intent.putExtra("newstatus", status);
+                        getBaseContext().sendBroadcast(intent);
+                        return;
+                    }
+                }
+                status = "OFFLINE";
+                mainhandler = new Handler(Looper.getMainLooper());
+                mainhandler.postDelayed(this::checkIfConnected, 15000);
+            }
+        });
     }
     public void stop(){
         dataClient.removeListener(this);
+        mainhandler.removeCallbacksAndMessages(null);
     }
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
@@ -45,7 +72,7 @@ public class communication_wear extends WearableListenerService implements DataC
             }
             if(dataMap.getString("responseData") == null){return;}
             String responseData = dataMap.getString("responseData");
-            Log.i("communication_wear", requestType + ": " + responseData);
+            Log.i("communication_wear", "Received " + requestType + ": " + responseData);
             gotResponse(requestType, responseData);
         }
     }
@@ -61,13 +88,7 @@ public class communication_wear extends WearableListenerService implements DataC
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         putDataReq.setUrgent();
         Task<DataItem> putDataTask = Wearable.getDataClient(context).putDataItem(putDataReq);
-        putDataTask.addOnCompleteListener(
-                task -> {
-                    if (!task.isSuccessful()) {
-                        Log.e("communication_wear", "sendRequest failed");
-                        gotError(context, "Request failed");
-                    }
-                });
+        putDataTask.addOnFailureListener(exception -> gotError(context, exception.getMessage()));
     }
 
     @SuppressWarnings("SameParameterValue")

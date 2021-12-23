@@ -85,11 +85,6 @@ public class Communication extends WearableListenerService {
         putDataReq.setUrgent();
         DataClient dataClient = Wearable.getDataClient(getApplicationContext());
         Task<DataItem> putDataTask = dataClient.putDataItem(putDataReq);
-        putDataTask.addOnCompleteListener(
-                task -> {
-                    if (!task.isSuccessful()) {
-                        Log.e("communication", "sendRequest failed");
-                    }
-                });
+        putDataTask.addOnFailureListener(exception -> Log.e("communication", "sendRequest failed: " + exception.getMessage()));
     }
 }

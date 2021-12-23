@@ -39,7 +39,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
-
+//TODO: improve the top layout
 public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private communication_tizen comms_tizen = null;
@@ -195,11 +195,9 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initWear(){
         comms_wear = new communication_wear(getApplicationContext());
-        comms_wear.status = "CONNECTED";//TODO: get connected status
         findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
         findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
         findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
-        updateStatus("CONNECTED");
     }
     private void destroyWear(){
         if (comms_wear != null) {
@@ -441,6 +439,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "CONNECTED":
                 status = getString(R.string.status_CONNECTED);
+                findViewById(R.id.bExit).setVisibility(View.VISIBLE);
+                findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
+                findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
+                findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
+                break;
+            case "OFFLINE":
+                status = getString(R.string.status_OFFLINE);
                 findViewById(R.id.bExit).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);

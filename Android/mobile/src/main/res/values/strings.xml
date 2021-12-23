@@ -47,6 +47,7 @@
     <string name="status_DISCONNECTED">Disconnected</string>
     <string name="status_CONNECTION_LOST">Connection lost</string>
     <string name="status_CONNECTED">Connected</string>
+    <string name="status_OFFLINE">Offline</string>
     <string name="status_GETTING_MATCHES">Getting matches</string>
     <string name="status_GETTING_MATCH">Getting match</string>
     <string name="status_PREPARE">Sending prepare</string>
