@@ -170,22 +170,22 @@
         </FrameLayout>
 
     </LinearLayout>
-    <com.windkracht8.rugbyrefereewatch.wearos.Conf
+    <com.windkracht8.rugbyrefereewatch.Conf
         android:id="@+id/conf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    <com.windkracht8.rugbyrefereewatch.wearos.Score
+    <com.windkracht8.rugbyrefereewatch.Score
         android:id="@+id/score"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    <com.windkracht8.rugbyrefereewatch.wearos.Report
+    <com.windkracht8.rugbyrefereewatch.Report
         android:id="@+id/report"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    <com.windkracht8.rugbyrefereewatch.wearos.Correct
+    <com.windkracht8.rugbyrefereewatch.Correct
         android:id="@+id/correct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

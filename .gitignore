@@ -8,9 +8,9 @@ Android/.gradle
 Android/.idea
 Android/build
 Android/gradle
-Android/app/build
-Android/app/release
-Android/app/debug
+Android/mobile/build
+Android/mobile/release
+Android/mobile/debug
 Android/wear/build
 Android/wear/release
 Android/wear/debug

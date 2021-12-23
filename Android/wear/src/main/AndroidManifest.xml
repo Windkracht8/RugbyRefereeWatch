@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.windkracht8.rugbyrefereewatch.wearos">
+    package="com.windkracht8.rugbyrefereewatch">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-feature android:name="android.hardware.type.watch" />
@@ -18,6 +18,15 @@
         <meta-data
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
+        <service
+            android:name="com.windkracht8.rugbyrefereewatch.Communication"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/rrw"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
