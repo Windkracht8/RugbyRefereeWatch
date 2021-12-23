@@ -18,7 +18,7 @@ public class communication_tizen extends SAAgentV2 {
         try {
             mAccessory.initialize(context);
         } catch (Exception e) {
-            Log.e("communication", "construct: " + e);
+            Log.e("communication_tizen", "construct: " + e);
             updateStatus("FATAL");
             gotError(e.getMessage());
             releaseAgent();
@@ -31,7 +31,7 @@ public class communication_tizen extends SAAgentV2 {
 
     @Override
     protected void onFindPeerAgentsResponse(SAPeerAgent[] peerAgents, int result) {
-        Log.i("communication", "onFindPeerAgentsResponse");
+        Log.i("communication_tizen", "onFindPeerAgentsResponse");
         if ((result == SAAgent.PEER_AGENT_FOUND) && (peerAgents != null)) {
             for(SAPeerAgent peerAgent:peerAgents)
                 requestServiceConnection(peerAgent);
@@ -49,7 +49,7 @@ public class communication_tizen extends SAAgentV2 {
 
     @Override
     protected void onServiceConnectionRequested(SAPeerAgent peerAgent) {
-        Log.i("communication", "onServiceConnectionRequested");
+        Log.i("communication_tizen", "onServiceConnectionRequested");
         if (peerAgent != null) {
             acceptServiceConnectionRequest(peerAgent);
         }
@@ -57,7 +57,7 @@ public class communication_tizen extends SAAgentV2 {
 
     @Override
     protected void onServiceConnectionResponse(SAPeerAgent peerAgent, SASocket socket, int result){
-        Log.i("communication", "onServiceConnectionResponse: " + result);
+        Log.i("communication_tizen", "onServiceConnectionResponse: " + result);
         switch(result){
             case SAAgent.CONNECTION_SUCCESS:
                 this.mConnectionHandler = (ServiceConnection) socket;
@@ -74,7 +74,7 @@ public class communication_tizen extends SAAgentV2 {
 
     @Override
     protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode) {
-        Log.i("communication", "onError: " + errorCode);
+        Log.i("communication_tizen", "onError: " + errorCode);
         super.onError(peerAgent, errorMessage, errorCode);
         gotError(errorMessage);
     }
@@ -82,12 +82,12 @@ public class communication_tizen extends SAAgentV2 {
     public class ServiceConnection extends SASocket {
         public ServiceConnection() {
             super(ServiceConnection.class.getName());
-            Log.i("communication", "ServiceConnection.ServiceConnection");
+            Log.i("communication_tizen", "ServiceConnection.ServiceConnection");
         }
 
         @Override
         public void onError(int channelId, String errorMessage, int errorCode) {
-            Log.i("communication", "ServiceConnection.onError: " + errorCode);
+            Log.i("communication_tizen", "ServiceConnection.onError: " + errorCode);
             gotError(errorCode + ": "  + errorMessage);
         }
 
@@ -95,7 +95,7 @@ public class communication_tizen extends SAAgentV2 {
         public void onReceive(int channelId, byte[] data) {
             try {
                 String sData = new String(data);
-                Log.i("communication", "ServiceConnection.onReceive: " + sData);
+                Log.i("communication_tizen", "ServiceConnection.onReceive: " + sData);
                 JSONObject responseMessage = new JSONObject(sData);
                 gotResponse(responseMessage);
             }catch(Exception e){
@@ -113,7 +113,7 @@ public class communication_tizen extends SAAgentV2 {
     }
 
     public void findPeers() {
-        Log.i("communication", "findPeers");
+        Log.i("communication_tizen", "findPeers");
         updateStatus("FINDING_PEERS");
         findPeerAgents();
     }
@@ -130,7 +130,7 @@ public class communication_tizen extends SAAgentV2 {
             gotError("Issue with json: " + e.getMessage());
             return;
         }
-        Log.i("communication", "sendRequest: " + requestMessage.toString());
+        Log.i("communication_tizen", "sendRequest: " + requestMessage.toString());
         try {
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
         } catch (IOException e) {
@@ -139,7 +139,7 @@ public class communication_tizen extends SAAgentV2 {
     }
 
     public void closeConnection() {
-        Log.i("communication", "closeConnection");
+        Log.i("communication_tizen", "closeConnection");
         if (mConnectionHandler != null) {
             mConnectionHandler.close();
             mConnectionHandler = null;
@@ -147,7 +147,7 @@ public class communication_tizen extends SAAgentV2 {
     }
 
     private void updateStatus(final String newstatus) {
-        Log.i("communication", "updateStatus: " + newstatus);
+        Log.i("communication_tizen", "updateStatus: " + newstatus);
         this.status = newstatus;
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateStatus");
@@ -155,7 +155,7 @@ public class communication_tizen extends SAAgentV2 {
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotError(final String error) {
-        Log.e("communication", "gotError: " + error);
+        Log.e("communication_tizen", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "gotError");
         intent.putExtra("error", error);
@@ -169,7 +169,7 @@ public class communication_tizen extends SAAgentV2 {
             intent.putExtra("responseData", responseMessage.getString("responseData"));
             getApplicationContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("communication_wear", "gotResponse error: " + e.getMessage());
+            Log.e("communication_tizen", "gotResponse error: " + e.getMessage());
             gotError("Invalid response");
         }
     }

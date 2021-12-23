@@ -11,6 +11,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -24,7 +25,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.samsung.android.sdk.accessory.SAAgentV2;
@@ -65,9 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
         handleOrientation();
 
-        //TODO: store tizenNotWear setting and do a guess on first boot
-        //tizenNotWear = guessTizenNotWear();
-        tizenNotWear = false;
+        SharedPreferences sharedpreferences = getSharedPreferences("com.windkracht8.rrw.prefs", Context.MODE_PRIVATE);
+        if(sharedpreferences.getBoolean("firstboot", true)){
+            tizenNotWear = guessTizenNotWear();
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean("firstboot", false);
+            editor.apply();
+        }else {
+            tizenNotWear = sharedpreferences.getBoolean("tizenNotWear", false);
+        }
 
         Spinner sOS = findViewById(R.id.sOS);
         int[] icons = {R.drawable.os_tizen, R.drawable.os_wear};
@@ -139,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         handleIntent();
     }
     private boolean guessTizenNotWear(){
-        //TODO: check for Wear OS app
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
             return true;
@@ -163,6 +168,10 @@ public class MainActivity extends AppCompatActivity {
             initTizen();
         }
         this.tizenNotWear = tizenNotWear;
+        SharedPreferences sharedpreferences = getSharedPreferences("com.windkracht8.rrw.prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putBoolean("tizenNotWear", tizenNotWear);
+        editor.apply();
     }
     private void initTizen(){
         try{
@@ -355,18 +364,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void bGetMatchesClick() {
-        if(!canSendRequest()){return;}
+        if(cantSendRequest()){return;}
         gotError("");
         history hHistory = findViewById(R.id.hHistory);
         sendRequest( "getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick() {
-        if(!canSendRequest()){return;}
+        if(cantSendRequest()){return;}
         gotError("");
         sendRequest("getMatch", null);
     }
     public void bPrepareClick() {
-        if(!canSendRequest()){return;}
+        if(cantSendRequest()){return;}
         gotError("");
         prepare pPrepare = findViewById(R.id.pPrepare);
         JSONObject requestData = pPrepare.getSettings();
@@ -383,16 +392,16 @@ public class MainActivity extends AppCompatActivity {
             communication_wear.sendRequest(this, requestType, requestData);
         }
     }
-    private boolean canSendRequest(){
+    private boolean cantSendRequest(){
         if(tizenNotWear && (comms_tizen == null || !comms_tizen.status.equals("CONNECTED"))){
             gotError(getString(R.string.first_connect));
-            return false;
+            return true;
         }
         if(!tizenNotWear && !comms_wear.status.equals("CONNECTED")){
             gotError(getString(R.string.first_connect));
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     private void historyMatchClick(String match) {
         try{

@@ -65,7 +65,7 @@
 
             role="consumer"
 
-            serviceImpl="com.windkracht8.rugbyrefereewatch.Communication"
+            serviceImpl="com.windkracht8.rugbyrefereewatch.communication_tizen"
 
             version="1.0"
 
