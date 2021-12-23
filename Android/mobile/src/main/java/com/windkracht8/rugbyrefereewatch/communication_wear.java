@@ -35,10 +35,10 @@ public class communication_wear extends WearableListenerService implements DataC
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
         status = "STARTING";
-        checkIfConnected();
+        checkIfConnected(context);
     }
-    private void checkIfConnected(){
-        Task<List<Node>> nodeListTask = Wearable.getNodeClient(getBaseContext()).getConnectedNodes();
+    private void checkIfConnected(Context context){
+        Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
         nodeListTask.addOnCompleteListener(task -> {
             if (task.isSuccessful()){
                 for (Node node : task.getResult()) {
@@ -47,13 +47,13 @@ public class communication_wear extends WearableListenerService implements DataC
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intentType", "updateStatus");
                         intent.putExtra("newstatus", status);
-                        getBaseContext().sendBroadcast(intent);
+                        context.sendBroadcast(intent);
                         return;
                     }
                 }
                 status = "OFFLINE";
                 mainhandler = new Handler(Looper.getMainLooper());
-                mainhandler.postDelayed(this::checkIfConnected, 15000);
+                mainhandler.postDelayed(() -> checkIfConnected(context), 15000);
             }
         });
     }
