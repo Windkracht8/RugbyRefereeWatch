@@ -163,8 +163,18 @@
                     android:layout_weight="22"
                     android:background="#B3000000"
                     android:text="conf"
+                    android:visibility="gone"
                     android:textColor="@color/w8blue"
                     android:textSize="24dp" />
+
+                <ImageButton
+                    android:id="@+id/bconf"
+                    android:layout_width="match_parent"
+                    android:layout_height="24sp"
+                    android:layout_weight="22"
+                    android:background="#B3000000"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/gear" />
 
             </LinearLayout>
         </FrameLayout>

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class MainActivity extends FragmentActivity {
     private TextView timerstatus;
     private Button overtimerbutton;
     private Button bottombutton;
+    private ImageButton bconf;
     private Conf conf;
     private Score score;
     private Correct correct;
@@ -99,6 +101,8 @@ public class MainActivity extends FragmentActivity {
         timerstatus = findViewById(R.id.timerstatus);
         overtimerbutton = findViewById(R.id.overtimerbutton);
         bottombutton = findViewById(R.id.bottombutton);
+        bconf = findViewById(R.id.bconf);
+        bconf.setOnClickListener(v -> bconfClick());
         conf = findViewById(R.id.conf);
         score = findViewById(R.id.score);
         TextView score_try = findViewById(R.id.score_try);
@@ -251,11 +255,10 @@ public class MainActivity extends FragmentActivity {
         String uistatus = "";
         overtimerbutton.setVisibility(View.GONE);
         bottombutton.setVisibility(View.GONE);
+        bconf.setVisibility(View.GONE);
         switch(timer_status){
             case "conf":
-                bottombutton.setText("conf");
-                bottombutton.setOnClickListener(v -> bconfClick());
-                bottombutton.setVisibility(View.VISIBLE);
+                bconf.setVisibility(View.VISIBLE);
             case "ready":
                 overtimerbutton.setText("start");
                 overtimerbutton.setOnClickListener(v -> bresumeClick());
