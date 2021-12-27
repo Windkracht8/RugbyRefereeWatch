@@ -290,6 +290,7 @@ public class history extends LinearLayout {
         unselect();
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "exportMatches");
+        intent.putExtra("source", "history");
         getContext().sendBroadcast(intent);
     }
 }

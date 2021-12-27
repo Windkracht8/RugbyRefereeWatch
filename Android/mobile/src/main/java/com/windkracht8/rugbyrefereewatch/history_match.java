@@ -83,6 +83,7 @@ public class history_match extends LinearLayout{
                     }else {
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intentType", "historyMatchClick");
+                        intent.putExtra("source", "historymatch");
                         intent.putExtra("match", match.toString());
                         getContext().sendBroadcast(intent);
                         performClick();

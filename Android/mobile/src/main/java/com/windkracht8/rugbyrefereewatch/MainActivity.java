@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if(!intent.hasExtra("intentType") || !intent.hasExtra("source")){return;}
                 if(!intent.hasExtra("source")){return;}
-                if(tizenNotWear && !intent.getStringExtra("source").equals("tizen")){return;}
-                if(!tizenNotWear && !intent.getStringExtra("source").equals("wear")){return;}
+                if(tizenNotWear && intent.getStringExtra("source").equals("wear")){return;}
+                if(!tizenNotWear && intent.getStringExtra("source").equals("tizen")){return;}
                 switch(intent.getStringExtra("intentType")){
                     case "gotError":
                         if(!intent.hasExtra("error")){return;}
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onSwipeRight() {
+    public void onSwipeRight() {//TODO: does not work if swiping below content
         if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
             tabHistoryClick();
         }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){

@@ -80,6 +80,7 @@ public class report_card extends LinearLayout {
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateCardReason");
+        intent.putExtra("source", "reportcard");
         intent.putExtra("reason", reason);
         intent.putExtra("matchid", matchid);
         intent.putExtra("eventid", eventid);

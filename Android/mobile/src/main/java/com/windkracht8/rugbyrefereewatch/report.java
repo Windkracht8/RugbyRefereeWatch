@@ -235,6 +235,7 @@ public class report extends LinearLayout {
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateTeamName");
+        intent.putExtra("source", "report");
         intent.putExtra("name", name);
         intent.putExtra("teamid", "home");
         intent.putExtra("matchid", matchid);
@@ -258,6 +259,7 @@ public class report extends LinearLayout {
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateTeamName");
+        intent.putExtra("source", "report");
         intent.putExtra("name", name);
         intent.putExtra("teamid", "away");
         intent.putExtra("matchid", matchid);
