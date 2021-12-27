@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconf2Click, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -69,8 +69,8 @@ window.onload = function () {
 	}
 	file_init();
 
-	updateTime();
 	update();
+	updateButtons();
 
 	function onScreenStateChanged(previousState, newState) {
 	    if(newState === 'SCREEN_NORMAL'){
@@ -120,7 +120,7 @@ function timerClick(){
 		timer.status = "timeoff";
 		timer.start_timeoff = getCurrentTimestamp();
 		logEvent("Time off", null, null);
-		update();
+		updateButtons();
 		startTimeOffBuzz();
 	}
 }
@@ -145,7 +145,6 @@ function bresumeClick(){
 			timer.period++;
 			timer.start = getCurrentTimestamp();
 			logEvent("Start " + getPeriodName(), getKickoffTeam(), null);
-			update();
 			updateScore();
 			break;
 		case "timeoff":
@@ -153,14 +152,13 @@ function bresumeClick(){
 			timer.status = "running";
 			timer.start += (getCurrentTimestamp() - timer.start_timeoff);
 			logEvent("Resume time", null, null);
-			update();
 			break;
 		case "rest":
 			//get ready for next period
 			timer.status = "ready";
-			updateTimer();
 			break;
 	}
+	updateButtons();
 }
 function brestClick(){
 	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
@@ -175,7 +173,7 @@ function brestClick(){
 	$.each(match.away.sinbins, function(index, value){
 		value.end = value.end - timer.timer;
 	});
-	update();
+	updateButtons();
 
 	if(match.events[match.events.length-1].what === "Time off"){
 		match.events.splice(match.events.length-1, 1);
@@ -187,7 +185,7 @@ function brestClick(){
 }
 function bfinishClick(){
 	timer.status = "finished";
-	update();
+	updateButtons();
 	updateScore();
 
 	if(match.events[match.events.length-1].what === "Rest start"){
@@ -203,7 +201,7 @@ function bclearClick(){
 	match.events = [];
 	match.matchid = 0;
 	updateScore();
-	update();
+	updateButtons();
 	$('#sinbins_home').html("");
 	$('#sinbins_away').html("");
 	$('#home').css('background', match.home.color);
@@ -212,31 +210,26 @@ function bclearClick(){
 	$('#bconf').show();
 }
 
-function update(){
+function updateButtons(){
 	var timerstatus = "";
-	$('.bottombutton, .overtimerbutton').each(function (){$(this).hide();});
+	$('.bottombutton, .overtimerbutton, #bconf2img').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
 			$('#bconf').show();
 		case "ready":
 			$('#bstart').show();
 			break;
-		case "running":
-			updateTimer();
-			updateSinbins();
-			setTimeout(update, 50);
-			break;
 		case "timeoff":
 			$('#bresume').show();
 			$('#brest').show();
+			$('#bconf2img').show();
 			timerstatus = "time off";
 			break;
 		case "rest":
 			$('#bnext').show();
 			$('#bfinish').show();
-			updateTimer();
+			$('#bconf2img').show();
 			timerstatus = "rest";
-			setTimeout(update, 50);
 			break;
 		case "finished":
 			$('#breport').show();
@@ -247,11 +240,24 @@ function update(){
 	$('#timerstatus').html(timerstatus);
 }
 
+function update(){
+	var millisecs = updateTime();
+	switch(timer.status){
+		case "running":
+			updateSinbins();
+		case "rest":
+			updateTimer();
+			break;
+	}
+	setTimeout(update, 1000 - millisecs);
+}
+
 function updateTime(){
 	var d = new Date();
 	var hours = d.getHours();
 	var mins = d.getMinutes();
 	var secs = d.getSeconds();
+	var millisecs = d.getMilliseconds();
 
 	var result = "";
 	if(hours < 10){result += "0";}
@@ -262,29 +268,28 @@ function updateTime(){
 	result += secs;
 
 	$('#time').html(result);
-	setTimeout(updateTime, 100);
+	return millisecs;
 }
 function updateTimer(){
-	var millisec = 0;
+	var millisecs = 0;
 	if(timer.status === "running" || timer.status === "rest"){
-		millisec = getCurrentTimestamp() - timer.start;
+		millisecs = getCurrentTimestamp() - timer.start;
 	}
 	if(timer.status === "timeoff"){
-		millisec = timer.start_timeoff - timer.start;
+		millisecs = timer.start_timeoff - timer.start;
 	}
-	timer.timer = millisec;
+	timer.timer = millisecs;
 
 	var temp = "";
 	if(match.settings.countdown === 1 && timer.status !== "rest"){
-		millisec = (match.settings.period_time * 60000) - millisec;
+		millisecs = (match.settings.period_time * 60000) - millisecs;
 	}
-	if(millisec < 0){
-		millisec -= millisec * 2;
+	if(millisecs < 0){
+		millisecs -= millisecs * 2;
 		temp = "-";
 	}
 
-	$('#timersec').html(temp + prettyTimer(millisec));
-	$('#timermil').html('.' + Math.floor((millisec % 1000) / 100));
+	$('#timer').html(temp + prettyTimer(millisecs));
 
 	if(!timer.periodended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
 		timer.periodended = true;
@@ -292,8 +297,8 @@ function updateTimer(){
 		beep();
 	}
 }
-function prettyTimer(millisec){
-	var sec = Math.floor(millisec / 1000);
+function prettyTimer(millisecs){
+	var sec = Math.floor(millisecs / 1000);
 	var mins = Math.floor(sec / 60);
 	sec = sec % 60;
 
@@ -498,7 +503,7 @@ function removeEvent(index){
 	$('#correct_overlay').hide();
 }
 function bconf2Click(){
-	$('#correct_overlay').hide();
+	if(timer.status === "conf"){return;}
 	$('#conf1').hide();
 	bconfClick();
 }

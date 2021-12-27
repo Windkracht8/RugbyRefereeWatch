@@ -15,8 +15,11 @@
 </head>
 
 <body>
-<div id="battery"><span id="battery_perc">100</span>%</div>
-<div id="time">00:00:00</div>
+<div id="bconf2" onclick="bconf2Click()">
+	<div id="battery"><span id="battery_perc">100</span>%</div>
+	<div id="time">00:00:00</div>
+	<img id="bconf2img" src="res/gear2.png">
+</div>
 <div id="home">
 	<div id="score_home" onclick="score_homeClick()">0</div>
 	<div id="sinbins_home"></div>
@@ -25,9 +28,9 @@
 	<div id="score_away" onclick="score_awayClick()">0</div>
 	<div id="sinbins_away"></div>
 </div>
-<div id="timer" onclick="timerClick()"><span id="timersec">40:00</span><span id="timermil">.0</span></div>
+<div id="timer" onclick="timerClick()">40:00</div>
 <div id="timerstatus"></div>
-<div id="bconf" class="button bottombutton" onclick="bconfClick()"><img src="res/gear.png" onclick="bconfClick()"></div>
+<div id="bconf" class="button bottombutton" onclick="bconfClick()"><img src="res/gear.png"></div>
 <button id="bstart" class="overtimerbutton" onclick="bresumeClick()">start</button>
 <button id="bresume" class="overtimerbutton" onclick="bresumeClick()">resume</button>
 <button id="brest" class="bottombutton" onclick="brestClick()">rest</button>
@@ -73,9 +76,6 @@
 	<button id="card_red" onclick="card_redClick()">red</button>
 </div>
 <div id="correct_overlay" class="overlay">
-	<div id="bconf2" class="" onclick="bconf2Click()">
-		<img src="res/gear.png" onclick="bconf2Click()">
-	</div>
 	Tab event to remove<br>
 	<div id="correct"></div>
 </div>

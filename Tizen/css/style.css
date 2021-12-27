@@ -58,9 +58,6 @@ select, input, button{
 	font-size: 30vh;
 	z-index: 1;
 }
-#timermil{
-	font-size: 15vh;
-}
 #timerstatus{
 	position: fixed;
 	left: 0;
