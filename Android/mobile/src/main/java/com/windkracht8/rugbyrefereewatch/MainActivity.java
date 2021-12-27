@@ -17,6 +17,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -26,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samsung.android.sdk.accessory.SAAgentV2;
 
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private long backpresstime;
     private BroadcastReceiver rrwReceiver;
     private boolean tizenNotWear = false;
+    private Handler mainhandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
         findViewById(R.id.bConnect).setOnClickListener(view -> bConnectClick());
-        findViewById(R.id.bExit).setOnClickListener(view -> bExitClick());
         findViewById(R.id.tabHistory).setOnClickListener(view -> tabHistoryClick());
         findViewById(R.id.tabReport).setOnClickListener(view -> tabReportClick());
         findViewById(R.id.tabPrepare).setOnClickListener(view -> tabPrepareClick());
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
 
         handleIntent();
+        mainhandler = new Handler(Looper.getMainLooper());
     }
     private boolean guessTizenNotWear(){
         try{
@@ -153,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
     private void switchOS(boolean tizenNotWear){
         if(this.tizenNotWear == tizenNotWear)return;
         findViewById(R.id.bConnect).setVisibility(View.GONE);
-        findViewById(R.id.bExit).setVisibility(View.GONE);
         findViewById(R.id.bGetMatches).setVisibility(View.GONE);
         findViewById(R.id.bGetMatch).setVisibility(View.GONE);
         findViewById(R.id.bPrepare).setVisibility(View.GONE);
@@ -261,19 +264,28 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        Date date = new Date();
-        if(date.getTime() - backpresstime < 1000){
-            bExitClick();
-        }
-        backpresstime = date.getTime();
+        mainhandler.removeCallbacks(this::explainDoubleBack);
         if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
             history hHistory = findViewById(R.id.hHistory);
-            hHistory.unselect();
+            if(hHistory.unselect()) return;
         }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
             tabHistoryClick();
+            return;
         }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
             tabReportClick();
+            return;
         }
+        Date date = new Date();
+        if(date.getTime() - backpresstime < 1000){
+            finish();
+            System.exit(0);
+        }else{
+            mainhandler.postDelayed(this::explainDoubleBack, 1000);
+        }
+        backpresstime = date.getTime();
+    }
+    private void explainDoubleBack(){
+        Toast.makeText(getApplicationContext(),"Press back twice to close", Toast.LENGTH_SHORT).show();
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -339,11 +351,6 @@ public class MainActivity extends AppCompatActivity {
             gotError(errorMessage);
         }
     };
-
-    public void bExitClick() {
-        finish();
-        System.exit(0);
-    }
 
     public void bConnectClick() {
         gotError("");
@@ -430,21 +437,18 @@ public class MainActivity extends AppCompatActivity {
             case "CONNECTION_LOST":
                 status = getString(R.string.status_CONNECTION_LOST);
                 findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
-                findViewById(R.id.bExit).setVisibility(View.GONE);
                 findViewById(R.id.bGetMatches).setVisibility(View.GONE);
                 findViewById(R.id.bGetMatch).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case "CONNECTED":
                 status = getString(R.string.status_CONNECTED);
-                findViewById(R.id.bExit).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 break;
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
-                findViewById(R.id.bExit).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
@@ -471,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 status = getString(R.string.status_ERROR);
                 findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
-                findViewById(R.id.bExit).setVisibility(View.GONE);
                 findViewById(R.id.bGetMatches).setVisibility(View.GONE);
                 findViewById(R.id.bGetMatch).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);

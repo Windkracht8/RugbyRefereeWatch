@@ -7,9 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class osAdapter extends BaseAdapter {
-    Context context;
-    int[] icons;
-    int[] names;
+    final private Context context;
+    final private int[] icons;
+    final private int[] names;
 
     public osAdapter(Context context, int[] icons, int[] names) {
         this.context = context;

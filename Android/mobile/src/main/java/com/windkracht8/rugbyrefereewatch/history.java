@@ -192,16 +192,17 @@ public class history extends LinearLayout {
         }
     }
 
-    public void unselect(){
+    public boolean unselect(){
+        boolean ret = false;
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
         for (int i=0; i < llMatches.getChildCount(); i++) {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
-                history_match tmp = (history_match)child;
-                tmp.unselect();
+                if(((history_match)child).unselect()) ret = true;
             }
         }
+        return ret;
     }
     public void deleteSelected(){
         for (int i=llMatches.getChildCount()-1; i >=0; i--) {

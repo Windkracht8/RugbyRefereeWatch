@@ -114,8 +114,10 @@ public class history_match extends LinearLayout{
         hParent.selectionChanged();
     }
 
-    public void unselect(){
+    public boolean unselect(){
+        boolean ret = isselected;
         tvName.setBackgroundColor(0);
         isselected = false;
+        return ret;
     }
 }
