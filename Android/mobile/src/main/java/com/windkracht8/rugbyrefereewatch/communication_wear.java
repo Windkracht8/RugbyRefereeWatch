@@ -47,6 +47,7 @@ public class communication_wear extends WearableListenerService implements DataC
                         status = "CONNECTED";
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intentType", "updateStatus");
+                        intent.putExtra("source", "wear");
                         intent.putExtra("newstatus", status);
                         context.sendBroadcast(intent);
                         return;
@@ -56,6 +57,7 @@ public class communication_wear extends WearableListenerService implements DataC
             status = "OFFLINE";
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intentType", "updateStatus");
+            intent.putExtra("source", "wear");
             intent.putExtra("newstatus", status);
             context.sendBroadcast(intent);
             mainhandler = new Handler(Looper.getMainLooper());
@@ -102,12 +104,14 @@ public class communication_wear extends WearableListenerService implements DataC
         Log.e("communication_wear", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "gotError");
+        intent.putExtra("source", "wear");
         intent.putExtra("error", error);
         context.sendBroadcast(intent);
     }
     private void gotResponse(final String requestType, final String responseData){
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "gotResponse");
+        intent.putExtra("source", "wear");
         intent.putExtra("requestType", requestType);
         intent.putExtra("responseData", responseData);
         dataClient.getApplicationContext().sendBroadcast(intent);

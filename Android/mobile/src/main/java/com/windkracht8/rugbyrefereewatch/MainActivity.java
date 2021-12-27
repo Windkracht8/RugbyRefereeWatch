@@ -100,15 +100,17 @@ public class MainActivity extends AppCompatActivity {
         rrwReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(!intent.hasExtra("intentType")){return;}
+                if(!intent.hasExtra("intentType") || !intent.hasExtra("source")){return;}
+                if(!intent.hasExtra("source")){return;}
+                if(tizenNotWear && !intent.getStringExtra("source").equals("tizen")){return;}
+                if(!tizenNotWear && !intent.getStringExtra("source").equals("wear")){return;}
                 switch(intent.getStringExtra("intentType")){
                     case "gotError":
                         if(!intent.hasExtra("error")){return;}
                         gotError(intent.getStringExtra("error"));
                         break;
                     case "gotResponse":
-                        if(!intent.hasExtra("requestType")){return;}
-                        if(!intent.hasExtra("responseData")){return;}
+                        if(!intent.hasExtra("responseData") || !intent.hasExtra("requestType")){return;}
                         gotResponse(intent.getStringExtra("requestType"), intent.getStringExtra("responseData"));
                     case "updateStatus":
                         if(!intent.hasExtra("newstatus")){return;}
@@ -119,17 +121,13 @@ public class MainActivity extends AppCompatActivity {
                         historyMatchClick(intent.getStringExtra("match"));
                         break;
                     case "updateTeamName":
-                        if(!intent.hasExtra("name")){return;}
-                        if(!intent.hasExtra("teamid")){return;}
-                        if(!intent.hasExtra("matchid")){return;}
+                        if(!intent.hasExtra("teamid") || !intent.hasExtra("matchid") || !intent.hasExtra("name")){return;}
                         updateTeamName(intent.getStringExtra("name"),
                                 intent.getStringExtra("teamid"),
                                 intent.getLongExtra("matchid", 0));
                         break;
                     case "updateCardReason":
-                        if(!intent.hasExtra("match")){return;}
-                        if(!intent.hasExtra("matchid")){return;}
-                        if(!intent.hasExtra("eventid")){return;}
+                        if(!intent.hasExtra("matchid") || !intent.hasExtra("eventid") || !intent.hasExtra("match")){return;}
                         updateCardReason(intent.getStringExtra("match"),
                                 intent.getLongExtra("matchid", 0),
                                 intent.getLongExtra("eventid", 0));
