@@ -7,17 +7,24 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="HardcodedText,NestedWeights,SpUsage"
-    >
+    android:background="#000"
+    tools:ignore="HardcodedText,NestedWeights,SpUsage">
+
+    <ImageButton
+        android:id="@+id/bconf2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#000"
+        android:contentDescription="configuration"
+        android:scaleType="centerInside"
+        android:src="@drawable/gear2" />
     <LinearLayout
         android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
         android:orientation="vertical"
         android:padding="@dimen/box_inset_layout_padding"
         tools:context=".MainActivity" >
-
         <TextView
             android:id="@+id/battery"
             android:layout_width="match_parent"
@@ -27,7 +34,6 @@
             android:text="100%"
             android:textColor="#FFF"
             android:textSize="14dp" />
-
         <TextView
             android:id="@+id/time"
             android:layout_width="match_parent"
@@ -67,8 +73,7 @@
         </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,41 +99,19 @@
                 android:orientation="vertical">
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="26dp"
-                    />
+                    android:layout_height="26dp"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/timersec"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="41"
                     android:background="#B3000000"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <TextView
-                        android:id="@+id/timersec"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="-10dp"
-                        android:layout_weight="1"
-                        android:gravity="top|end"
-                        android:includeFontPadding="false"
-                        android:text="00:00"
-                        android:textColor="#FFF"
-                        android:textSize="60dp" />
-
-                    <TextView
-                        android:id="@+id/timermil"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="-10dp"
-                        android:layout_weight="1"
-                        android:gravity="top|start"
-                        android:includeFontPadding="false"
-                        android:text=".0"
-                        android:textColor="#FFF"
-                        android:textSize="48dp" />
-                </LinearLayout>
+                    android:gravity="top|center"
+                    android:includeFontPadding="false"
+                    android:text="00:00"
+                    android:textColor="#FFF"
+                    android:textSize="60dp" />
                 <TextView
                     android:id="@+id/timerstatus"
                     android:layout_width="match_parent"
@@ -136,14 +119,11 @@
                     android:layout_weight="22"
                     android:gravity="center"
                     android:text="" />
-
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
                 <Button
                     android:id="@+id/overtimerbutton"
                     style="@android:style/Widget.DeviceDefault.Button.Borderless"
@@ -154,7 +134,6 @@
                     android:text="start"
                     android:textColor="@color/w8blue"
                     android:textSize="24dp" />
-
                 <Button
                     android:id="@+id/bottombutton"
                     style="@android:style/Widget.DeviceDefault.Button"
@@ -173,12 +152,11 @@
                     android:layout_height="24sp"
                     android:layout_weight="22"
                     android:background="#B3000000"
+                    android:contentDescription="configuration"
                     android:scaleType="centerInside"
                     android:src="@drawable/gear" />
-
             </LinearLayout>
         </FrameLayout>
-
     </LinearLayout>
     <com.windkracht8.rugbyrefereewatch.Conf
         android:id="@+id/conf"

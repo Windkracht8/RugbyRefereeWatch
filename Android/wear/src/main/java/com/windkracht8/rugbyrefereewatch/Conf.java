@@ -23,6 +23,8 @@ public class Conf extends ScrollView {
     private final Switch screen_on;
     private final Spinner timer_type;
 
+    private boolean conf2 = false;
+
     public Conf(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -145,6 +147,12 @@ public class Conf extends ScrollView {
 
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setSelection(MainActivity.timer_type);
+        findViewById(R.id.conf1).setVisibility(View.VISIBLE);
+        conf2 = false;
+    }
+    public void conf2(){
+        findViewById(R.id.conf1).setVisibility(View.GONE);
+        conf2 = true;
     }
     private void selectitem(Spinner spin, String str){
         for (int i=0;i<spin.getCount();i++){
@@ -155,17 +163,18 @@ public class Conf extends ScrollView {
         }
     }
     public void save(matchdata match){
-        match.home.color = color_home.getSelectedItem().toString();
-        match.away.color = color_away.getSelectedItem().toString();
-        match.match_type = match_type.getSelectedItem().toString();
+        if(!conf2) {
+            match.home.color = color_home.getSelectedItem().toString();
+            match.away.color = color_away.getSelectedItem().toString();
+            match.match_type = match_type.getSelectedItem().toString();
 
-        match.period_time = period_time.getSelectedItemPosition()+1;
-        match.period_count = period_count.getSelectedItemPosition()+1;
-        match.sinbin = sinbin.getSelectedItemPosition()+1;
-        match.points_try = points_try.getSelectedItemPosition();
-        match.points_con = points_con.getSelectedItemPosition();
-        match.points_goal = points_goal.getSelectedItemPosition();
-
+            match.period_time = period_time.getSelectedItemPosition() + 1;
+            match.period_count = period_count.getSelectedItemPosition() + 1;
+            match.sinbin = sinbin.getSelectedItemPosition() + 1;
+            match.points_try = points_try.getSelectedItemPosition();
+            match.points_con = points_con.getSelectedItemPosition();
+            match.points_goal = points_goal.getSelectedItemPosition();
+        }
         MainActivity.screen_on = screen_on.isChecked();
         MainActivity.timer_type = timer_type.getSelectedItemPosition();
     }
