@@ -503,7 +503,7 @@ function removeEvent(index){
 	$('#correct_overlay').hide();
 }
 function bconf2Click(){
-	if(timer.status === "conf"){return;}
+	if(timer.status === "conf" || timer.status === "running"){return;}
 	$('#conf1').hide();
 	bconfClick();
 }
