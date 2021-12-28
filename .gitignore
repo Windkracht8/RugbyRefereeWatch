@@ -8,11 +8,10 @@ Android/.gradle
 Android/.idea
 Android/build
 Android/gradle
+Android/release
 Android/mobile/build
-Android/mobile/release
 Android/mobile/debug
 Android/wear/build
-Android/wear/release
 Android/wear/debug
 *.jks
 *.aab
