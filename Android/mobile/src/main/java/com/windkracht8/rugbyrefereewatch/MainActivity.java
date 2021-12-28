@@ -376,17 +376,24 @@ public class MainActivity extends AppCompatActivity {
             comms_tizen.findPeers();
         }
     }
+    private void setButtonProcessing(int vid){
+        findViewById(vid).setEnabled(false);
+        mainhandler.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
+    }
     public void bGetMatchesClick() {
+        setButtonProcessing(R.id.bGetMatches);
         if(cantSendRequest()){return;}
         gotError("");
         sendRequest( "getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick() {
+        setButtonProcessing(R.id.bGetMatch);
         if(cantSendRequest()){return;}
         gotError("");
         sendRequest("getMatch", null);
     }
     public void bPrepareClick() {
+        setButtonProcessing(R.id.bPrepare);
         if(cantSendRequest()){return;}
         gotError("");
         JSONObject requestData = pPrepare.getSettings();
@@ -510,6 +517,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "getMatches":
                     Log.i("MainActivity.gotResponse", "getMatches");
+                    findViewById(R.id.bGetMatches).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 2){gotError("invalid response");break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
@@ -517,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "getMatch":
                     Log.i("MainActivity.gotResponse", "getMatch");
+                    findViewById(R.id.bGetMatch).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 1){gotError("invalid response");break;}
                     JSONObject getMatchResponse = new JSONObject(responseData);
@@ -524,6 +533,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "prepare":
                     Log.i("MainActivity.gotResponse", "prepare");
+                    findViewById(R.id.bPrepare).setEnabled(true);
                     if (!responseData.equals("okilly dokilly")) {
                         gotError(responseData);
                     }
