@@ -594,8 +594,7 @@ public class MainActivity extends FragmentActivity {
             ret.put("points_try", match.points_try);
             ret.put("points_con", match.points_con);
             ret.put("points_goal", match.points_goal);
-
-            ret.put("screen_on", screen_on ? 1 : 0);
+            ret.put("screen_on", (int)(screen_on ? 1 : 0));
             ret.put("timer_type", timer_type);
 
         } catch (Exception e) {

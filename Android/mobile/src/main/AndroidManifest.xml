@@ -9,6 +9,7 @@
     <uses-permission android:name="com.samsung.WATCH_APP_TYPE.Companion"/>
     <queries>
         <package android:name="com.samsung.accessory" />
+        <package android:name="com.google.android.wearable.app" />
     </queries>
 
     <application

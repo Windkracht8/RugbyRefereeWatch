@@ -42,7 +42,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
-//TODO: improve the top layout
+
 public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private communication_tizen comms_tizen = null;
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initWear(){
         try{
-            getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_ACTIVITIES);
+            getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
         }catch(PackageManager.NameNotFoundException e){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);
