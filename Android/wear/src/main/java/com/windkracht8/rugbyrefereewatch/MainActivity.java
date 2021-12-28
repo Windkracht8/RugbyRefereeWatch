@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity {
     private static boolean timer_periodended = false;
     private static int timer_period = 0;
     public static boolean screen_on = true;
-    public static boolean countdown = true;
+    public static int timer_type = 1;//0:up, 1:down
 
     private Handler mainhandler;
     private static BroadcastReceiver settingsupdateReceiver;
@@ -348,7 +348,7 @@ public class MainActivity extends FragmentActivity {
         timer_timer = millisec;
 
         String temp = "";
-        if(countdown && !timer_status.equals("rest")){
+        if(timer_type == 1 && !timer_status.equals("rest")){
             millisec = ((long)match.period_time * 60000) - millisec;
         }
         if(millisec < 0){
@@ -568,14 +568,40 @@ public class MainActivity extends FragmentActivity {
             match.points_goal = newsettings.getInt("points_goal");
 
             if(newsettings.has("screen_on"))
-                screen_on = newsettings.getBoolean("screen_on");
+                screen_on = newsettings.getInt("screen_on") == 1;
             if(newsettings.has("countdown"))
-                countdown = newsettings.getBoolean("countdown");
+                timer_type = newsettings.getInt("countdown");
+            if(newsettings.has("timer_type"))
+                timer_type = newsettings.getInt("timer_type");
         } catch (Exception e) {
             Log.e("MainActivity", "incomingSettings: " + e.getMessage());
             return false;
         }
         return true;
+    }
+
+    public static JSONObject getSettings(){
+        JSONObject ret = new JSONObject();
+        try{
+            ret.put("home_name", match.home.team);
+            ret.put("home_color", match.home.color);
+            ret.put("away_name", match.home.team);
+            ret.put("away_color", match.home.color);
+            ret.put("match_type", match.match_type);
+            ret.put("period_time", match.period_time);
+            ret.put("period_count", match.period_count);
+            ret.put("sinbin", match.sinbin);
+            ret.put("points_try", match.points_try);
+            ret.put("points_con", match.points_con);
+            ret.put("points_goal", match.points_goal);
+
+            ret.put("screen_on", screen_on ? 1 : 0);
+            ret.put("timer_type", timer_type);
+
+        } catch (Exception e) {
+            Log.e("Filestore", "file_deletedMatches: " + e.getMessage());
+        }
+        return ret;
     }
 
     static long[] buzzpattern = {300,500,300,500,300,500};

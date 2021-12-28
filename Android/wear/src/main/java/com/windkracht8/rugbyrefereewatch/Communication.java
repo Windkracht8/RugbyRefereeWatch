@@ -43,15 +43,22 @@ public class Communication extends WearableListenerService {
                         Log.e("communication", "No requestData for request sync");
                         return;
                     }
-                    responseData = Filestore.file_deletedMatches(getApplicationContext(), requestData);
-
+                    try{
+                        JSONObject responseData_json = new JSONObject(requestData);
+                        responseData_json.put("matches", Filestore.file_deletedMatches(getApplicationContext(), requestData));
+                        responseData_json.put("settings", MainActivity.getSettings());
+                        responseData = responseData_json.toString();
+                    } catch (Exception e) {
+                        Log.e("communication", "sync: " + e.getMessage());
+                        responseData = "unexpected error";
+                    }
                     break;
                 case "getMatches":
                     if(requestData == null){
                         Log.e("communication", "No requestData for request getMatches");
                         return;
                     }
-                    responseData = Filestore.file_deletedMatches(getApplicationContext(), requestData);
+                    responseData = Filestore.file_deletedMatches(getApplicationContext(), requestData).toString();
                     break;
                 case "getMatch":
                     responseData = MainActivity.match.tojson().toString();

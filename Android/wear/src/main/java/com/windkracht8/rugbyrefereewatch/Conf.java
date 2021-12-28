@@ -21,7 +21,7 @@ public class Conf extends ScrollView {
     private final Spinner points_con;
     private final Spinner points_goal;
     private final Switch screen_on;
-    private final Spinner countdown;
+    private final Spinner timer_type;
 
     public Conf(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,7 +39,7 @@ public class Conf extends ScrollView {
         points_con = findViewById(R.id.points_con);
         points_goal = findViewById(R.id.points_goal);
         screen_on = findViewById(R.id.screen_on);
-        countdown = findViewById(R.id.countdown);
+        timer_type = findViewById(R.id.timer_type);
 
         String[] aTemp = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
         ArrayAdapter<String> aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
@@ -125,10 +125,10 @@ public class Conf extends ScrollView {
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        String[] aCountType = new String[] {"down", "up"};
-        ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
-        aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        countdown.setAdapter(aaCountType);
+        aTemp = new String[] {"Count up", "Count down"};
+        aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
+        aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timer_type.setAdapter(aaTemp);
     }
 
     public void load(matchdata match){
@@ -144,11 +144,7 @@ public class Conf extends ScrollView {
         points_goal.setSelection(match.points_goal);
 
         screen_on.setChecked(MainActivity.screen_on);
-        if(MainActivity.countdown){
-            selectitem(countdown, "down");
-        }else{
-            selectitem(countdown, "up");
-        }
+        timer_type.setSelection(MainActivity.timer_type);
     }
     private void selectitem(Spinner spin, String str){
         for (int i=0;i<spin.getCount();i++){
@@ -171,6 +167,6 @@ public class Conf extends ScrollView {
         match.points_goal = points_goal.getSelectedItemPosition();
 
         MainActivity.screen_on = screen_on.isChecked();
-        MainActivity.countdown = countdown.getSelectedItem().toString().equals("down");
+        MainActivity.timer_type = timer_type.getSelectedItemPosition();
     }
 }

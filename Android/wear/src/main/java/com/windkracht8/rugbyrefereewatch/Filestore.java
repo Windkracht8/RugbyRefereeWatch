@@ -21,18 +21,17 @@ public class Filestore {
         file_storeMatches(context, matches);
     }
     //Store all merchants
-    public static String file_storeMatches(Context context, ArrayList<matchdata> matches){
+    public static JSONArray file_storeMatches(Context context, ArrayList<matchdata> matches){
+        JSONArray jsonaMatches = new JSONArray();
         try {
-            JSONArray jsonaMatches = new JSONArray();
             for (int i=0; i < matches.size(); i++) {
                 jsonaMatches.put(matches.get(i).tojson());
             }
             storeFile(context, R.string.matches_filename, jsonaMatches.toString());
-            return jsonaMatches.toString();
         } catch (Exception e) {
             Log.e("Filestore", "file_storeMatches: " + e.getMessage());
         }
-        return "";
+        return jsonaMatches;
     }
     //Return an array of stored matches
     public static ArrayList<matchdata> file_readMatches(Context context){
@@ -62,7 +61,7 @@ public class Filestore {
         file_storeMatches(context, matches);
     }
     //The phone sends a list of matches that can be deleted
-    public static String file_deletedMatches(Context context, String requestdata){
+    public static JSONArray file_deletedMatches(Context context, String requestdata){
         try{
             JSONObject requestdata_json = new JSONObject(requestdata);
             JSONArray deleted_matches = requestdata_json.getJSONArray("deleted_matches");
@@ -79,13 +78,13 @@ public class Filestore {
         } catch (Exception e) {
             Log.e("Filestore", "file_deletedMatches: " + e.getMessage());
         }
-        return "";
+        return new JSONArray();
     }
     public static void file_storeSettings(Context context){
         try{
             JSONObject jsonSettings = new JSONObject();
             jsonSettings.put("screen_on", MainActivity.screen_on);
-            jsonSettings.put("countdown", MainActivity.countdown);
+            jsonSettings.put("timer_type", MainActivity.timer_type);
             jsonSettings.put("match_type", MainActivity.match.match_type);
             jsonSettings.put("period_time", MainActivity.match.period_time);
             jsonSettings.put("period_count", MainActivity.match.period_count);
@@ -104,7 +103,7 @@ public class Filestore {
             if(sSettings.length() < 3){ return;}
             JSONObject jsonSettings = new JSONObject(sSettings);
             MainActivity.screen_on = jsonSettings.getBoolean("screen_on");
-            MainActivity.countdown = jsonSettings.getBoolean("countdown");
+            MainActivity.timer_type = jsonSettings.getInt("timer_type");
             MainActivity.match.match_type = jsonSettings.getString("match_type");
             MainActivity.match.period_time = jsonSettings.getInt("period_time");
             MainActivity.match.period_count = jsonSettings.getInt("period_count");

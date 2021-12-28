@@ -166,7 +166,7 @@
             android:textColor="#FFF"
             android:textSize="24dp" />
         <Spinner
-            android:id="@+id/countdown"
+            android:id="@+id/timer_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center" />
