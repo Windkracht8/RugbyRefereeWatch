@@ -8,14 +8,12 @@ import android.widget.TextView;
 
 public class osAdapter extends BaseAdapter {
     final private Context context;
-    final private int[] icons;
-    final private int[] names;
+    final private int[] icons = {R.drawable.os_tizen, R.drawable.os_wear};
+    final private int[] names = {R.string.os_tizen, R.string.os_wear};
 
-    public osAdapter(Context context, int[] icons, int[] names) {
+    public osAdapter(Context context) {
         this.context = context;
         this.context.setTheme(R.style.AppTheme);
-        this.icons = icons;
-        this.names = names;
     }
 
     @Override

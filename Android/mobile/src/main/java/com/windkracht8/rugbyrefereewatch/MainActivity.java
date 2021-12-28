@@ -53,11 +53,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean tizenNotWear = false;
     private Handler mainhandler;
 
+    private history hHistory;
+    private report rReport;
+    private prepare pPrepare;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
+        hHistory = findViewById(R.id.hHistory);
+        rReport = findViewById(R.id.rReport);
+        pPrepare = findViewById(R.id.pPrepare);
         findViewById(R.id.bConnect).setOnClickListener(view -> bConnectClick());
         findViewById(R.id.tabHistory).setOnClickListener(view -> tabHistoryClick());
         findViewById(R.id.tabReport).setOnClickListener(view -> tabReportClick());
@@ -79,11 +86,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Spinner sOS = findViewById(R.id.sOS);
-        int[] icons = {R.drawable.os_tizen, R.drawable.os_wear};
-        int[] names = {R.string.os_tizen, R.string.os_wear};
-        osAdapter osa = new osAdapter(getApplicationContext(), icons, names);
+        osAdapter osa = new osAdapter(getApplicationContext());
         sOS.setAdapter(osa);
-
         sOS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -155,20 +159,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void switchOS(boolean tizenNotWear){
-        if(this.tizenNotWear == tizenNotWear)return;
+        if(this.tizenNotWear == tizenNotWear) return;
+        this.tizenNotWear = tizenNotWear;
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         findViewById(R.id.bGetMatches).setVisibility(View.GONE);
         findViewById(R.id.bGetMatch).setVisibility(View.GONE);
         findViewById(R.id.bPrepare).setVisibility(View.GONE);
         updateStatus("DISCONNECTED");
-        if(this.tizenNotWear){
-            destroyTizen();
-            initWear();
-        }else{
+        findViewById(R.id.tvStatus).setVisibility(View.VISIBLE);
+        if(tizenNotWear){
             destroyWear();
             initTizen();
+        }else{
+            destroyTizen();
+            initWear();
         }
-        this.tizenNotWear = tizenNotWear;
         SharedPreferences sharedpreferences = getSharedPreferences("com.windkracht8.rrw.prefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putBoolean("tizenNotWear", tizenNotWear);
@@ -182,8 +187,7 @@ public class MainActivity extends AppCompatActivity {
             updateStatus("DISCONNECTED");
         }catch(PackageManager.NameNotFoundException e){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
-            TextView tvError = findViewById(R.id.tvError);
-            tvError.setText(R.string.tvFatal);
+            ((TextView)findViewById(R.id.tvError)).setText(R.string.noTizenLib);
             findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.samsung.accessory"))));
         }
     }
@@ -195,6 +199,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void initWear(){
+        try{
+            getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_ACTIVITIES);
+        }catch(PackageManager.NameNotFoundException e){
+            findViewById(R.id.tvStatus).setVisibility(View.GONE);
+            ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);
+            findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.wearable.app"))));
+            return;
+        }
         comms_wear = new communication_wear(getApplicationContext());
         findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
         findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
@@ -230,7 +242,6 @@ public class MainActivity extends AppCompatActivity {
             br.close();
             String sNewmatches = text.toString();
             JSONArray newmatches = new JSONArray(sNewmatches);
-            history hHistory = findViewById(R.id.hHistory);
             hHistory.gotMatches(newmatches);
         } catch (Exception e) {
             Log.e("MainActivity", "handleIntent read file: " + e.getMessage());
@@ -265,13 +276,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         mainhandler.removeCallbacks(this::explainDoubleBack);
-        if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
-            history hHistory = findViewById(R.id.hHistory);
+        if(hHistory.getVisibility() == View.VISIBLE){
             if(hHistory.unselect()) return;
-        }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
+        }else if(rReport.getVisibility() == View.VISIBLE){
             tabHistoryClick();
             return;
-        }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
+        }else if(pPrepare.getVisibility() == View.VISIBLE){
             tabReportClick();
             return;
         }
@@ -323,17 +333,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSwipeRight() {//TODO: does not work if swiping below content
-        if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
+        if(rReport.getVisibility() == View.VISIBLE){
             tabHistoryClick();
-        }else if(findViewById(R.id.pPrepare).getVisibility() == View.VISIBLE){
+        }else if(pPrepare.getVisibility() == View.VISIBLE){
             tabReportClick();
         }
     }
 
     public void onSwipeLeft() {
-        if(findViewById(R.id.hHistory).getVisibility() == View.VISIBLE){
+        if(hHistory.getVisibility() == View.VISIBLE){
             tabReportClick();
-        }else if(findViewById(R.id.rReport).getVisibility() == View.VISIBLE){
+        }else if(rReport.getVisibility() == View.VISIBLE){
             tabPrepareClick();
         }
     }
@@ -369,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
     public void bGetMatchesClick() {
         if(cantSendRequest()){return;}
         gotError("");
-        history hHistory = findViewById(R.id.hHistory);
         sendRequest( "getMatches", hHistory.getDeletedMatches());
     }
     public void bGetMatchClick() {
@@ -380,7 +389,6 @@ public class MainActivity extends AppCompatActivity {
     public void bPrepareClick() {
         if(cantSendRequest()){return;}
         gotError("");
-        prepare pPrepare = findViewById(R.id.pPrepare);
         JSONObject requestData = pPrepare.getSettings();
         if(requestData == null){
             gotError("Error with settings");
@@ -400,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
             gotError(getString(R.string.first_connect));
             return true;
         }
-        if(!tizenNotWear && !comms_wear.status.equals("CONNECTED")){
+        if(!tizenNotWear && !comms_wear.status.equals("CONNECTED") && !comms_wear.status.equals("OFFLINE")){
             gotError(getString(R.string.first_connect));
             return true;
         }
@@ -409,7 +417,6 @@ public class MainActivity extends AppCompatActivity {
     private void historyMatchClick(String match) {
         try{
             JSONObject match_json = new JSONObject(match);
-            report rReport = findViewById(R.id.rReport);
             rReport.gotMatch(match_json);
             tabReportClick();
         } catch (Exception e) {
@@ -446,6 +453,9 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
+                if(cantSendRequest()){break;}
+                gotError("");
+                sendRequest( "sync", hHistory.getDeletedMatches());
                 break;
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
@@ -483,22 +493,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gotResponse(final String requestType, final String responseData){
+        int responseType = 0;
+        if(responseData.startsWith("{")) responseType = 1;//JSONObject
+        if(responseData.startsWith("[")) responseType = 2;//JSONArray
         try {
             switch (requestType) {
+                case "sync":
+                    Log.i("MainActivity.gotResponse", "sync");
+                    if(responseType != 1){break;}//Silently ignore for now
+                    JSONObject syncResponse = new JSONObject(responseData);
+                    if(!syncResponse.has("matches") || !syncResponse.has("settings")){
+                        Log.e("MainActivity", "incomplete response");
+                    }
+                    hHistory.gotMatches(syncResponse.getJSONArray("matches"));
+                    pPrepare.gotSettings(syncResponse.getJSONObject("settings"));
+                    break;
                 case "getMatches":
-                    Log.i("MainActivity.gotResult", "getMatches");
+                    Log.i("MainActivity.gotResponse", "getMatches");
+                    if(responseType == 0){gotError(responseData);break;}
+                    if(responseType != 2){gotError("invalid response");break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
-                    history hHistory = findViewById(R.id.hHistory);
                     hHistory.gotMatches(getMatchesResponse);
                     break;
                 case "getMatch":
-                    Log.i("MainActivity.gotResult", "getMatch");
+                    Log.i("MainActivity.gotResponse", "getMatch");
+                    if(responseType == 0){gotError(responseData);break;}
+                    if(responseType != 1){gotError("invalid response");break;}
                     JSONObject getMatchResponse = new JSONObject(responseData);
-                    report rReport = findViewById(R.id.rReport);
                     rReport.gotMatch(getMatchResponse);
                     break;
                 case "prepare":
-                    Log.i("MainActivity.gotResult", "prepare");
+                    Log.i("MainActivity.gotResponse", "prepare");
                     if (!responseData.equals("okilly dokilly")) {
                         gotError(responseData);
                     }
@@ -521,33 +546,31 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tabHistory).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
-        findViewById(R.id.hHistory).setVisibility(View.VISIBLE);
-        findViewById(R.id.rReport).setVisibility(View.GONE);
-        findViewById(R.id.pPrepare).setVisibility(View.GONE);
+        hHistory.setVisibility(View.VISIBLE);
+        rReport.setVisibility(View.GONE);
+        pPrepare.setVisibility(View.GONE);
     }
     public void tabReportClick() {
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
-        findViewById(R.id.hHistory).setVisibility(View.GONE);
-        findViewById(R.id.rReport).setVisibility(View.VISIBLE);
-        findViewById(R.id.pPrepare).setVisibility(View.GONE);
+        hHistory.setVisibility(View.GONE);
+        rReport.setVisibility(View.VISIBLE);
+        pPrepare.setVisibility(View.GONE);
     }
     public void tabPrepareClick() {
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(R.drawable.tab_active);
-        findViewById(R.id.hHistory).setVisibility(View.GONE);
-        findViewById(R.id.rReport).setVisibility(View.GONE);
-        findViewById(R.id.pPrepare).setVisibility(View.VISIBLE);
+        hHistory.setVisibility(View.GONE);
+        rReport.setVisibility(View.GONE);
+        pPrepare.setVisibility(View.VISIBLE);
     }
 
     private void updateCardReason(String reason, long matchid, long eventid){
-        history hHistory = findViewById(R.id.hHistory);
         hHistory.updateCardReason(reason, matchid, eventid);
     }
     private void updateTeamName(String name, String teamid, long matchid){
-        history hHistory = findViewById(R.id.hHistory);
         hHistory.updateTeamName(name, teamid, matchid);
     }
 
@@ -586,7 +609,6 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             outputStream = getContentResolver().openOutputStream(uri);
                             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-                            history hHistory = findViewById(R.id.hHistory);
                             bw.write(hHistory.export_matches.toString());
                             bw.flush();
                             bw.close();

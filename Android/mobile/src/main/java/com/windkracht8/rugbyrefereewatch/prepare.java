@@ -3,6 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,7 +31,7 @@ public class prepare extends LinearLayout {
     private final CheckBox cbRecordPlayer;
     private final CheckBox cbScreenOn;
     private final Button bWatchSettings;
-    private final Spinner sCountDown;
+    private final Spinner sTimerType;
     private boolean watchsettings = false;
 
     public prepare(Context context, AttributeSet attrs) {
@@ -53,7 +54,7 @@ public class prepare extends LinearLayout {
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
         cbScreenOn = findViewById(R.id.cbScreenOn);
         bWatchSettings = findViewById(R.id.bWatchSettings);
-        sCountDown = findViewById(R.id.sCountDown);
+        sTimerType = findViewById(R.id.sTimerType);
 
         String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
@@ -144,10 +145,10 @@ public class prepare extends LinearLayout {
             }
         }
 
-        String[] aCountType = new String[] {"down", "up"};
+        String[] aCountType = new String[] {"Count up", "Count down"};
         ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
         aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sCountDown.setAdapter(aaCountType);
+        sTimerType.setAdapter(aaCountType);
 
         bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
     }
@@ -156,12 +157,12 @@ public class prepare extends LinearLayout {
         if(watchsettings){
             findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
             findViewById(R.id.trScreenOn).setVisibility(View.GONE);
-            findViewById(R.id.trCountDown).setVisibility(View.GONE);
+            findViewById(R.id.trTimerType).setVisibility(View.GONE);
             bWatchSettings.setText(R.string.bWatchSettings);
         }else {
             findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
             findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
-            findViewById(R.id.trCountDown).setVisibility(View.VISIBLE);
+            findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
             bWatchSettings.setText(R.string.bWatchSettings2);
         }
         watchsettings = !watchsettings;
@@ -187,11 +188,43 @@ public class prepare extends LinearLayout {
             if(watchsettings) {
                 settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
                 settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
-                settings.put("countdown", sCountDown.getSelectedItem().toString().equals("down") ? 1 : 0);
+                settings.put("countdown", sTimerType.getSelectedItemPosition());//DEPRECATED
+                settings.put("timer_type", sTimerType.getSelectedItemPosition());
             }
         }catch(Exception e){
             return null;
         }
         return settings;
+    }
+    public void gotSettings(JSONObject settings){
+        try{
+            if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
+            if(settings.has("home_color")) selectitem(sHomeColor, settings.getString("home_color"));
+            if(settings.has("away_name")) etHomeName.setText(settings.getString("away_name"));
+            if(settings.has("away_color")) selectitem(sAwayColor, settings.getString("away_color"));
+
+            if(settings.has("match_type")) selectitem(sMatchType, settings.getString("match_type"));
+            if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
+            if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
+            if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
+            if(settings.has("points_try")) etPointsTry.setText(String.valueOf(settings.getInt("points_try")));
+            if(settings.has("points_con")) etPointsCon.setText(String.valueOf(settings.getInt("points_con")));
+            if(settings.has("points_goal")) etPointsGoal.setText(String.valueOf(settings.getInt("points_goal")));
+
+            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
+            if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getInt("screen_on") == 1);
+            if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
+        }catch(Exception e){
+            Log.e("Prepare", "gotSettings: " + e.getMessage());
+        }
+    }
+    private void selectitem(Spinner spin, String str){
+        if(str.equals("lightgray")){str = "white";}
+        for (int i=0;i<spin.getCount();i++){
+            if (spin.getItemAtPosition(i).equals(str)){
+                spin.setSelection(i);
+                return;
+            }
+        }
     }
 }

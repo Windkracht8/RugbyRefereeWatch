@@ -32,7 +32,8 @@
     <string name="_5">5</string>
     <string name="match_type">Match type</string>
     <string name="exit">exit</string>
-    <string name="tvFatal">Click here to install the Samsung Accessory Service</string>
+    <string name="noTizenLib">Click here to install the Samsung Accessory Service</string>
+    <string name="noWearLib">Click here to install the Wear OS Service</string>
     <string name="record_player">Record player #</string>
     <string name="bDelete_text">Delete selected</string>
     <string name="no_card_reason">reason not entered</string>
@@ -59,7 +60,7 @@
     <string name="cbScreenOn">Keep screen on</string>
     <string name="bWatchSettings">Watch settings</string>
     <string name="bWatchSettings2">No watch settings</string>
-    <string name="cbCountDown">Count</string>
+    <string name="timer_type">Timer type</string>
     <string name="os_wear">WearOS</string>
     <string name="os_tizen">Tizen</string>
 </resources>

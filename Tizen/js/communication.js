@@ -15,6 +15,13 @@ var communicationListener = {
 			var requestMessage_js = JSON.parse(requestMessage);
 			var responseData = "";
 			switch(requestMessage_js.requestType){
+				case "sync":
+					file_deletedMatches(requestMessage_js.requestData);
+					var temp = {};
+					temp["matches"] = matches;
+					temp["settings"] = getSettings();
+					responseData = JSON.stringify(temp);
+					break;
 				case "getMatches":
 					file_deletedMatches(requestMessage_js.requestData);
 					responseData = JSON.stringify(matches);

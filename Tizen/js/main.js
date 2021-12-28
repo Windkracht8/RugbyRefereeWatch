@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconf2Click, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, countdownChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconf2Click, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -20,7 +20,7 @@ var match = {
 		points_goal: 3,
 		record_player: 0,
 		screen_on: 1,
-		countdown: 1
+		timer_type: 1//0:up, 1:down
 	},
 	home: {
 		id: "home",
@@ -281,7 +281,7 @@ function updateTimer(){
 	timer.timer = millisecs;
 
 	var temp = "";
-	if(match.settings.countdown === 1 && timer.status !== "rest"){
+	if(match.settings.timer_type === 1 && timer.status !== "rest"){
 		millisecs = (match.settings.period_time * 60000) - millisecs;
 	}
 	if(millisecs < 0){
@@ -524,7 +524,7 @@ function bconfClick(){
 
 	$('#record_player').val(match.settings.record_player);
 	$('#screen_on').val(match.settings.screen_on);
-	$('#countdown').val(match.settings.countdown);
+	$('#timer_type').val(match.settings.timer_type);
 
 	$('#conf').show();
 }
@@ -645,11 +645,11 @@ function requestScreen_on(){
 		tizen.power.request("SCREEN", "SCREEN_NORMAL");
 	}
 }
-function countdownChange(){
-	match.settings.countdown = parseInt($('#countdown').val());
-	countdownChanged();
+function timer_typeChange(){
+	match.settings.timer_type = parseInt($('#timer_type').val());
+	timer_typeChanged();
 }
-function countdownChanged(){
+function timer_typeChanged(){
 	updateTimer();
 }
 
@@ -759,6 +759,25 @@ function incomingSettings(newsettings){
 	return true;
 }
 
+function getSettings(){
+	var ret = {};
+	ret["home_name"] = match.home.team;
+	ret["home_color"] = match.home.color;
+	ret["away_name"] = match.away.team;
+	ret["away_color"] = match.away.color;
+	ret["match_type"] = match.settings.match_type;
+	ret["period_time"] = match.settings.period_time;
+	ret["period_count"] = match.settings.period_count;
+	ret["sinbin"] = match.settings.sinbin;
+	ret["points_try"] = match.settings.points_try;
+	ret["points_con"] = match.settings.points_con;
+	ret["points_goal"] = match.settings.points_goal;
+	ret["record_player"] = match.settings.record_player;
+	ret["screen_on"] = match.settings.screen_on;
+	ret["timer_type"] = match.settings.timer_type;
+	return ret;
+}
+
 function settingsRead(newsettings){
 	if(timer.status !== "conf"){
 		console.log("Ignore stored settings, game already started");
@@ -783,9 +802,13 @@ function setNewSettings(newsettings){
 		match.settings.screen_on = newsettings.screen_on;
 		screen_onChanged();
 	}
-	if(newsettings.hasOwnProperty('countdown')){
-		match.settings.countdown = newsettings.countdown;
-		countdownChanged();
+	if(newsettings.hasOwnProperty('countdown')){///DEPRECATED
+		match.settings.timer_type = newsettings.countdown;
+		timer_typeChanged();
+	}
+	if(newsettings.hasOwnProperty('timer_type')){
+		match.settings.timer_type = newsettings.timer_type;
+		timer_typeChanged();
 	}
 }
 function beep(){

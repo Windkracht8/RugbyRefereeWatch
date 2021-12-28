@@ -38,6 +38,14 @@ public class Communication extends WearableListenerService {
             Log.i("communication", requestType + ": " + requestData);
             String responseData;
             switch(requestType){
+                case "sync":
+                    if(requestData == null){
+                        Log.e("communication", "No requestData for request sync");
+                        return;
+                    }
+                    responseData = Filestore.file_deletedMatches(getApplicationContext(), requestData);
+
+                    break;
                 case "getMatches":
                     if(requestData == null){
                         Log.e("communication", "No requestData for request getMatches");

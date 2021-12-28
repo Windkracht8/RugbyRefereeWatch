@@ -99,7 +99,6 @@ public class communication_wear extends WearableListenerService implements DataC
         putDataTask.addOnFailureListener(exception -> gotError(context, exception.getMessage()));
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static void gotError(Context context, final String error) {
         Log.e("communication_wear", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");

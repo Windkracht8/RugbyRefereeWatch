@@ -232,16 +232,16 @@
                     android:importantForAutofill="no" />
             </TableRow>
             <TableRow
-                android:id="@+id/trCountDown"
+                android:id="@+id/trTimerType"
                 android:visibility="gone">
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/cbCountDown"
-                    android:text="@string/cbCountDown"
+                    android:labelFor="@+id/sTimerType"
+                    android:text="@string/timer_type"
                     android:textSize="18sp" />
                 <Spinner
-                    android:id="@+id/sCountDown"
+                    android:id="@+id/sTimerType"
                     android:layout_height="48dp" />
             </TableRow>
         </TableLayout>
