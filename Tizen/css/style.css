@@ -98,33 +98,21 @@ button, .button{
 	min-height: 80vh;
 	top: 0;
 	left: 0;
-	padding: 20vh 0;
+	padding: 10vh 0;
 	background: black;
 	font-size: 15vh;
 }
-#card{
-	font-size: 10vw;
-}
-#card_player_wrap{
-	position: fixed;
-	width: 100vw;
-	height: 33vh;
+#score, #card{
+	height: 80vh;
 }
 #card_yellow, #card_red{
-	width: 100vw;
-	height: 33vh;
 	font-size: 25vh;
-	position: fixed;
-	left: 0;
-	background: transparent;
 }
 #card_yellow{
 	color: yellow;
-	bottom: 35vh;
 }
 #card_red{
 	color: red;
-	bottom: 5vh;
 }
 #conf input{
 	text-align: right;

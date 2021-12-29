@@ -71,6 +71,7 @@ window.onload = function () {
 
 	update();
 	updateButtons();
+	record_playerChanged();
 
 	function onScreenStateChanged(previousState, newState) {
 	    if(newState === 'SCREEN_NORMAL'){
@@ -424,7 +425,7 @@ function updateScore(){
 	$('#score_away').html(match.away.tot);
 }
 function cardsClick(){
-	$('#card_player').val(0);
+	$('#card_player').val($('#score_player').val());
 	$('#card').show();
 	$('#score').hide();
 }
@@ -622,14 +623,14 @@ function screen_onChange(){
 }
 function record_playerChanged(){
 	if(match.settings.record_player === 1){
-		$('#score').css('padding', '');
+		$('#score').css('font-size', '15vh');
 		$('#score_player_wrap').show();
-		$('#card').css('padding', '');
+		$('#card_yellow, #card_red').css('height', '');
 		$('#card_player_wrap').show();
 	}else{
-		$('#score').css('padding', '20vh 0 0');
+		$('#score').css('font-size', '17vh');
 		$('#score_player_wrap').hide();
-		$('#card').css('padding', '5vh 0 0');
+		$('#card_yellow, #card_red').css('height', '40vh');
 		$('#card_player_wrap').hide();
 	}
 }
