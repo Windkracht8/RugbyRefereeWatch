@@ -239,6 +239,7 @@ function updateButtons(){
 			break;
 	}
 	$('#timerstatus').html(timerstatus);
+	updateTimer();
 }
 
 function update(){

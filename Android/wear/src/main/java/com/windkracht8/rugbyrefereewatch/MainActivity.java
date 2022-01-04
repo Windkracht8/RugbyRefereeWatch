@@ -1,5 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import static android.util.TypedValue.COMPLEX_UNIT_PX;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -38,7 +41,7 @@ public class MainActivity extends FragmentActivity {
     private TextView score_away;
     private LinearLayout sinbins_home;
     private LinearLayout sinbins_away;
-    private TextView timersec;
+    private TextView timer;
     private TextView timerstatus;
     private Button overtimerbutton;
     private Button bottombutton;
@@ -51,6 +54,7 @@ public class MainActivity extends FragmentActivity {
 
     public static matchdata match;
     public static int heightPixels = 0;
+    public static int vh = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
@@ -58,6 +62,7 @@ public class MainActivity extends FragmentActivity {
     private static long timer_start_timeoff = 0;
     private static boolean timer_periodended = false;
     private static int timer_period = 0;
+    public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
 
@@ -73,19 +78,9 @@ public class MainActivity extends FragmentActivity {
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
         }
+        vh = heightPixels / 100;
+
         setContentView(R.layout.activity_main);
-
-        mainhandler = new Handler(Looper.getMainLooper());
-
-        settingsupdateReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                updateAfterConfig();
-            }
-        };
-        registerReceiver(settingsupdateReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch.settingsupdate"));
-
-        match = new matchdata();
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
         score_home = findViewById(R.id.score_home);
@@ -94,8 +89,8 @@ public class MainActivity extends FragmentActivity {
         score_away.setOnClickListener(v -> score_awayClick());
         sinbins_home = findViewById(R.id.sinbins_home);
         sinbins_away = findViewById(R.id.sinbins_away);
-        timersec = findViewById(R.id.timersec);
-        timersec.setOnClickListener(v -> timerClick());
+        timer = findViewById(R.id.timer);
+        timer.setOnClickListener(v -> timerClick());
         timerstatus = findViewById(R.id.timerstatus);
         overtimerbutton = findViewById(R.id.overtimerbutton);
         bottombutton = findViewById(R.id.bottombutton);
@@ -118,6 +113,30 @@ public class MainActivity extends FragmentActivity {
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
+
+        //Resize elements for the heightPixels
+        battery.setTextSize(COMPLEX_UNIT_PX, vh*10);
+        time.setTextSize(COMPLEX_UNIT_PX, vh*15);
+        score_home.setTextSize(COMPLEX_UNIT_PX, vh*10);
+        score_away.setTextSize(COMPLEX_UNIT_PX, vh*10);
+        findViewById(R.id.sinbin_space).setMinimumHeight(vh*15);
+        timer.setTextSize(COMPLEX_UNIT_PX, vh*30);
+        timerstatus.setTextSize(COMPLEX_UNIT_PX, vh*15);
+        overtimerbutton.setTextSize(COMPLEX_UNIT_PX, vh*10);
+        bottombutton.setTextSize(COMPLEX_UNIT_PX, vh*10);
+        bconf.setMaxHeight(vh*15);
+        bconf2.setMaxHeight(vh*25);
+
+        mainhandler = new Handler(Looper.getMainLooper());
+        match = new matchdata();
+
+        settingsupdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateAfterConfig();
+            }
+        };
+        registerReceiver(settingsupdateReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch.settingsupdate"));
 
         Filestore.file_readSettings(getBaseContext());
         Filestore.file_cleanMatches(getBaseContext());
@@ -198,7 +217,7 @@ public class MainActivity extends FragmentActivity {
         timer_status = "rest";
         timer_start = getCurrentTimestamp();
         timer_periodended = false;
-        timersec.setTextColor(getResources().getColor(R.color.purewhite, getBaseContext().getTheme()));
+        timer.setTextColor(getResources().getColor(R.color.purewhite, getBaseContext().getTheme()));
 
         for (matchdata.sinbin sb : match.home.sinbins){
             sb.end = sb.end - timer_timer;
@@ -244,6 +263,7 @@ public class MainActivity extends FragmentActivity {
         updateScore();
         updateButtons();
         updateAfterConfig();
+        updateSinbins();
     }
     @SuppressLint("SetTextI18n")
     private void updateButtons(){
@@ -291,6 +311,7 @@ public class MainActivity extends FragmentActivity {
                 break;
         }
         timerstatus.setText(uistatus);
+        updateTimer();
     }
     private void update(){
         long millisecs = updateTime();
@@ -309,6 +330,7 @@ public class MainActivity extends FragmentActivity {
 
         score_home.setBackgroundColor(getColor(match.home.color));
         score_away.setBackgroundColor(getColor(match.away.color));
+
         if(screen_on){
             //If this is not enough, implement wake_lock: https://developer.android.com/training/scheduling/wakelock
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -355,11 +377,11 @@ public class MainActivity extends FragmentActivity {
             temp = "-";
         }
         temp += prettyTimer(millisec);
-        timersec.setText(temp);
+        timer.setText(temp);
 
         if(!timer_periodended && timer_status.equals("running") && timer_timer > (long)match.period_time * 60000){
             timer_periodended = true;
-            timersec.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
+            timer.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
             beep(getBaseContext());
         }
     }
@@ -507,7 +529,7 @@ public class MainActivity extends FragmentActivity {
 
     public void bconf2Click(){
         conf.load(match);
-        conf.conf2();
+        conf.onlyConf1();
         conf.setVisibility(View.VISIBLE);
     }
     public void bconfClick(){
@@ -595,7 +617,8 @@ public class MainActivity extends FragmentActivity {
             ret.put("points_try", match.points_try);
             ret.put("points_con", match.points_con);
             ret.put("points_goal", match.points_goal);
-            ret.put("screen_on", (int)(screen_on ? 1 : 0));
+            ret.put("record_player", record_player ? 1 : 0);
+            ret.put("screen_on", screen_on ? 1 : 0);
             ret.put("timer_type", timer_type);
 
         } catch (Exception e) {

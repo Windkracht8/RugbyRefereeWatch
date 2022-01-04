@@ -83,6 +83,7 @@ public class Filestore {
     public static void file_storeSettings(Context context){
         try{
             JSONObject jsonSettings = new JSONObject();
+            jsonSettings.put("record_player", MainActivity.record_player);
             jsonSettings.put("screen_on", MainActivity.screen_on);
             jsonSettings.put("timer_type", MainActivity.timer_type);
             jsonSettings.put("match_type", MainActivity.match.match_type);
@@ -102,6 +103,7 @@ public class Filestore {
             String sSettings = getFileAsString(context, R.string.settings_filename);
             if(sSettings.length() < 3){ return;}
             JSONObject jsonSettings = new JSONObject(sSettings);
+            MainActivity.record_player = jsonSettings.getBoolean("record_player");
             MainActivity.screen_on = jsonSettings.getBoolean("screen_on");
             MainActivity.timer_type = jsonSettings.getInt("timer_type");
             MainActivity.match.match_type = jsonSettings.getString("match_type");

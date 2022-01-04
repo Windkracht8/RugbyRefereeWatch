@@ -52,6 +52,7 @@ public class Score extends ScrollView {
         score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);
+        findViewById(R.id.player_wrap).setVisibility(MainActivity.record_player ? View.VISIBLE : View.GONE);
     }
     public void clear(){
         player.setSelection(0);

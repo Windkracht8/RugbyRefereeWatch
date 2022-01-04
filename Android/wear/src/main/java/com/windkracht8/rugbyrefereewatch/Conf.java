@@ -20,10 +20,11 @@ public class Conf extends ScrollView {
     private final Spinner points_try;
     private final Spinner points_con;
     private final Spinner points_goal;
+    private final Switch record_player;
     private final Switch screen_on;
     private final Spinner timer_type;
 
-    private boolean conf2 = false;
+    private boolean onlyConf1 = false;
 
     public Conf(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -40,6 +41,7 @@ public class Conf extends ScrollView {
         points_try = findViewById(R.id.points_try);
         points_con = findViewById(R.id.points_con);
         points_goal = findViewById(R.id.points_goal);
+        record_player = findViewById(R.id.record_player);
         screen_on = findViewById(R.id.screen_on);
         timer_type = findViewById(R.id.timer_type);
 
@@ -145,14 +147,15 @@ public class Conf extends ScrollView {
         points_con.setSelection(match.points_con);
         points_goal.setSelection(match.points_goal);
 
+        record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setSelection(MainActivity.timer_type);
         findViewById(R.id.conf1).setVisibility(View.VISIBLE);
-        conf2 = false;
+        onlyConf1 = false;
     }
-    public void conf2(){
+    public void onlyConf1(){
         findViewById(R.id.conf1).setVisibility(View.GONE);
-        conf2 = true;
+        onlyConf1 = true;
     }
     private void selectitem(Spinner spin, String str){
         for (int i=0;i<spin.getCount();i++){
@@ -163,7 +166,7 @@ public class Conf extends ScrollView {
         }
     }
     public void save(matchdata match){
-        if(!conf2) {
+        if(!onlyConf1) {
             match.home.color = color_home.getSelectedItem().toString();
             match.away.color = color_away.getSelectedItem().toString();
             match.match_type = match_type.getSelectedItem().toString();
@@ -175,6 +178,7 @@ public class Conf extends ScrollView {
             match.points_con = points_con.getSelectedItemPosition();
             match.points_goal = points_goal.getSelectedItemPosition();
         }
+        MainActivity.record_player = record_player.isChecked();
         MainActivity.screen_on = screen_on.isChecked();
         MainActivity.timer_type = timer_type.getSelectedItemPosition();
     }

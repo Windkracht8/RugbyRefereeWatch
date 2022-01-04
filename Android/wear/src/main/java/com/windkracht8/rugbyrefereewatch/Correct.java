@@ -15,8 +15,10 @@ public class Correct extends ScrollView {
         assert inflater != null;
         inflater.inflate(R.layout.correct, this, true);
 
-        LinearLayout list = findViewById(R.id.list);
-        list.setMinimumHeight(MainActivity.heightPixels - 80);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, MainActivity.vh*10, 0, MainActivity.vh*10);
+        findViewById(R.id.list_wrap).setLayoutParams(params);
+        findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh*80);
     }
     public void load(matchdata match){
         this.match = match;
