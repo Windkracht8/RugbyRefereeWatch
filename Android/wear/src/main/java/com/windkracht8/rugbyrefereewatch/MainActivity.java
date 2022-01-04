@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -49,12 +48,19 @@ public class MainActivity extends FragmentActivity {
     private ImageButton bconf2;
     private Conf conf;
     private Score score;
+    private Card card;
     private Correct correct;
     private Report report;
 
     public static matchdata match;
     public static int heightPixels = 0;
-    public static int vh = 0;
+    public static int vh10 = 0;
+    public static int vh15 = 0;
+    public static int vh18 = 0;
+    public static int vh25 = 0;
+    public static int vh30 = 0;
+    public static int vh50 = 0;
+    public static int vh80 = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
@@ -78,7 +84,13 @@ public class MainActivity extends FragmentActivity {
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
         }
-        vh = heightPixels / 100;
+        vh10 = heightPixels / 10;
+        vh15 = (int) (heightPixels * .15);
+        vh18 = (int) (heightPixels * .18);
+        vh25 = heightPixels / 4;
+        vh30 = (int) (heightPixels * .3);
+        vh50 = heightPixels / 2;
+        vh80 = (int) (heightPixels * .8);
 
         setContentView(R.layout.activity_main);
         battery = findViewById(R.id.battery);
@@ -106,26 +118,26 @@ public class MainActivity extends FragmentActivity {
         score_con.setOnClickListener(v -> conversionClick());
         TextView score_goal = findViewById(R.id.score_goal);
         score_goal.setOnClickListener(v -> goalClick());
-        TextView card_yellow = findViewById(R.id.card_yellow);
-        card_yellow.setOnClickListener(v -> card_yellowClick());
-        TextView card_red = findViewById(R.id.card_red);
-        card_red.setOnClickListener(v -> card_redClick());
+        findViewById(R.id.cards).setOnClickListener(v -> cardsClick());
+        card = findViewById(R.id.card);
+        findViewById(R.id.card_yellow).setOnClickListener(v -> card_yellowClick());
+        findViewById(R.id.card_red).setOnClickListener(v -> card_redClick());
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
 
         //Resize elements for the heightPixels
-        battery.setTextSize(COMPLEX_UNIT_PX, vh*10);
-        time.setTextSize(COMPLEX_UNIT_PX, vh*15);
-        score_home.setTextSize(COMPLEX_UNIT_PX, vh*10);
-        score_away.setTextSize(COMPLEX_UNIT_PX, vh*10);
-        findViewById(R.id.sinbin_space).setMinimumHeight(vh*15);
-        timer.setTextSize(COMPLEX_UNIT_PX, vh*30);
-        timerstatus.setTextSize(COMPLEX_UNIT_PX, vh*15);
-        overtimerbutton.setTextSize(COMPLEX_UNIT_PX, vh*10);
-        bottombutton.setTextSize(COMPLEX_UNIT_PX, vh*10);
-        bconf.setMaxHeight(vh*15);
-        bconf2.setMaxHeight(vh*25);
+        battery.setTextSize(COMPLEX_UNIT_PX, vh10);
+        time.setTextSize(COMPLEX_UNIT_PX, vh15);
+        score_home.setTextSize(COMPLEX_UNIT_PX, vh10);
+        score_away.setTextSize(COMPLEX_UNIT_PX, vh10);
+        findViewById(R.id.sinbin_space).setMinimumHeight(vh15);
+        timer.setTextSize(COMPLEX_UNIT_PX, vh30);
+        timerstatus.setTextSize(COMPLEX_UNIT_PX, vh15);
+        overtimerbutton.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bottombutton.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bconf.setMaxHeight(vh15);
+        bconf2.setMaxHeight(vh25);
 
         mainhandler = new Handler(Looper.getMainLooper());
         match = new matchdata();
@@ -144,6 +156,7 @@ public class MainActivity extends FragmentActivity {
         updateBattery();
         update();
         updateButtons();
+        updateAfterConfig();
     }
     @Override
     protected void onDestroy() {
@@ -159,6 +172,8 @@ public class MainActivity extends FragmentActivity {
             Filestore.file_storeSettings(getBaseContext());
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
+        }else if(card.getVisibility() == View.VISIBLE){
+            card.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
         }else if(report.getVisibility() == View.VISIBLE){
@@ -339,6 +354,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         score.update(match);
+        card.update();
     }
     public int getColor(String name){
         return getResources().getColor(getResources().getIdentifier(name, "color", getPackageName()), getBaseContext().getTheme());
@@ -502,20 +518,25 @@ public class MainActivity extends FragmentActivity {
         tmp = match.away.tot + "";
         score_away.setText(tmp);
     }
+    public void cardsClick(){
+        card.setPlayer(score.player_no);
+        card.setVisibility(View.VISIBLE);
+        score.setVisibility(View.GONE);
+    }
     public void card_yellowClick(){
         long time = getCurrentTimestamp();
-        match.log_event(time, "YELLOW CARD", score.team.id, score.player_no);
+        match.log_event(time, "YELLOW CARD", score.team.id, card.player_no);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
         score.team.add_sinbin(time, end);
         updateSinbins();
-        score.setVisibility(View.GONE);
+        card.setVisibility(View.GONE);
         score.clear();
     }
 
     public void card_redClick(){
-        match.log_event("RED CARD", score.team.id, score.player_no);
-        score.setVisibility(View.GONE);
+        match.log_event("RED CARD", score.team.id, card.player_no);
+        card.setVisibility(View.GONE);
         score.clear();
     }
 
@@ -620,9 +641,8 @@ public class MainActivity extends FragmentActivity {
             ret.put("record_player", record_player ? 1 : 0);
             ret.put("screen_on", screen_on ? 1 : 0);
             ret.put("timer_type", timer_type);
-
         } catch (Exception e) {
-            Log.e("Filestore", "file_deletedMatches: " + e.getMessage());
+            Log.e("MainActivity", "getSettings: " + e.getMessage());
         }
         return ret;
     }

@@ -18,9 +18,9 @@ public class Report extends ScrollView {
         inflater.inflate(R.layout.report, this, true);
 
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, MainActivity.vh*10, 0, MainActivity.vh*10);
+        params.setMargins(0, MainActivity.vh10, 0, MainActivity.vh10);
         findViewById(R.id.list).setLayoutParams(params);
-        findViewById(R.id.list).setMinimumHeight(MainActivity.vh*80);
+        findViewById(R.id.list).setMinimumHeight(MainActivity.vh80);
     }
 
     public void load(matchdata match){

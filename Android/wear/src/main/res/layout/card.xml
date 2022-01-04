@@ -28,35 +28,20 @@
             android:layout_weight="1" />
     </LinearLayout>
     <TextView
-        android:id="@+id/score_try"
+        android:id="@+id/card_yellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="try"
-        android:textColor="#FFF" />
+        android:text="yellow"
+        android:textColor="#FFEB3B" />
     <TextView
-        android:id="@+id/score_con"
+        android:id="@+id/card_red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="conversion"
-        android:textColor="#FFF" />
-    <TextView
-        android:id="@+id/score_goal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:text="goal"
-        android:textColor="#FFF" />
-    <TextView
-        android:id="@+id/cards"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:text="card"
-        android:textColor="#FFF" />
+        android:text="red"
+        android:textColor="#F00" />
+
 </LinearLayout>
