@@ -4,21 +4,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
-    tools:ignore="HardcodedText,SpUsage">
+    tools:ignore="HardcodedText">
     <LinearLayout
         android:id="@+id/list_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="20dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Tab to remove"
-            android:textColor="#FFF"
-            android:textSize="18dp" />
+            android:textColor="@color/w8blue"
+            android:textSize="18sp" />
         <LinearLayout
             android:id="@+id/list"
             android:layout_width="match_parent"

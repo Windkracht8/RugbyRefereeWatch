@@ -45,7 +45,7 @@ public class MainActivity extends FragmentActivity {
     private Button overtimerbutton;
     private Button bottombutton;
     private ImageButton bconf;
-    private ImageButton bconf2;
+    private ImageButton bconfwatch;
     private Conf conf;
     private Score score;
     private Card card;
@@ -54,6 +54,7 @@ public class MainActivity extends FragmentActivity {
 
     public static matchdata match;
     public static int heightPixels = 0;
+    public static int vh5 = 0;
     public static int vh10 = 0;
     public static int vh15 = 0;
     public static int vh18 = 0;
@@ -61,6 +62,7 @@ public class MainActivity extends FragmentActivity {
     public static int vh30 = 0;
     public static int vh50 = 0;
     public static int vh80 = 0;
+    public static int vh90 = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
@@ -84,6 +86,7 @@ public class MainActivity extends FragmentActivity {
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
         }
+        vh5 = heightPixels / 20;
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
         vh18 = (int) (heightPixels * .18);
@@ -91,6 +94,7 @@ public class MainActivity extends FragmentActivity {
         vh30 = (int) (heightPixels * .3);
         vh50 = heightPixels / 2;
         vh80 = (int) (heightPixels * .8);
+        vh90 = (int) (heightPixels * .9);
 
         setContentView(R.layout.activity_main);
         battery = findViewById(R.id.battery);
@@ -108,8 +112,8 @@ public class MainActivity extends FragmentActivity {
         bottombutton = findViewById(R.id.bottombutton);
         bconf = findViewById(R.id.bconf);
         bconf.setOnClickListener(v -> bconfClick());
-        bconf2 = findViewById(R.id.bconf2);
-        bconf2.setOnClickListener(v -> bconf2Click());
+        bconfwatch = findViewById(R.id.bconfwatch);
+        bconfwatch.setOnClickListener(v -> bconfwatchClick());
         conf = findViewById(R.id.conf);
         score = findViewById(R.id.score);
         TextView score_try = findViewById(R.id.score_try);
@@ -137,7 +141,7 @@ public class MainActivity extends FragmentActivity {
         overtimerbutton.setTextSize(COMPLEX_UNIT_PX, vh10);
         bottombutton.setTextSize(COMPLEX_UNIT_PX, vh10);
         bconf.setMaxHeight(vh15);
-        bconf2.setMaxHeight(vh25);
+        bconfwatch.setMaxHeight(vh25);
 
         mainhandler = new Handler(Looper.getMainLooper());
         match = new matchdata();
@@ -286,7 +290,7 @@ public class MainActivity extends FragmentActivity {
         overtimerbutton.setVisibility(View.GONE);
         bottombutton.setVisibility(View.GONE);
         bconf.setVisibility(View.GONE);
-        bconf2.setVisibility(View.GONE);
+        bconfwatch.setVisibility(View.GONE);
         switch(timer_status){
             case "conf":
                 bconf.setVisibility(View.VISIBLE);
@@ -302,7 +306,7 @@ public class MainActivity extends FragmentActivity {
                 bottombutton.setText("rest");
                 bottombutton.setOnClickListener(v -> brestClick());
                 bottombutton.setVisibility(View.VISIBLE);
-                bconf2.setVisibility(View.VISIBLE);
+                bconfwatch.setVisibility(View.VISIBLE);
                 uistatus = "time off";
                 break;
             case "rest":
@@ -312,7 +316,7 @@ public class MainActivity extends FragmentActivity {
                 bottombutton.setText("finish");
                 bottombutton.setOnClickListener(v -> bfinishClick());
                 bottombutton.setVisibility(View.VISIBLE);
-                bconf2.setVisibility(View.VISIBLE);
+                bconfwatch.setVisibility(View.VISIBLE);
                 uistatus = "rest";
                 break;
             case "finished":
@@ -548,9 +552,9 @@ public class MainActivity extends FragmentActivity {
         updateScore();
     }
 
-    public void bconf2Click(){
+    public void bconfwatchClick(){
         conf.load(match);
-        conf.onlyConf1();
+        conf.onlyWatchSettings();
         conf.setVisibility(View.VISIBLE);
     }
     public void bconfClick(){

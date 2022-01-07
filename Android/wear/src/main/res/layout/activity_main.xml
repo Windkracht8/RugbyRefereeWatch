@@ -7,11 +7,9 @@
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
-    tools:ignore="HardcodedText,NestedWeights,SpUsage">
-
+    tools:ignore="HardcodedText,SpUsage">
     <ImageButton
-        android:id="@+id/bconf2"
+        android:id="@+id/bconfwatch"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#000"
@@ -21,15 +19,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/battery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#0000"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="100%"
-        android:textColor="#FFF"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,11 +35,11 @@
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#0000"
         android:layout_marginTop="-4dp"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="00:00:00"
-        android:textColor="#FFF"
         android:textSize="27dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +63,6 @@
             android:background="@color/green"
             android:gravity="center"
             android:text="0"
-            android:textColor="#FFF"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -78,7 +74,6 @@
             android:background="@color/red"
             android:gravity="center"
             android:text="0"
-            android:textColor="#FFF"
             android:textSize="18dp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -135,7 +130,6 @@
         android:gravity="top|center"
         android:includeFontPadding="false"
         android:text="00:00"
-        android:textColor="#FFF"
         android:textSize="54dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

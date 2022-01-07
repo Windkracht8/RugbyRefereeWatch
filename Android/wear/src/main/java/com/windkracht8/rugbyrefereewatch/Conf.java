@@ -24,7 +24,7 @@ public class Conf extends ScrollView {
     private final Switch screen_on;
     private final Spinner timer_type;
 
-    private boolean onlyConf1 = false;
+    private boolean onlyWatchSettings = false;
 
     public Conf(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -150,12 +150,12 @@ public class Conf extends ScrollView {
         record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setSelection(MainActivity.timer_type);
-        findViewById(R.id.conf1).setVisibility(View.VISIBLE);
-        onlyConf1 = false;
+        findViewById(R.id.matchSettings).setVisibility(View.VISIBLE);
+        onlyWatchSettings = false;
     }
-    public void onlyConf1(){
-        findViewById(R.id.conf1).setVisibility(View.GONE);
-        onlyConf1 = true;
+    public void onlyWatchSettings(){
+        findViewById(R.id.matchSettings).setVisibility(View.GONE);
+        onlyWatchSettings = true;
     }
     private void selectitem(Spinner spin, String str){
         for (int i=0;i<spin.getCount();i++){
@@ -166,7 +166,7 @@ public class Conf extends ScrollView {
         }
     }
     public void save(matchdata match){
-        if(!onlyConf1) {
+        if(!onlyWatchSettings) {
             match.home.color = color_home.getSelectedItem().toString();
             match.away.color = color_away.getSelectedItem().toString();
             match.match_type = match_type.getSelectedItem().toString();

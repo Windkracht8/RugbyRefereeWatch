@@ -18,9 +18,9 @@ public class Report extends ScrollView {
         inflater.inflate(R.layout.report, this, true);
 
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, MainActivity.vh10, 0, MainActivity.vh10);
-        findViewById(R.id.list).setLayoutParams(params);
-        findViewById(R.id.list).setMinimumHeight(MainActivity.vh80);
+        params.setMargins(0, MainActivity.vh5, 0, MainActivity.vh5);
+        findViewById(R.id.list_wrap).setLayoutParams(params);
+        findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh90);
     }
 
     public void load(matchdata match){
@@ -42,7 +42,6 @@ public class Report extends ScrollView {
             }
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
-            tv.setTextColor(Color.WHITE);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             list.addView(tv);
         }

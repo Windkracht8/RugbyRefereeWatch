@@ -3,16 +3,19 @@
     <style name="rrw">
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
+        <item name="android:colorAccent">@color/w8blue</item>
+        <item name="android:colorControlActivated">@color/w8blue</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:background">#000</item>
     </style>
     <style name="spinnerItemStyle">
         <item name="android:gravity">center</item>
-        <item name="android:textColor">#FFF</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/w8blue</item>
+        <item name="android:textSize">16sp</item>
     </style>
     <style name="spinnerDropDownItemStyle">
         <item name="android:gravity">center</item>
-        <item name="android:textColor">#FFF</item>
-        <item name="android:background">#000</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/w8blue</item>
+        <item name="android:textSize">20sp</item>
     </style>
 </resources>
