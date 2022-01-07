@@ -1,3 +1,6 @@
+:root{
+	--w8blue-color: #2bd2e3;
+}
 html, body{
 	margin: 0;
 	height: 100vh;
@@ -15,6 +18,9 @@ select, input, button{
 	background: transparent;
 	color: white;
 	font-size: 10vh;
+}
+.w8blue{
+	color: var(--w8blue-color);
 }
 #battery{
 	position: fixed;
@@ -68,7 +74,7 @@ select, input, button{
 }
 button, .button{
 	width: 100vw;
-	color: #2bd2e3;
+	color: var(--w8blue-color);
 	background-color: rgba(0,0,0,.7);
 	z-index: 5;
 }
@@ -95,15 +101,24 @@ button, .button{
 	z-index: 5;
 	display: none;
 	width: 100vw;
-	min-height: 80vh;
+	min-height: 90vh;
 	top: 0;
 	left: 0;
-	padding: 10vh 0;
+	padding: 5vh 0;
 	background: black;
-	font-size: 15vh;
+	font-size: 10vh;
+}
+#correct_overlay{
+	padding: 10vh 0;
+	min-height: 80vh;
 }
 #score, #card{
 	height: 80vh;
+}
+#score_inner, #card_inner{
+	position: relative;
+	top: 50%;
+	transform: translate(0, -50%);
 }
 #card_yellow, #card_red{
 	font-size: 25vh;
@@ -124,17 +139,61 @@ button, .button{
 	display: none;
 }
 #report{
-	font-size: 5vw;
-	padding: 15vh 0 20vh;
+	font-size: 7vw;
+	padding: 5vh 0 20vh;
 }
 #correct_overlay{
 	font-size: 10vw;
 }
-#bconf2{
+#bconfwatch{
 	position: absolute;
 	top: 0;
 	width: 100vw;
 }
-#bconf2 img{
+#bconfwatch img{
 	height: 20vh;
+}
+.slider{
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	transition: .4s;
+	border-radius: 34px;
+	border: solid thin white;
+}
+.slider:before{
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	transition: .4s;
+	border-radius: 50%;
+}
+.switch{
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+}
+.switch input{
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+input:checked + .slider{
+  background-color: var(--w8blue-color);
+}
+
+input:focus + .slider{
+  box-shadow: 0 0 1px var(--w8blue-color)var(--w8blue-color);
+}
+
+input:checked + .slider:before{
+  transform: translateX(26px);
 }

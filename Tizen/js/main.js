@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconf2Click, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -207,13 +207,13 @@ function bclearClick(){
 	$('#sinbins_away').html("");
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
-	$('#conf1').show();
+	$('#matchSettings').show();
 	$('#bconf').show();
 }
 
 function updateButtons(){
 	var timerstatus = "";
-	$('.bottombutton, .overtimerbutton, #bconf2img').each(function (){$(this).hide();});
+	$('.bottombutton, .overtimerbutton, #bconfwatchimg').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
 			$('#bconf').show();
@@ -223,13 +223,13 @@ function updateButtons(){
 		case "timeoff":
 			$('#bresume').show();
 			$('#brest').show();
-			$('#bconf2img').show();
+			$('#bconfwatchimg').show();
 			timerstatus = "time off";
 			break;
 		case "rest":
 			$('#bnext').show();
 			$('#bfinish').show();
-			$('#bconf2img').show();
+			$('#bconfwatchimg').show();
 			timerstatus = "rest";
 			break;
 		case "finished":
@@ -504,9 +504,9 @@ function removeEvent(index){
 	updateScore();
 	$('#correct_overlay').hide();
 }
-function bconf2Click(){
+function bconfwatchClick(){
 	if(timer.status === "conf" || timer.status === "running"){return;}
-	$('#conf1').hide();
+	$('#matchSettings').hide();
 	bconfClick();
 }
 function bconfClick(){
@@ -524,8 +524,8 @@ function bconfClick(){
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
 
-	$('#record_player').val(match.settings.record_player);
-	$('#screen_on').val(match.settings.screen_on);
+	$('#record_player').prop('checked', match.settings.record_player === 1 ? true : false);
+	$('#screen_on').prop('checked', match.settings.screen_on === 1 ? true : false);
 	$('#timer_type').val(match.settings.timer_type);
 
 	$('#conf').show();
@@ -615,11 +615,11 @@ function points_goalChange(){
 	match.settings.points_goal = parseInt($('#points_goal').val());
 }
 function record_playerChange(){
-	match.settings.record_player = parseInt($('#record_player').val());
+	match.settings.record_player = $('#record_player').is(":checked") ? 1: 0;
 	record_playerChanged();
 }
 function screen_onChange(){
-	match.settings.screen_on = parseInt($('#screen_on').val());
+	match.settings.screen_on = $('#screen_on').is(":checked") ? 1: 0;
 	screen_onChanged();
 }
 function record_playerChanged(){
@@ -738,7 +738,7 @@ function showReport(){
 	});
 
 	$('#report').html(html);
-	$('#report').show();
+	$('#report_overlay').show();
 }
 
 function incomingSettings(newsettings){

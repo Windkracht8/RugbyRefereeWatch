@@ -15,10 +15,10 @@
 </head>
 
 <body>
-<div id="bconf2" onclick="bconf2Click()">
+<div id="bconfwatch" onclick="bconfwatchClick()">
 	<div id="battery"><span id="battery_perc">100</span>%</div>
 	<div id="time">00:00:00</div>
-	<img id="bconf2img" src="res/gear2.png">
+	<img id="bconfwatchimg" src="res/gear2.png">
 </div>
 <div id="home">
 	<div id="score_home" onclick="score_homeClick()">0</div>
@@ -39,7 +39,7 @@
 <button id="breport" class="overtimerbutton" onclick="showReport()">report</button>
 <button id="bclear" class="bottombutton" onclick="bclearClick()">clear</button>
 
-<div id="score" class="overlay">
+<div id="score" class="overlay"><div id="score_inner">
 	<div id="score_player_wrap">player <select id="score_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -57,8 +57,8 @@
 	<div id="score_con" onclick="conversionClick()">conversion <span id="con">0</span></div>
 	<div id="score_goal" onclick="goalClick()">goal <span id="goal">0</span></div>
 	<div onclick="cardsClick()">card</div>
-</div>
-<div id="card" class="overlay">
+</div></div>
+<div id="card" class="overlay"><div id="card_inner">
 	<div id="card_player_wrap">player <select id="card_player">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
@@ -74,13 +74,14 @@
 	</select></div>
 	<button id="card_yellow" onclick="card_yellowClick()">yellow</button>
 	<button id="card_red" onclick="card_redClick()">red</button>
-</div>
+</div></div>
 <div id="correct_overlay" class="overlay">
-	Tab to remove<br>
+	<div class="w8blue">Tab to remove</div>
 	<div id="correct"></div>
 </div>
 <div id="conf" class="overlay">
-	<div id="conf1">
+	<div class="w8blue">Config</div>
+	<div id="matchSettings">
 		Home<br>
 		<select id="color_home" onchange="color_homeChange()">
 			<option>black</option>
@@ -108,13 +109,13 @@
 			<option value="lightgray">white</option>
 		</select><br>
 		Match type<br>
-		<select id="match_type" onchange="match_typeChange()">
+		<select id="match_type" class="w8blue" onchange="match_typeChange()">
 			<option selected>15s</option><option>10s</option><option>7s</option>
 			<option>beach 7s</option><option>beach 5s</option><option>custom</option>
 		</select><br>
 		<div id="custom_match">
 			Time/period<br>
-			<select id="period_time" onchange="period_timeChange()">
+			<select id="period_time" class="w8blue" onchange="period_timeChange()">
 				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
 				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
@@ -127,47 +128,48 @@
 				<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
 			</select><br>
 			Period count<br>
-			<select id="period_count" onchange="period_countChange()">
+			<select id="period_count" class="w8blue" onchange="period_countChange()">
 				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 			</select><br>
 			Sinbin<br>
-			<select id="sinbin" onchange="sinbinChange()">
+			<select id="sinbin" class="w8blue" onchange="sinbinChange()">
 				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
 				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
 				<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
 			</select><br>
 			Points try<br>
-			<select id="points_try" onchange="points_tryChange()">
+			<select id="points_try" class="w8blue" onchange="points_tryChange()">
 				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
 				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
 			</select><br>
 			Points conversion<br>
-			<select id="points_con" onchange="points_conChange()">
+			<select id="points_con" class="w8blue" onchange="points_conChange()">
 				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
 				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
 			</select><br>
 			Points goal<br>
-			<select id="points_goal" onchange="points_goalChange()">
+			<select id="points_goal" class="w8blue" onchange="points_goalChange()">
 				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
 				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
 			</select>
 		</div>
 	</div>
 	Record player<br>
-	<select id="record_player" onchange="record_playerChange()">
-		<option value="0">no</option><option value="1">yes</option>
-	</select><br>
+	<label class="switch w8blue"><input id="record_player" onchange="record_playerChange()" type="checkbox"><span class="slider"></span></label>
+	<br>
 	Screen on<br>
-	<select id="screen_on" onchange="screen_onChange()">
-		<option value="1">yes</option><option value="0">no</option>
-	</select><br>
+	<label class="switch w8blue"><input id="screen_on" onchange="screen_onChange()" type="checkbox"><span class="slider"></span></label>
+	<br>
 	Timer type<br>
-	<select id="timer_type" onchange="timer_typeChange()">
+	<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
 		<option value="0">Count up</option><option value="1">Count down</option>
 	</select><br>
 </div>
-<div id="report" class="overlay" onclick="this.style.display='none'"></div>
+<div id="report_overlay" class="overlay" onclick="this.style.display='none'">
+	<div class="w8blue">Report</div>
+	<div id="report"></div>
+</div>
 <div id="message" class="overlay" onclick="this.innerHTML='';this.style.display='none';"></div>
 </body>
 </html>
