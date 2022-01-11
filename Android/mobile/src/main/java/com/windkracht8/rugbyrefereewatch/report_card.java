@@ -79,7 +79,7 @@ public class report_card extends LinearLayout {
         tvReason.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "updateCardReason");
+        intent.putExtra("intent_type", "updateCardReason");
         intent.putExtra("source", "report_card");
         intent.putExtra("reason", reason);
         intent.putExtra("match_id", match_id);

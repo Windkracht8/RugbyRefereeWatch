@@ -444,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             case "DISCONNECTED":
                 status = getString(R.string.status_DISCONNECTED);
+                findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
                 break;
             case "FINDING_PEERS":
                 status = getString(R.string.status_CONNECTING);

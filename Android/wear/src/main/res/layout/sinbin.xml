@@ -5,13 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#0000"
     tools:ignore="SpUsage">
     <TextView
         android:id="@+id/timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/timer_placeholder"

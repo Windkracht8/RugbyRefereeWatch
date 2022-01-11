@@ -82,7 +82,7 @@ public class history_match extends LinearLayout{
                         toggleSelect();
                     }else {
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                        intent.putExtra("intentType", "historyMatchClick");
+                        intent.putExtra("intent_type", "historyMatchClick");
                         intent.putExtra("source", "history_match");
                         intent.putExtra("match", match.toString());
                         getContext().sendBroadcast(intent);
@@ -108,7 +108,7 @@ public class history_match extends LinearLayout{
         if(is_selected) {
             unselect();
         }else{
-            tvName.setBackgroundColor(R.attr.boxBackgroundColor);
+            tvName.setBackgroundColor(R.attr.backgroundTint);
             is_selected = true;
         }
         hParent.selectionChanged();

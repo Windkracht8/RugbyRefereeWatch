@@ -234,7 +234,7 @@ public class report extends LinearLayout {
         tvHomeName.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "updateTeamName");
+        intent.putExtra("intent_type", "updateTeamName");
         intent.putExtra("source", "report");
         intent.putExtra("name", name);
         intent.putExtra("team_id", "home");
@@ -258,7 +258,7 @@ public class report extends LinearLayout {
         tvAwayName.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "updateTeamName");
+        intent.putExtra("intent_type", "updateTeamName");
         intent.putExtra("source", "report");
         intent.putExtra("name", name);
         intent.putExtra("team_id", "away");

@@ -150,7 +150,7 @@ public class communication_tizen extends SAAgentV2 {
         Log.i("communication_tizen", "updateStatus: " + status_new);
         this.status = status_new;
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "updateStatus");
+        intent.putExtra("intent_type", "updateStatus");
         intent.putExtra("source", "tizen");
         intent.putExtra("status_new", status_new);
         getApplicationContext().sendBroadcast(intent);
@@ -158,7 +158,7 @@ public class communication_tizen extends SAAgentV2 {
     private void gotError(final String error) {
         Log.e("communication_tizen", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "gotError");
+        intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "tizen");
         intent.putExtra("error", error);
         getApplicationContext().sendBroadcast(intent);
@@ -166,7 +166,7 @@ public class communication_tizen extends SAAgentV2 {
     private void gotResponse(final JSONObject responseMessage){
         try {
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-            intent.putExtra("intentType", "gotResponse");
+            intent.putExtra("intent_type", "gotResponse");
             intent.putExtra("source", "tizen");
             intent.putExtra("requestType", responseMessage.getString("requestType"));
             intent.putExtra("responseData", responseMessage.getString("responseData"));

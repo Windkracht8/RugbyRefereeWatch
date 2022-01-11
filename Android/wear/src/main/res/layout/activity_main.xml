@@ -6,7 +6,8 @@
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="SpUsage">
+    tools:ignore="SpUsage"
+    style="@style/rrw_black_background">
     <ImageButton
         android:id="@+id/bConfWatch"
         android:layout_width="match_parent"
@@ -22,7 +23,6 @@
         android:id="@+id/battery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/battery_placeholder"
@@ -34,7 +34,6 @@
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000"
         android:layout_marginTop="-4dp"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -121,7 +120,6 @@
         android:id="@+id/tTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0000"
         android:gravity="top|center"
         android:includeFontPadding="false"
         android:text="@string/tTimer_placeholder"
@@ -134,7 +132,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="#0000"
         android:gravity="center"
         android:text=""
         android:textSize="27dp"

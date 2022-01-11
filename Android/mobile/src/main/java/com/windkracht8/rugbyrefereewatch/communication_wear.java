@@ -46,7 +46,7 @@ public class communication_wear extends WearableListenerService implements DataC
                     if(node.isNearby()) {
                         status = "CONNECTED";
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                        intent.putExtra("intentType", "updateStatus");
+                        intent.putExtra("intent_type", "updateStatus");
                         intent.putExtra("source", "wear");
                         intent.putExtra("status_new", status);
                         context.sendBroadcast(intent);
@@ -56,7 +56,7 @@ public class communication_wear extends WearableListenerService implements DataC
             }
             status = "OFFLINE";
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-            intent.putExtra("intentType", "updateStatus");
+            intent.putExtra("intent_type", "updateStatus");
             intent.putExtra("source", "wear");
             intent.putExtra("status_new", status);
             context.sendBroadcast(intent);
@@ -102,14 +102,14 @@ public class communication_wear extends WearableListenerService implements DataC
     private static void gotError(Context context, final String error) {
         Log.e("communication_wear", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "gotError");
+        intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "wear");
         intent.putExtra("error", error);
         context.sendBroadcast(intent);
     }
     private void gotResponse(final String requestType, final String responseData){
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intentType", "gotResponse");
+        intent.putExtra("intent_type", "gotResponse");
         intent.putExtra("source", "wear");
         intent.putExtra("requestType", requestType);
         intent.putExtra("responseData", responseData);
