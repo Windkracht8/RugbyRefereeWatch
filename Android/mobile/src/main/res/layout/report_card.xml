@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
-
     <TextView
         android:id="@+id/tvReason"
 		android:layout_width="match_parent"
@@ -18,5 +17,4 @@
 		android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:visibility="gone" />
-
 </LinearLayout>

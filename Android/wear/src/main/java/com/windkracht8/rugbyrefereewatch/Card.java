@@ -58,7 +58,7 @@ public class Card extends LinearLayout {
         card_yellow.setHeight(height);
         card_red.setHeight(height);
     }
-    public void setPlayer(int setplayer){
-        player.setSelection(setplayer);
+    public void setPlayer(int set_player){
+        player.setSelection(set_player);
     }
 }

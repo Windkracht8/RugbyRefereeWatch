@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Sinbin extends LinearLayout {
-    public matchdata.sinbin sinbin;
+    public MatchData.sinbin sinbin;
 
     private final TextView timer;
 
@@ -20,7 +20,7 @@ public class Sinbin extends LinearLayout {
 
         timer = findViewById(R.id.timer);
     }
-    public void load(matchdata.sinbin sinbin, int col){
+    public void load(MatchData.sinbin sinbin, int col){
         this.sinbin = sinbin;
         this.setBackgroundColor(col);
         update();

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="purewhite">#FFF</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="pure_white">#FFF</color>
     <color name="w8blue">#2BD2E3</color>
 
-    <color name="black">#000</color>
-    <color name="blue">#00F</color>
-    <color name="brown">#A52A2A</color>
-    <color name="gold">#FFD700</color>
+    <color name="black" tools:keep="@color/black">#000</color>
+    <color name="blue" tools:keep="@color/blue">#00F</color>
+    <color name="brown" tools:keep="@color/brown">#A52A2A</color>
+    <color name="gold" tools:keep="@color/gold">#FFD700</color>
     <color name="green">#080</color>
-    <color name="orange">#FFA500</color>
-    <color name="pink">#FFC0CB</color>
-    <color name="purple">#808</color>
+    <color name="orange" tools:keep="@color/orange">#FFA500</color>
+    <color name="pink" tools:keep="@color/pink">#FFC0CB</color>
+    <color name="purple" tools:keep="@color/purple">#808</color>
     <color name="red">#F00</color>
-    <color name="white">#D3D3D3</color>
+    <color name="white" tools:keep="@color/white">#D3D3D3</color>
 
 </resources>

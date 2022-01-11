@@ -11,7 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public class Score extends LinearLayout {
-    public matchdata.team team;
+    public MatchData.team team;
     public int player_no;
 
     private final Spinner player;
@@ -47,10 +47,10 @@ public class Score extends LinearLayout {
             }
         });
     }
-    public void load(matchdata.team team){
+    public void load(MatchData.team team){
         this.team = team;
     }
-    public void update(matchdata match){
+    public void update(MatchData match){
         score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);

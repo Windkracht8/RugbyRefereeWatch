@@ -27,7 +27,7 @@ import java.util.List;
 public class communication_wear extends WearableListenerService implements DataClient.OnDataChangedListener {
     private DataClient dataClient;
     public String status;
-    private Handler mainhandler;
+    private Handler handler_main;
 
     @SuppressWarnings("unused")
     public communication_wear(){}
@@ -48,7 +48,7 @@ public class communication_wear extends WearableListenerService implements DataC
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intentType", "updateStatus");
                         intent.putExtra("source", "wear");
-                        intent.putExtra("newstatus", status);
+                        intent.putExtra("status_new", status);
                         context.sendBroadcast(intent);
                         return;
                     }
@@ -58,16 +58,16 @@ public class communication_wear extends WearableListenerService implements DataC
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intentType", "updateStatus");
             intent.putExtra("source", "wear");
-            intent.putExtra("newstatus", status);
+            intent.putExtra("status_new", status);
             context.sendBroadcast(intent);
-            mainhandler = new Handler(Looper.getMainLooper());
-            mainhandler.postDelayed(() -> checkIfConnected(context), 15000);
+            handler_main = new Handler(Looper.getMainLooper());
+            handler_main.postDelayed(() -> checkIfConnected(context), 15000);
         });
     }
     public void stop(){
         dataClient.removeListener(this);
-        if(mainhandler != null)
-            mainhandler.removeCallbacksAndMessages(null);
+        if(handler_main != null)
+            handler_main.removeCallbacksAndMessages(null);
     }
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {

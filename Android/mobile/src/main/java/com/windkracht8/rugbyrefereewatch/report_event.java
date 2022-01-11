@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, int scorewidth) {
+    public report_event(Context context, JSONObject event, int score_width) {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -51,7 +51,7 @@ public class report_event extends LinearLayout {
                     case "GOAL":
                         String score = event.getString("score");
                         tvMiddle.setText(score);
-                        tvMiddle.setWidth(scorewidth);
+                        tvMiddle.setWidth(score_width);
                         if(score.length() == 4){
                             //even number of characters will mess up the alignment
                             tvMiddle.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
@@ -72,10 +72,10 @@ public class report_event extends LinearLayout {
                             tvRight.setText(text);
                         }
 
-                        int width = (this.getWidth()-scorewidth)/2-scorewidth;
+                        int width = (this.getWidth()-score_width)/2-score_width;
                         tvLeft.setWidth(width);
-                        tvLeftTime.setWidth(scorewidth);
-                        tvRightTime.setWidth(scorewidth);
+                        tvLeftTime.setWidth(score_width);
+                        tvRightTime.setWidth(score_width);
                         tvRight.setWidth(width);
                         break;
                     default:

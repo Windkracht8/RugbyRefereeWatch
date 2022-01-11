@@ -40,19 +40,19 @@ public class MainActivity extends FragmentActivity {
     private TextView score_away;
     private LinearLayout sinbins_home;
     private LinearLayout sinbins_away;
-    private TextView timer;
-    private TextView timerstatus;
-    private Button overtimerbutton;
-    private Button bottombutton;
-    private ImageButton bconf;
-    private ImageButton bconfwatch;
+    private TextView tTimer;
+    private TextView tTimerStatus;
+    private Button bOverTimer;
+    private Button bBottom;
+    private ImageButton bConf;
+    private ImageButton bConfWatch;
     private Conf conf;
     private Score score;
     private Card card;
     private Correct correct;
     private Report report;
 
-    public static matchdata match;
+    public static MatchData match;
     public static int heightPixels = 0;
     public static int vh5 = 0;
     public static int vh10 = 0;
@@ -67,15 +67,15 @@ public class MainActivity extends FragmentActivity {
     private static String timer_status = "conf";
     public static long timer_timer = 0;
     private static long timer_start = 0;
-    private static long timer_start_timeoff = 0;
-    private static boolean timer_periodended = false;
+    private static long timer_start_time_off = 0;
+    private static boolean timer_period_ended = false;
     private static int timer_period = 0;
     public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
 
-    private Handler mainhandler;
-    private static BroadcastReceiver settingsupdateReceiver;
+    private Handler handler_main;
+    private static BroadcastReceiver settingsUpdateReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -105,15 +105,15 @@ public class MainActivity extends FragmentActivity {
         score_away.setOnClickListener(v -> score_awayClick());
         sinbins_home = findViewById(R.id.sinbins_home);
         sinbins_away = findViewById(R.id.sinbins_away);
-        timer = findViewById(R.id.timer);
-        timer.setOnClickListener(v -> timerClick());
-        timerstatus = findViewById(R.id.timerstatus);
-        overtimerbutton = findViewById(R.id.overtimerbutton);
-        bottombutton = findViewById(R.id.bottombutton);
-        bconf = findViewById(R.id.bconf);
-        bconf.setOnClickListener(v -> bconfClick());
-        bconfwatch = findViewById(R.id.bconfwatch);
-        bconfwatch.setOnClickListener(v -> bconfwatchClick());
+        tTimer = findViewById(R.id.tTimer);
+        tTimer.setOnClickListener(v -> timerClick());
+        tTimerStatus = findViewById(R.id.tTimerStatus);
+        bOverTimer = findViewById(R.id.bOverTimer);
+        bBottom = findViewById(R.id.bBottom);
+        bConf = findViewById(R.id.bConf);
+        bConf.setOnClickListener(v -> bConfClick());
+        bConfWatch = findViewById(R.id.bConfWatch);
+        bConfWatch.setOnClickListener(v -> bConfWatchClick());
         conf = findViewById(R.id.conf);
         score = findViewById(R.id.score);
         TextView score_try = findViewById(R.id.score_try);
@@ -136,26 +136,26 @@ public class MainActivity extends FragmentActivity {
         score_home.setTextSize(COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(COMPLEX_UNIT_PX, vh10);
         findViewById(R.id.sinbin_space).setMinimumHeight(vh15);
-        timer.setTextSize(COMPLEX_UNIT_PX, vh30);
-        timerstatus.setTextSize(COMPLEX_UNIT_PX, vh15);
-        overtimerbutton.setTextSize(COMPLEX_UNIT_PX, vh10);
-        bottombutton.setTextSize(COMPLEX_UNIT_PX, vh10);
-        bconf.setMaxHeight(vh15);
-        bconfwatch.setMaxHeight(vh25);
+        tTimer.setTextSize(COMPLEX_UNIT_PX, vh30);
+        tTimerStatus.setTextSize(COMPLEX_UNIT_PX, vh15);
+        bOverTimer.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bBottom.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bConf.setMaxHeight(vh15);
+        bConfWatch.setMaxHeight(vh25);
 
-        mainhandler = new Handler(Looper.getMainLooper());
-        match = new matchdata();
+        handler_main = new Handler(Looper.getMainLooper());
+        match = new MatchData();
 
-        settingsupdateReceiver = new BroadcastReceiver() {
+        settingsUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updateAfterConfig();
             }
         };
-        registerReceiver(settingsupdateReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch.settingsupdate"));
+        registerReceiver(settingsUpdateReceiver, new IntentFilter("com.w8.rrw.settings"));
 
-        Filestore.file_readSettings(getBaseContext());
-        Filestore.file_cleanMatches(getBaseContext());
+        FileStore.file_readSettings(getBaseContext());
+        FileStore.file_cleanMatches(getBaseContext());
 
         updateBattery();
         update();
@@ -165,7 +165,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(settingsupdateReceiver);
+        unregisterReceiver(settingsUpdateReceiver);
     }
     @Override
     public void onBackPressed(){
@@ -173,7 +173,7 @@ public class MainActivity extends FragmentActivity {
             conf.save(match);
             updateAfterConfig();
             conf.setVisibility(View.GONE);
-            Filestore.file_storeSettings(getBaseContext());
+            FileStore.file_storeSettings(getBaseContext());
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(card.getVisibility() == View.VISIBLE){
@@ -193,35 +193,35 @@ public class MainActivity extends FragmentActivity {
 
     public void timerClick(){
         if(timer_status.equals("running")){
-            timer_status = "timeoff";
-            timer_start_timeoff = getCurrentTimestamp();
-            match.log_event("Time off");
+            timer_status = "time_off";
+            timer_start_time_off = getCurrentTimestamp();
+            match.logEvent("Time off");
             updateButtons();
-            mainhandler.postDelayed(this::timeOffBuzz, 15000);
+            handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
     public void timeOffBuzz(){
-        if(timer_status.equals("timeoff")){
+        if(timer_status.equals("time_off")){
             beep(getBaseContext());
-            mainhandler.postDelayed(this::timeOffBuzz, 15000);
+            handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
-    public void bresumeClick(){
+    public void bResumeClick(){
         switch(timer_status){
             case "conf":
-                match.matchid = getCurrentTimestamp();
+                match.match_id = getCurrentTimestamp();
             case "ready":
                 timer_status = "running";
                 timer_period++;
                 timer_start = getCurrentTimestamp();
-                match.log_event("Start " + getPeriodName(), getKickoffTeam());
+                match.logEvent("Start " + getPeriodName(), getKickoffTeam());
                 updateScore();
                 break;
-            case "timeoff":
+            case "time_off":
                 //resume running
                 timer_status = "running";
-                timer_start += (getCurrentTimestamp() - timer_start_timeoff);
-                match.log_event("Resume time");
+                timer_start += (getCurrentTimestamp() - timer_start_time_off);
+                match.logEvent("Resume time");
                 break;
             case "rest":
                 //get ready for next period
@@ -231,17 +231,17 @@ public class MainActivity extends FragmentActivity {
         updateButtons();
     }
     public void brestClick(){
-        match.log_event("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot);
+        match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot);
 
         timer_status = "rest";
         timer_start = getCurrentTimestamp();
-        timer_periodended = false;
-        timer.setTextColor(getResources().getColor(R.color.purewhite, getBaseContext().getTheme()));
+        timer_period_ended = false;
+        tTimer.setTextColor(getResources().getColor(R.color.pure_white, getBaseContext().getTheme()));
 
-        for (matchdata.sinbin sb : match.home.sinbins){
+        for (MatchData.sinbin sb : match.home.sinbins){
             sb.end = sb.end - timer_timer;
         }
-        for (matchdata.sinbin sb : match.away.sinbins){
+        for (MatchData.sinbin sb : match.away.sinbins){
             sb.end = sb.end - timer_timer;
         }
         updateButtons();
@@ -260,7 +260,7 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-    public void bfinishClick(){
+    public void bFinishClick(){
         timer_status = "finished";
         updateButtons();
         updateScore();
@@ -268,17 +268,17 @@ public class MainActivity extends FragmentActivity {
         if(match.events.get(match.events.size()-1).what.equals("Rest star")){
             match.events.remove(match.events.size()-1);
         }
-        Filestore.file_storeMatch(getBaseContext(), match);
+        FileStore.file_storeMatch(getBaseContext(), match);
     }
-    public void bclearClick(){
+    public void bClearClick(){
         timer_status = "conf";
         timer_timer = 0;
         timer_start = 0;
-        timer_start_timeoff = 0;
-        timer_periodended = false;
+        timer_start_time_off = 0;
+        timer_period_ended = false;
         timer_period = 0;
         match.clear();
-        match = new matchdata();
+        match = new MatchData();
         updateScore();
         updateButtons();
         updateAfterConfig();
@@ -286,54 +286,54 @@ public class MainActivity extends FragmentActivity {
     }
     @SuppressLint("SetTextI18n")
     private void updateButtons(){
-        String uistatus = "";
-        overtimerbutton.setVisibility(View.GONE);
-        bottombutton.setVisibility(View.GONE);
-        bconf.setVisibility(View.GONE);
-        bconfwatch.setVisibility(View.GONE);
+        String ui_status = "";
+        bOverTimer.setVisibility(View.GONE);
+        bBottom.setVisibility(View.GONE);
+        bConf.setVisibility(View.GONE);
+        bConfWatch.setVisibility(View.GONE);
         switch(timer_status){
             case "conf":
-                bconf.setVisibility(View.VISIBLE);
+                bConf.setVisibility(View.VISIBLE);
             case "ready":
-                overtimerbutton.setText("start");
-                overtimerbutton.setOnClickListener(v -> bresumeClick());
-                overtimerbutton.setVisibility(View.VISIBLE);
+                bOverTimer.setText("start");
+                bOverTimer.setOnClickListener(v -> bResumeClick());
+                bOverTimer.setVisibility(View.VISIBLE);
                 break;
-            case "timeoff":
-                overtimerbutton.setText("resume");
-                overtimerbutton.setOnClickListener(v -> bresumeClick());
-                overtimerbutton.setVisibility(View.VISIBLE);
-                bottombutton.setText("rest");
-                bottombutton.setOnClickListener(v -> brestClick());
-                bottombutton.setVisibility(View.VISIBLE);
-                bconfwatch.setVisibility(View.VISIBLE);
-                uistatus = "time off";
+            case "time_off":
+                bOverTimer.setText("resume");
+                bOverTimer.setOnClickListener(v -> bResumeClick());
+                bOverTimer.setVisibility(View.VISIBLE);
+                bBottom.setText("rest");
+                bBottom.setOnClickListener(v -> brestClick());
+                bBottom.setVisibility(View.VISIBLE);
+                bConfWatch.setVisibility(View.VISIBLE);
+                ui_status = "time off";
                 break;
             case "rest":
-                overtimerbutton.setText("next");
-                overtimerbutton.setOnClickListener(v -> bresumeClick());
-                overtimerbutton.setVisibility(View.VISIBLE);
-                bottombutton.setText("finish");
-                bottombutton.setOnClickListener(v -> bfinishClick());
-                bottombutton.setVisibility(View.VISIBLE);
-                bconfwatch.setVisibility(View.VISIBLE);
-                uistatus = "rest";
+                bOverTimer.setText("next");
+                bOverTimer.setOnClickListener(v -> bResumeClick());
+                bOverTimer.setVisibility(View.VISIBLE);
+                bBottom.setText("finish");
+                bBottom.setOnClickListener(v -> bFinishClick());
+                bBottom.setVisibility(View.VISIBLE);
+                bConfWatch.setVisibility(View.VISIBLE);
+                ui_status = "rest";
                 break;
             case "finished":
-                overtimerbutton.setText("report");
-                overtimerbutton.setOnClickListener(v -> showReport());
-                overtimerbutton.setVisibility(View.VISIBLE);
-                bottombutton.setText("clear");
-                bottombutton.setOnClickListener(v -> bclearClick());
-                bottombutton.setVisibility(View.VISIBLE);
-                uistatus = "finished";
+                bOverTimer.setText("report");
+                bOverTimer.setOnClickListener(v -> showReport());
+                bOverTimer.setVisibility(View.VISIBLE);
+                bBottom.setText("clear");
+                bBottom.setOnClickListener(v -> bClearClick());
+                bBottom.setVisibility(View.VISIBLE);
+                ui_status = "finished";
                 break;
         }
-        timerstatus.setText(uistatus);
+        tTimerStatus.setText(ui_status);
         updateTimer();
     }
     private void update(){
-        long millisecs = updateTime();
+        long milli_secs = updateTime();
         switch(timer_status){
             case "running":
                 updateSinbins();
@@ -341,14 +341,16 @@ public class MainActivity extends FragmentActivity {
                 updateTimer();
                 break;
         }
-        mainhandler.postDelayed(this::update, 1000 - millisecs);
+        handler_main.postDelayed(this::update, 1000 - milli_secs);
     }
 
     public void updateAfterConfig(){
         updateTimer();
 
         score_home.setBackgroundColor(getColor(match.home.color));
+        sinbins_home.setBackgroundColor(getColor(match.home.color));
         score_away.setBackgroundColor(getColor(match.away.color));
+        sinbins_away.setBackgroundColor(getColor(match.away.color));
 
         if(screen_on){
             //If this is not enough, implement wake_lock: https://developer.android.com/training/scheduling/wakelock
@@ -365,9 +367,9 @@ public class MainActivity extends FragmentActivity {
     }
     public long updateTime(){
         Date date = new Date();
-        long millisecs = date.getTime() % 1000;
+        long milli_secs = date.getTime() % 1000;
         time.setText(prettyTime(date));
-        return millisecs;
+        return milli_secs;
     }
     public static String prettyTime(long timestamp){
         Date date = new Date(timestamp);
@@ -379,41 +381,41 @@ public class MainActivity extends FragmentActivity {
         return sdf.format(date);
     }
     public void updateTimer(){
-        long millisec = 0;
+        long milli_secs = 0;
         if(timer_status.equals("running") || timer_status.equals("rest")){
-            millisec = getCurrentTimestamp() - timer_start;
+            milli_secs = getCurrentTimestamp() - timer_start;
         }
-        if(timer_status.equals("timeoff")){
-            millisec = timer_start_timeoff - timer_start;
+        if(timer_status.equals("time_off")){
+            milli_secs = timer_start_time_off - timer_start;
         }
-        timer_timer = millisec;
+        timer_timer = milli_secs;
 
         String temp = "";
         if(timer_type == 1 && !timer_status.equals("rest")){
-            millisec = ((long)match.period_time * 60000) - millisec;
+            milli_secs = ((long)match.period_time * 60000) - milli_secs;
         }
-        if(millisec < 0){
-            millisec -= millisec * 2;
+        if(milli_secs < 0){
+            milli_secs -= milli_secs * 2;
             temp = "-";
         }
-        temp += prettyTimer(millisec);
-        timer.setText(temp);
+        temp += prettyTimer(milli_secs);
+        tTimer.setText(temp);
 
-        if(!timer_periodended && timer_status.equals("running") && timer_timer > (long)match.period_time * 60000){
-            timer_periodended = true;
-            timer.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
+        if(!timer_period_ended && timer_status.equals("running") && timer_timer > (long)match.period_time * 60000){
+            timer_period_ended = true;
+            tTimer.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
             beep(getBaseContext());
         }
     }
-    public static String prettyTimer(long millisec){
-        long tmp = millisec % 1000;
-        long sec = (millisec - tmp) / 1000;
-        tmp = sec % 60;
-        long mins = (sec - tmp) / 60;
+    public static String prettyTimer(long milli_secs){
+        long tmp = milli_secs % 1000;
+        long secs = (milli_secs - tmp) / 1000;
+        tmp = secs % 60;
+        long minutes = (secs - tmp) / 60;
 
         String pretty = Long.toString(tmp);
         if(tmp < 10){pretty = "0" + pretty;}
-        pretty = mins + ":" + pretty;
+        pretty = minutes + ":" + pretty;
 
         return pretty;
     }
@@ -423,8 +425,8 @@ public class MainActivity extends FragmentActivity {
     }
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
-    public void getSinbins(matchdata.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llsinbins){
-        for(matchdata.sinbin sinbin_data : team.sinbins){
+    public void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
+        for(MatchData.sinbin sinbin_data : team.sinbins){
             boolean exists = false;
             for(Sinbin sinbin_ui : al_sinbins_ui){
                 if(sinbin_data.id == sinbin_ui.sinbin.id){
@@ -435,14 +437,14 @@ public class MainActivity extends FragmentActivity {
             if(!exists){
                 Sinbin sb = new Sinbin(getBaseContext(), null);
                 sb.load(sinbin_data, getColor(team.color));
-                llsinbins.addView(sb);
+                llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }
         }
         for(int i = al_sinbins_ui.size(); i > 0; i--){
             Sinbin sinbin_ui = al_sinbins_ui.get(i-1);
             if(sinbin_ui.sinbin.hide){
-                llsinbins.removeView(sinbin_ui);
+                llSinbins.removeView(sinbin_ui);
                 al_sinbins_ui.remove(sinbin_ui);
             }else{
                 sinbin_ui.update();
@@ -453,7 +455,7 @@ public class MainActivity extends FragmentActivity {
         BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
         String tmp = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%";
         battery.setText(tmp);
-        mainhandler.postDelayed(this::updateBattery, 10000);//TODO: subscribe to update?
+        handler_main.postDelayed(this::updateBattery, 10000);//TODO: subscribe to update?
     }
     @SuppressLint("SetTextI18n")
     public void score_homeClick(){
@@ -490,33 +492,33 @@ public class MainActivity extends FragmentActivity {
         }
     }
     public void tryClick(){
-        score.team.trys++;
+        score.team.tries++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.log_event("TRY", score.team.id, score.player_no);
+        match.logEvent("TRY", score.team.id, score.player_no);
     }
     public void conversionClick(){
         score.team.cons++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.log_event("CONVERSION", score.team.id, score.player_no);
+        match.logEvent("CONVERSION", score.team.id, score.player_no);
     }
     public void goalClick(){
         score.team.goals++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.log_event("GOAL", score.team.id, score.player_no);
+        match.logEvent("GOAL", score.team.id, score.player_no);
     }
     public void updateScore(){
-        match.home.tot = match.home.trys*match.points_try +
+        match.home.tot = match.home.tries*match.points_try +
                 match.home.cons*match.points_con +
                 match.home.goals*match.points_goal;
         String tmp = match.home.tot + "";
         score_home.setText(tmp);
-        match.away.tot = match.away.trys*match.points_try +
+        match.away.tot = match.away.tries*match.points_try +
                 match.away.cons*match.points_con +
                 match.away.goals*match.points_goal;
         tmp = match.away.tot + "";
@@ -529,17 +531,17 @@ public class MainActivity extends FragmentActivity {
     }
     public void card_yellowClick(){
         long time = getCurrentTimestamp();
-        match.log_event(time, "YELLOW CARD", score.team.id, card.player_no);
+        match.logEvent(time, "YELLOW CARD", score.team.id, card.player_no);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
-        score.team.add_sinbin(time, end);
+        score.team.addSinbin(time, end);
         updateSinbins();
         card.setVisibility(View.GONE);
         score.clear();
     }
 
     public void card_redClick(){
-        match.log_event("RED CARD", score.team.id, card.player_no);
+        match.logEvent("RED CARD", score.team.id, card.player_no);
         card.setVisibility(View.GONE);
         score.clear();
     }
@@ -552,12 +554,12 @@ public class MainActivity extends FragmentActivity {
         updateScore();
     }
 
-    public void bconfwatchClick(){
+    public void bConfWatchClick(){
         conf.load(match);
         conf.onlyWatchSettings();
         conf.setVisibility(View.VISIBLE);
     }
-    public void bconfClick(){
+    public void bConfClick(){
         conf.load(match);
         conf.setVisibility(View.VISIBLE);
     }
@@ -600,27 +602,27 @@ public class MainActivity extends FragmentActivity {
         report.load(match);
         report.setVisibility(View.VISIBLE);
     }
-    public static boolean incomingSettings(JSONObject newsettings){
+    public static boolean incomingSettings(JSONObject settings_new){
         if(!timer_status.equals("conf")){return false;}
         try {
-            match.home.team = newsettings.getString("home_name");
-            match.home.color = newsettings.getString("home_color");
-            match.away.team = newsettings.getString("away_name");
-            match.away.color = newsettings.getString("away_color");
-            match.match_type = newsettings.getString("match_type");
-            match.period_time = newsettings.getInt("period_time");
-            match.period_count = newsettings.getInt("period_count");
-            match.sinbin = newsettings.getInt("sinbin");
-            match.points_try = newsettings.getInt("points_try");
-            match.points_con = newsettings.getInt("points_con");
-            match.points_goal = newsettings.getInt("points_goal");
+            match.home.team = settings_new.getString("home_name");
+            match.home.color = settings_new.getString("home_color");
+            match.away.team = settings_new.getString("away_name");
+            match.away.color = settings_new.getString("away_color");
+            match.match_type = settings_new.getString("match_type");
+            match.period_time = settings_new.getInt("period_time");
+            match.period_count = settings_new.getInt("period_count");
+            match.sinbin = settings_new.getInt("sinbin");
+            match.points_try = settings_new.getInt("points_try");
+            match.points_con = settings_new.getInt("points_con");
+            match.points_goal = settings_new.getInt("points_goal");
 
-            if(newsettings.has("screen_on"))
-                screen_on = newsettings.getInt("screen_on") == 1;
-            if(newsettings.has("countdown"))
-                timer_type = newsettings.getInt("countdown");
-            if(newsettings.has("timer_type"))
-                timer_type = newsettings.getInt("timer_type");
+            if(settings_new.has("screen_on"))
+                screen_on = settings_new.getInt("screen_on") == 1;
+            if(settings_new.has("countdown"))
+                timer_type = settings_new.getInt("countdown");
+            if(settings_new.has("timer_type"))
+                timer_type = settings_new.getInt("timer_type");
         } catch (Exception e) {
             Log.e("MainActivity", "incomingSettings: " + e.getMessage());
             return false;
@@ -651,7 +653,7 @@ public class MainActivity extends FragmentActivity {
         return ret;
     }
 
-    static long[] buzzpattern = {300,500,300,500,300,500};
+    static final long[] buzz_pattern = {300,500,300,500,300,500};
     public static void beep(Context c){
         Log.i("MainActivity", "buzz buzz");
         final Vibrator vibrator;
@@ -660,7 +662,7 @@ public class MainActivity extends FragmentActivity {
         }else {
             vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
         }
-        final VibrationEffect ve = VibrationEffect.createWaveform(buzzpattern, -1);
+        final VibrationEffect ve = VibrationEffect.createWaveform(buzz_pattern, -1);
         vibrator.cancel();
         vibrator.vibrate(ve);
     }

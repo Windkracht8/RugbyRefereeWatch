@@ -28,8 +28,8 @@ public class report extends LinearLayout {
     private final EditText etHomeName;
     private final TextView tvAwayName;
     private final EditText etAwayName;
-    private final TextView tvHomeTrys;
-    private final TextView tvAwayTrys;
+    private final TextView tvHomeTries;
+    private final TextView tvAwayTries;
     private final TableRow trCons;
     private final TextView tvHomeCons;
     private final TextView tvAwayCons;
@@ -43,11 +43,11 @@ public class report extends LinearLayout {
     private final Button bShare;
 
     private JSONObject match;
-    private long matchid;
+    private long match_id;
 
-    private final int timewidth;
-    private final int timerwidth;
-    private final int scorewidth;
+    private final int time_width;
+    private final int timer_width;
+    private final int score_width;
 
     private boolean view_full = false;
 
@@ -61,13 +61,13 @@ public class report extends LinearLayout {
         //Yes this is very ugly, TableLayout does not work when you add TableRows as a separate class
         TextView tvTime = findViewById(R.id.tvTime);
         tvTime.measure(0, 0);
-        timewidth = tvTime.getMeasuredWidth();
+        time_width = tvTime.getMeasuredWidth();
         TextView tvTimer = findViewById(R.id.tvTimer);
         tvTimer.measure(0, 0);
-        timerwidth = tvTimer.getMeasuredWidth();
+        timer_width = tvTimer.getMeasuredWidth();
         TextView tvScore = findViewById(R.id.tvScore);
         tvScore.measure(0, 0);
-        scorewidth = tvScore.getMeasuredWidth();
+        score_width = tvScore.getMeasuredWidth();
         llEvents = findViewById(R.id.llEvents);
         llEvents.removeAllViews();
 
@@ -75,8 +75,8 @@ public class report extends LinearLayout {
         etHomeName = findViewById(R.id.etHomeName);
         tvAwayName = findViewById(R.id.tvAwayName);
         etAwayName = findViewById(R.id.etAwayName);
-        tvHomeTrys = findViewById(R.id.tvHomeTrys);
-        tvAwayTrys = findViewById(R.id.tvAwayTrys);
+        tvHomeTries = findViewById(R.id.tvHomeTries);
+        tvAwayTries = findViewById(R.id.tvAwayTries);
         trCons = findViewById(R.id.trCons);
         tvHomeCons = findViewById(R.id.tvHomeCons);
         tvAwayCons = findViewById(R.id.tvAwayCons);
@@ -126,15 +126,15 @@ public class report extends LinearLayout {
         this.match = match;
         addScores();
         try {
-            this.matchid = match.getLong("matchid");
+            this.match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
             tvHomeName.setText(MainActivity.getTeamName(home));
             tvAwayName.setText(MainActivity.getTeamName(away));
-            tvHomeTrys.setText(home.getString("trys"));
-            tvAwayTrys.setText(away.getString("trys"));
+            tvHomeTries.setText(home.getString("tries"));
+            tvAwayTries.setText(away.getString("tries"));
 
             if(settings.has("points_con") && settings.getInt("points_con") == 0) {
                 trCons.setVisibility(View.GONE);
@@ -168,12 +168,12 @@ public class report extends LinearLayout {
             for (int i = 0; i < events.length(); i++) {
                 JSONObject event = events.getJSONObject(i);
                 if(view_full) {
-                    llEvents.addView(new report_event_full(context, event, match, timewidth, timerwidth, scorewidth));
+                    llEvents.addView(new report_event_full(context, event, match, time_width, timer_width, score_width));
                 }else{
-                    llEvents.addView(new report_event(context, event, scorewidth));
+                    llEvents.addView(new report_event(context, event, score_width));
                 }
                 if(event.getString("what").contains("CARD")) {
-                    llEvents.addView(new report_card(context, event, matchid));
+                    llEvents.addView(new report_card(context, event, match_id));
                 }
             }
         }catch (Exception e){
@@ -182,8 +182,8 @@ public class report extends LinearLayout {
     }
     private void addScores(){
         try {
-            int scoreh = 0;
-            int scorea = 0;
+            int score_home = 0;
+            int score_away = 0;
             JSONObject settings = match.getJSONObject("settings");
             int points_try = settings.getInt("points_try");
             int points_con = settings.getInt("points_con");
@@ -205,12 +205,12 @@ public class report extends LinearLayout {
                             break;
                     }
                     if(event.getString("team").equals("home")){
-                        scoreh += points;
+                        score_home += points;
                     }else{
-                        scorea += points;
+                        score_away += points;
                     }
                 }
-                event.put("score",  scoreh + ":" + scorea);
+                event.put("score",  score_home + ":" + score_away);
             }
         }catch(Exception e){
             Log.e("report", "getScore: " + e.getMessage());
@@ -237,8 +237,8 @@ public class report extends LinearLayout {
         intent.putExtra("intentType", "updateTeamName");
         intent.putExtra("source", "report");
         intent.putExtra("name", name);
-        intent.putExtra("teamid", "home");
-        intent.putExtra("matchid", matchid);
+        intent.putExtra("team_id", "home");
+        intent.putExtra("match_id", match_id);
         view.getContext().sendBroadcast(intent);
     }
     public void tvAwayNameClick(View view){
@@ -261,8 +261,8 @@ public class report extends LinearLayout {
         intent.putExtra("intentType", "updateTeamName");
         intent.putExtra("source", "report");
         intent.putExtra("name", name);
-        intent.putExtra("teamid", "away");
-        intent.putExtra("matchid", matchid);
+        intent.putExtra("team_id", "away");
+        intent.putExtra("match_id", match_id);
         view.getContext().sendBroadcast(intent);
     }
 
@@ -291,10 +291,10 @@ public class report extends LinearLayout {
         Log.i("report", "match: " + match.toString());
 
         try {
-            Date dMatchdate = new Date(matchid);
-            String sMatchdate = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(dMatchdate);
+            Date match_date_d = new Date(match_id);
+            String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
 
-            shareSubject += " " + sMatchdate;
+            shareSubject += " " + match_date_s;
 
             JSONObject home = match.getJSONObject("home");
             shareSubject += " " + MainActivity.getTeamName(home);
@@ -319,7 +319,7 @@ public class report extends LinearLayout {
 
             JSONObject home = match.getJSONObject("home");
             shareBody.append(MainActivity.getTeamName(home)).append("\n");
-            shareBody.append("  Trys: ").append(home.getString("trys")).append("\n");
+            shareBody.append("  Tries: ").append(home.getString("tries")).append("\n");
             shareBody.append("  Conversions: ").append(home.getString("cons")).append("\n");
             shareBody.append("  Goals: ").append(home.getString("goals")).append("\n");
             shareBody.append("  Total: ").append(home.getString("tot")).append("\n");
@@ -327,7 +327,7 @@ public class report extends LinearLayout {
 
             JSONObject away = match.getJSONObject("away");
             shareBody.append(MainActivity.getTeamName(away)).append("\n");
-            shareBody.append("  Trys: ").append(away.getString("trys")).append("\n");
+            shareBody.append("  Tries: ").append(away.getString("tries")).append("\n");
             shareBody.append("  Conversions: ").append(away.getString("cons")).append("\n");
             shareBody.append("  Goals: ").append(away.getString("goals")).append("\n");
             shareBody.append("  Total: ").append(away.getString("tot")).append("\n");

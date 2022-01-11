@@ -1,48 +1,50 @@
 <resources>
     <string name="app_name">RugbyRefereeWatch</string>
-    <string name="starting">Starting</string>
-    <string name="bGetMatch_text">Get match from watch</string>
-    <string name="bGetMatches_text">Get matches from watch</string>
-    <string name="home">home</string>
-    <string name="away">away</string>
-    <string name="trys">Trys</string>
-    <string name="conversions">Conversions</string>
-    <string name="_0">0</string>
-    <string name="goals">Goals</string>
-    <string name="home_color">Home color</string>
-    <string name="away_color">Away color</string>
-    <string name="time_period">Time/period</string>
-    <string name="period_count">Period count</string>
-    <string name="sinbin">Sinbin</string>
-    <string name="bPrepare_text">Send to watch</string>
-    <string name="bConnect_text">Connnect</string>
-    <string name="home_name">Home name</string>
-    <string name="away_name">Away name</string>
-    <string name="points_for_try">Points for Try</string>
-    <string name="points_for_conversion">Points for Conversion</string>
-    <string name="points_for_goal">Points for Goal</string>
-    <string name="icon">icon</string>
-    <string name="report">Report</string>
-    <string name="prepare">Prepare</string>
-    <string name="_40">40</string>
-    <string name="_2">2</string>
-    <string name="_10">10</string>
-    <string name="_3">3</string>
-    <string name="_5">5</string>
-    <string name="match_type">Match type</string>
-    <string name="noTizenLib">Click here to install the Samsung Accessory Service</string>
-    <string name="noWearLib">Click here to install the Wear OS Service</string>
-    <string name="record_player">Record player #</string>
-    <string name="bDelete_text">Delete selected</string>
-    <string name="no_card_reason">reason not entered</string>
-    <string name="bView_text">view</string>
-    <string name="bShare_text">share</string>
-    <string name="update_watch_app">Update app on watch to support this</string>
-    <string name="did_not_understand_message">Did not understand message</string>
-    <string name="first_connect">First connect with watch</string>
-    <string name="history">History</string>
+
+    <string name="ivIcon_desc">icon</string>
+    <string name="sOS_desc">Watch OS selection</string>
+    <string name="svMatches_desc">History of matches</string>
+    <string name="etAwayName_desc">Away name entry</string>
+    <string name="etHomeName_desc">Home name entry</string>
+    <string name="sHomeColor_desc">Home color selection</string>
+    <string name="sAwayColor_desc">Away color selection</string>
+    <string name="sMatchType_desc">Match type selection</string>
+
     <string name="tvTime_placeholder">00:00:00</string>
     <string name="tvTimer_placeholder">00:00</string>
+
+    <string name="bView_text">view</string>
+    <string name="bShare_text">share</string>
+    <string name="bDelete_text">Delete selected</string>
+    <string name="bPrepare_text">Send to watch</string>
+    <string name="bConnect_text">Connect</string>
+    <string name="bGetMatch_text">Get match from watch</string>
+    <string name="bGetMatches_text">Get matches from watch</string>
+    <string name="cbScreenOn_text">Keep screen on</string>
+    <string name="bExport_text">Export selected</string>
+    <string name="etPointsTry_text">Points for Try</string>
+    <string name="etPointsCon_text">Points for Conversion</string>
+    <string name="etPointsGoal_text">Points for Goal</string>
+    <string name="sHomeColor_text">Home color</string>
+    <string name="sAwayColor_text">Away color</string>
+    <string name="etTimePeriod_text">Time/period</string>
+    <string name="etPeriodCount_text">Period count</string>
+    <string name="etSinbin_text">Sinbin</string>
+    <string name="sMatchType_text">Match type</string>
+    <string name="etRecordPlayer_text">Record player #</string>
+    <string name="sTimerType_text">Timer type</string>
+    <string name="etHomeName_text">Home name</string>
+    <string name="etAwayName_text">Away name</string>
+
+    <string name="history">History</string>
+    <string name="report">Report</string>
+    <string name="prepare">Prepare</string>
+
+    <string name="tries">Tries</string>
+    <string name="conversions">Conversions</string>
+    <string name="goals">Goals</string>
+
+    <string name="status_STARTING">Starting</string>
     <string name="status_DISCONNECTED">Disconnected</string>
     <string name="status_CONNECTION_LOST">Connection lost</string>
     <string name="status_CONNECTED">Connected</string>
@@ -52,13 +54,28 @@
     <string name="status_PREPARE">Sending prepare</string>
     <string name="status_ERROR">error</string>
     <string name="status_CONNECTING">Connecting</string>
+
     <string name="matches_filename">matches.json</string>
-    <string name="deletedmatches_filename">deleted_matches.json</string>
-    <string name="bExport_text">Export selected</string>
-    <string name="cbScreenOn">Keep screen on</string>
-    <string name="bWatchSettings">Watch settings</string>
-    <string name="bWatchSettings2">No watch settings</string>
-    <string name="timer_type">Timer type</string>
+    <string name="deleted_matches_filename">deleted_matches.json</string>
+
     <string name="os_wear">WearOS</string>
     <string name="os_tizen">Tizen</string>
+    <string name="watch_settings">Watch settings</string>
+    <string name="no_watch_settings">No watch settings</string>
+    <string name="no_card_reason">reason not entered</string>
+    <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="did_not_understand_message">Did not understand message</string>
+    <string name="first_connect">First connect with watch</string>
+    <string name="noTizenLib">Click here to install the Samsung Accessory Service</string>
+    <string name="noWearLib">Click here to install the Wear OS Service</string>
+    <string name="home">home</string>
+    <string name="away">away</string>
+
+    <string name="_0">0</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_5">5</string>
+    <string name="_10">10</string>
+    <string name="_40">40</string>
+
 </resources>

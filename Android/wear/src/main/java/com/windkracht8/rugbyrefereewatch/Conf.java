@@ -123,7 +123,7 @@ public class Conf extends ScrollView {
         points_con.setAdapter(aaTemp);
         points_goal.setAdapter(aaTemp);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.teamcolors, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         color_home.setAdapter(adapter);
@@ -135,10 +135,10 @@ public class Conf extends ScrollView {
         timer_type.setAdapter(aaTemp);
     }
 
-    public void load(matchdata match){
-        selectitem(color_home, match.home.color);
-        selectitem(color_away, match.away.color);
-        selectitem(match_type, match.match_type);
+    public void load(MatchData match){
+        selectItem(color_home, match.home.color);
+        selectItem(color_away, match.away.color);
+        selectItem(match_type, match.match_type);
 
         period_time.setSelection(match.period_time-1);
         period_count.setSelection(match.period_count-1);
@@ -157,7 +157,7 @@ public class Conf extends ScrollView {
         findViewById(R.id.matchSettings).setVisibility(View.GONE);
         onlyWatchSettings = true;
     }
-    private void selectitem(Spinner spin, String str){
+    private void selectItem(Spinner spin, String str){
         for (int i=0;i<spin.getCount();i++){
             if (spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
@@ -165,7 +165,7 @@ public class Conf extends ScrollView {
             }
         }
     }
-    public void save(matchdata match){
+    public void save(MatchData match){
         if(!onlyWatchSettings) {
             match.home.color = color_home.getSelectedItem().toString();
             match.away.color = color_away.getSelectedItem().toString();

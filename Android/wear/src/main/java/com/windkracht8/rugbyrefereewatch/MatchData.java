@@ -8,11 +8,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class matchdata{
-    public long matchid;
-    public ArrayList<event> events = new ArrayList<>();
-    public team home;
-    public team away;
+public class MatchData {
+    public long match_id;
+    public final ArrayList<event> events = new ArrayList<>();
+    public final team home;
+    public final team away;
     public String match_type = "15s";
     public int period_time = 40;
     public int period_count = 2;
@@ -21,15 +21,15 @@ public class matchdata{
     public int points_con = 2;
     public int points_goal = 3;
 
-    public matchdata(){
+    public MatchData(){
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
     }
-    public matchdata(JSONObject match_json){
+    public MatchData(JSONObject match_json){
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
         try {
-            matchid = match_json.getLong("matchid");
+            match_id = match_json.getLong("matchid");
             JSONObject settings = match_json.getJSONObject("settings");
             match_type = settings.getString("match_type");
             period_time = settings.getInt("period_time");
@@ -39,13 +39,13 @@ public class matchdata{
             points_con = settings.getInt("points_con");
             points_goal = settings.getInt("points_goal");
         }catch(JSONException e){
-            Log.e("matchdata", "matchdata from json: " + e.getMessage());
+            Log.e("MatchData", "MatchData from json: " + e.getMessage());
         }
     }
-    public JSONObject tojson(){
+    public JSONObject toJson(){
         JSONObject ret = new JSONObject();
         try {
-            ret.put("matchid", matchid);
+            ret.put("matchid", match_id);
             JSONObject settings = new JSONObject();
             settings.put("match_type", match_type);
             settings.put("period_time", period_time);
@@ -55,15 +55,15 @@ public class matchdata{
             settings.put("points_con", points_con);
             settings.put("points_goal", points_goal);
             ret.put("settings", settings);
-            ret.put("home", home.tojson());
-            ret.put("away", away.tojson());
+            ret.put("home", home.toJson());
+            ret.put("away", away.toJson());
             JSONArray events_json = new JSONArray();
             for(event evt : events){
-                events_json.put(evt.tojson());
+                events_json.put(evt.toJson());
             }
             ret.put("events", events_json);
         } catch (JSONException e) {
-            Log.e("matchdata", "tojson: " + e.getMessage());
+            Log.e("MatchData", "toJson: " + e.getMessage());
         }
         return ret;
     }
@@ -89,7 +89,7 @@ public class matchdata{
                 }
                 break;
             case "TRY":
-                team_edit.trys--;
+                team_edit.tries--;
                 break;
             case "CONVERSION":
                 team_edit.cons--;
@@ -99,76 +99,76 @@ public class matchdata{
                 break;
         }
     }
-    public void log_event(String what){
+    public void logEvent(String what){
         event evt = new event(what);
         events.add(evt);
-        Log.i("matchdata" , "log_event: " + evt.tojson());
+        Log.i("MatchData" , "log_event: " + evt.toJson());
     }
-    public void log_event(String what, String team){
+    public void logEvent(String what, String team){
         if(team == null){
-            log_event(what);
+            logEvent(what);
             return;
         }
         event evt = new event(what);
         evt.team = team;
         events.add(evt);
-        Log.i("matchdata" , "log_event: " + evt.tojson());
+        Log.i("MatchData" , "log_event: " + evt.toJson());
     }
-    public void log_event(String what, String team, int who){
+    public void logEvent(String what, String team, int who){
         event evt = new event(what);
         evt.team = team;
         evt.who = who;
         events.add(evt);
-        Log.i("matchdata" , "log_event: " + evt.tojson());
+        Log.i("MatchData" , "log_event: " + evt.toJson());
     }
-    public void log_event(long time, String what, String team, int who){
+    public void logEvent(long time, String what, String team, int who){
         event evt = new event(time, what);
         evt.team = team;
         evt.who = who;
         events.add(evt);
-        Log.i("matchdata" , "log_event: " + evt.tojson());
+        Log.i("MatchData" , "log_event: " + evt.toJson());
     }
     public static class team{
-        public String id;
+        public final String id;
         public String team;
         public String color;
         public int tot = 0;
-        public int trys = 0;
+        public int tries = 0;
         public int cons = 0;
         public int goals = 0;
-        public ArrayList<sinbin> sinbins = new ArrayList<>();
+        public final ArrayList<sinbin> sinbins = new ArrayList<>();
         public boolean kickoff = false;
         public team(String id, String team, String color){
             this.id = id;
             this.team = team;
             this.color = color;
         }
-        public void add_sinbin(long id, long end){
+        public void addSinbin(long id, long end){
             sinbin sb = new sinbin(id, end);
             sinbins.add(sb);
         }
-        public JSONObject tojson(){
+        public JSONObject toJson(){
             JSONObject ret = new JSONObject();
             try {
                 ret.put("id", id);
                 ret.put("team", team);
                 ret.put("color", color);
                 ret.put("tot", tot);
-                ret.put("trys", trys);
+                ret.put("tries", tries);
                 ret.put("cons", cons);
                 ret.put("goals", goals);
                 ret.put("kickoff", kickoff);
             } catch (JSONException e) {
-                Log.e("matchdata", "match.tojson: " + e.getMessage());
+                Log.e("MatchData", "match.toJson: " + e.getMessage());
             }
             return ret;
         }
     }
     public static class event{
-        public long id;
-        public String time;
-        public String timer;
-        public String what;
+        public final long id;
+        public final String time;
+        public final String timer;
+        public final String what;
         public String team = null;
         public int who = 0;
         public event(long id, String what){
@@ -183,7 +183,7 @@ public class matchdata{
             this.timer = MainActivity.prettyTimer(MainActivity.timer_timer);
             this.what = what;
         }
-        public JSONObject tojson(){
+        public JSONObject toJson(){
             JSONObject evt = new JSONObject();
             try {
                 evt.put("id", id);
@@ -197,13 +197,13 @@ public class matchdata{
                     }
                 }
             } catch (JSONException e) {
-                Log.e("matchdata" , "event.tojson: " + e.getMessage());
+                Log.e("MatchData" , "event.toJson: " + e.getMessage());
             }
             return evt;
         }
     }
     public static class sinbin{
-        public long id;
+        public final long id;
         public long end;
         public boolean ended = false;
         public boolean hide = false;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="teamcolors">
+    <string-array name="team_colors">
         <item>black</item>
         <item>blue</item>
         <item>brown</item>

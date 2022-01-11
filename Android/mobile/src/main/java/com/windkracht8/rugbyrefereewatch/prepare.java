@@ -32,7 +32,7 @@ public class prepare extends LinearLayout {
     private final CheckBox cbScreenOn;
     private final Button bWatchSettings;
     private final Spinner sTimerType;
-    private boolean watchsettings = false;
+    private boolean watch_settings = false;
 
     public prepare(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -127,7 +127,7 @@ public class prepare extends LinearLayout {
             public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.teamcolors, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         sHomeColor.setAdapter(adapter);
@@ -154,18 +154,18 @@ public class prepare extends LinearLayout {
     }
 
     private void bWatchSettingsClick(){
-        if(watchsettings){
+        if(watch_settings){
             findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
             findViewById(R.id.trScreenOn).setVisibility(View.GONE);
             findViewById(R.id.trTimerType).setVisibility(View.GONE);
-            bWatchSettings.setText(R.string.bWatchSettings);
+            bWatchSettings.setText(R.string.watch_settings);
         }else {
             findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
             findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
             findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
-            bWatchSettings.setText(R.string.bWatchSettings2);
+            bWatchSettings.setText(R.string.no_watch_settings);
         }
-        watchsettings = !watchsettings;
+        watch_settings = !watch_settings;
     }
     public JSONObject getSettings(){
         JSONObject settings = new JSONObject();
@@ -185,7 +185,7 @@ public class prepare extends LinearLayout {
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
-            if(watchsettings) {
+            if(watch_settings) {
                 settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
                 settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
                 settings.put("countdown", sTimerType.getSelectedItemPosition());//DEPRECATED
@@ -199,11 +199,11 @@ public class prepare extends LinearLayout {
     public void gotSettings(JSONObject settings){
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
-            if(settings.has("home_color")) selectitem(sHomeColor, settings.getString("home_color"));
+            if(settings.has("home_color")) selectItem(sHomeColor, settings.getString("home_color"));
             if(settings.has("away_name")) etHomeName.setText(settings.getString("away_name"));
-            if(settings.has("away_color")) selectitem(sAwayColor, settings.getString("away_color"));
+            if(settings.has("away_color")) selectItem(sAwayColor, settings.getString("away_color"));
 
-            if(settings.has("match_type")) selectitem(sMatchType, settings.getString("match_type"));
+            if(settings.has("match_type")) selectItem(sMatchType, settings.getString("match_type"));
             if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
             if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
             if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
@@ -218,7 +218,7 @@ public class prepare extends LinearLayout {
             Log.e("Prepare", "gotSettings: " + e.getMessage());
         }
     }
-    private void selectitem(Spinner spin, String str){
+    private void selectItem(Spinner spin, String str){
         if(str.equals("lightgray")){str = "white";}
         for (int i=0;i<spin.getCount();i++){
             if (spin.getItemAtPosition(i).equals(str)){

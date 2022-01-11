@@ -45,7 +45,7 @@ public class Communication extends WearableListenerService {
                     }
                     try{
                         JSONObject responseData_json = new JSONObject();
-                        responseData_json.put("matches", Filestore.file_deletedMatches(getApplicationContext(), requestData));
+                        responseData_json.put("matches", FileStore.file_deletedMatches(getApplicationContext(), requestData));
                         responseData_json.put("settings", MainActivity.getSettings());
                         responseData = responseData_json.toString();
                     } catch (Exception e) {
@@ -58,10 +58,10 @@ public class Communication extends WearableListenerService {
                         Log.e("communication", "No requestData for request getMatches");
                         return;
                     }
-                    responseData = Filestore.file_deletedMatches(getApplicationContext(), requestData).toString();
+                    responseData = FileStore.file_deletedMatches(getApplicationContext(), requestData).toString();
                     break;
                 case "getMatch":
-                    responseData = MainActivity.match.tojson().toString();
+                    responseData = MainActivity.match.toJson().toString();
                     break;
                 case "prepare":
                     if(requestData == null){
@@ -72,11 +72,11 @@ public class Communication extends WearableListenerService {
                         JSONObject requestData_json = new JSONObject(requestData);
                         if(MainActivity.incomingSettings(requestData_json)){
                             responseData = "okilly dokilly";
-                            Filestore.file_storeSettings(getApplicationContext());
+                            FileStore.file_storeSettings(getApplicationContext());
                         }else{
                             responseData = "match ongoing";
                         }
-                        this.sendBroadcast(new Intent("com.windkracht8.rugbyrefereewatch.settingsupdate"));
+                        this.sendBroadcast(new Intent("com.w8.rrw.settings"));
                     } catch (Exception e) {
                         Log.e("communication", "prepare: " + e.getMessage());
                         responseData = "unexpected error";

@@ -16,15 +16,15 @@ import org.json.JSONObject;
 
 
 public class report_card extends LinearLayout {
-    private long matchid;
-    private long eventid;
+    private long match_id;
+    private long event_id;
     private TextView tvReason;
     private EditText etReason;
 
     public report_card(Context context){super(context);}
-    public report_card(Context context, JSONObject event, long matchid) {
+    public report_card(Context context, JSONObject event, long match_id) {
         super(context);
-        this.matchid = matchid;
+        this.match_id = match_id;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
             inflater.inflate(R.layout.report_card, this, true);
@@ -48,7 +48,7 @@ public class report_card extends LinearLayout {
             }
         });
         try {
-            eventid = event.getLong("id");
+            event_id = event.getLong("id");
 
             if(event.has("reason")){
                 tvReason.setText(event.getString("reason").replace("\n", " "));
@@ -80,10 +80,10 @@ public class report_card extends LinearLayout {
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateCardReason");
-        intent.putExtra("source", "reportcard");
+        intent.putExtra("source", "report_card");
         intent.putExtra("reason", reason);
-        intent.putExtra("matchid", matchid);
-        intent.putExtra("eventid", eventid);
+        intent.putExtra("match_id", match_id);
+        intent.putExtra("event_id", event_id);
         view.getContext().sendBroadcast(intent);
     }
 }

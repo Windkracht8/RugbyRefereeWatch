@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -23,12 +22,12 @@ public class Report extends ScrollView {
         findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh90);
     }
 
-    public void load(matchdata match){
+    public void load(MatchData match){
         LinearLayout list = findViewById(R.id.list);
         for(int i = list.getChildCount(); i > 0; i--){
             list.removeViewAt(i-1);
         }
-        for(matchdata.event event : match.events){
+        for(MatchData.event event : match.events){
             if(event.what.equals("Resume time") || event.what.equals("Time off")){
                 continue;
             }

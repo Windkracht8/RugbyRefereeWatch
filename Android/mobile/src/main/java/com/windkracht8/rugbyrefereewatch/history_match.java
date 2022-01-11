@@ -23,7 +23,7 @@ public class history_match extends LinearLayout{
     history hParent;
     public JSONObject match;
     private TextView tvName;
-    public boolean isselected = false;
+    public boolean is_selected = false;
 
     public history_match(Context context){super(context);}
     public history_match(Context context, JSONObject match, history hParent, boolean last) {
@@ -40,13 +40,13 @@ public class history_match extends LinearLayout{
             findViewById(R.id.llHistoryMatch).setBackgroundResource(0);
         }
         try {
-            Date dMatchdate = new Date(match.getLong("matchid"));
-            String sMatchdate = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(dMatchdate);
+            Date match_date_d = new Date(match.getLong("matchid"));
+            String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
-            String sName = sMatchdate + " " + MainActivity.getTeamName(home) + " v " + MainActivity.getTeamName(away);
+            String name_s = match_date_s + " " + MainActivity.getTeamName(home) + " v " + MainActivity.getTeamName(away);
 
-            tvName.setText(sName);
+            tvName.setText(name_s);
         } catch (Exception e) {
             Log.e("history_match", "history_match: " + e.getMessage());
         }
@@ -64,14 +64,14 @@ public class history_match extends LinearLayout{
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        longpress();
+                        longPress();
                     }
                 }, 500);
                 return true;
             case (MotionEvent.ACTION_MOVE):
-                float diffx = x - event.getX();
-                float diffy = y - event.getY();
-                if(diffx > 10 || diffx < -10 || diffy > 10 || diffy < -10){
+                float diff_x = x - event.getX();
+                float diff_y = y - event.getY();
+                if(diff_x > 10 || diff_x < -10 || diff_y > 10 || diff_y < -10){
                     timer.cancel();
                 }
                 return true;
@@ -83,7 +83,7 @@ public class history_match extends LinearLayout{
                     }else {
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intentType", "historyMatchClick");
-                        intent.putExtra("source", "historymatch");
+                        intent.putExtra("source", "history_match");
                         intent.putExtra("match", match.toString());
                         getContext().sendBroadcast(intent);
                         performClick();
@@ -100,24 +100,24 @@ public class history_match extends LinearLayout{
         return super.performClick();
     }
 
-    private void longpress() {
+    private void longPress() {
         new Handler(Looper.getMainLooper()).post(this::toggleSelect);
     }
 
     private void toggleSelect(){
-        if(isselected) {
+        if(is_selected) {
             unselect();
         }else{
             tvName.setBackgroundColor(R.attr.boxBackgroundColor);
-            isselected = true;
+            is_selected = true;
         }
         hParent.selectionChanged();
     }
 
     public boolean unselect(){
-        boolean ret = isselected;
+        boolean ret = is_selected;
         tvName.setBackgroundColor(0);
-        isselected = false;
+        is_selected = false;
         return ret;
     }
 }

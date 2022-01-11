@@ -146,13 +146,13 @@ public class communication_tizen extends SAAgentV2 {
         }
     }
 
-    private void updateStatus(final String newstatus) {
-        Log.i("communication_tizen", "updateStatus: " + newstatus);
-        this.status = newstatus;
+    private void updateStatus(final String status_new) {
+        Log.i("communication_tizen", "updateStatus: " + status_new);
+        this.status = status_new;
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intentType", "updateStatus");
         intent.putExtra("source", "tizen");
-        intent.putExtra("newstatus", newstatus);
+        intent.putExtra("status_new", status_new);
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotError(final String error) {

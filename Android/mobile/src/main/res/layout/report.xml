@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +29,6 @@
         android:importantForAutofill="no"
         android:inputType="text"
         android:visibility="gone" />
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,70 +56,54 @@
                 android:textStyle="bold" />
         </TableRow>
         <TableRow>
-            <TextView android:text="@string/trys" />
-
+            <TextView android:text="@string/tries" />
             <TextView
-                android:id="@+id/tvHomeTrys"
+                android:id="@+id/tvHomeTries"
                 android:layout_marginEnd="20dp"
                 android:gravity="end"
                 android:text="@string/_0" />
-
             <TextView
                 android:layout_marginStart="20dp"
-                android:text="@string/trys" />
-
+                android:text="@string/tries" />
             <TextView
-                android:id="@+id/tvAwayTrys"
+                android:id="@+id/tvAwayTries"
                 android:gravity="end"
                 android:text="@string/_0" />
         </TableRow>
-
         <TableRow
             android:id="@+id/trCons" >
-
             <TextView android:text="@string/conversions" />
-
             <TextView
                 android:id="@+id/tvHomeCons"
                 android:layout_marginEnd="20dp"
                 android:gravity="end"
                 android:text="@string/_0" />
-
             <TextView
                 android:layout_marginStart="20dp"
                 android:text="@string/conversions" />
-
             <TextView
                 android:id="@+id/tvAwayCons"
                 android:gravity="end"
                 android:text="@string/_0" />
         </TableRow>
-
         <TableRow
             android:id="@+id/trGoals" >
-
             <TextView android:text="@string/goals" />
-
             <TextView
                 android:id="@+id/tvHomeGoals"
                 android:layout_marginEnd="20dp"
                 android:gravity="end"
                 android:text="@string/_0" />
-
             <TextView
                 android:layout_marginStart="20dp"
                 android:text="@string/goals" />
-
             <TextView
                 android:id="@+id/tvAwayGoals"
                 android:gravity="end"
                 android:text="@string/_0" />
         </TableRow>
-
         <TableRow>
-
             <Space />
-
             <TextView
                 android:id="@+id/tvHomeTot"
                 android:layout_marginEnd="20dp"
@@ -128,9 +112,7 @@
                 android:text="@string/_0"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <Space />
-
             <TextView
                 android:id="@+id/tvAwayTot"
                 android:background="@drawable/table_tot_line"
@@ -140,7 +122,6 @@
                 android:textStyle="bold" />
         </TableRow>
     </TableLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -162,17 +143,13 @@
                     android:layout_marginEnd="10sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tvTime_placeholder"
-                    />
-
+                    android:text="@string/tvTime_placeholder"/>
                 <TextView
                     android:id="@+id/tvTimer"
                     android:layout_marginEnd="10sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tvTimer_placeholder"
-                    />
-
+                    android:text="@string/tvTimer_placeholder"/>
                 <TextView
                     android:id="@+id/tvScore"
                     android:gravity="end"
@@ -180,9 +157,7 @@
                     android:layout_marginEnd="10sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tvTimer_placeholder"
-                    />
-
+                    android:text="@string/tvTimer_placeholder"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -190,7 +165,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
         <Button
             android:id="@+id/bView"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -201,7 +175,6 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="invisible" />
-
         <Button
             android:id="@+id/bShare"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"

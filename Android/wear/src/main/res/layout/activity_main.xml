@@ -3,17 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="HardcodedText,SpUsage">
     <ImageButton
-        android:id="@+id/bconfwatch"
+        android:id="@+id/bConfWatch"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#000"
-        android:contentDescription="configuration"
+        android:contentDescription="Watch configuration"
         android:scaleType="centerInside"
         android:src="@drawable/gear2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,7 +53,6 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time">
-
         <TextView
             android:id="@+id/score_home"
             android:layout_width="wrap_content"
@@ -65,7 +63,6 @@
             android:text="0"
             android:textSize="18dp"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/score_away"
             android:layout_width="wrap_content"
@@ -78,7 +75,6 @@
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/sin_bins"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -113,9 +109,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scores" />
-
     <TextView
-        android:id="@+id/timer_bg"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginTop="8dp"
@@ -124,7 +118,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
     <TextView
-        android:id="@+id/timer"
+        android:id="@+id/tTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top|center"
@@ -135,7 +129,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
     <TextView
-        android:id="@+id/timerstatus"
+        android:id="@+id/tTimerStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -144,10 +138,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timer" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tTimer" />
     <Button
-        android:id="@+id/overtimerbutton"
+        android:id="@+id/bOverTimer"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -161,7 +154,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
     <Button
-        android:id="@+id/bottombutton"
+        android:id="@+id/bBottom"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -172,11 +165,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
-
     <ImageButton
-        android:id="@+id/bconf"
+        android:id="@+id/bConf"
         android:layout_width="match_parent"
-        android:layout_height="27dp"
+        android:layout_height="32dp"
         android:background="#B3000000"
         android:contentDescription="configuration"
         android:scaleType="centerInside"
@@ -184,7 +176,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
     <com.windkracht8.rugbyrefereewatch.Conf
         android:id="@+id/conf"
         android:layout_width="match_parent"

@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class Correct extends ScrollView {
-    private matchdata match;
+    private MatchData match;
     public Correct(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -20,14 +20,14 @@ public class Correct extends ScrollView {
         findViewById(R.id.list_wrap).setLayoutParams(params);
         findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh80);
     }
-    public void load(matchdata match){
+    public void load(MatchData match){
         this.match = match;
         LinearLayout list = findViewById(R.id.list);
         for(int i = list.getChildCount(); i > 0; i--){
             list.removeViewAt(i-1);
         }
         for(int i = match.events.size(); i > 0; i--){
-            matchdata.event event_data = match.events.get(i-1);
+            MatchData.event event_data = match.events.get(i-1);
             if(!event_data.what.equals("TRY") &&
                     !event_data.what.equals("CONVERSION") &&
                     !event_data.what.equals("GOAL") &&

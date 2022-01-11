@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
     <Button
         android:id="@+id/bPrepare"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -18,8 +19,7 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        >
+        android:layout_marginEnd="5dp">
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,8 +28,7 @@
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/etHomeName"
-                    android:text="@string/home_name"
+                    android:text="@string/etHomeName_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etHomeName"
@@ -37,25 +36,25 @@
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:text="@string/home"
+                    android:hint="@string/etHomeName_desc"
                     android:textAlignment="center" />
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/sHomeColor"
-                    android:text="@string/home_color"
-                    android:textSize="18sp" />
+                    android:text="@string/sHomeColor_text"
+                    android:textSize="18sp"/>
                 <Spinner
                     android:id="@+id/sHomeColor"
-                    android:layout_height="48dp" />
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/sHomeColor_desc" />
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/etAwayName"
-                    android:text="@string/away_name"
+                    android:text="@string/etAwayName_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etAwayName"
@@ -63,30 +62,30 @@
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:text="@string/away"
+                    android:hint="@string/etAwayName_desc"
                     android:textAlignment="center" />
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/sAwayColor"
-                    android:text="@string/away_color"
+                    android:text="@string/sAwayColor_text"
                     android:textSize="18sp" />
                 <Spinner
                     android:id="@+id/sAwayColor"
-                    android:layout_height="48dp" />
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/sAwayColor_desc"/>
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/sMatchType"
-                    android:text="@string/match_type"
+                    android:text="@string/sMatchType_text"
                     android:textSize="18sp" />
-
                 <Spinner
                     android:id="@+id/sMatchType"
-                    android:layout_height="48dp" />
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/sMatchType_desc"/>
             </TableRow>
             <TableRow
                 android:id="@+id/trTimePeriod"
@@ -95,7 +94,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etTimePeriod"
-                    android:text="@string/time_period"
+                    android:text="@string/etTimePeriod_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etTimePeriod"
@@ -112,7 +111,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etPeriodCount"
-                    android:text="@string/period_count"
+                    android:text="@string/etPeriodCount_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etPeriodCount"
@@ -129,7 +128,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etSinbin"
-                    android:text="@string/sinbin"
+                    android:text="@string/etSinbin_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etSinbin"
@@ -146,7 +145,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etPointsTry"
-                    android:text="@string/points_for_try"
+                    android:text="@string/etPointsTry_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etPointsTry"
@@ -163,7 +162,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etPointsCon"
-                    android:text="@string/points_for_conversion"
+                    android:text="@string/etPointsCon_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etPointsCon"
@@ -180,7 +179,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etPointsGoal"
-                    android:text="@string/points_for_goal"
+                    android:text="@string/etPointsGoal_text"
                     android:textSize="18sp" />
                 <EditText
                     android:id="@+id/etPointsGoal"
@@ -198,7 +197,7 @@
                     android:layout_height="48dp"
                     android:textAlignment="center"
                     android:textAllCaps="false"
-                    android:text="@string/bWatchSettings"
+                    android:text="@string/watch_settings"
                     android:textSize="18sp"
                     android:layout_span="2" />
             </TableRow>
@@ -209,7 +208,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/etRecordPlayer"
-                    android:text="@string/record_player"
+                    android:text="@string/etRecordPlayer_text"
                     android:textSize="18sp" />
                 <CheckBox
                     android:id="@+id/cbRecordPlayer"
@@ -223,7 +222,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/cbScreenOn"
-                    android:text="@string/cbScreenOn"
+                    android:text="@string/cbScreenOn_text"
                     android:textSize="18sp" />
                 <CheckBox
                     android:id="@+id/cbScreenOn"
@@ -238,7 +237,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:labelFor="@+id/sTimerType"
-                    android:text="@string/timer_type"
+                    android:text="@string/sTimerType_text"
                     android:textSize="18sp" />
                 <Spinner
                     android:id="@+id/sTimerType"

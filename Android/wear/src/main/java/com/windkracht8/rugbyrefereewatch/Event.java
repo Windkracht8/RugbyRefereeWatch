@@ -7,11 +7,11 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 public class Event extends TextView {
-    public matchdata.event event_data;
+    public MatchData.event event_data;
     public Event(Context context) {
         super(context);
     }
-    public Event(Context context, matchdata.event event_data) {
+    public Event(Context context, MatchData.event event_data) {
         super(context);
         this.event_data = event_data;
         String item = event_data.timer + ' ' + event_data.what;

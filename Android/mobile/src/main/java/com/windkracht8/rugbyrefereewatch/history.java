@@ -45,46 +45,46 @@ public class history extends LinearLayout {
         loadMatches();
     }
 
-    public void gotMatches(final JSONArray newmatches){
+    public void gotMatches(final JSONArray matches_new){
         try {
-            for (int i = 0; i < newmatches.length(); i++) {
-                JSONObject newmatch = new JSONObject(newmatches.getString(i));
-                insertMatch(newmatch);
+            for (int i = 0; i < matches_new.length(); i++) {
+                JSONObject match_new = new JSONObject(matches_new.getString(i));
+                insertMatch(match_new);
             }
         } catch (Exception e) {
             Log.e("history", "gotMatches: " + e.getMessage());
         }
         showMatches();
         storeMatches();
-		cleanDeletedMatches(newmatches);
+		cleanDeletedMatches(matches_new);
     }
-    private void insertMatch(final JSONObject newmatch){
+    private void insertMatch(final JSONObject match_new){
         try {
-            long newmatchid = newmatch.getLong("matchid");
-            if(deleted_matches.contains(newmatchid)){
+            long match_new_id = match_new.getLong("matchid");
+            if(deleted_matches.contains(match_new_id)){
                 return;
             }
             for (int i = 0; i < matches.size(); i++) {
-                long matchid = matches.get(i).getLong("matchid");
-                if(newmatchid < matchid){
-                    matches.add(i, newmatch);
+                long match_id = matches.get(i).getLong("matchid");
+                if(match_new_id < match_id){
+                    matches.add(i, match_new);
                     return;
                 }
-                if(newmatchid == matchid){
+                if(match_new_id == match_id){
                     return;
                 }
             }
-            matches.add(newmatch);
+            matches.add(match_new);
         } catch (Exception e) {
             Log.e("history", "insertMatch: " + e.getMessage());
         }
     }
-    public void cleanDeletedMatches(final JSONArray newmatches){
+    public void cleanDeletedMatches(final JSONArray matches_new){
         ArrayList<Long> new_matches = new ArrayList<>();
         try {
-			for (int i = 0; i < newmatches.length(); i++) {
-				JSONObject newmatch = new JSONObject(newmatches.getString(i));
-                new_matches.add(newmatch.getLong("matchid"));
+			for (int i = 0; i < matches_new.length(); i++) {
+				JSONObject match_new = new JSONObject(matches_new.getString(i));
+                new_matches.add(match_new.getLong("matchid"));
             }
         } catch (Exception e) {
             Log.e("history", "cleanDeletedMatches: " + e.getMessage());
@@ -97,13 +97,13 @@ public class history extends LinearLayout {
     }
     public JSONObject getDeletedMatches(){
         try {
-            JSONArray jsonaDeletedMatches = new JSONArray();
+            JSONArray jaDeletedMatches = new JSONArray();
             for (int i=0; i < deleted_matches.size(); i++) {
-                jsonaDeletedMatches.put(deleted_matches.get(i));
+                jaDeletedMatches.put(deleted_matches.get(i));
             }
-            JSONObject jsonoDeletedMatches = new JSONObject();
-            jsonoDeletedMatches.put("deleted_matches", jsonaDeletedMatches);
-            return jsonoDeletedMatches;
+            JSONObject joDeletedMatches = new JSONObject();
+            joDeletedMatches.put("deleted_matches", jaDeletedMatches);
+            return joDeletedMatches;
         } catch (Exception e) {
             Log.e("history", "getDeletedMatches: " + e.getMessage());
         }
@@ -133,7 +133,7 @@ public class history extends LinearLayout {
         showMatches();
 
         try {
-            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.deletedmatches_filename));
+            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.deleted_matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
 
@@ -149,7 +149,7 @@ public class history extends LinearLayout {
                 deleted_matches.add(jsonDeletedMatches.getLong(i));
             }
         } catch (Exception e) {
-            Log.e("history", "loadMatches deletedmatches: " + e.getMessage());
+            Log.e("history", "loadMatches deleted_matches: " + e.getMessage());
         }
     }
     private void showMatches(){
@@ -167,25 +167,25 @@ public class history extends LinearLayout {
 
     public void storeMatches(){
         try {
-            JSONArray jsonaMatches = new JSONArray();
+            JSONArray jaMatches = new JSONArray();
             for (int i=0; i < matches.size(); i++) {
-                jsonaMatches.put(matches.get(i));
+                jaMatches.put(matches.get(i));
             }
             FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
-            osr.write(jsonaMatches.toString());
+            osr.write(jaMatches.toString());
             osr.close();
         } catch (Exception e) {
             Log.e("history", "storeMatches matches: " + e.getMessage());
         }
         try {
-            JSONArray jsonaDeletedMatches = new JSONArray();
+            JSONArray jaDeletedMatches = new JSONArray();
             for (int i=0; i < deleted_matches.size(); i++) {
-                jsonaDeletedMatches.put(deleted_matches.get(i));
+                jaDeletedMatches.put(deleted_matches.get(i));
             }
-            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.deletedmatches_filename), Context.MODE_PRIVATE);
+            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.deleted_matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
-            osr.write(jsonaDeletedMatches.toString());
+            osr.write(jaDeletedMatches.toString());
             osr.close();
         } catch (Exception e) {
             Log.e("history", "storeMatches deleted_matches: " + e.getMessage());
@@ -209,7 +209,7 @@ public class history extends LinearLayout {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
-                if(tmp.isselected){
+                if(tmp.is_selected){
                     Log.i("history", "delete match: " + i);
                     try {
                         deleted_matches.add(matches.get(i).getLong("matchid"));
@@ -232,7 +232,7 @@ public class history extends LinearLayout {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
-                if(tmp.isselected){
+                if(tmp.is_selected){
                     bExport.setVisibility(View.VISIBLE);
                     bDelete.setVisibility(View.VISIBLE);
                     selecting = true;
@@ -241,15 +241,15 @@ public class history extends LinearLayout {
             }
         }
     }
-    public void updateCardReason(String reason, long matchid, long eventid){
+    public void updateCardReason(String reason, long match_id, long event_id){
         try {
             for (int i = 0; i < matches.size(); i++) {
                 JSONObject match = matches.get(i);
-                if(match.getLong("matchid") == matchid){
+                if(match.getLong("matchid") == match_id){
                     JSONArray events = match.getJSONArray("events");
                     for (int j = 0; j < events.length(); j++) {
                         JSONObject event = events.getJSONObject(j);
-                        if(event.getLong("id") == eventid){
+                        if(event.getLong("id") == event_id){
                             event.put("reason", reason);
                             storeMatches();
                             return;
@@ -262,12 +262,12 @@ public class history extends LinearLayout {
         }
     }
 
-    public void updateTeamName(String name, String teamid, long matchid){
+    public void updateTeamName(String name, String team_id, long match_id){
         try {
             for (int i = 0; i < matches.size(); i++) {
                 JSONObject match = matches.get(i);
-                if(match.getLong("matchid") == matchid){
-                    JSONObject team = match.getJSONObject(teamid);
+                if(match.getLong("matchid") == match_id){
+                    JSONObject team = match.getJSONObject(team_id);
                     team.put("team", name);
                     storeMatches();
                     return;
@@ -283,7 +283,7 @@ public class history extends LinearLayout {
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("history_match")){
                 history_match tmp = (history_match)child;
-                if(tmp.isselected){
+                if(tmp.is_selected){
                     export_matches.put(tmp.match);
                 }
             }

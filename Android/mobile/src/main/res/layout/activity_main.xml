@@ -2,39 +2,36 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <ImageView
         android:id="@+id/ivIcon"
         android:layout_width="120dip"
         android:layout_height="120dip"
-        android:contentDescription="@string/icon"
+        android:contentDescription="@string/ivIcon_desc"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/icon" />
-
     <Spinner
         android:id="@+id/sOS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="32dp"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        android:contentDescription="@string/sOS_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/starting"
+        android:text="@string/status_STARTING"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toBottomOf="@+id/sOS" />
-
     <TextView
         android:id="@+id/tvError"
         android:layout_width="0dp"
@@ -47,7 +44,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
-
     <Button
         android:id="@+id/bConnect"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -59,14 +55,12 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/llTabs"
         app:layout_constraintEnd_toEndOf="parent" />
-
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/ivIcon">
-
         <TextView
             android:id="@+id/tabHistory"
             android:layout_width="wrap_content"
@@ -76,7 +70,6 @@
             android:gravity="center"
             android:text="@string/history"
             android:textAllCaps="true" />
-
         <TextView
             android:id="@+id/tabReport"
             android:layout_width="wrap_content"
@@ -85,7 +78,6 @@
             android:gravity="center"
             android:text="@string/report"
             android:textAllCaps="true" />
-
         <TextView
             android:id="@+id/tabPrepare"
             android:layout_width="wrap_content"
@@ -95,7 +87,6 @@
             android:text="@string/prepare"
             android:textAllCaps="true" />
     </LinearLayout>
-
     <com.windkracht8.rugbyrefereewatch.history
         android:id="@+id/hHistory"
         android:layout_width="match_parent"
@@ -106,7 +97,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
-
     <com.windkracht8.rugbyrefereewatch.report
         android:id="@+id/rReport"
         android:layout_width="match_parent"
@@ -118,7 +108,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
-
     <com.windkracht8.rugbyrefereewatch.prepare
         android:id="@+id/pPrepare"
         android:layout_width="match_parent"
@@ -130,6 +119,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
