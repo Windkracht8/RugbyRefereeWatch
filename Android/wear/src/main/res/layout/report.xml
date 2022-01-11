@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="HardcodedText" >
+    android:layout_height="match_parent" >
     <LinearLayout
         android:id="@+id/list_wrap"
         android:layout_width="match_parent"
@@ -15,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Report"
+        android:text="@string/report_title"
         android:textColor="@color/w8blue"
         android:textSize="18sp" />
         <LinearLayout

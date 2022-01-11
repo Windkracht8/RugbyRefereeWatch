@@ -129,7 +129,7 @@ public class Conf extends ScrollView {
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        aTemp = new String[] {"Count up", "Count down"};
+        aTemp = new String[] {"count up", "count down"};
         aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
         aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timer_type.setAdapter(aaTemp);

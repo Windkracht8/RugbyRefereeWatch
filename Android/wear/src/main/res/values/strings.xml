@@ -2,4 +2,45 @@
     <string name="app_name">Rugby Referee Watch</string>
     <string name="matches_filename" translatable="false">matches.json</string>
     <string name="settings_filename" translatable="false">settings.json</string>
+    <string name="timer_placeholder">0:00</string>
+    <string name="player_label_text">#</string>
+    <string name="score_try_text">try</string>
+    <string name="score_con_text">conversion</string>
+    <string name="score_goal_text">goal</string>
+    <string name="cards_text">card</string>
+    <string name="report_title">Report</string>
+    <string name="correct_title">Tab to remove</string>
+    <string name="card_yellow_text">yellow</string>
+    <string name="card_red_text">red</string>
+    <string name="bConfWatch_desc">Watch configuration</string>
+    <string name="battery_placeholder">100%</string>
+    <string name="time_placeholder">00:00:00</string>
+    <string name="_0">0</string>
+    <string name="tTimer_placeholder">00:00</string>
+    <string name="bOverTimer_text">start</string>
+    <string name="bBottom_text">conf</string>
+    <string name="bConf_desc">configuration</string>
+    <string name="conf_title">Config</string>
+    <string name="home">home</string>
+    <string name="away">away</string>
+    <string name="match_type_text">match type</string>
+    <string name="period_time_text">time/period</string>
+    <string name="period_count_text">period count</string>
+    <string name="sinbin_text">sinbin</string>
+    <string name="points_try_text">points try</string>
+    <string name="points_con_text">points conversion</string>
+    <string name="points_goal_text">points goal</string>
+    <string name="record_player_text">Record player</string>
+    <string name="screen_on_text">Screen on</string>
+    <string name="timer_type_text">Timer type</string>
+    <string name="color_away_desc">Color away select</string>
+    <string name="color_home_desc">Color home select</string>
+    <string name="match_type_desc">Match type selection</string>
+    <string name="period_time_desc">Period time selection</string>
+    <string name="period_count_desc">Period count selection</string>
+    <string name="sinbin_desc">Sinbin time selection</string>
+    <string name="points_try_desc">Points try selection</string>
+    <string name="points_con_desc">Points con selection</string>
+    <string name="points_goal_desc">Points goal selection</string>
+    <string name="timer_type_desc">Timer type selection</string>
 </resources>

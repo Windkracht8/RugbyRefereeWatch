@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:ignore="HardcodedText,SpUsage">
+    android:background="#0000"
+    tools:ignore="SpUsage">
     <TextView
         android:id="@+id/timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#0000"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="0:00"
+        android:text="@string/timer_placeholder"
         android:textColor="#FFF"
         android:textSize="24dp" />
 </LinearLayout>

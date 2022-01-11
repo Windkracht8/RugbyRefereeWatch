@@ -50,11 +50,13 @@ public class Card extends LinearLayout {
         if(MainActivity.record_player){
             findViewById(R.id.player_wrap).setVisibility(View.VISIBLE);
             height = MainActivity.vh30;
+            ((TextView)findViewById(R.id.player_label)).setHeight(height);
         }else{
-            findViewById(R.id.player_wrap).setVisibility(View.GONE);
-            height = MainActivity.vh50;
+            findViewById(R.id.player_wrap).setVisibility(View.INVISIBLE);
+            ((TextView)findViewById(R.id.player_label)).setHeight(MainActivity.vh15);
+            height = MainActivity.vh40;
         }
-        ((TextView)findViewById(R.id.player_label)).setHeight(height);
+
         card_yellow.setHeight(height);
         card_red.setHeight(height);
     }

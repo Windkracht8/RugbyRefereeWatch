@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/conf"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="HardcodedText" >
+    android:layout_height="match_parent" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Config"
+            android:text="@string/conf_title"
             android:textColor="@color/w8blue"
             android:textSize="20sp" />
         <LinearLayout
@@ -30,36 +29,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="home"
+                android:text="@string/home"
                 android:textColor="#FFF"
                 android:textSize="20sp" />
             <Spinner
                 android:id="@+id/color_home"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:contentDescription="@string/color_home_desc"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="away"
+                android:text="@string/away"
                 android:textColor="#FFF"
                 android:textSize="20sp"/>
             <Spinner
                 android:id="@+id/color_away"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:contentDescription="@string/color_away_desc"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="match type"
+                android:text="@string/match_type_text"
                 android:textColor="#FFF"
                 android:textSize="20sp"/>
             <Spinner
                 android:id="@+id/match_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/w8blue" />
+                android:minHeight="48dp"
+                android:textColor="@color/w8blue"
+                android:contentDescription="@string/match_type_desc" />
             <LinearLayout
                 android:id="@+id/custom_match"
                 android:layout_width="match_parent"
@@ -69,75 +74,81 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="time/period"
+                    android:text="@string/period_time_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/period_time"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/period_time_desc"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="period count"
+                    android:text="@string/period_count_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/period_count"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/period_count_desc"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="sinbin"
+                    android:text="@string/sinbin_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/sinbin"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/sinbin_desc"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="points try"
+                    android:text="@string/points_try_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_try"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/points_try_desc"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="points conversion"
+                    android:text="@string/points_con_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_con"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/points_con_desc"/>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="points goal"
+                    android:text="@string/points_goal_text"
                     android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_goal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/points_goal_desc"/>
             </LinearLayout>
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Record player"
+            android:text="@string/record_player_text"
             android:textColor="#FFF"
             android:textSize="20sp" />
         <Switch
@@ -150,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Screen on"
+            android:text="@string/screen_on_text"
             android:textColor="#FFF"
             android:textSize="20sp"/>
         <Switch
@@ -163,12 +174,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Timer type"
+            android:text="@string/timer_type_text"
             android:textColor="#FFF"
             android:textSize="20sp"/>
         <Spinner
             android:id="@+id/timer_type"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/timer_type_desc"/>
     </LinearLayout>
 </ScrollView>

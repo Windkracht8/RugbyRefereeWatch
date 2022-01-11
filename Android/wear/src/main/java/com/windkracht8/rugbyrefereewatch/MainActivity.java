@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity {
     public static int vh18 = 0;
     public static int vh25 = 0;
     public static int vh30 = 0;
-    public static int vh50 = 0;
+    public static int vh40 = 0;
     public static int vh80 = 0;
     public static int vh90 = 0;
 
@@ -92,7 +92,7 @@ public class MainActivity extends FragmentActivity {
         vh18 = (int) (heightPixels * .18);
         vh25 = heightPixels / 4;
         vh30 = (int) (heightPixels * .3);
-        vh50 = heightPixels / 2;
+        vh40 = (int) (heightPixels * .4);
         vh80 = (int) (heightPixels * .8);
         vh90 = (int) (heightPixels * .9);
 
@@ -139,7 +139,9 @@ public class MainActivity extends FragmentActivity {
         tTimer.setTextSize(COMPLEX_UNIT_PX, vh30);
         tTimerStatus.setTextSize(COMPLEX_UNIT_PX, vh15);
         bOverTimer.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bOverTimer.setMinimumHeight(vh30);
         bBottom.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bBottom.setMinimumHeight(vh25);
         bConf.setMaxHeight(vh15);
         bConfWatch.setMaxHeight(vh25);
 
@@ -230,7 +232,7 @@ public class MainActivity extends FragmentActivity {
         }
         updateButtons();
     }
-    public void brestClick(){
+    public void bRestClick(){
         match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot);
 
         timer_status = "rest";
@@ -304,7 +306,7 @@ public class MainActivity extends FragmentActivity {
                 bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
                 bBottom.setText("rest");
-                bBottom.setOnClickListener(v -> brestClick());
+                bBottom.setOnClickListener(v -> bRestClick());
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
                 ui_status = "time off";
@@ -348,9 +350,7 @@ public class MainActivity extends FragmentActivity {
         updateTimer();
 
         score_home.setBackgroundColor(getColor(match.home.color));
-        sinbins_home.setBackgroundColor(getColor(match.home.color));
         score_away.setBackgroundColor(getColor(match.away.color));
-        sinbins_away.setBackgroundColor(getColor(match.away.color));
 
         if(screen_on){
             //If this is not enough, implement wake_lock: https://developer.android.com/training/scheduling/wakelock
@@ -455,7 +455,7 @@ public class MainActivity extends FragmentActivity {
         BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
         String tmp = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%";
         battery.setText(tmp);
-        handler_main.postDelayed(this::updateBattery, 10000);//TODO: subscribe to update?
+        handler_main.postDelayed(this::updateBattery, 10000);
     }
     @SuppressLint("SetTextI18n")
     public void score_homeClick(){

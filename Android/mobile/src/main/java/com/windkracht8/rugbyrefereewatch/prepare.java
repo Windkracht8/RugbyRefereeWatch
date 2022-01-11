@@ -145,7 +145,7 @@ public class prepare extends LinearLayout {
             }
         }
 
-        String[] aCountType = new String[] {"Count up", "Count down"};
+        String[] aCountType = new String[] {"count up", "count down"};
         ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
         aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sTimerType.setAdapter(aaCountType);

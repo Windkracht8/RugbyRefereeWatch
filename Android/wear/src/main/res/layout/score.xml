@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:ignore="HardcodedText,SpUsage">
+    tools:ignore="SpUsage">
     <LinearLayout
         android:id="@+id/player_wrap"
         android:layout_width="match_parent"
@@ -17,13 +17,14 @@
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"
             android:gravity="end"
-            android:text="#"
+            android:text="@string/player_label_text"
             android:textColor="#FFF"
             android:layout_weight="2"/>
         <Spinner
             android:id="@+id/player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="32dp"
             android:layout_weight="1" />
     </LinearLayout>
     <TextView
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="try"
+        android:text="@string/score_try_text"
         android:textColor="#FFF" />
     <TextView
         android:id="@+id/score_con"
@@ -40,7 +41,7 @@
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="conversion"
+        android:text="@string/score_con_text"
         android:textColor="#FFF" />
     <TextView
         android:id="@+id/score_goal"
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="goal"
+        android:text="@string/score_goal_text"
         android:textColor="#FFF" />
     <TextView
         android:id="@+id/cards"
@@ -56,6 +57,6 @@
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="card"
+        android:text="@string/cards_text"
         android:textColor="#FFF" />
 </LinearLayout>
