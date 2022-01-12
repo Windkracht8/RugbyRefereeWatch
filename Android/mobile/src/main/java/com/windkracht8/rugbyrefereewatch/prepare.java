@@ -1,6 +1,5 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -61,20 +60,19 @@ public class prepare extends LinearLayout {
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 switch(position){
                     case 0://15s
-                        etTimePeriod.setText("40");
+                        etTimePeriod.setText(String.valueOf(40));
                         etPeriodCount.setText("2");
-                        etSinbin.setText("10");
+                        etSinbin.setText(String.valueOf(10));
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
                         break;
                     case 1://10s
-                        etTimePeriod.setText("10");
+                        etTimePeriod.setText(String.valueOf(10));
                         etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("5");

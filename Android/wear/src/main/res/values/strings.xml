@@ -16,6 +16,7 @@
     <string name="battery_placeholder">100%</string>
     <string name="time_placeholder">00:00:00</string>
     <string name="_0">0</string>
+    <string name="_0_kick">0 KICK</string>
     <string name="tTimer_placeholder">00:00</string>
     <string name="bOverTimer_text">start</string>
     <string name="bBottom_text">conf</string>
@@ -43,4 +44,11 @@
     <string name="points_con_desc">Points con selection</string>
     <string name="points_goal_desc">Points goal selection</string>
     <string name="timer_type_desc">Timer type selection</string>
+    <string name="start">start</string>
+    <string name="resume">resume</string>
+    <string name="rest">rest</string>
+    <string name="next">next</string>
+    <string name="finish">finish</string>
+    <string name="report">report</string>
+    <string name="clear">clear</string>
 </resources>

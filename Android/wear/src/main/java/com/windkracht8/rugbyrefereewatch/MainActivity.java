@@ -2,7 +2,6 @@ package com.windkracht8.rugbyrefereewatch;
 
 import static android.util.TypedValue.COMPLEX_UNIT_PX;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -290,7 +289,6 @@ public class MainActivity extends FragmentActivity {
         updateAfterConfig();
         updateSinbins();
     }
-    @SuppressLint("SetTextI18n")
     private void updateButtons(){
         String ui_status = "";
         bOverTimer.setVisibility(View.GONE);
@@ -302,16 +300,16 @@ public class MainActivity extends FragmentActivity {
             case "conf":
                 bConf.setVisibility(View.VISIBLE);
             case "ready":
-                bOverTimer.setText("start");
+                bOverTimer.setText(R.string.start);
                 bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "time_off":
-                bOverTimer.setText("resume");
+                bOverTimer.setText(R.string.resume);
                 bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
-                bBottom.setText("rest");
+                bBottom.setText(R.string.rest);
                 bBottom.setOnClickListener(v -> bRestClick());
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -319,10 +317,10 @@ public class MainActivity extends FragmentActivity {
                 ui_status = "time off";
                 break;
             case "rest":
-                bOverTimer.setText("next");
+                bOverTimer.setText(R.string.next);
                 bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
-                bBottom.setText("finish");
+                bBottom.setText(R.string.finish);
                 bBottom.setOnClickListener(v -> bFinishClick());
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -330,10 +328,10 @@ public class MainActivity extends FragmentActivity {
                 ui_status = "rest";
                 break;
             case "finished":
-                bOverTimer.setText("report");
+                bOverTimer.setText(R.string.report);
                 bOverTimer.setOnClickListener(v -> showReport());
                 bOverTimer.setVisibility(View.VISIBLE);
-                bBottom.setText("clear");
+                bBottom.setText(R.string.clear);
                 bBottom.setOnClickListener(v -> bClearClick());
                 bBottom.setVisibility(View.VISIBLE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
@@ -466,7 +464,6 @@ public class MainActivity extends FragmentActivity {
         battery.setText(tmp);
         handler_main.postDelayed(this::updateBattery, 10000);
     }
-    @SuppressLint("SetTextI18n")
     public void score_homeClick(){
         if(timer_status.equals("conf")){
             if(match.home.kickoff){
@@ -474,7 +471,7 @@ public class MainActivity extends FragmentActivity {
                 score_home.setText("0");
             }else{
                 match.home.kickoff = true;
-                score_home.setText("0 KICK");
+                score_home.setText(R.string._0_kick);
             }
             match.away.kickoff = false;
             score_away.setText("0");
@@ -483,7 +480,6 @@ public class MainActivity extends FragmentActivity {
             score.setVisibility(View.VISIBLE);
         }
     }
-    @SuppressLint("SetTextI18n")
     public void score_awayClick(){
         if(timer_status.equals("conf")){
             if(match.away.kickoff){
@@ -491,7 +487,7 @@ public class MainActivity extends FragmentActivity {
                 score_away.setText("0");
             }else{
                 match.away.kickoff = true;
-                score_away.setText("0 KICK");
+                score_away.setText(R.string._0_kick);
             }
             match.home.kickoff = false;
             score_home.setText("0");
