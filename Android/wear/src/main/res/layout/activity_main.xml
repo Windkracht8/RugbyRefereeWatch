@@ -139,12 +139,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
+    <TextView
+        android:id="@+id/button_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#B3000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sinbin_space"
+        app:layout_constraintBottom_toBottomOf="parent"/>
     <Button
         android:id="@+id/bOverTimer"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B3000000"
         android:text="@string/bOverTimer_text"
         android:textColor="@color/w8blue"
         android:textSize="18dp"
@@ -156,7 +164,6 @@
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B3000000"
         android:text="@string/bBottom_text"
         android:textColor="@color/w8blue"
         android:textSize="18dp"
