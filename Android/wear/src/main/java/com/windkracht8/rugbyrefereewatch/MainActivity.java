@@ -144,6 +144,7 @@ public class MainActivity extends FragmentActivity {
         bBottom.setMinimumHeight(vh25);
         bConf.setMaxHeight(vh15);
         bConfWatch.setMaxHeight(vh25);
+        findViewById(R.id.button_background).setMinimumHeight(vh40);
 
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
@@ -195,6 +196,7 @@ public class MainActivity extends FragmentActivity {
 
     public void timerClick(){
         if(timer_status.equals("running")){
+            singleBeep(getBaseContext());
             timer_status = "time_off";
             timer_start_time_off = getCurrentTimestamp();
             match.logEvent("Time off");
@@ -213,6 +215,7 @@ public class MainActivity extends FragmentActivity {
             case "conf":
                 match.match_id = getCurrentTimestamp();
             case "ready":
+                singleBeep(getBaseContext());
                 timer_status = "running";
                 timer_period++;
                 timer_start = getCurrentTimestamp();
@@ -221,6 +224,7 @@ public class MainActivity extends FragmentActivity {
                 break;
             case "time_off":
                 //resume running
+                singleBeep(getBaseContext());
                 timer_status = "running";
                 timer_start += (getCurrentTimestamp() - timer_start_time_off);
                 match.logEvent("Resume time");
@@ -293,6 +297,7 @@ public class MainActivity extends FragmentActivity {
         bBottom.setVisibility(View.GONE);
         bConf.setVisibility(View.GONE);
         bConfWatch.setVisibility(View.GONE);
+        findViewById(R.id.button_background).setVisibility(View.GONE);
         switch(timer_status){
             case "conf":
                 bConf.setVisibility(View.VISIBLE);
@@ -300,6 +305,7 @@ public class MainActivity extends FragmentActivity {
                 bOverTimer.setText("start");
                 bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
+                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "time_off":
                 bOverTimer.setText("resume");
@@ -309,6 +315,7 @@ public class MainActivity extends FragmentActivity {
                 bBottom.setOnClickListener(v -> bRestClick());
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
+                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 ui_status = "time off";
                 break;
             case "rest":
@@ -319,6 +326,7 @@ public class MainActivity extends FragmentActivity {
                 bBottom.setOnClickListener(v -> bFinishClick());
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
+                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 ui_status = "rest";
                 break;
             case "finished":
@@ -328,6 +336,7 @@ public class MainActivity extends FragmentActivity {
                 bBottom.setText("clear");
                 bBottom.setOnClickListener(v -> bClearClick());
                 bBottom.setVisibility(View.VISIBLE);
+                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 ui_status = "finished";
                 break;
         }
@@ -663,6 +672,18 @@ public class MainActivity extends FragmentActivity {
             vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
         }
         final VibrationEffect ve = VibrationEffect.createWaveform(buzz_pattern, -1);
+        vibrator.cancel();
+        vibrator.vibrate(ve);
+    }
+    public static void singleBeep(Context c){
+        Log.i("MainActivity", "buzz");
+        final Vibrator vibrator;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
+        }else {
+            vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
+        }
+        final VibrationEffect ve = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
         vibrator.cancel();
         vibrator.vibrate(ve);
     }
