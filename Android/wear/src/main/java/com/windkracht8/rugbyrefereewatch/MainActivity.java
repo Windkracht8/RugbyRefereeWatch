@@ -154,7 +154,7 @@ public class MainActivity extends FragmentActivity {
                 updateAfterConfig();
             }
         };
-        registerReceiver(settingsUpdateReceiver, new IntentFilter("com.w8.rrw.settings"));
+        registerReceiver(settingsUpdateReceiver, new IntentFilter("com.windkracht8.rrw.settings"));
 
         FileStore.file_readSettings(getBaseContext());
         FileStore.file_cleanMatches(getBaseContext());

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -150,11 +151,17 @@ public class Conf extends ScrollView {
         record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setSelection(MainActivity.timer_type);
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) timer_type.getLayoutParams();
+        lp.setMargins(0, 0, 0, 40);
+        timer_type.setLayoutParams(lp);
         findViewById(R.id.matchSettings).setVisibility(View.VISIBLE);
         onlyWatchSettings = false;
     }
     public void onlyWatchSettings(){
         findViewById(R.id.matchSettings).setVisibility(View.GONE);
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) timer_type.getLayoutParams();
+        lp.setMargins(0, 0, 0, 0);
+        timer_type.setLayoutParams(lp);
         onlyWatchSettings = true;
     }
     private void selectItem(Spinner spin, String str){

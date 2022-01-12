@@ -76,7 +76,7 @@ public class Communication extends WearableListenerService {
                         }else{
                             responseData = "match ongoing";
                         }
-                        this.sendBroadcast(new Intent("com.w8.rrw.settings"));
+                        this.sendBroadcast(new Intent("com.windkracht8.rrw.settings"));
                     } catch (Exception e) {
                         Log.e("communication", "prepare: " + e.getMessage());
                         responseData = "unexpected error";
