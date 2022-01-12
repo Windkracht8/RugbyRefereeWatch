@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.windkracht8.rugbyrefereewatch">
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK" />
-    <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
-    <uses-permission android:name="com.samsung.wmanager.ENABLE_NOTIFICATION" />
     <uses-permission android:name="com.samsung.WATCH_APP_TYPE.Companion"/>
     <queries>
         <package android:name="com.samsung.accessory" />
         <package android:name="com.google.android.wearable.app" />
     </queries>
-
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:supportsRtl="false"
-        >
+        android:supportsRtl="false">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
@@ -36,13 +31,10 @@
                 <data android:scheme="content" android:mimeType="application/json" />
             </intent-filter>
         </activity>
-
-
         <service android:name="com.samsung.android.sdk.accessory.SAService" />
         <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" />
         <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver" />
         <meta-data android:name="AccessoryServicesLocation" android:value="/res/xml/accessoryservices.xml" />
         <meta-data android:name="GearAppType" android:value="wgt" />
     </application>
-
 </manifest>

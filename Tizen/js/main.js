@@ -27,7 +27,7 @@ var match = {
 		team: "home",
 		color: "green",
 		tot: 0,
-		trys: 0,
+		tries: 0,
 		cons: 0,
 		goals: 0,
 		sinbins: [],
@@ -38,7 +38,7 @@ var match = {
 		team: "away",
 		color: "red",
 		tot: 0,
-		trys: 0,
+		tries: 0,
 		cons: 0,
 		goals: 0,
 		sinbins: [],
@@ -118,6 +118,7 @@ function getCurrentTimestamp(){
 function timerClick(){
 	if(timer.status === "running"){
 		//time off
+		singleBeep();
 		timer.status = "timeoff";
 		timer.start_timeoff = getCurrentTimestamp();
 		logEvent("Time off", null, null);
@@ -142,6 +143,7 @@ function bresumeClick(){
 			match.matchid = getCurrentTimestamp();
 		case "ready":
 			//start next period
+			singleBeep();
 			timer.status = "running";
 			timer.period++;
 			timer.start = getCurrentTimestamp();
@@ -150,6 +152,7 @@ function bresumeClick(){
 			break;
 		case "timeoff":
 			//resume running
+			singleBeep();
 			timer.status = "running";
 			timer.start += (getCurrentTimestamp() - timer.start_timeoff);
 			logEvent("Resume time", null, null);
@@ -197,8 +200,8 @@ function bfinishClick(){
 function bclearClick(){
 	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
 	updateTimer();
-	match.home = {id:"home",team:"home",color:"green",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
-	match.away = {id:"away",team:"away",color:"red",tot:0,trys:0,cons:0,goals:0,sinbins:[],kickoff:0};
+	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,goals:0,sinbins:[],kickoff:0};
+	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,goals:0,sinbins:[],kickoff:0};
 	match.events = [];
 	match.matchid = 0;
 	updateScore();
@@ -379,7 +382,7 @@ function score_awayClick(){
 }
 function score_show(){
 	$('#score_player').val(0);
-	$('#try').html(team_edit.trys);
+	$('#try').html(team_edit.tries);
 	$('#con').html(team_edit.cons);
 	$('#goal').html(team_edit.goals);
 
@@ -395,7 +398,7 @@ function score_show(){
 	$('#score').show();
 }
 function tryClick(){
-	team_edit.trys++;
+	team_edit.tries++;
 	updateScore();
 	$('#score').hide();
 	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
@@ -416,11 +419,11 @@ function goalClick(){
 	logEvent("GOAL", team_edit, player);
 }
 function updateScore(){
-	match.home.tot = match.home.trys*match.settings.points_try + 
+	match.home.tot = match.home.tries*match.settings.points_try + 
 					match.home.cons*match.settings.points_con + 
 					match.home.goals*match.settings.points_goal;
 	$('#score_home').html(match.home.tot);
-	match.away.tot = match.away.trys*match.settings.points_try + 
+	match.away.tot = match.away.tries*match.settings.points_try + 
 					match.away.cons*match.settings.points_con + 
 					match.away.goals*match.settings.points_goal;
 	$('#score_away').html(match.away.tot);
@@ -480,7 +483,7 @@ function removeEvent(index){
 	team_edit = match.events[index].team === match.home.id ? match.home : match.away;
 	switch(match.events[index].what){
 		case "TRY":
-			team_edit.trys--;
+			team_edit.tries--;
 			break;
 		case "CONVERSION":
 			team_edit.cons--;
@@ -814,8 +817,12 @@ function setNewSettings(newsettings){
 	}
 }
 function beep(){
-	console.log("beep");
+	console.log("beep beep");
 	navigator.vibrate([500, 500, 500]);
+}
+function singleBeep(){
+	console.log("beep");
+	navigator.vibrate([300]);
 }
 
 function showMessage(message){
