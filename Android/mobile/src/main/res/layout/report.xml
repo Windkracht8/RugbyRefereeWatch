@@ -126,44 +126,40 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp">
+        android:layout_marginEnd="5dp"
+        android:contentDescription="@string/svEvents_desc">
         <LinearLayout
             android:id="@+id/llEvents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/tvTime"
-                    android:layout_marginEnd="10sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tvTime_placeholder"/>
-                <TextView
-                    android:id="@+id/tvTimer"
-                    android:layout_marginEnd="10sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tvTimer_placeholder"/>
-                <TextView
-                    android:id="@+id/tvScore"
-                    android:gravity="end"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tvTimer_placeholder"/>
-            </LinearLayout>
-        <LinearLayout
-            android:id="@+id/llEventPlaceholder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
-        </LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
+    <LinearLayout
+        android:id="@+id/text_measure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_marginEnd="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvTime_placeholder"/>
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_marginEnd="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvTimer_placeholder"/>
+        <TextView
+            android:id="@+id/tvScore"
+            android:gravity="end"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tvTimer_placeholder"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

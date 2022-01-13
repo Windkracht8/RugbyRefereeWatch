@@ -68,8 +68,8 @@ public class report extends LinearLayout {
         TextView tvScore = findViewById(R.id.tvScore);
         tvScore.measure(0, 0);
         score_width = tvScore.getMeasuredWidth();
+        findViewById(R.id.text_measure).setVisibility(View.GONE);
         llEvents = findViewById(R.id.llEvents);
-        llEvents.removeAllViews();
 
         tvHomeName = findViewById(R.id.tvHomeName);
         etHomeName = findViewById(R.id.etHomeName);
