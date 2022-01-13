@@ -2,11 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="SpUsage"
     style="@style/rrw_black_background">
     <ImageButton
         android:id="@+id/bConfWatch"
@@ -26,7 +24,7 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/battery_placeholder"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +36,7 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/time_placeholder"
-        android:textSize="27dp"
+        android:textSize="27sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/battery" />
@@ -60,7 +58,7 @@
             android:background="@color/green"
             android:gravity="center"
             android:text="@string/_0"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textStyle="bold" />
         <TextView
             android:id="@+id/score_away"
@@ -70,7 +68,7 @@
             android:background="@color/red"
             android:gravity="center"
             android:text="@string/_0"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
@@ -123,7 +121,7 @@
         android:gravity="top|center"
         android:includeFontPadding="false"
         android:text="@string/tTimer_placeholder"
-        android:textSize="54dp"
+        android:textSize="54sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
@@ -134,7 +132,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text=""
-        android:textSize="27dp"
+        android:textSize="27sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -155,7 +153,7 @@
         android:layout_height="wrap_content"
         android:text="@string/bOverTimer_text"
         android:textColor="@color/w8blue"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
@@ -166,7 +164,7 @@
         android:layout_height="wrap_content"
         android:text="@string/bBottom_text"
         android:textColor="@color/w8blue"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

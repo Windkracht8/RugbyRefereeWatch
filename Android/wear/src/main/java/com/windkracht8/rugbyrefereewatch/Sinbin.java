@@ -19,6 +19,7 @@ public class Sinbin extends LinearLayout {
         inflater.inflate(R.layout.sinbin, this, true);
 
         timer = findViewById(R.id.timer);
+        timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, MainActivity.vh10);
     }
     public void load(MatchData.sinbin sinbin, int col){
         this.sinbin = sinbin;

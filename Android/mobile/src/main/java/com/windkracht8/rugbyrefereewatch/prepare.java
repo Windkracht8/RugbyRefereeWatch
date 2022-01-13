@@ -198,7 +198,7 @@ public class prepare extends LinearLayout {
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
             if(settings.has("home_color")) selectItem(sHomeColor, settings.getString("home_color"));
-            if(settings.has("away_name")) etHomeName.setText(settings.getString("away_name"));
+            if(settings.has("away_name")) etAwayName.setText(settings.getString("away_name"));
             if(settings.has("away_color")) selectItem(sAwayColor, settings.getString("away_color"));
 
             if(settings.has("match_type")) selectItem(sMatchType, settings.getString("match_type"));

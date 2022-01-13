@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             updateStatus("DISCONNECTED");
         }catch(PackageManager.NameNotFoundException e){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
+            findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noTizenLib);
             findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.samsung.accessory"))));
         }
@@ -203,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
             getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
         }catch(PackageManager.NameNotFoundException e){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
+            findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);
             findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.wearable.app"))));
             return;
@@ -467,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
+                findViewById(R.id.bConnect).setVisibility(View.GONE);
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
