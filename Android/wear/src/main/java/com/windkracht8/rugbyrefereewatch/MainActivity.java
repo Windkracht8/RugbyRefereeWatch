@@ -1,7 +1,5 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import static android.util.TypedValue.COMPLEX_UNIT_PX;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +14,7 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -130,20 +129,19 @@ public class MainActivity extends FragmentActivity {
         report = findViewById(R.id.report);
 
         //Resize elements for the heightPixels
-        battery.setTextSize(COMPLEX_UNIT_PX, vh10);
-        time.setTextSize(COMPLEX_UNIT_PX, vh15);
-        score_home.setTextSize(COMPLEX_UNIT_PX, vh10);
-        score_away.setTextSize(COMPLEX_UNIT_PX, vh10);
+        battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
+        score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         findViewById(R.id.sinbin_space).setMinimumHeight(vh15);
-        tTimer.setTextSize(COMPLEX_UNIT_PX, vh30);
-        tTimerStatus.setTextSize(COMPLEX_UNIT_PX, vh15);
-        bOverTimer.setTextSize(COMPLEX_UNIT_PX, vh10);
+        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
+        tTimerStatus.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
+        bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bOverTimer.setMinimumHeight(vh30);
-        bBottom.setTextSize(COMPLEX_UNIT_PX, vh10);
+        bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bBottom.setMinimumHeight(vh25);
         bConf.setMaxHeight(vh15);
         bConfWatch.setMaxHeight(vh25);
-        findViewById(R.id.button_background).setMinimumHeight(vh40);
 
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();

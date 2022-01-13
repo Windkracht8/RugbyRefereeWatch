@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="rrw" parent="@android:style/Theme.DeviceDefault">
+    <style name="rrw" parent="Theme.AppCompat">
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <item name="android:colorAccent">@color/w8blue</item>
@@ -15,10 +15,12 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/w8blue</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:background">#000</item>
     </style>
     <style name="spinnerDropDownItemStyle">
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/w8blue</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:background">#000</item>
     </style>
 </resources>

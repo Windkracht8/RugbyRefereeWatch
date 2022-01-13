@@ -9,7 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.Switch;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 public class Conf extends ScrollView {
     private final Spinner color_home;
@@ -21,8 +22,8 @@ public class Conf extends ScrollView {
     private final Spinner points_try;
     private final Spinner points_con;
     private final Spinner points_goal;
-    private final Switch record_player;
-    private final Switch screen_on;
+    private final SwitchCompat record_player;
+    private final SwitchCompat screen_on;
     private final Spinner timer_type;
 
     private boolean onlyWatchSettings = false;

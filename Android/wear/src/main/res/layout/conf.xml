@@ -151,12 +151,16 @@
             android:text="@string/record_player_text"
             android:textColor="#FFF"
             android:textSize="20sp" />
-        <Switch
+        <!-- the first SwitchCompat does not style properly -->
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/record_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/w8blue" />
+            android:layout_gravity="center" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -164,12 +168,11 @@
             android:text="@string/screen_on_text"
             android:textColor="#FFF"
             android:textSize="20sp"/>
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/screen_on"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/w8blue" />
+            android:layout_gravity="center" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

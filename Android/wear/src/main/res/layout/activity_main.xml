@@ -110,7 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginTop="8dp"
-        android:background="#B3000000"
+        android:background="#A000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
@@ -137,15 +137,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
-    <TextView
+    <View
         android:id="@+id/button_background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#B3000000"
+        android:layout_height="0dp"
+        android:background="#A000"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbin_space"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/scores" />
     <Button
         android:id="@+id/bOverTimer"
         style="@android:style/Widget.DeviceDefault.Button.Borderless"
@@ -173,7 +173,7 @@
         android:id="@+id/bConf"
         android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:background="#B3000000"
+        android:background="#A000"
         android:contentDescription="@string/bConf_desc"
         android:scaleType="centerInside"
         android:src="@drawable/gear"

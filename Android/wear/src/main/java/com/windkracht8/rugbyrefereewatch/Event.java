@@ -3,9 +3,8 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.widget.TextView;
 
-public class Event extends TextView {
+public class Event extends androidx.appcompat.widget.AppCompatTextView {
     public MatchData.event event_data;
     public Event(Context context) {
         super(context);
