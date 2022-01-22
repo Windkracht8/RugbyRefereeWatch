@@ -436,6 +436,7 @@ public class MainActivity extends AppCompatActivity {
     public void updateStatus(final String status_new) {
         TextView tvStatus = findViewById(R.id.tvStatus);
         TextView tvError = findViewById(R.id.tvError);
+        tvStatus.setVisibility(View.VISIBLE);
         tvError.setText("");
 
         String status;
@@ -494,6 +495,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "ERROR":
             default:
+                tvStatus.setVisibility(View.GONE);
                 status = getString(R.string.status_ERROR);
                 findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatches).setVisibility(View.GONE);
