@@ -1,6 +1,3 @@
-:root{
-	--w8blue-color: #2bd2e3;
-}
 html, body{
 	margin: 0;
 	height: 100vh;
@@ -15,12 +12,13 @@ html, body{
 }
 select, input, button{
 	border: none;
-	background: transparent;
-	color: white;
 	font-size: 10vh;
 }
 .w8blue{
-	color: var(--w8blue-color);
+	color: #2bd2e3;
+}
+#score_player, #card_player, #conf select{
+	color: initial;
 }
 #battery{
 	position: fixed;
@@ -74,7 +72,7 @@ select, input, button{
 }
 button, .button{
 	width: 100vw;
-	color: var(--w8blue-color);
+	color: #2bd2e3;
 	background-color: rgba(0,0,0,.7);
 	z-index: 5;
 }
@@ -187,11 +185,11 @@ button, .button{
 	height: 0;
 }
 input:checked + .slider{
-	background-color: var(--w8blue-color);
+	background-color: #2bd2e3;
 }
 
 input:focus + .slider{
-	box-shadow: 0 0 1px var(--w8blue-color);
+	box-shadow: 0 0 1px #2bd2e3;
 }
 
 input:checked + .slider:before{

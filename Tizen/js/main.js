@@ -83,6 +83,9 @@ window.onload = function () {
 	}catch(e){
 		console.log("setScreenStateChangeListener exception " + e.message);
 	}
+	if(tizen.systeminfo.getCapabilities().platformVersion.charAt(0) < 3){
+		$('#stylesheet').attr("href", "css/style.2.css");
+	}
 };
  
 function back(){
