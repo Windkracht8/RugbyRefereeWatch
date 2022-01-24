@@ -164,9 +164,11 @@
 	Timer type<br>
 	<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
 		<option value="0">Count up</option><option value="1">Count down</option>
-	</select><br>
-	Help<br>
-	<button class="w8blue" onclick="$('#conf').hide();$('#help').show()">Show help</button>
+	</select>
+	<div id="settings_help">
+		Help<br>
+		<button class="w8blue" onclick="showHelp()">Show help</button>
+	</div>
 </div>
 <div id="report_overlay" class="overlay" onclick="this.style.display='none'">
 	<div class="w8blue">Report</div>

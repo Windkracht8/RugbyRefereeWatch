@@ -215,6 +215,7 @@ function bclearClick(){
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
 	$('#matchSettings').show();
+	$('#settings_help').show();
 	$('#bconf').show();
 }
 
@@ -514,6 +515,7 @@ function removeEvent(index){
 function bconfwatchClick(){
 	if(timer.status === "conf" || timer.status === "running"){return;}
 	$('#matchSettings').hide();
+	$('#settings_help').hide();
 	bconfClick();
 }
 function bconfClick(){
@@ -536,6 +538,7 @@ function bconfClick(){
 	$('#timer_type').val(match.settings.timer_type);
 
 	$('#conf').show();
+	$('#conf').scrollTop(0);
 }
 function color_homeChange(){
 	match.home.color = $('#color_home').val();
@@ -800,8 +803,14 @@ function settingsRead(newsettings){
 
 function noStoredSettings(){
 	$('#help_intro').show();
-	$('#help').show();
+	showHelp();
 	file_storeSettings(match.settings);
+}
+
+function showHelp(){
+	$('#help').show();
+	$('#help').scrollTop(0);
+	$('#conf').hide();
 }
 
 function setNewSettings(newsettings){
