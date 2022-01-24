@@ -34,10 +34,16 @@ public class communication_wear extends WearableListenerService implements DataC
     public communication_wear(Context context){
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
-        status = "Starting";
+        status = "Searching";
         checkIfConnected(context);
+
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "updateStatus");
+        intent.putExtra("source", "wear");
+        intent.putExtra("status_new", status);
+        context.sendBroadcast(intent);
     }
-    private void checkIfConnected(Context context){
+    public void checkIfConnected(Context context){
         Log.i("communication_wear", "checkIfConnected");
         Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
         nodeListTask.addOnCompleteListener(task -> {
@@ -60,14 +66,13 @@ public class communication_wear extends WearableListenerService implements DataC
             intent.putExtra("source", "wear");
             intent.putExtra("status_new", status);
             context.sendBroadcast(intent);
-            handler_main = new Handler(Looper.getMainLooper());
-            handler_main.postDelayed(() -> checkIfConnected(context), 15000);
+            if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
+            handler_main.postDelayed(() -> checkIfConnected(context), 60000);
         });
     }
     public void stop(){
         dataClient.removeListener(this);
-        if(handler_main != null)
-            handler_main.removeCallbacksAndMessages(null);
+        if(handler_main != null) handler_main.removeCallbacksAndMessages(null);
     }
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {

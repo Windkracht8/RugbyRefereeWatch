@@ -215,7 +215,7 @@ function bclearClick(){
 	$('#home').css('background', match.home.color);
 	$('#away').css('background', match.away.color);
 	$('#matchSettings').show();
-	$('#settings_help').show();
+	$('#helpSettings').show();
 	$('#bconf').show();
 }
 
@@ -515,7 +515,7 @@ function removeEvent(index){
 function bconfwatchClick(){
 	if(timer.status === "conf" || timer.status === "running"){return;}
 	$('#matchSettings').hide();
-	$('#settings_help').hide();
+	$('#helpSettings').hide();
 	bconfClick();
 }
 function bconfClick(){

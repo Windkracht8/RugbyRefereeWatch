@@ -1,0 +1,2 @@
+-keep class com.windkracht8.rugbyrefereewatch.** { *; }
+-keep class com.samsung.** { *; }

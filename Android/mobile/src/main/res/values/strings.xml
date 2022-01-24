@@ -78,5 +78,7 @@
     <string name="_10">10</string>
     <string name="_40">40</string>
     <string name="svEvents_desc">Events in match</string>
+    <string name="bSearch_text">Search</string>
+    <string name="searching">Searching</string>
 
 </resources>

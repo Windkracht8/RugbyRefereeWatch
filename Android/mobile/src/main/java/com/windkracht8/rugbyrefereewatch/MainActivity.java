@@ -47,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private communication_tizen comms_tizen = null;
     private communication_wear comms_wear = null;
+    private SharedPreferences.Editor sharedPreferences_editor;
 
     private long back_press_time;
     private BroadcastReceiver rrwReceiver;
-    private boolean tizen_not_wear = false;
+    private boolean tizen_not_wear = true;
     private Handler handler_main;
 
     private history hHistory;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         rReport = findViewById(R.id.rReport);
         pPrepare = findViewById(R.id.pPrepare);
         findViewById(R.id.bConnect).setOnClickListener(view -> bConnectClick());
+        findViewById(R.id.bSearch).setOnClickListener(view -> bSearchClick());
         findViewById(R.id.tabHistory).setOnClickListener(view -> tabHistoryClick());
         findViewById(R.id.tabReport).setOnClickListener(view -> tabReportClick());
         findViewById(R.id.tabPrepare).setOnClickListener(view -> tabPrepareClick());
@@ -75,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
 
         handleOrientation();
 
-        SharedPreferences sharedpreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
-        if(sharedpreferences.getBoolean("first_boot", true)){
+        SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
+        sharedPreferences_editor = sharedPreferences.edit();
+        if(!sharedPreferences.contains("tizen_not_wear")){
             tizen_not_wear = guessTizenNotWear();
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putBoolean("first_boot", false);
-            editor.apply();
+            sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
+            sharedPreferences_editor.apply();
         }else {
-            tizen_not_wear = sharedpreferences.getBoolean("tizen_not_wear", false);
+            tizen_not_wear = sharedPreferences.getBoolean("tizen_not_wear", true);
         }
 
         Spinner sOS = findViewById(R.id.sOS);
@@ -160,13 +162,17 @@ public class MainActivity extends AppCompatActivity {
     }
     private void switchOS(boolean tizenNotWear){
         if(this.tizen_not_wear == tizenNotWear) return;
-        this.tizen_not_wear = tizenNotWear;
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         findViewById(R.id.bGetMatches).setVisibility(View.GONE);
         findViewById(R.id.bGetMatch).setVisibility(View.GONE);
         findViewById(R.id.bPrepare).setVisibility(View.GONE);
         updateStatus("DISCONNECTED");
         findViewById(R.id.tvStatus).setVisibility(View.VISIBLE);
+
+        this.tizen_not_wear = tizenNotWear;
+        sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
+        sharedPreferences_editor.apply();
+
         if(tizenNotWear){
             destroyWear();
             initTizen();
@@ -174,10 +180,6 @@ public class MainActivity extends AppCompatActivity {
             destroyTizen();
             initWear();
         }
-        SharedPreferences sharedpreferences = getSharedPreferences("com.windkracht8.rrw.prefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putBoolean("tizenNotWear", tizenNotWear);
-        editor.apply();
     }
     private void initTizen(){
         try{
@@ -378,6 +380,12 @@ public class MainActivity extends AppCompatActivity {
             comms_tizen.findPeers();
         }
     }
+    public void bSearchClick() {
+        gotError("");
+        ((TextView)findViewById(R.id.tvStatus)).setText(R.string.searching);
+        findViewById(R.id.bSearch).setVisibility(View.GONE);
+        comms_wear.checkIfConnected(getApplicationContext());
+    }
     private void setButtonProcessing(int vid){
         findViewById(vid).setEnabled(false);
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
@@ -438,6 +446,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tvError = findViewById(R.id.tvError);
         tvStatus.setVisibility(View.VISIBLE);
         tvError.setText("");
+        findViewById(R.id.bSearch).setVisibility(View.GONE);
 
         String status;
         switch(status_new){
@@ -471,6 +480,7 @@ public class MainActivity extends AppCompatActivity {
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
                 findViewById(R.id.bConnect).setVisibility(View.GONE);
+                findViewById(R.id.bSearch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
                 findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);

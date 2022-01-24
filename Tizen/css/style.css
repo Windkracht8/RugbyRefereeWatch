@@ -118,9 +118,6 @@ button, .button{
 	height: 80vh;
 	font-size: 10vw;
 }
-#score, #card{
-	height: 80vh;
-}
 #score_inner, #card_inner{
 	position: relative;
 	top: 50%;
