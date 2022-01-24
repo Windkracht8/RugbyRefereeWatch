@@ -1,5 +1,5 @@
-/* global getCurrentTimestamp, settingsRead */
-/* exported file_init, file_storeMatch, file_deletedMatches */
+/* global getCurrentTimestamp, settingsRead, noStoredSettings */
+/* exported file_init, file_storeMatch, file_deletedMatches, file_storeSettings */
 var useFileHandle = typeof(tizen.filesystem.openFile) === "function";
 var dirname = "wgt-private";
 var matches_filename = "matches.json";
@@ -26,10 +26,10 @@ function file_init(){
 						},
 						function(){
 							file_settings = dir.createFile(settings_filename);
-							file_storeSettings();
 							if(typeof(file_settings) === "undefined"){
 								console.log("file_init failed to create settings file");
 							}
+							noStoredSettings();
 						},
 						"rw"
 					);
@@ -209,20 +209,27 @@ function file_readSettings(){
 			var str = file_settings.readString();
 			if(str.length > 10){
 				settingsRead(JSON.parse(str));
+			}else{
+				noStoredSettings();
 			}
 			file_settings.close();
 		}catch(e){
 			console.log("file_readSettings exception " + e.message);
+			noStoredSettings();
 		}
 		return;
 	}
 
-	if(typeof(file_settings) === "undefined"){return;}
+	if(typeof(file_settings) === "undefined"){
+		noStoredSettings();
+		return;
+	}
 	try {
 		file_settings.readAsText(
 			function(str){
 				if(str.length > 10){
 					settingsRead(JSON.parse(str));
+					return;
 				}
 			},
 			function(e){
@@ -232,5 +239,6 @@ function file_readSettings(){
 	}catch(e){
 		console.log("file_readSettings exception " + e.message);
 	}
+	noStoredSettings();
 }
 

@@ -22,6 +22,7 @@ select, input, button{
 }
 #battery{
 	position: fixed;
+	z-index: 1;
 	top: 0;
 	left: 0;
 	width: 100vw;
@@ -29,6 +30,7 @@ select, input, button{
 }
 #time{
 	position: fixed;
+	z-index: 1;
 	top: 10vh;
 	left: 0;
 	width: 100vw;
@@ -93,7 +95,9 @@ button, .button{
 	bottom: 0;
 	height: 22vh;
 }
-
+#bstart, #bconf{
+	display: block;
+}
 .overlay{
 	position: absolute;
 	z-index: 5;
@@ -109,6 +113,7 @@ button, .button{
 #correct_overlay{
 	padding: 10vh 0;
 	min-height: 80vh;
+	font-size: 10vw;
 }
 #score, #card{
 	height: 80vh;
@@ -140,16 +145,26 @@ button, .button{
 	font-size: 7vw;
 	padding: 5vh 0 20vh;
 }
-#correct_overlay{
-	font-size: 10vw;
-}
-#bconfwatch{
+#top{
 	position: absolute;
 	top: 0;
 	width: 100vw;
 }
-#bconfwatch img{
+#bconfwatch{
+	display: none;
 	height: 20vh;
+}
+#help{
+	font-size: 7vh;
+	padding: 15vh 10vw;
+	width: 80vw;
+}
+#help_intro{
+	display: none;
+}
+.helptopic{
+	font-size: 10vh;
+	color: var(--w8blue-color);
 }
 .slider{
 	position: absolute;

@@ -20,7 +20,8 @@ var match = {
 		points_goal: 3,
 		record_player: 0,
 		screen_on: 1,
-		timer_type: 1//0:up, 1:down
+		timer_type: 1,//0:up, 1:down
+		help_version: 1
 	},
 	home: {
 		id: "home",
@@ -219,7 +220,7 @@ function bclearClick(){
 
 function updateButtons(){
 	var timerstatus = "";
-	$('.bottombutton, .overtimerbutton, #bconfwatchimg').each(function (){$(this).hide();});
+	$('.bottombutton, .overtimerbutton, #bconfwatch').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
 			$('#bconf').show();
@@ -229,13 +230,13 @@ function updateButtons(){
 		case "timeoff":
 			$('#bresume').show();
 			$('#brest').show();
-			$('#bconfwatchimg').show();
+			$('#bconfwatch').show();
 			timerstatus = "time off";
 			break;
 		case "rest":
 			$('#bnext').show();
 			$('#bfinish').show();
-			$('#bconfwatchimg').show();
+			$('#bconfwatch').show();
 			timerstatus = "rest";
 			break;
 		case "finished":
@@ -792,6 +793,15 @@ function settingsRead(newsettings){
 		return;
 	}
 	setNewSettings(newsettings);
+	if(!newsettings.hasOwnProperty('help_version') || newsettings.help_version !== match.settings.help_version){
+		noStoredSettings();
+	}
+}
+
+function noStoredSettings(){
+	$('#help_intro').show();
+	$('#help').show();
+	file_storeSettings(match.settings);
 }
 
 function setNewSettings(newsettings){

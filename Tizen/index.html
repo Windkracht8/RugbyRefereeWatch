@@ -15,10 +15,10 @@
 </head>
 
 <body>
-<div id="bconfwatch" onclick="bconfwatchClick()">
+<div id="top" onclick="bconfwatchClick()">
 	<div id="battery"><span id="battery_perc">100</span>%</div>
 	<div id="time">00:00:00</div>
-	<img id="bconfwatchimg" src="res/gear2.png">
+	<img id="bconfwatch" src="res/gear2.png">
 </div>
 <div id="home">
 	<div id="score_home" onclick="score_homeClick()">0</div>
@@ -165,10 +165,25 @@
 	<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
 		<option value="0">Count up</option><option value="1">Count down</option>
 	</select><br>
+	Help<br>
+	<button class="w8blue" onclick="$('#conf').hide();$('#help').show()">Show help</button>
 </div>
 <div id="report_overlay" class="overlay" onclick="this.style.display='none'">
 	<div class="w8blue">Report</div>
 	<div id="report"></div>
+</div>
+<div id="help" class="overlay" onclick="this.style.display='none'">
+	<div id="help_intro"><div class="helptopic">Welcome</div>Here are a few tips to get you familiar with this app.<br><br></div>
+	<div class="helptopic">Corrections</div>
+	During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.
+	<br><br><div class="helptopic">Kick off</div>
+	Before the game starts you can record which team will kick off by tapping the home or away team score.
+	<br><br><div class="helptopic">Battery</div>
+	Screen on is a very useful setting to keep the screen on during a game, but this will use more battery. Consider switching off Wifi, GPS and Bluetooth during a game, this app does not use these.
+	<br><br><div class="helptopic">Storage</div>
+	Matches will be stored on the watch for 14 days, use the companion app on your phone to download them.
+	<br><br><div class="helptopic">Get help</div>
+	From the settings you can open this screen. Find the support contacts in the App Store for more help.
 </div>
 <div id="message" class="overlay" onclick="this.innerHTML='';this.style.display='none';"></div>
 </body>
