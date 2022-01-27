@@ -22,6 +22,7 @@
             android:id="@+id/player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/player_desc"
             android:minHeight="32dp"
             android:layout_weight="1" />
     </LinearLayout>

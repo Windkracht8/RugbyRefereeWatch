@@ -148,7 +148,6 @@
         app:layout_constraintTop_toBottomOf="@+id/scores" />
     <Button
         android:id="@+id/bOverTimer"
-        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/bOverTimer_text"
@@ -159,7 +158,6 @@
         app:layout_constraintTop_toBottomOf="@+id/sinbin_space" />
     <Button
         android:id="@+id/bBottom"
-        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/bBottom_text"

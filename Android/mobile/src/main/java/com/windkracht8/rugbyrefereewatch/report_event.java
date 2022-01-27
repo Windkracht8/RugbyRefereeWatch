@@ -7,20 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
 
 public class report_event extends LinearLayout {
     public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event, int score_width) {
+    public report_event(Context context, JSONObject event){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater == null) {
-            Log.e("report_event", "No inflater");
-            return;
-        }
+        if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event, this, true);
 
         TextView tvLeft = findViewById(R.id.tvLeft);
@@ -29,13 +27,13 @@ public class report_event extends LinearLayout {
         TextView tvRightTime = findViewById(R.id.tvRightTime);
         TextView tvRight = findViewById(R.id.tvRight);
 
-        try {
+        try{
             String text = event.getString("what");
             if(text.startsWith("Start") || text.startsWith("Result")){
                 if(text.contains(":")){
                     text = text.substring(0, text.lastIndexOf(" "));
                 }
-                if(text.startsWith("Result") && event.has("score")) {
+                if(text.startsWith("Result") && event.has("score")){
                     String[] scores = event.getString("score").split(":");
                     tvLeft.setText(scores[0]);
                     tvRight.setText(scores[1]);
@@ -45,26 +43,27 @@ public class report_event extends LinearLayout {
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else{
+                tvMiddle.setWidth(report.score_width);
                 switch(text){
                     case "TRY":
                     case "CONVERSION":
                     case "GOAL":
                         String score = event.getString("score");
                         tvMiddle.setText(score);
-                        tvMiddle.setWidth(score_width);
                         if(score.length() == 4){
                             //even number of characters will mess up the alignment
                             tvMiddle.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
                         }
                     case "YELLOW CARD":
                     case "RED CARD":
-                        String timer = event.getString("timer").replace(":", "'");
-                        if(event.has("who")) {
+                        String timer = event.getString("timer");
+                        timer = timer.substring(0, timer.length()-3) + "'";
+                        if(event.has("who")){
                             text += " " + event.getString("who");
                         }
 
                         String team = event.getString("team");
-                        if(team.equals("home")) {
+                        if(team.equals("home")){
                             tvLeft.setText(text);
                             tvLeftTime.setText(timer);
                         }else{
@@ -72,19 +71,24 @@ public class report_event extends LinearLayout {
                             tvRight.setText(text);
                         }
 
-                        int width = (this.getWidth()-score_width)/2-score_width;
+                        int width = (this.getWidth()-report.score_width)/2-report.timer_width;
                         tvLeft.setWidth(width);
-                        tvLeftTime.setWidth(score_width);
-                        tvRightTime.setWidth(score_width);
+                        tvLeftTime.setWidth(report.timer_width);
+                        tvRightTime.setWidth(report.timer_width);
                         tvRight.setWidth(width);
+                        if(event.has("reason")){
+                            ((TextView)findViewById(R.id.tvReason)).setText(event.getString("reason"));
+                            findViewById(R.id.tvReason).setVisibility(View.VISIBLE);
+                        }
                         break;
                     default:
                         this.setVisibility(View.GONE);
                 }
             }
 
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("report_event", "report_event: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
 }

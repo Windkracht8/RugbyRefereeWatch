@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
-public class Correct extends ScrollView {
+public class Correct extends ScrollView{
     private MatchData match;
-    public Correct(Context context, AttributeSet attrs) {
+    public Correct(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show correction screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.correct, this, true);
 
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);

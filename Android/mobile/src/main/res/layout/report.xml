@@ -6,7 +6,6 @@
     android:orientation="vertical" >
     <Button
         android:id="@+id/bGetMatch"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/bGetMatch_text"
@@ -14,21 +13,8 @@
         android:textAlignment="center"
         android:textAllCaps="false"
         android:visibility="gone" />
-    <EditText
-        android:id="@+id/etHomeName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:visibility="gone" />
-    <EditText
-        android:id="@+id/etAwayName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:visibility="gone" />
     <TableLayout
+        android:id="@+id/table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="20dp"
@@ -121,6 +107,29 @@
                 android:textStyle="bold" />
         </TableRow>
     </TableLayout>
+    <LinearLayout
+        android:id="@+id/edit_team_names"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <EditText
+            android:id="@+id/etHomeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:gravity="center"/>
+        <EditText
+            android:id="@+id/etAwayName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:gravity="center"/>
+    </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -153,12 +162,10 @@
             android:text="@string/tvTimer_placeholder"/>
         <TextView
             android:id="@+id/tvScore"
-            android:gravity="end"
-            android:layout_gravity="end"
             android:layout_marginEnd="10sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tvTimer_placeholder"/>
+            android:text="@string/tvScore_placeholder"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -174,6 +181,36 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="invisible" />
+        <Button
+            android:id="@+id/bEdit"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/bEdit_text"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:visibility="invisible" />
+        <Button
+            android:id="@+id/bClose"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/bClose_text"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/bSave"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/bSave_text"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:visibility="gone" />
         <Button
             android:id="@+id/bShare"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"

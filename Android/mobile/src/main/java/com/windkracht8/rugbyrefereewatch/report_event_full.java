@@ -6,33 +6,33 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
 
-public class report_event_full extends LinearLayout {
+public class report_event_full extends LinearLayout{
     public report_event_full(Context context){super(context);}
-    public report_event_full(Context context, JSONObject event, JSONObject match, int time_width, int timer_width, int score_width) {
+    public report_event_full(Context context, JSONObject event, JSONObject match){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater != null) {
-            inflater.inflate(R.layout.report_event_full, this, true);
-        }
+        if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
+        inflater.inflate(R.layout.report_event_full, this, true);
 
-        try {
+        try{
             TextView tvTime = findViewById(R.id.tvTime);
-            tvTime.setWidth(time_width);
+            tvTime.setWidth(report.time_width);
             tvTime.setText(event.getString("time"));
 
             TextView tvTimer = findViewById(R.id.tvTimer);
-            tvTimer.setWidth(timer_width);
+            tvTimer.setWidth(report.score_width);
             String timer = event.getString("timer").replace(":", "'");
             tvTimer.setText(timer);
 
-            if(event.has("score")) {
+            if(event.has("score")){
                 TextView tvScore = findViewById(R.id.tvScore);
-                tvScore.setWidth(score_width);
+                tvScore.setWidth(report.score_width);
                 String score = event.getString("score");
                 tvScore.setText(score);
                 if(score.length() == 4){
@@ -44,19 +44,20 @@ public class report_event_full extends LinearLayout {
             TextView tvWhat = findViewById(R.id.tvWhat);
             tvWhat.setText(event.getString("what"));
 
-            if(event.has("team")) {
+            if(event.has("team")){
                 TextView tvTeam = findViewById(R.id.tvTeam);
                 String team = event.getString("team");
                 team = match.has(team) ? MainActivity.getTeamName(match.getJSONObject(team)) : team;
                 tvTeam.setText(team);
             }
 
-            if(event.has("who")) {
+            if(event.has("who")){
                 TextView tvWho = findViewById(R.id.tvWho);
                 tvWho.setText(event.getString("who"));
             }
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("report_event_full", "report_event_full: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
 }

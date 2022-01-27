@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
 
-public class Event extends androidx.appcompat.widget.AppCompatTextView {
+public class Event extends androidx.appcompat.widget.AppCompatTextView{
     public MatchData.event event_data;
-    public Event(Context context) {
+    public Event(Context context){
         super(context);
     }
-    public Event(Context context, MatchData.event event_data) {
+    public Event(Context context, MatchData.event event_data){
         super(context);
         this.event_data = event_data;
         String item = event_data.timer + " " + event_data.what;

@@ -6,33 +6,33 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class osAdapter extends BaseAdapter {
+public class osAdapter extends BaseAdapter{
     final private Context context;
     final private int[] icons = {R.drawable.os_tizen, R.drawable.os_wear};
     final private int[] names = {R.string.os_tizen, R.string.os_wear};
 
-    public osAdapter(Context context) {
+    public osAdapter(Context context){
         this.context = context;
-        this.context.setTheme(R.style.AppTheme);
+        this.context.setTheme(R.style.rrw);
     }
 
     @Override
-    public int getCount() {
+    public int getCount(){
         return icons.length;
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(int i){
         return null;
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(int i){
         return 0;
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int i, View view, ViewGroup viewGroup){
         TextView tv = new TextView(context);
         tv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
         tv.setPadding(0,10,0,10);

@@ -1,4 +1,15 @@
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="rrw" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+    </style>
+    <style name="rrwReportEditSpinner" parent="rrw">
+        <item name="android:spinnerItemStyle">@style/rrwReportEditSpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/rrwReportEditDropDownItem</item>
+    </style>
+    <style name="rrwReportEditSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:paddingEnd">0dp</item>
+    </style>
+    <style name="rrwReportEditDropDownItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:gravity">center_vertical</item>
     </style>
 </resources>

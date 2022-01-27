@@ -19,13 +19,12 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class Communication extends WearableListenerService {
-    public Communication(){
-    }
+public class Communication extends WearableListenerService{
+    public Communication(){}
 
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent event : dataEvents) {
+    public void onDataChanged(DataEventBuffer dataEvents){
+        for(DataEvent event : dataEvents){
             DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
             String requestType = dataMap.getString("requestType");
             if(requestType == null){
@@ -46,9 +45,9 @@ public class Communication extends WearableListenerService {
                     try{
                         JSONObject responseData_json = new JSONObject();
                         responseData_json.put("matches", FileStore.file_deletedMatches(getApplicationContext(), requestData));
-                        responseData_json.put("settings", MainActivity.getSettings());
+                        responseData_json.put("settings", MainActivity.getSettings(getBaseContext()));
                         responseData = responseData_json.toString();
-                    } catch (Exception e) {
+                    }catch(Exception e){
                         Log.e("communication", "sync: " + e.getMessage());
                         responseData = "unexpected error";
                     }
@@ -61,7 +60,7 @@ public class Communication extends WearableListenerService {
                     responseData = FileStore.file_deletedMatches(getApplicationContext(), requestData).toString();
                     break;
                 case "getMatch":
-                    responseData = MainActivity.match.toJson().toString();
+                    responseData = MainActivity.match.toJson(getBaseContext()).toString();
                     break;
                 case "prepare":
                     if(requestData == null){
@@ -70,14 +69,14 @@ public class Communication extends WearableListenerService {
                     }
                     try{
                         JSONObject requestData_json = new JSONObject(requestData);
-                        if(MainActivity.incomingSettings(requestData_json)){
+                        if(MainActivity.incomingSettings(getBaseContext(), requestData_json)){
                             responseData = "okilly dokilly";
                             FileStore.file_storeSettings(getApplicationContext());
                         }else{
                             responseData = "match ongoing";
                         }
                         this.sendBroadcast(new Intent("com.windkracht8.rrw.settings"));
-                    } catch (Exception e) {
+                    }catch(Exception e){
                         Log.e("communication", "prepare: " + e.getMessage());
                         responseData = "unexpected error";
                     }
@@ -90,7 +89,7 @@ public class Communication extends WearableListenerService {
         }
     }
 
-    public void sendRequest(final String requestType, final String requestDataType, final String requestData) {
+    public void sendRequest(final String requestType, final String requestDataType, final String requestData){
         Log.i("communication", "sendRequest: " + requestType);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/rrw");
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());

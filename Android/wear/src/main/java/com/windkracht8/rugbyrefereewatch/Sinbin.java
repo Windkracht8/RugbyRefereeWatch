@@ -6,16 +6,17 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class Sinbin extends LinearLayout {
+public class Sinbin extends LinearLayout{
     public MatchData.sinbin sinbin;
 
-    private final TextView timer;
+    private TextView timer;
 
-    public Sinbin(Context context, AttributeSet attrs) {
+    public Sinbin(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show sinbins", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.sinbin, this, true);
 
         timer = findViewById(R.id.timer);

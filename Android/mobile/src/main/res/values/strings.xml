@@ -9,15 +9,24 @@
     <string name="sHomeColor_desc">Home color selection</string>
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_desc">Match type selection</string>
+    <string name="svEvents_desc">Events in match</string>
+    <string name="what_desc">what</string>
+    <string name="team_desc">team</string>
+    <string name="reason_hint">reason</string>
 
     <string name="tvTime_placeholder">00:00:00</string>
-    <string name="tvTimer_placeholder">00:00</string>
+    <string name="tvTimer_placeholder">00\'</string>
+    <string name="tvScore_placeholder">00:00</string>
 
     <string name="bView_text">view</string>
+    <string name="bEdit_text">edit</string>
+    <string name="bSave_text">save</string>
+    <string name="bClose_text">close</string>
     <string name="bShare_text">share</string>
     <string name="bDelete_text">Delete selected</string>
     <string name="bPrepare_text">Send to watch</string>
     <string name="bConnect_text">Connect</string>
+    <string name="bSearch_text">Search</string>
     <string name="bGetMatch_text">Get match from watch</string>
     <string name="bGetMatches_text">Get matches from watch</string>
     <string name="cbScreenOn_text">Keep screen on</string>
@@ -54,6 +63,7 @@
     <string name="status_PREPARE">Sending prepare</string>
     <string name="status_ERROR">error</string>
     <string name="status_CONNECTING">Connecting</string>
+    <string name="status_SEARCHING">Searching</string>
 
     <string name="matches_filename">matches.json</string>
     <string name="deleted_matches_filename">deleted_matches.json</string>
@@ -62,7 +72,6 @@
     <string name="os_tizen">Tizen</string>
     <string name="watch_settings">Watch settings</string>
     <string name="no_watch_settings">No watch settings</string>
-    <string name="no_card_reason">reason not entered</string>
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
@@ -72,13 +81,12 @@
     <string name="away">away</string>
 
     <string name="_0">0</string>
+    <string name="_00">00</string>
     <string name="_2">2</string>
     <string name="_3">3</string>
     <string name="_5">5</string>
     <string name="_10">10</string>
     <string name="_40">40</string>
-    <string name="svEvents_desc">Events in match</string>
-    <string name="bSearch_text">Search</string>
-    <string name="searching">Searching</string>
+    <string name="x">X</string>
 
 </resources>

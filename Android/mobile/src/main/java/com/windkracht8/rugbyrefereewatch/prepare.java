@@ -12,31 +12,32 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
-public class prepare extends LinearLayout {
-    private final EditText etHomeName;
-    private final EditText etAwayName;
-    private final Spinner sHomeColor;
-    private final Spinner sAwayColor;
-    private final Spinner sMatchType;
-    private final EditText etTimePeriod;
-    private final EditText etPeriodCount;
-    private final EditText etSinbin;
-    private final EditText etPointsTry;
-    private final EditText etPointsCon;
-    private final EditText etPointsGoal;
-    private final CheckBox cbRecordPlayer;
-    private final CheckBox cbScreenOn;
-    private final Button bWatchSettings;
-    private final Spinner sTimerType;
+public class prepare extends LinearLayout{
+    private EditText etHomeName;
+    private EditText etAwayName;
+    private Spinner sHomeColor;
+    private Spinner sAwayColor;
+    private Spinner sMatchType;
+    private EditText etTimePeriod;
+    private EditText etPeriodCount;
+    private EditText etSinbin;
+    private EditText etPointsTry;
+    private EditText etPointsCon;
+    private EditText etPointsGoal;
+    private CheckBox cbRecordPlayer;
+    private CheckBox cbScreenOn;
+    private Button bWatchSettings;
+    private Spinner sTimerType;
     private boolean watch_settings = false;
 
-    public prepare(Context context, AttributeSet attrs) {
+    public prepare(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show prepare", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.prepare, this, true);
 
         etHomeName = findViewById(R.id.etHomeName);
@@ -59,9 +60,9 @@ public class prepare extends LinearLayout {
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
-        sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 switch(position){
                     case 0://15s
                         etTimePeriod.setText(String.valueOf(40));
@@ -122,22 +123,22 @@ public class prepare extends LinearLayout {
                 }
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parentView){}
         });
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         sHomeColor.setAdapter(adapter);
-        for (int i=0;i<sHomeColor.getCount();i++){
-            if (sHomeColor.getItemAtPosition(i).equals("green")){
+        for(int i=0;i<sHomeColor.getCount();i++){
+            if(sHomeColor.getItemAtPosition(i).equals("green")){
                 sHomeColor.setSelection(i);
                 break;
             }
         }
         sAwayColor.setAdapter(adapter);
-        for (int i=0;i<sAwayColor.getCount();i++){
-            if (sAwayColor.getItemAtPosition(i).equals("red")){
+        for(int i=0;i<sAwayColor.getCount();i++){
+            if(sAwayColor.getItemAtPosition(i).equals("red")){
                 sAwayColor.setSelection(i);
                 break;
             }
@@ -157,7 +158,7 @@ public class prepare extends LinearLayout {
             findViewById(R.id.trScreenOn).setVisibility(View.GONE);
             findViewById(R.id.trTimerType).setVisibility(View.GONE);
             bWatchSettings.setText(R.string.watch_settings);
-        }else {
+        }else{
             findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
             findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
             findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
@@ -167,7 +168,7 @@ public class prepare extends LinearLayout {
     }
     public JSONObject getSettings(){
         JSONObject settings = new JSONObject();
-        try {
+        try{
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
             String temp = sHomeColor.getSelectedItem().toString();
@@ -183,13 +184,15 @@ public class prepare extends LinearLayout {
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
-            if(watch_settings) {
+            if(watch_settings){
                 settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
                 settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
                 settings.put("countdown", sTimerType.getSelectedItemPosition());//DEPRECATED
                 settings.put("timer_type", sTimerType.getSelectedItemPosition());
             }
         }catch(Exception e){
+            Log.e("report", "getSettings: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to get settings from watch", Toast.LENGTH_SHORT).show();
             return null;
         }
         return settings;
@@ -214,12 +217,13 @@ public class prepare extends LinearLayout {
             if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
         }catch(Exception e){
             Log.e("Prepare", "gotSettings: " + e.getMessage());
+            Toast.makeText(getContext(), "Problem with settings from watch", Toast.LENGTH_SHORT).show();
         }
     }
     private void selectItem(Spinner spin, String str){
         if(str.equals("lightgray")){str = "white";}
-        for (int i=0;i<spin.getCount();i++){
-            if (spin.getItemAtPosition(i).equals(str)){
+        for(int i=0;i<spin.getCount();i++){
+            if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
                 return;
             }

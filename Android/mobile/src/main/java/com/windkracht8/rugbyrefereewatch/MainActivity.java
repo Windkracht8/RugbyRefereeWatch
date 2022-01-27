@@ -43,7 +43,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private GestureDetector gestureDetector;
     private communication_tizen comms_tizen = null;
     private communication_wear comms_wear = null;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private prepare pPrepare;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             tizen_not_wear = guessTizenNotWear();
             sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
             sharedPreferences_editor.apply();
-        }else {
+        }else{
             tizen_not_wear = sharedPreferences.getBoolean("tizen_not_wear", true);
         }
 
@@ -92,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
         sOS.setAdapter(osa);
         sOS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
                 switchOS(pos == 0);
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent){}
         });
         if(tizen_not_wear){
             sOS.setSelection(0);
@@ -106,11 +106,10 @@ public class MainActivity extends AppCompatActivity {
             initWear();
         }
 
-        rrwReceiver = new BroadcastReceiver() {
+        rrwReceiver = new BroadcastReceiver(){
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent){
                 if(!intent.hasExtra("intent_type") || !intent.hasExtra("source")){return;}
-                if(!intent.hasExtra("source")){return;}
                 if(tizen_not_wear && intent.getStringExtra("source").equals("wear")){return;}
                 if(!tizen_not_wear && intent.getStringExtra("source").equals("tizen")){return;}
                 switch(intent.getStringExtra("intent_type")){
@@ -129,17 +128,13 @@ public class MainActivity extends AppCompatActivity {
                         if(!intent.hasExtra("match")){return;}
                         historyMatchClick(intent.getStringExtra("match"));
                         break;
-                    case "updateTeamName":
-                        if(!intent.hasExtra("team_id") || !intent.hasExtra("match_id") || !intent.hasExtra("name")){return;}
-                        updateTeamName(intent.getStringExtra("name"),
-                                intent.getStringExtra("team_id"),
-                                intent.getLongExtra("match_id", 0));
+                    case "bDelClick":
+                        if(!intent.hasExtra("event_id")){return;}
+                        rReport.bDelClick(intent.getIntExtra("event_id", 0));
                         break;
-                    case "updateCardReason":
-                        if(!intent.hasExtra("match_id") || !intent.hasExtra("event_id") || !intent.hasExtra("match")){return;}
-                        updateCardReason(intent.getStringExtra("match"),
-                                intent.getLongExtra("match_id", 0),
-                                intent.getLongExtra("event_id", 0));
+                    case "updateMatch":
+                        if(!intent.hasExtra("match")){return;}
+                        hHistory.updateMatch(intent.getStringExtra("match"));
                         break;
                     case "exportMatches":
                         exportMatches();
@@ -195,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void destroyTizen(){
-        if (comms_tizen != null) {
+        if(comms_tizen != null){
             comms_tizen.closeConnection();
             comms_tizen.releaseAgent();
             comms_tizen = null;
@@ -217,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
     }
     private void destroyWear(){
-        if (comms_wear != null) {
+        if(comms_wear != null){
             comms_wear.stop();
             comms_wear = null;
         }
@@ -225,14 +220,14 @@ public class MainActivity extends AppCompatActivity {
     private void handleIntent(){
         Intent intent = getIntent();
         String action = intent.getAction();
-        if (action.compareTo(Intent.ACTION_VIEW) != 0) return;
+        if(action.compareTo(Intent.ACTION_VIEW) != 0) return;
 
         String scheme = intent.getScheme();
-        if (scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0) {
+        if(scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0){
             Log.e("MainActivity" , "Non supported scheme: " + scheme);
             return;
         }
-        try {
+        try{
             ContentResolver cr = getContentResolver();
             InputStream is = cr.openInputStream(intent.getData());
             InputStreamReader isr = new InputStreamReader(is);
@@ -240,15 +235,16 @@ public class MainActivity extends AppCompatActivity {
 
             StringBuilder text = new StringBuilder();
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null){
                 text.append(line);
             }
             br.close();
             String matches_new_s = text.toString();
             JSONArray matches_new_ja = new JSONArray(matches_new_s);
             hHistory.gotMatches(matches_new_ja);
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("MainActivity", "handleIntent read file: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Problem with matches received from watch", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -261,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig){
         super.onConfigurationChanged(newConfig);
         handleOrientation();
     }
@@ -269,16 +265,16 @@ public class MainActivity extends AppCompatActivity {
     private void handleOrientation(){
         ImageView ivIcon = findViewById(R.id.ivIcon);
         Resources r = getResources();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, r.getDisplayMetrics()));
             ivIcon.getLayoutParams().height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, r.getDisplayMetrics()));
-        }else {
+        }else{
             ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
             ivIcon.getLayoutParams().height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
         }
     }
     @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
         handler_main.removeCallbacks(this::explainDoubleBack);
         if(hHistory.getVisibility() == View.VISIBLE){
             if(hHistory.unselect()) return;
@@ -302,28 +298,28 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),"Press back twice to close", Toast.LENGTH_SHORT).show();
     }
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
-    private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+    private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
         @Override
-        public boolean onDown(MotionEvent e) {
+        public boolean onDown(MotionEvent e){
             return true;
         }
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
             boolean result = false;
-            try {
+            try{
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                        if (diffX > 0) {
+                if(Math.abs(diffX) > Math.abs(diffY)){
+                    if(Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD){
+                        if(diffX > 0){
                             onSwipeRight();
-                        } else {
+                        }else{
                             onSwipeLeft();
                         }
                         result = true;
@@ -336,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onSwipeRight() {//TODO: does not work if swiping below content
+    public void onSwipeRight(){//TODO: does not work if swiping below content
         if(rReport.getVisibility() == View.VISIBLE){
             tabHistoryClick();
         }else if(pPrepare.getVisibility() == View.VISIBLE){
@@ -344,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onSwipeLeft() {
+    public void onSwipeLeft(){
         if(hHistory.getVisibility() == View.VISIBLE){
             tabReportClick();
         }else if(rReport.getVisibility() == View.VISIBLE){
@@ -352,37 +348,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private final SAAgentV2.RequestAgentCallback mAgentCallback1 = new SAAgentV2.RequestAgentCallback() {
+    private final SAAgentV2.RequestAgentCallback mAgentCallback1 = new SAAgentV2.RequestAgentCallback(){
         @Override
-        public void onAgentAvailable(SAAgentV2 agent) {
+        public void onAgentAvailable(SAAgentV2 agent){
             comms_tizen = (communication_tizen) agent;
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }
 
         @Override
-        public void onError(int errorCode, String errorMessage) {
+        public void onError(int errorCode, String errorMessage){
             Log.e("MainActivity", "Agent initialization error: " + errorCode + ". ErrorMsg: " + errorMessage);
             gotError(errorMessage);
         }
     };
 
-    public void bConnectClick() {
+    public void bConnectClick(){
         gotError("");
         findViewById(R.id.bConnect).setVisibility(View.GONE);
-        if(comms_tizen == null) {
+        if(comms_tizen == null){
             gotError("Watch not found");
             return;
         }
         if(comms_tizen.status.equals("DISCONNECTED") ||
            comms_tizen.status.equals("CONNECTION_LOST") ||
            comms_tizen.status.equals("ERROR")
-        ) {
+        ){
             comms_tizen.findPeers();
         }
     }
-    public void bSearchClick() {
+    public void bSearchClick(){
         gotError("");
-        ((TextView)findViewById(R.id.tvStatus)).setText(R.string.searching);
+        ((TextView)findViewById(R.id.tvStatus)).setText(R.string.status_SEARCHING);
         findViewById(R.id.bSearch).setVisibility(View.GONE);
         comms_wear.checkIfConnected(getApplicationContext());
     }
@@ -390,19 +386,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(vid).setEnabled(false);
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
-    public void bGetMatchesClick() {
+    public void bGetMatchesClick(){
         setButtonProcessing(R.id.bGetMatches);
         if(cantSendRequest()){return;}
         gotError("");
         sendRequest( "getMatches", hHistory.getDeletedMatches());
     }
-    public void bGetMatchClick() {
+    public void bGetMatchClick(){
         setButtonProcessing(R.id.bGetMatch);
         if(cantSendRequest()){return;}
         gotError("");
         sendRequest("getMatch", null);
     }
-    public void bPrepareClick() {
+    public void bPrepareClick(){
         setButtonProcessing(R.id.bPrepare);
         if(cantSendRequest()){return;}
         gotError("");
@@ -414,9 +410,9 @@ public class MainActivity extends AppCompatActivity {
         sendRequest("prepare", requestData);
     }
     private void sendRequest(String requestType, JSONObject requestData){
-        if(tizen_not_wear) {
+        if(tizen_not_wear){
             comms_tizen.sendRequest(requestType, requestData);
-        }else {
+        }else{
             communication_wear.sendRequest(this, requestType, requestData);
         }
     }
@@ -431,17 +427,18 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-    private void historyMatchClick(String match) {
+    private void historyMatchClick(String match){
         try{
             JSONObject match_json = new JSONObject(match);
             rReport.gotMatch(match_json);
             tabReportClick();
-        } catch (Exception e) {
+        }catch(Exception e){
             gotError("Issue with match: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void updateStatus(final String status_new) {
+    public void updateStatus(final String status_new){
         TextView tvStatus = findViewById(R.id.tvStatus);
         TextView tvError = findViewById(R.id.tvError);
         tvStatus.setVisibility(View.VISIBLE);
@@ -519,8 +516,8 @@ public class MainActivity extends AppCompatActivity {
         int responseType = 0;
         if(responseData.startsWith("{")) responseType = 1;//JSONObject
         if(responseData.startsWith("[")) responseType = 2;//JSONArray
-        try {
-            switch (requestType) {
+        try{
+            switch(requestType){
                 case "sync":
                     Log.i("MainActivity.gotResponse", "sync");
                     if(responseType != 1){break;}//Silently ignore for now
@@ -550,25 +547,26 @@ public class MainActivity extends AppCompatActivity {
                 case "prepare":
                     Log.i("MainActivity.gotResponse", "prepare");
                     findViewById(R.id.bPrepare).setEnabled(true);
-                    if (!responseData.equals("okilly dokilly")) {
+                    if(!responseData.equals("okilly dokilly")){
                         gotError(responseData);
                     }
                     break;
             }
         }catch(Exception e){
             gotError("gotResponse exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Problem with message from watch", Toast.LENGTH_SHORT).show();
         }
     }
-    public void gotError(String error) {
+    public void gotError(String error){
         Log.i("MainActivity.gotError", error);
-        if(error.equals(getString(R.string.did_not_understand_message))) {
+        if(error.equals(getString(R.string.did_not_understand_message))){
             error = getString(R.string.update_watch_app);
         }
         TextView tvError = findViewById(R.id.tvError);
         tvError.setText(error);
     }
 
-    public void tabHistoryClick() {
+    public void tabHistoryClick(){
         findViewById(R.id.tabHistory).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
@@ -576,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
         rReport.setVisibility(View.GONE);
         pPrepare.setVisibility(View.GONE);
     }
-    public void tabReportClick() {
+    public void tabReportClick(){
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabPrepare).setBackgroundResource(0);
@@ -584,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
         rReport.setVisibility(View.VISIBLE);
         pPrepare.setVisibility(View.GONE);
     }
-    public void tabPrepareClick() {
+    public void tabPrepareClick(){
         findViewById(R.id.tabHistory).setBackgroundResource(0);
         findViewById(R.id.tabReport).setBackgroundResource(0);
         findViewById(R.id.tabPrepare).setBackgroundResource(R.drawable.tab_active);
@@ -593,30 +591,23 @@ public class MainActivity extends AppCompatActivity {
         pPrepare.setVisibility(View.VISIBLE);
     }
 
-    private void updateCardReason(String reason, long match_id, long event_id){
-        hHistory.updateCardReason(reason, match_id, event_id);
-    }
-    private void updateTeamName(String name, String team_id, long match_id){
-        hHistory.updateTeamName(name, team_id, match_id);
-    }
-
-    public static String getTeamName(JSONObject team) {
+    public static String getTeamName(JSONObject team){
         String name = "";
-        try {
+        try{
             name = team.getString("team");
-            if (team.has("id") && !team.getString("id").equals(name)) {
+            if(team.has("id") && !team.getString("id").equals(name)){
                 return name;
             }
             String color = team.getString("color");
             color = color.equals("lightgray") ? "white" : color;
             return name + " (" + color + ")";
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("MainActivity", "getTeamName: " + e.getMessage());
         }
         return name;
     }
 
-    private void exportMatches() {
+    private void exportMatches(){
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/json");
@@ -625,23 +616,23 @@ public class MainActivity extends AppCompatActivity {
         exportMatchesActivityResultLauncher.launch(intent);
     }
     final ActivityResultLauncher<Intent> exportMatchesActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data != null) {
-                        Uri uri = data.getData();
-                        OutputStream outputStream;
-                        try {
-                            outputStream = getContentResolver().openOutputStream(uri);
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-                            bw.write(hHistory.export_matches.toString());
-                            bw.flush();
-                            bw.close();
-                        } catch (Exception e) {
-                            Log.e("MainActivity", "onActivityResult: " + e.getMessage());
-                        }
-                    }
-                }
-            });
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> {
+            if(result.getResultCode() != Activity.RESULT_OK) return;
+            Intent data = result.getData();
+            if(data == null) return;
+            Uri uri = data.getData();
+            OutputStream outputStream;
+            try{
+                outputStream = getContentResolver().openOutputStream(uri);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
+                bw.write(hHistory.export_matches.toString());
+                bw.flush();
+                bw.close();
+            }catch(Exception e){
+                Log.e("MainActivity", "onActivityResult: " + e.getMessage());
+                Toast.makeText(getApplicationContext(), "Failed to export matches", Toast.LENGTH_SHORT).show();
+            }
+        }
+    );
 }

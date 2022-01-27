@@ -9,19 +9,19 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class Card extends LinearLayout {
+public class Card extends LinearLayout{
     public int player_no;
 
-    private final Spinner player;
-    private final TextView card_yellow;
-    private final TextView card_red;
+    private Spinner player;
+    private TextView card_yellow;
+    private TextView card_red;
 
-
-    public Card(Context context, AttributeSet attrs) {
+    public Card(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show card screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.card, this, true);
 
         player = findViewById(R.id.player);
@@ -32,13 +32,13 @@ public class Card extends LinearLayout {
         ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
         aaPlayerNumbers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         player.setAdapter(aaPlayerNumbers);
-        player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 player_no = position;
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
+            public void onNothingSelected(AdapterView<?> parentView){
                 player_no = 0;
             }
         });

@@ -51,4 +51,7 @@
     <string name="finish">finish</string>
     <string name="report">report</string>
     <string name="clear">clear</string>
+    <string name="player_desc">player</string>
+    <string name="record_player_desc">record player</string>
+    <string name="screen_on_desc">screen on</string>
 </resources>

@@ -4,20 +4,22 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.samsung.android.sdk.accessory.*;
 import org.json.JSONObject;
 
-public class communication_tizen extends SAAgentV2 {
+public class communication_tizen extends SAAgentV2{
     public String status = "DISCONNECTED";
 
     private ServiceConnection mConnectionHandler = null;
 
-    public communication_tizen(Context context) {
+    public communication_tizen(Context context){
         super("RugbyRefereeWatch", context, ServiceConnection.class);
         SA mAccessory = new SA();
-        try {
+        try{
             mAccessory.initialize(context);
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("communication_tizen", "construct: " + e);
             updateStatus("FATAL");
             gotError(e.getMessage());
@@ -26,38 +28,34 @@ public class communication_tizen extends SAAgentV2 {
     }
 
     @Override
-    protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result) {
-    }
+    protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result){}
 
     @Override
-    protected void onFindPeerAgentsResponse(SAPeerAgent[] peerAgents, int result) {
-        Log.i("communication_tizen", "onFindPeerAgentsResponse");
-        if ((result == SAAgent.PEER_AGENT_FOUND) && (peerAgents != null)) {
+    protected void onFindPeerAgentsResponse(SAPeerAgent[] peerAgents, int result){
+        if((result == SAAgent.PEER_AGENT_FOUND) && (peerAgents != null)){
             for(SAPeerAgent peerAgent:peerAgents)
                 requestServiceConnection(peerAgent);
-        } else if (result == SAAgent.FINDPEER_DEVICE_NOT_CONNECTED) {
+        } else if(result == SAAgent.FINDPEER_DEVICE_NOT_CONNECTED){
             updateStatus("ERROR");
             gotError("Watch not found");
-        } else if (result == SAAgent.FINDPEER_SERVICE_NOT_FOUND) {
+        } else if(result == SAAgent.FINDPEER_SERVICE_NOT_FOUND){
             updateStatus("ERROR");
             gotError("App not found on the watch");
-        } else {
+        }else{
             updateStatus("ERROR");
             gotError("No peers found");
         }
     }
 
     @Override
-    protected void onServiceConnectionRequested(SAPeerAgent peerAgent) {
-        Log.i("communication_tizen", "onServiceConnectionRequested");
-        if (peerAgent != null) {
+    protected void onServiceConnectionRequested(SAPeerAgent peerAgent){
+        if(peerAgent != null){
             acceptServiceConnectionRequest(peerAgent);
         }
     }
 
     @Override
     protected void onServiceConnectionResponse(SAPeerAgent peerAgent, SASocket socket, int result){
-        Log.i("communication_tizen", "onServiceConnectionResponse: " + result);
         switch(result){
             case SAAgent.CONNECTION_SUCCESS:
                 this.mConnectionHandler = (ServiceConnection) socket;
@@ -73,27 +71,26 @@ public class communication_tizen extends SAAgentV2 {
     }
 
     @Override
-    protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode) {
+    protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode){
         Log.i("communication_tizen", "onError: " + errorCode);
         super.onError(peerAgent, errorMessage, errorCode);
         gotError(errorMessage);
     }
 
-    public class ServiceConnection extends SASocket {
-        public ServiceConnection() {
+    public class ServiceConnection extends SASocket{
+        public ServiceConnection(){
             super(ServiceConnection.class.getName());
-            Log.i("communication_tizen", "ServiceConnection.ServiceConnection");
         }
 
         @Override
-        public void onError(int channelId, String errorMessage, int errorCode) {
+        public void onError(int channelId, String errorMessage, int errorCode){
             Log.i("communication_tizen", "ServiceConnection.onError: " + errorCode);
             gotError(errorCode + ": "  + errorMessage);
         }
 
         @Override
-        public void onReceive(int channelId, byte[] data) {
-            try {
+        public void onReceive(int channelId, byte[] data){
+            try{
                 String sData = new String(data);
                 Log.i("communication_tizen", "ServiceConnection.onReceive: " + sData);
                 JSONObject responseMessage = new JSONObject(sData);
@@ -112,42 +109,41 @@ public class communication_tizen extends SAAgentV2 {
         }
     }
 
-    public void findPeers() {
-        Log.i("communication_tizen", "findPeers");
+    public void findPeers(){
         updateStatus("FINDING_PEERS");
         findPeerAgents();
     }
 
-    public void sendRequest(final String requestType, final JSONObject requestData) {
-        if (mConnectionHandler == null) {
+    public void sendRequest(final String requestType, final JSONObject requestData){
+        if(mConnectionHandler == null){
             gotError("Not connected");
         }
         JSONObject requestMessage = new JSONObject();
-        try {
+        try{
             requestMessage.put("requestType", requestType);
             requestMessage.put("requestData", requestData);
         }catch(Exception e){
             gotError("Issue with json: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
             return;
         }
-        Log.i("communication_tizen", "sendRequest: " + requestMessage.toString());
-        try {
+        Log.i("communication_tizen", "sendRequest: " + requestMessage);
+        try{
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
-        } catch (IOException e) {
+        }catch(IOException e){
             gotError("Issue with sending request: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void closeConnection() {
-        Log.i("communication_tizen", "closeConnection");
-        if (mConnectionHandler != null) {
+    public void closeConnection(){
+        if(mConnectionHandler != null){
             mConnectionHandler.close();
             mConnectionHandler = null;
         }
     }
 
-    private void updateStatus(final String status_new) {
-        Log.i("communication_tizen", "updateStatus: " + status_new);
+    private void updateStatus(final String status_new){
         this.status = status_new;
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "updateStatus");
@@ -155,7 +151,7 @@ public class communication_tizen extends SAAgentV2 {
         intent.putExtra("status_new", status_new);
         getApplicationContext().sendBroadcast(intent);
     }
-    private void gotError(final String error) {
+    private void gotError(final String error){
         Log.e("communication_tizen", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
@@ -164,7 +160,7 @@ public class communication_tizen extends SAAgentV2 {
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotResponse(final JSONObject responseMessage){
-        try {
+        try{
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intent_type", "gotResponse");
             intent.putExtra("source", "tizen");

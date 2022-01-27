@@ -1,6 +1,8 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,7 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MatchData {
+public class MatchData{
     public long match_id;
     public final ArrayList<event> events = new ArrayList<>();
     public final team home;
@@ -25,10 +27,10 @@ public class MatchData {
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
     }
-    public MatchData(JSONObject match_json){
+    public MatchData(Context context, JSONObject match_json){
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
-        try {
+        try{
             match_id = match_json.getLong("matchid");
             JSONObject settings = match_json.getJSONObject("settings");
             match_type = settings.getString("match_type");
@@ -40,11 +42,12 @@ public class MatchData {
             points_goal = settings.getInt("points_goal");
         }catch(JSONException e){
             Log.e("MatchData", "MatchData from json: " + e.getMessage());
+            Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
         }
     }
-    public JSONObject toJson(){
+    public JSONObject toJson(Context context){
         JSONObject ret = new JSONObject();
-        try {
+        try{
             ret.put("matchid", match_id);
             JSONObject settings = new JSONObject();
             settings.put("match_type", match_type);
@@ -55,23 +58,24 @@ public class MatchData {
             settings.put("points_con", points_con);
             settings.put("points_goal", points_goal);
             ret.put("settings", settings);
-            ret.put("home", home.toJson());
-            ret.put("away", away.toJson());
+            ret.put("home", home.toJson(context));
+            ret.put("away", away.toJson(context));
             JSONArray events_json = new JSONArray();
             for(event evt : events){
-                events_json.put(evt.toJson());
+                events_json.put(evt.toJson(context));
             }
             ret.put("events", events_json);
-        } catch (JSONException e) {
+        }catch(JSONException e){
             Log.e("MatchData", "toJson: " + e.getMessage());
+            Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
         }
         return ret;
     }
     public void clear(){
-        for(sinbin sinbin_data : home.sinbins) {
+        for(sinbin sinbin_data : home.sinbins){
             sinbin_data.hide = true;
         }
-        for(sinbin sinbin_data : away.sinbins) {
+        for(sinbin sinbin_data : away.sinbins){
             sinbin_data.hide = true;
         }
     }
@@ -81,8 +85,8 @@ public class MatchData {
 
         switch(event_del.what){
             case "YELLOW CARD":
-                for(sinbin sinbin : team_edit.sinbins) {
-                    if (event_del.id == sinbin.id){
+                for(sinbin sinbin : team_edit.sinbins){
+                    if(event_del.id == sinbin.id){
                         sinbin.hide = true;
                         return;
                     }
@@ -102,7 +106,7 @@ public class MatchData {
     public void logEvent(String what){
         event evt = new event(what);
         events.add(evt);
-        Log.i("MatchData" , "log_event: " + evt.toJson());
+        Log.i("MatchData" , "log_event: " + what);
     }
     public void logEvent(String what, String team){
         if(team == null){
@@ -112,21 +116,21 @@ public class MatchData {
         event evt = new event(what);
         evt.team = team;
         events.add(evt);
-        Log.i("MatchData" , "log_event: " + evt.toJson());
+        Log.i("MatchData" , "log_event: " + what + " " + team);
     }
     public void logEvent(String what, String team, int who){
         event evt = new event(what);
         evt.team = team;
         evt.who = who;
         events.add(evt);
-        Log.i("MatchData" , "log_event: " + evt.toJson());
+        Log.i("MatchData" , "log_event: " + what + " " + team + " " + who);
     }
     public void logEvent(long time, String what, String team, int who){
         event evt = new event(time, what);
         evt.team = team;
         evt.who = who;
         events.add(evt);
-        Log.i("MatchData" , "log_event: " + evt.toJson());
+        Log.i("MatchData" , "log_event: " + what + " " + team + " " + who);
     }
     public static class team{
         public final String id;
@@ -147,9 +151,9 @@ public class MatchData {
             sinbin sb = new sinbin(id, end);
             sinbins.add(sb);
         }
-        public JSONObject toJson(){
+        public JSONObject toJson(Context context){
             JSONObject ret = new JSONObject();
-            try {
+            try{
                 ret.put("id", id);
                 ret.put("team", team);
                 ret.put("color", color);
@@ -158,8 +162,9 @@ public class MatchData {
                 ret.put("cons", cons);
                 ret.put("goals", goals);
                 ret.put("kickoff", kickoff);
-            } catch (JSONException e) {
+            }catch(JSONException e){
                 Log.e("MatchData", "match.toJson: " + e.getMessage());
+                Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
             }
             return ret;
         }
@@ -183,9 +188,9 @@ public class MatchData {
             this.timer = MainActivity.prettyTimer(MainActivity.timer_timer);
             this.what = what;
         }
-        public JSONObject toJson(){
+        public JSONObject toJson(Context context){
             JSONObject evt = new JSONObject();
-            try {
+            try{
                 evt.put("id", id);
                 evt.put("time", time);
                 evt.put("timer", timer);
@@ -196,8 +201,9 @@ public class MatchData {
                         evt.put("who", who);
                     }
                 }
-            } catch (JSONException e) {
+            }catch(JSONException e){
                 Log.e("MatchData" , "event.toJson: " + e.getMessage());
+                Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
             }
             return evt;
         }

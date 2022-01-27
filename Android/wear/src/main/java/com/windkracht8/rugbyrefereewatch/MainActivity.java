@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity{
     private TextView battery;
     private TextView time;
     private TextView score_home;
@@ -77,9 +78,9 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
-        }else {
+        }else{
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
@@ -146,9 +147,9 @@ public class MainActivity extends FragmentActivity {
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        settingsUpdateReceiver = new BroadcastReceiver() {
+        settingsUpdateReceiver = new BroadcastReceiver(){
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent){
                 updateAfterConfig();
             }
         };
@@ -163,7 +164,7 @@ public class MainActivity extends FragmentActivity {
         updateAfterConfig();
     }
     @Override
-    protected void onDestroy() {
+    protected void onDestroy(){
         super.onDestroy();
         unregisterReceiver(settingsUpdateReceiver);
     }
@@ -241,10 +242,10 @@ public class MainActivity extends FragmentActivity {
         timer_period_ended = false;
         tTimer.setTextColor(getResources().getColor(R.color.pure_white, getBaseContext().getTheme()));
 
-        for (MatchData.sinbin sb : match.home.sinbins){
+        for(MatchData.sinbin sb : match.home.sinbins){
             sb.end = sb.end - timer_timer;
         }
-        for (MatchData.sinbin sb : match.away.sinbins){
+        for(MatchData.sinbin sb : match.away.sinbins){
             sb.end = sb.end - timer_timer;
         }
         updateButtons();
@@ -599,15 +600,15 @@ public class MainActivity extends FragmentActivity {
                 return "home";
             }
         }
-        return null;
+        return "away";
     }
     public void showReport(){
         report.load(match);
         report.setVisibility(View.VISIBLE);
     }
-    public static boolean incomingSettings(JSONObject settings_new){
-        if(!timer_status.equals("conf")){return false;}
-        try {
+    public static boolean incomingSettings(Context context, JSONObject settings_new){
+        if(!timer_status.equals("conf")) return false;
+        try{
             match.home.team = settings_new.getString("home_name");
             match.home.color = settings_new.getString("home_color");
             match.away.team = settings_new.getString("away_name");
@@ -626,14 +627,15 @@ public class MainActivity extends FragmentActivity {
                 timer_type = settings_new.getInt("countdown");
             if(settings_new.has("timer_type"))
                 timer_type = settings_new.getInt("timer_type");
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("MainActivity", "incomingSettings: " + e.getMessage());
+            Toast.makeText(context, "Problem with incoming settings", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    public static JSONObject getSettings(){
+    public static JSONObject getSettings(Context context){
         JSONObject ret = new JSONObject();
         try{
             ret.put("home_name", match.home.team);
@@ -650,19 +652,19 @@ public class MainActivity extends FragmentActivity {
             ret.put("record_player", record_player ? 1 : 0);
             ret.put("screen_on", screen_on ? 1 : 0);
             ret.put("timer_type", timer_type);
-        } catch (Exception e) {
+        }catch(Exception e){
             Log.e("MainActivity", "getSettings: " + e.getMessage());
+            Toast.makeText(context, "Problem with sending settings", Toast.LENGTH_SHORT).show();
         }
         return ret;
     }
 
     static final long[] buzz_pattern = {300,500,300,500,300,500};
     public static void beep(Context c){
-        Log.i("MainActivity", "buzz buzz");
         final Vibrator vibrator;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
-        }else {
+        }else{
             vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
         }
         final VibrationEffect ve = VibrationEffect.createWaveform(buzz_pattern, -1);
@@ -670,11 +672,10 @@ public class MainActivity extends FragmentActivity {
         vibrator.vibrate(ve);
     }
     public static void singleBeep(Context c){
-        Log.i("MainActivity", "buzz");
         final Vibrator vibrator;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
-        }else {
+        }else{
             vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
         }
         final VibrationEffect ve = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);

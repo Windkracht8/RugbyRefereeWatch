@@ -9,21 +9,22 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class Score extends LinearLayout {
+public class Score extends LinearLayout{
     public MatchData.team team;
     public int player_no;
 
-    private final Spinner player;
-    private final TextView score_try;
-    private final TextView score_con;
-    private final TextView score_goal;
-    private final TextView cards;
+    private Spinner player;
+    private TextView score_try;
+    private TextView score_con;
+    private TextView score_goal;
+    private TextView cards;
 
-    public Score(Context context, AttributeSet attrs) {
+    public Score(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show score screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.score, this, true);
 
         player = findViewById(R.id.player);
@@ -36,13 +37,13 @@ public class Score extends LinearLayout {
         ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
         aaPlayerNumbers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         player.setAdapter(aaPlayerNumbers);
-        player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 player_no = position;
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
+            public void onNothingSelected(AdapterView<?> parentView){
                 player_no = 0;
             }
         });

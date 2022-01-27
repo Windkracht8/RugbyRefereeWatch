@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class Report extends ScrollView {
-    public Report(Context context, AttributeSet attrs) {
+public class Report extends ScrollView{
+    public Report(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show report", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report, this, true);
 
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);

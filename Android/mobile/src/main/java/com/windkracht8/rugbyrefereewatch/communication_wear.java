@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
-public class communication_wear extends WearableListenerService implements DataClient.OnDataChangedListener {
+public class communication_wear extends WearableListenerService implements DataClient.OnDataChangedListener{
     private DataClient dataClient;
     public String status;
     private Handler handler_main;
@@ -44,12 +44,11 @@ public class communication_wear extends WearableListenerService implements DataC
         context.sendBroadcast(intent);
     }
     public void checkIfConnected(Context context){
-        Log.i("communication_wear", "checkIfConnected");
         Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
-        nodeListTask.addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                for (Node node : task.getResult()) {
-                    if(node.isNearby()) {
+        nodeListTask.addOnCompleteListener(task ->{
+            if(task.isSuccessful()){
+                for(Node node : task.getResult()){
+                    if(node.isNearby()){
                         status = "CONNECTED";
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intent_type", "updateStatus");
@@ -75,8 +74,8 @@ public class communication_wear extends WearableListenerService implements DataC
         if(handler_main != null) handler_main.removeCallbacksAndMessages(null);
     }
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent event : dataEvents) {
+    public void onDataChanged(DataEventBuffer dataEvents){
+        for(DataEvent event : dataEvents){
             DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
             String requestType = dataMap.getString("requestType");
             if(requestType == null){
@@ -90,12 +89,12 @@ public class communication_wear extends WearableListenerService implements DataC
         }
     }
 
-    public static void sendRequest(Context context, final String requestType, final JSONObject requestData) {
+    public static void sendRequest(Context context, final String requestType, final JSONObject requestData){
         Log.i("communication_wear", "sendRequest: " + requestType);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/rrw");
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());
         putDataMapReq.getDataMap().putString("requestType", requestType);
-        if(requestData != null) {
+        if(requestData != null){
             putDataMapReq.getDataMap().putString("requestData", requestData.toString());
         }
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
@@ -104,7 +103,7 @@ public class communication_wear extends WearableListenerService implements DataC
         putDataTask.addOnFailureListener(exception -> gotError(context, exception.getMessage()));
     }
 
-    private static void gotError(Context context, final String error) {
+    private static void gotError(Context context, final String error){
         Log.e("communication_wear", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");

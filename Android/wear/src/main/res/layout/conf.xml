@@ -13,18 +13,19 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/conf_title"
-            android:textColor="@color/w8blue"
-            android:textSize="20sp" />
         <LinearLayout
             android:id="@+id/matchSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/conf_title"
+                android:textColor="@color/w8blue"
+                android:textSize="20sp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +82,8 @@
                     android:id="@+id/period_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/period_time_desc"/>
+                    android:contentDescription="@string/period_time_desc"
+                    android:minHeight="48dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,7 +95,8 @@
                     android:id="@+id/period_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/period_count_desc"/>
+                    android:contentDescription="@string/period_count_desc"
+                    android:minHeight="48dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -105,7 +108,8 @@
                     android:id="@+id/sinbin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/sinbin_desc"/>
+                    android:contentDescription="@string/sinbin_desc"
+                    android:minHeight="48dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +121,8 @@
                     android:id="@+id/points_try"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/points_try_desc"/>
+                    android:contentDescription="@string/points_try_desc"
+                    android:minHeight="48dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -129,7 +134,8 @@
                     android:id="@+id/points_con"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/points_con_desc"/>
+                    android:contentDescription="@string/points_con_desc"
+                    android:minHeight="48dp" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -141,7 +147,8 @@
                     android:id="@+id/points_goal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/points_goal_desc"/>
+                    android:contentDescription="@string/points_goal_desc"
+                    android:minHeight="48dp" />
             </LinearLayout>
         </LinearLayout>
         <TextView
@@ -160,7 +167,9 @@
             android:id="@+id/record_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:contentDescription="@string/record_player_desc"
+            android:minHeight="48dp" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -172,7 +181,9 @@
             android:id="@+id/screen_on"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:contentDescription="@string/screen_on_desc"
+            android:minHeight="48dp" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -182,8 +193,9 @@
             android:textSize="20sp"/>
         <Spinner
             android:id="@+id/timer_type"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:contentDescription="@string/timer_type_desc"/>
     </LinearLayout>
 </ScrollView>

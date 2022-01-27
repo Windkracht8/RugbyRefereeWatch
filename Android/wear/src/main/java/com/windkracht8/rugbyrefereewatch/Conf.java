@@ -9,29 +9,30 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
 
-public class Conf extends ScrollView {
-    private final Spinner color_home;
-    private final Spinner color_away;
-    private final Spinner match_type;
-    private final Spinner period_time;
-    private final Spinner period_count;
-    private final Spinner sinbin;
-    private final Spinner points_try;
-    private final Spinner points_con;
-    private final Spinner points_goal;
-    private final SwitchCompat record_player;
-    private final SwitchCompat screen_on;
-    private final Spinner timer_type;
+public class Conf extends ScrollView{
+    private Spinner color_home;
+    private Spinner color_away;
+    private Spinner match_type;
+    private Spinner period_time;
+    private Spinner period_count;
+    private Spinner sinbin;
+    private Spinner points_try;
+    private Spinner points_con;
+    private Spinner points_goal;
+    private SwitchCompat record_player;
+    private SwitchCompat screen_on;
+    private Spinner timer_type;
 
     private boolean onlyWatchSettings = false;
 
-    public Conf(Context context, AttributeSet attrs) {
+    public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
+        if(inflater == null){Toast.makeText(context, "Failed to show correction screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf, this, true);
 
         color_home = findViewById(R.id.color_home);
@@ -51,9 +52,9 @@ public class Conf extends ScrollView {
         ArrayAdapter<String> aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
         aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         match_type.setAdapter(aaTemp);
-        match_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        match_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 switch(position){
                     case 0://15s
                         period_time.setSelection(39);
@@ -104,7 +105,7 @@ public class Conf extends ScrollView {
                 }
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parentView){}
         });
         aTemp = new String[] {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
         aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
@@ -166,15 +167,15 @@ public class Conf extends ScrollView {
         onlyWatchSettings = true;
     }
     private void selectItem(Spinner spin, String str){
-        for (int i=0;i<spin.getCount();i++){
-            if (spin.getItemAtPosition(i).equals(str)){
+        for(int i=0;i<spin.getCount();i++){
+            if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
                 return;
             }
         }
     }
     public void save(MatchData match){
-        if(!onlyWatchSettings) {
+        if(!onlyWatchSettings){
             match.home.color = color_home.getSelectedItem().toString();
             match.away.color = color_away.getSelectedItem().toString();
             match.match_type = match_type.getSelectedItem().toString();
