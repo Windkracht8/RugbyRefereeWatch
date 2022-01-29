@@ -157,10 +157,12 @@ public class Conf extends ScrollView{
         lp.setMargins(0, 0, 0, 40);
         timer_type.setLayoutParams(lp);
         findViewById(R.id.matchSettings).setVisibility(View.VISIBLE);
+        findViewById(R.id.helpSettings).setVisibility(View.VISIBLE);
         onlyWatchSettings = false;
     }
     public void onlyWatchSettings(){
         findViewById(R.id.matchSettings).setVisibility(View.GONE);
+        findViewById(R.id.helpSettings).setVisibility(View.GONE);
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) timer_type.getLayoutParams();
         lp.setMargins(0, 0, 0, 0);
         timer_type.setLayoutParams(lp);

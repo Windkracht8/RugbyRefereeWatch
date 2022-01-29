@@ -103,25 +103,16 @@ public class FileStore{
             Toast.makeText(context, "Failed to store settings", Toast.LENGTH_SHORT).show();
         }
     }
-    public static void file_readSettings(Context context){
+    public static JSONObject file_readSettings(Context context){
         try{
             String sSettings = getFileAsString(context, R.string.settings_filename);
-            if(sSettings.length() < 3){ return;}
-            JSONObject jsonSettings = new JSONObject(sSettings);
-            MainActivity.record_player = jsonSettings.getBoolean("record_player");
-            MainActivity.screen_on = jsonSettings.getBoolean("screen_on");
-            MainActivity.timer_type = jsonSettings.getInt("timer_type");
-            MainActivity.match.match_type = jsonSettings.getString("match_type");
-            MainActivity.match.period_time = jsonSettings.getInt("period_time");
-            MainActivity.match.period_count = jsonSettings.getInt("period_count");
-            MainActivity.match.sinbin = jsonSettings.getInt("sinbin");
-            MainActivity.match.points_try = jsonSettings.getInt("points_try");
-            MainActivity.match.points_con = jsonSettings.getInt("points_con");
-            MainActivity.match.points_goal = jsonSettings.getInt("points_goal");
+            if(sSettings.length() < 3){return null;}
+            return new JSONObject(sSettings);
         }catch(Exception e){
             Log.e("FileStore", "file_readSettings: " + e.getMessage());
             Toast.makeText(context, "Failed to read settings", Toast.LENGTH_SHORT).show();
         }
+        return null;
     }
 
     private static String getFileAsString(Context context, int file){

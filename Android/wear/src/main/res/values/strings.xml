@@ -44,6 +44,8 @@
     <string name="points_con_desc">Points con selection</string>
     <string name="points_goal_desc">Points goal selection</string>
     <string name="timer_type_desc">Timer type selection</string>
+    <string name="help">help</string>
+    <string name="bHelp">show help</string>
     <string name="start">start</string>
     <string name="resume">resume</string>
     <string name="rest">rest</string>
@@ -54,4 +56,17 @@
     <string name="player_desc">player</string>
     <string name="record_player_desc">record player</string>
     <string name="screen_on_desc">screen on</string>
+
+    <string name="help_welcome_title">Welcome</string>
+    <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
+    <string name="help_corrections_title">Corrections</string>
+    <string name="help_corrections">During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.</string>
+    <string name="help_kickoff_title">Kick off</string>
+    <string name="help_kickoff">Before the game starts you can record which team will kick off by tapping the home or away team score.</string>
+    <string name="help_battery_title">Battery</string>
+    <string name="help_battery">Screen on is a very useful setting to keep the screen on during a game, but this will use more battery. Consider switching off Wifi, GPS and Bluetooth during a game, this app does not use these.</string>
+    <string name="help_storage_title">Storage</string>
+    <string name="help_storage">Matches will be stored on the watch for 14 days, use the companion app on your phone to download them.</string>
+    <string name="help_help_title">Get help</string>
+    <string name="help_help">From the settings you can open this screen. Find the support contacts in the App Store for more help.</string>
 </resources>

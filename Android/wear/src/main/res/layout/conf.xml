@@ -31,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/home"
-                android:textColor="#FFF"
                 android:textSize="20sp" />
             <Spinner
                 android:id="@+id/color_home"
@@ -44,7 +43,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/away"
-                android:textColor="#FFF"
                 android:textSize="20sp"/>
             <Spinner
                 android:id="@+id/color_away"
@@ -57,7 +55,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/match_type_text"
-                android:textColor="#FFF"
                 android:textSize="20sp"/>
             <Spinner
                 android:id="@+id/match_type"
@@ -76,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/period_time_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/period_time"
@@ -89,7 +85,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/period_count_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/period_count"
@@ -102,7 +97,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/sinbin_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/sinbin"
@@ -115,7 +109,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/points_try_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_try"
@@ -128,7 +121,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/points_con_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_con"
@@ -141,7 +133,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/points_goal_text"
-                    android:textColor="#FFF"
                     android:textSize="20sp"/>
                 <Spinner
                     android:id="@+id/points_goal"
@@ -156,7 +147,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/record_player_text"
-            android:textColor="#FFF"
             android:textSize="20sp" />
         <!-- the first SwitchCompat does not style properly -->
         <androidx.appcompat.widget.SwitchCompat
@@ -175,7 +165,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/screen_on_text"
-            android:textColor="#FFF"
             android:textSize="20sp"/>
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/screen_on"
@@ -189,7 +178,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/timer_type_text"
-            android:textColor="#FFF"
             android:textSize="20sp"/>
         <Spinner
             android:id="@+id/timer_type"
@@ -197,5 +185,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/timer_type_desc"/>
+        <LinearLayout
+            android:id="@+id/helpSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/help"
+                android:textSize="20sp"/>
+            <Button
+                android:id="@+id/bHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/bHelp"
+                android:textAllCaps="false"
+                android:textColor="@color/w8blue" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

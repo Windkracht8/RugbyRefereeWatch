@@ -50,6 +50,7 @@ public class MainActivity extends FragmentActivity{
     private Card card;
     private Correct correct;
     private Report report;
+    private Help help;
 
     public static MatchData match;
     public static int heightPixels = 0;
@@ -72,6 +73,7 @@ public class MainActivity extends FragmentActivity{
     public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
+    public final static int help_version = 1;
 
     private Handler handler_main;
     private static BroadcastReceiver settingsUpdateReceiver;
@@ -128,6 +130,8 @@ public class MainActivity extends FragmentActivity{
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
+        help = findViewById(R.id.help);
+        findViewById(R.id.bHelp).setOnClickListener(v -> showHelp());
 
         //Resize elements for the heightPixels
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
@@ -155,7 +159,7 @@ public class MainActivity extends FragmentActivity{
         };
         registerReceiver(settingsUpdateReceiver, new IntentFilter("com.windkracht8.rrw.settings"));
 
-        FileStore.file_readSettings(getBaseContext());
+        readSettings();
         FileStore.file_cleanMatches(getBaseContext());
 
         updateBattery();
@@ -183,6 +187,8 @@ public class MainActivity extends FragmentActivity{
             correct.setVisibility(View.GONE);
         }else if(report.getVisibility() == View.VISIBLE){
             report.setVisibility(View.GONE);
+        }else if(help.getVisibility() == View.VISIBLE){
+            help.setVisibility(View.GONE);
         }else{
             if(timer_status.equals("conf") || timer_status.equals("finished")){
                 System.exit(0);
@@ -606,6 +612,10 @@ public class MainActivity extends FragmentActivity{
         report.load(match);
         report.setVisibility(View.VISIBLE);
     }
+    public void showHelp(){
+        help.setVisibility(View.VISIBLE);
+        conf.setVisibility(View.GONE);
+    }
     public static boolean incomingSettings(Context context, JSONObject settings_new){
         if(!timer_status.equals("conf")) return false;
         try{
@@ -634,6 +644,29 @@ public class MainActivity extends FragmentActivity{
         }
         return true;
     }
+    private void readSettings(){
+        JSONObject jsonSettings = FileStore.file_readSettings(getBaseContext());
+        try{
+            if(jsonSettings == null) return;
+            record_player = jsonSettings.getBoolean("record_player");
+            screen_on = jsonSettings.getBoolean("screen_on");
+            timer_type = jsonSettings.getInt("timer_type");
+            match.match_type = jsonSettings.getString("match_type");
+            match.period_time = jsonSettings.getInt("period_time");
+            match.period_count = jsonSettings.getInt("period_count");
+            match.sinbin = jsonSettings.getInt("sinbin");
+            match.points_try = jsonSettings.getInt("points_try");
+            match.points_con = jsonSettings.getInt("points_con");
+            match.points_goal = jsonSettings.getInt("points_goal");
+            if(!jsonSettings.has("help_version") || jsonSettings.getInt("help_version") != help_version){
+                help.showWelcome();
+                help.setVisibility(View.VISIBLE);
+            }
+        }catch(Exception e){
+            Log.e("MainActivity", "readSettings: " + e.getMessage());
+            Toast.makeText(getBaseContext(), "Problem with stored settings", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public static JSONObject getSettings(Context context){
         JSONObject ret = new JSONObject();
@@ -652,6 +685,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("record_player", record_player ? 1 : 0);
             ret.put("screen_on", screen_on ? 1 : 0);
             ret.put("timer_type", timer_type);
+            ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e("MainActivity", "getSettings: " + e.getMessage());
             Toast.makeText(context, "Problem with sending settings", Toast.LENGTH_SHORT).show();
