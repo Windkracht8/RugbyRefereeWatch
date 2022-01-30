@@ -21,6 +21,7 @@ public class Report extends ScrollView{
         params.setMargins(0, MainActivity.vh5, 0, MainActivity.vh5);
         findViewById(R.id.list_wrap).setLayoutParams(params);
         findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh90);
+        findViewById(R.id.list_wrap).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
     public void load(MatchData match){

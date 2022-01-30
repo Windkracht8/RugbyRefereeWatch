@@ -14,15 +14,8 @@ Android/mobile/debug
 Android/wear/build
 Android/wear/debug
 *.jks
+*.pepk
 *.aab
 *.apk
-*gradle*
 *.iml
 local.properties
-*.pepk
-*.crt
-*.csr
-*.p12
-*.pri
-*.pub
-*.pwd
