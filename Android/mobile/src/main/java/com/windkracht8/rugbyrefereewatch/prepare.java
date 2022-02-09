@@ -187,7 +187,6 @@ public class prepare extends LinearLayout{
             if(watch_settings){
                 settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
                 settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
-                settings.put("countdown", sTimerType.getSelectedItemPosition());//DEPRECATED
                 settings.put("timer_type", sTimerType.getSelectedItemPosition());
             }
         }catch(Exception e){

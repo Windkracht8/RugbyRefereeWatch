@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity{
     }
     private void switchOS(boolean tizenNotWear){
         if(this.tizen_not_wear == tizenNotWear) return;
+        this.tizen_not_wear = tizenNotWear;
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         findViewById(R.id.bGetMatches).setVisibility(View.GONE);
         findViewById(R.id.bGetMatch).setVisibility(View.GONE);
@@ -164,7 +165,6 @@ public class MainActivity extends AppCompatActivity{
         updateStatus("DISCONNECTED");
         findViewById(R.id.tvStatus).setVisibility(View.VISIBLE);
 
-        this.tizen_not_wear = tizenNotWear;
         sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
         sharedPreferences_editor.apply();
 
@@ -444,6 +444,7 @@ public class MainActivity extends AppCompatActivity{
         tvStatus.setVisibility(View.VISIBLE);
         tvError.setText("");
         findViewById(R.id.bSearch).setVisibility(View.GONE);
+        findViewById(R.id.bConnect).setVisibility(View.GONE);
 
         String status;
         switch(status_new){

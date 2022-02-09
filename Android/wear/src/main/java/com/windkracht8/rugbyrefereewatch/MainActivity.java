@@ -69,7 +69,7 @@ public class MainActivity extends FragmentActivity{
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
-    private static int timer_period = 0;
+    public static int timer_period = 0;
     public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
@@ -203,7 +203,7 @@ public class MainActivity extends FragmentActivity{
             singleBeep(getBaseContext());
             timer_status = "time_off";
             timer_start_time_off = getCurrentTimestamp();
-            match.logEvent("Time off");
+            match.logEvent("Time off", null, null, 0);
             updateButtons();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
@@ -221,9 +221,10 @@ public class MainActivity extends FragmentActivity{
             case "ready":
                 singleBeep(getBaseContext());
                 timer_status = "running";
-                timer_period++;
                 timer_start = getCurrentTimestamp();
-                match.logEvent("Start " + getPeriodName(), getKickoffTeam());
+                String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
+                timer_period++;
+                match.logEvent("Start " + getPeriodName(), kickoffTeam, null, 0);
                 updateScore();
                 break;
             case "time_off":
@@ -231,7 +232,7 @@ public class MainActivity extends FragmentActivity{
                 singleBeep(getBaseContext());
                 timer_status = "running";
                 timer_start += (getCurrentTimestamp() - timer_start_time_off);
-                match.logEvent("Resume time");
+                match.logEvent("Resume time", null, null, 0);
                 break;
             case "rest":
                 //get ready for next period
@@ -241,7 +242,10 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
     }
     public void bRestClick(){
-        match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot);
+        if(match.events.get(match.events.size()-1).what.equals("Time off")){
+            match.events.remove(match.events.size()-1);
+        }
+        match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null, 0);
 
         timer_status = "rest";
         timer_start = getCurrentTimestamp();
@@ -256,9 +260,6 @@ public class MainActivity extends FragmentActivity{
         }
         updateButtons();
 
-        if(match.events.get(match.events.size()-1).what.equals("Time off")){
-            match.events.remove(match.events.size()-1);
-        }
         String kickoffTeam = getKickoffTeam();
         if(kickoffTeam != null){
             if(kickoffTeam.equals("home")){
@@ -275,9 +276,6 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
         updateScore();
 
-        if(match.events.get(match.events.size()-1).what.equals("Rest star")){
-            match.events.remove(match.events.size()-1);
-        }
         FileStore.file_storeMatch(getBaseContext(), match);
     }
     public void bClearClick(){
@@ -506,21 +504,21 @@ public class MainActivity extends FragmentActivity{
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("TRY", score.team.id, score.player_no);
+        match.logEvent("TRY", score.team.id, score.player_no, 0);
     }
     public void conversionClick(){
         score.team.cons++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("CONVERSION", score.team.id, score.player_no);
+        match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
     public void goalClick(){
         score.team.goals++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("GOAL", score.team.id, score.player_no);
+        match.logEvent("GOAL", score.team.id, score.player_no, 0);
     }
     public void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -541,7 +539,7 @@ public class MainActivity extends FragmentActivity{
     }
     public void card_yellowClick(){
         long time = getCurrentTimestamp();
-        match.logEvent(time, "YELLOW CARD", score.team.id, card.player_no);
+        match.logEvent("YELLOW CARD", score.team.id, card.player_no, time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
         score.team.addSinbin(time, end);
@@ -551,7 +549,7 @@ public class MainActivity extends FragmentActivity{
     }
 
     public void card_redClick(){
-        match.logEvent("RED CARD", score.team.id, card.player_no);
+        match.logEvent("RED CARD", score.team.id, card.player_no, 0);
         card.setVisibility(View.GONE);
         score.clear();
     }
@@ -562,6 +560,7 @@ public class MainActivity extends FragmentActivity{
     }
     public void correctClicked(){
         updateScore();
+        updateSinbins();
     }
 
     public void bConfWatchClick(){
@@ -606,7 +605,7 @@ public class MainActivity extends FragmentActivity{
                 return "home";
             }
         }
-        return "away";
+        return null;
     }
     public void showReport(){
         report.load(match);
@@ -631,10 +630,10 @@ public class MainActivity extends FragmentActivity{
             match.points_con = settings_new.getInt("points_con");
             match.points_goal = settings_new.getInt("points_goal");
 
+            if(settings_new.has("record_player"))
+                record_player = settings_new.getInt("record_player") == 1;
             if(settings_new.has("screen_on"))
                 screen_on = settings_new.getInt("screen_on") == 1;
-            if(settings_new.has("countdown"))
-                timer_type = settings_new.getInt("countdown");
             if(settings_new.has("timer_type"))
                 timer_type = settings_new.getInt("timer_type");
         }catch(Exception e){
@@ -647,7 +646,12 @@ public class MainActivity extends FragmentActivity{
     private void readSettings(){
         JSONObject jsonSettings = FileStore.file_readSettings(getBaseContext());
         try{
-            if(jsonSettings == null) return;
+            if(jsonSettings == null || !jsonSettings.has("help_version") || jsonSettings.getInt("help_version") != help_version){
+                help.showWelcome();
+                help.setVisibility(View.VISIBLE);
+                FileStore.file_storeSettings(getApplicationContext());
+                if(jsonSettings == null) return;
+            }
             record_player = jsonSettings.getBoolean("record_player");
             screen_on = jsonSettings.getBoolean("screen_on");
             timer_type = jsonSettings.getInt("timer_type");
@@ -658,10 +662,6 @@ public class MainActivity extends FragmentActivity{
             match.points_try = jsonSettings.getInt("points_try");
             match.points_con = jsonSettings.getInt("points_con");
             match.points_goal = jsonSettings.getInt("points_goal");
-            if(!jsonSettings.has("help_version") || jsonSettings.getInt("help_version") != help_version){
-                help.showWelcome();
-                help.setVisibility(View.VISIBLE);
-            }
         }catch(Exception e){
             Log.e("MainActivity", "readSettings: " + e.getMessage());
             Toast.makeText(getBaseContext(), "Problem with stored settings", Toast.LENGTH_SHORT).show();
@@ -673,8 +673,8 @@ public class MainActivity extends FragmentActivity{
         try{
             ret.put("home_name", match.home.team);
             ret.put("home_color", match.home.color);
-            ret.put("away_name", match.home.team);
-            ret.put("away_color", match.home.color);
+            ret.put("away_name", match.away.team);
+            ret.put("away_color", match.away.color);
             ret.put("match_type", match.match_type);
             ret.put("period_time", match.period_time);
             ret.put("period_count", match.period_count);

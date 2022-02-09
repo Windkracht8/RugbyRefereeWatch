@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.util.Date;
 
 public class Communication extends WearableListenerService{
+    public static long lastSyncRequest = 0;
     public Communication(){}
 
     @Override
@@ -42,6 +43,10 @@ public class Communication extends WearableListenerService{
                         Log.e("communication", "No requestData for request sync");
                         return;
                     }
+                    if(dataMap.getLong("timestamp") < lastSyncRequest){
+                        return;
+                    }
+                    lastSyncRequest = dataMap.getLong("timestamp");
                     try{
                         JSONObject responseData_json = new JSONObject();
                         responseData_json.put("matches", FileStore.file_deletedMatches(getApplicationContext(), requestData));

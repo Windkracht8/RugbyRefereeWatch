@@ -149,9 +149,10 @@ function bresumeClick(){
 			//start next period
 			singleBeep();
 			timer.status = "running";
-			timer.period++;
 			timer.start = getCurrentTimestamp();
-			logEvent("Start " + getPeriodName(), getKickoffTeam(), null);
+			var kickoffTeam = getKickoffTeam();//capture before increasing timer_period
+			timer.period++;
+			logEvent("Start " + getPeriodName(), kickoffTeam, null);
 			updateScore();
 			break;
 		case "timeoff":
@@ -169,6 +170,9 @@ function bresumeClick(){
 	updateButtons();
 }
 function brestClick(){
+	if(match.events[match.events.length-1].what === "Time off"){
+		match.events.splice(match.events.length-1, 1);
+	}
 	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
 
 	timer.status = "rest";
@@ -183,9 +187,6 @@ function brestClick(){
 	});
 	updateButtons();
 
-	if(match.events[match.events.length-1].what === "Time off"){
-		match.events.splice(match.events.length-1, 1);
-	}
 	var kickoffTeam = getKickoffTeam();
 	if(kickoffTeam !== null){
 		$('#score_' + kickoffTeam.id).html(kickoffTeam.tot + " KICK");
@@ -196,9 +197,6 @@ function bfinishClick(){
 	updateButtons();
 	updateScore();
 
-	if(match.events[match.events.length-1].what === "Rest start"){
-		match.events.splice(match.events.length-1, 1);
-	}
 	file_storeMatch(match);
 }
 function bclearClick(){
@@ -503,6 +501,7 @@ function removeEvent(index){
 					team_edit.sinbins.splice(index, 1);
 				}
 			});
+			updateSinbins();
 			break;
 		case "RED CARD":
 			break;
@@ -716,13 +715,6 @@ function logEvent(what, team, who){
 	}
 	temp += '}';
 
-	if(match.events.length > 1 && 
-			what !== "Resume time" && 
-			match.events[match.events.length-1].what === "Time off"
-	){
-		match.events.splice(match.events.length-1, 1);
-	}
-
 	console.log(temp);
 	match.events.push(JSON.parse(temp));
 	return id;
@@ -828,10 +820,6 @@ function setNewSettings(newsettings){
 	if(newsettings.hasOwnProperty('screen_on')){
 		match.settings.screen_on = newsettings.screen_on;
 		screen_onChanged();
-	}
-	if(newsettings.hasOwnProperty('countdown')){///DEPRECATED
-		match.settings.timer_type = newsettings.countdown;
-		timer_typeChanged();
 	}
 	if(newsettings.hasOwnProperty('timer_type')){
 		match.settings.timer_type = newsettings.timer_type;

@@ -44,6 +44,7 @@ public class communication_wear extends WearableListenerService implements DataC
         context.sendBroadcast(intent);
     }
     public void checkIfConnected(Context context){
+        if(status.equals("CONNECTED")) return;
         Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
         nodeListTask.addOnCompleteListener(task ->{
             if(task.isSuccessful()){

@@ -27,24 +27,6 @@ public class MatchData{
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
     }
-    public MatchData(Context context, JSONObject match_json){
-        home = new team("home", "home", "green");
-        away = new team("away", "away", "red");
-        try{
-            match_id = match_json.getLong("matchid");
-            JSONObject settings = match_json.getJSONObject("settings");
-            match_type = settings.getString("match_type");
-            period_time = settings.getInt("period_time");
-            period_count = settings.getInt("period_count");
-            sinbin = settings.getInt("sinbin");
-            points_try = settings.getInt("points_try");
-            points_con = settings.getInt("points_con");
-            points_goal = settings.getInt("points_goal");
-        }catch(JSONException e){
-            Log.e("MatchData", "MatchData from json: " + e.getMessage());
-            Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
-        }
-    }
     public JSONObject toJson(Context context){
         JSONObject ret = new JSONObject();
         try{
@@ -103,32 +85,14 @@ public class MatchData{
                 break;
         }
     }
-    public void logEvent(String what){
-        event evt = new event(what);
-        events.add(evt);
-        Log.i("MatchData" , "log_event: " + what);
-    }
-    public void logEvent(String what, String team){
-        if(team == null){
-            logEvent(what);
-            return;
+    public void logEvent(String what, String team, Integer who, long id){
+        event evt = new event(what, id);
+        if(team != null){
+            evt.team = team;
+            if(who != null && who > 0){
+                evt.who = who;
+            }
         }
-        event evt = new event(what);
-        evt.team = team;
-        events.add(evt);
-        Log.i("MatchData" , "log_event: " + what + " " + team);
-    }
-    public void logEvent(String what, String team, int who){
-        event evt = new event(what);
-        evt.team = team;
-        evt.who = who;
-        events.add(evt);
-        Log.i("MatchData" , "log_event: " + what + " " + team + " " + who);
-    }
-    public void logEvent(long time, String what, String team, int who){
-        event evt = new event(time, what);
-        evt.team = team;
-        evt.who = who;
         events.add(evt);
         Log.i("MatchData" , "log_event: " + what + " " + team + " " + who);
     }
@@ -176,16 +140,11 @@ public class MatchData{
         public final String what;
         public String team = null;
         public int who = 0;
-        public event(long id, String what){
-            this.id = id;
+        public event(String what, long id){
+            this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
             this.time = MainActivity.prettyTime(id);
-            this.timer = MainActivity.prettyTimer(MainActivity.timer_timer);
-            this.what = what;
-        }
-        public event(String what){
-            this.id = MainActivity.getCurrentTimestamp();
-            this.time = MainActivity.prettyTime(id);
-            this.timer = MainActivity.prettyTimer(MainActivity.timer_timer);
+            long current_timer = (MainActivity.timer_timer + ((long)(MainActivity.timer_period-1)*MainActivity.match.period_time*60000));
+            this.timer = MainActivity.prettyTimer(current_timer);
             this.what = what;
         }
         public JSONObject toJson(Context context){

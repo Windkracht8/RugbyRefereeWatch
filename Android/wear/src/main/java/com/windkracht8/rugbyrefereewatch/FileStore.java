@@ -13,55 +13,52 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
 public class FileStore{
     //Append a new match
     public static void file_storeMatch(Context context, MatchData match){
-        ArrayList<MatchData> matches = file_readMatches(context);
-        matches.add(match);
+        JSONArray matches = file_readMatches(context);
+        matches.put(match.toJson(context));
         file_storeMatches(context, matches);
     }
-    //Store all merchants
-    public static JSONArray file_storeMatches(Context context, ArrayList<MatchData> matches){
-        JSONArray jaMatches = new JSONArray();
+
+    //Store all matches
+    public static void file_storeMatches(Context context, JSONArray matches){
         try{
-            for(int i=0; i < matches.size(); i++){
-                jaMatches.put(matches.get(i).toJson(context));
-            }
-            storeFile(context, R.string.matches_filename, jaMatches.toString());
+            storeFile(context, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e("FileStore", "file_storeMatches: " + e.getMessage());
             Toast.makeText(context, "Failed to save matches", Toast.LENGTH_SHORT).show();
         }
-        return jaMatches;
     }
     //Return an array of stored matches
-    public static ArrayList<MatchData> file_readMatches(Context context){
-        ArrayList<MatchData> matches = new ArrayList<>();
+    public static JSONArray file_readMatches(Context context){
         try{
             String sMatches = getFileAsString(context, R.string.matches_filename);
-            if(sMatches.length() < 3){ return matches;}
-            JSONArray jsonMatches = new JSONArray(sMatches);
-            for(int i = 0; i < jsonMatches.length(); i++){
-                matches.add(new MatchData(context, jsonMatches.getJSONObject(i)));
-            }
+            if(sMatches.length() < 3){return new JSONArray();}
+            return new JSONArray(sMatches);
         }catch(Exception e){
             Log.e("FileStore", "file_readMatches: " + e.getMessage());
             Toast.makeText(context, "Failed to read matches", Toast.LENGTH_SHORT).show();
         }
-        return matches;
+        return new JSONArray();
     }
 
     //Go through stored matches and remove old ones
     public static void file_cleanMatches(Context context){
-        ArrayList<MatchData> matches = file_readMatches(context);
-        for(int i = matches.size(); i > 0; i--){
-            if(matches.get(i-1).match_id < MainActivity.getCurrentTimestamp() - (1000*60*60*24*14)){
-                matches.remove(i-1);
+        JSONArray matches = file_readMatches(context);
+        try{
+            for(int i = matches.length(); i > 0; i--){
+                JSONObject match = matches.getJSONObject(i-1);
+                if(match.getLong("matchid") < MainActivity.getCurrentTimestamp() - 1209600000){
+                    matches.remove(i-1);
+                }
             }
+            file_storeMatches(context, matches);
+        }catch(Exception e){
+            Log.e("FileStore", "file_cleanMatches: " + e.getMessage());
+            Toast.makeText(context, "Failed to cleanup matches", Toast.LENGTH_SHORT).show();
         }
-        file_storeMatches(context, matches);
     }
     //The phone sends a list of matches that can be deleted
     public static JSONArray file_deletedMatches(Context context, String request_data){
@@ -69,15 +66,17 @@ public class FileStore{
             JSONObject request_data_jo = new JSONObject(request_data);
             JSONArray deleted_matches = request_data_jo.getJSONArray("deleted_matches");
 
-            ArrayList<MatchData> matches = file_readMatches(context);
-            for(int i = matches.size(); i > 0; i--){
+            JSONArray matches = file_readMatches(context);
+            for(int i = matches.length(); i > 0; i--){
                 for(int j = 0; j < deleted_matches.length(); j++){
-                    if(matches.get(i-1).match_id == deleted_matches.getLong(j)){
+                    JSONObject match = matches.getJSONObject(i-1);
+                    if(match.getLong("matchid") == deleted_matches.getLong(j)){
                         matches.remove(i-1);
                     }
                 }
             }
-            return file_storeMatches(context, matches);
+            file_storeMatches(context, matches);
+            return matches;
         }catch(Exception e){
             Log.e("FileStore", "file_deletedMatches: " + e.getMessage());
             Toast.makeText(context, "Failed to delete matches", Toast.LENGTH_SHORT).show();
@@ -90,6 +89,7 @@ public class FileStore{
             jsonSettings.put("record_player", MainActivity.record_player);
             jsonSettings.put("screen_on", MainActivity.screen_on);
             jsonSettings.put("timer_type", MainActivity.timer_type);
+            jsonSettings.put("help_version", MainActivity.help_version);
             jsonSettings.put("match_type", MainActivity.match.match_type);
             jsonSettings.put("period_time", MainActivity.match.period_time);
             jsonSettings.put("period_count", MainActivity.match.period_count);
