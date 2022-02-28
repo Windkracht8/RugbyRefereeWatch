@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,13 +51,14 @@ public class report extends LinearLayout{
 
         findViewById(R.id.bView).setOnClickListener(view -> bViewClick());
         findViewById(R.id.bEdit).setOnClickListener(view -> bEditClick());
-        findViewById(R.id.bClose).setOnClickListener(view -> bViewClick());
-        findViewById(R.id.bSave).setOnClickListener(view -> bSaveClick());
+        findViewById(R.id.bClose).setOnClickListener(this::bCloseClick);
+        findViewById(R.id.bSave).setOnClickListener(this::bSaveClick);
         findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
     }
 
     public void gotMatch(final JSONObject match){
         this.match = match;
+        view = 0;
         addScores();
         try{
             this.match_id = match.getLong("matchid");
@@ -93,9 +95,14 @@ public class report extends LinearLayout{
             Log.e("report", "gotMatch: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
+
         findViewById(R.id.bView).setVisibility(VISIBLE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
+        findViewById(R.id.bClose).setVisibility(GONE);
+        findViewById(R.id.bSave).setVisibility(GONE);
         findViewById(R.id.bShare).setVisibility(VISIBLE);
+        findViewById(R.id.table).setVisibility(VISIBLE);
+        findViewById(R.id.edit_team_names).setVisibility(GONE);
     }
     private void showEvents(){
         if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
@@ -159,6 +166,11 @@ public class report extends LinearLayout{
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
+    public void bCloseClick(View view){
+        InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
+        bViewClick();
+    }
     public void bViewClick(){
         view = view == 0 ? 1 : 0;
         findViewById(R.id.bView).setVisibility(VISIBLE);
@@ -198,7 +210,9 @@ public class report extends LinearLayout{
         }
     }
 
-    public void bSaveClick(){
+    public void bSaveClick(View view){
+        InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
         try{
             JSONObject settings = match.getJSONObject("settings");
             int points_try = settings.getInt("points_try");
@@ -281,7 +295,7 @@ public class report extends LinearLayout{
             intent.putExtra("source", "report");
             intent.putExtra("match", match.toString());
             getContext().sendBroadcast(intent);
-            bViewClick();
+            gotMatch(match);
         }catch(Exception e){
             Log.e("report", "bSaveClick: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_SHORT).show();

@@ -85,7 +85,6 @@ public class report_event extends LinearLayout {
                         this.setVisibility(View.GONE);
                 }
             }
-
         }catch(Exception e){
             Log.e("report_event", "report_event: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();

@@ -46,10 +46,10 @@ public class report_event_edit extends LinearLayout{
                     what.setSelection(0);
                     break;
                 case "CONVERSION":
-                    what.setSelection(2);
+                    what.setSelection(1);
                     break;
                 case "GOAL":
-                    what.setSelection(1);
+                    what.setSelection(2);
                     break;
                 case "YELLOW CARD":
                     what.setSelection(3);
