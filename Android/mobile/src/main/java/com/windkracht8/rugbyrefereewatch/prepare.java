@@ -171,12 +171,8 @@ public class prepare extends LinearLayout{
         try{
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
-            String temp = sHomeColor.getSelectedItem().toString();
-            if(temp.equals("white")){temp = "lightgray";}
-            settings.put("home_color", temp);
-            temp = sAwayColor.getSelectedItem().toString();
-            if(temp.equals("white")){temp = "lightgray";}
-            settings.put("away_color", temp);
+            settings.put("home_color", sHomeColor.getSelectedItem().toString());
+            settings.put("away_color", sAwayColor.getSelectedItem().toString());
             settings.put("match_type", sMatchType.getSelectedItem().toString());
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
             settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
@@ -220,7 +216,6 @@ public class prepare extends LinearLayout{
         }
     }
     private void selectItem(Spinner spin, String str){
-        if(str.equals("lightgray")){str = "white";}
         for(int i=0;i<spin.getCount();i++){
             if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);

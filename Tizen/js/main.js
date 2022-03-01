@@ -210,8 +210,8 @@ function bclearClick(){
 	updateButtons();
 	$('#sinbins_home').html("");
 	$('#sinbins_away').html("");
-	$('#home').css('background', match.home.color);
-	$('#away').css('background', match.away.color);
+	$('#home').css('background', checkColor(match.home.color));
+	$('#away').css('background', checkColor(match.away.color));
 	$('#matchSettings').show();
 	$('#helpSettings').show();
 	$('#bconf').show();
@@ -518,9 +518,9 @@ function bconfwatchClick(){
 	bconfClick();
 }
 function bconfClick(){
-	$('#color_home').css('background', match.home.color);
+	$('#color_home').css('background', checkColor(match.home.color));
 	$('#color_home').val(match.home.color);
-	$('#color_away').css('background', match.away.color);
+	$('#color_away').css('background', checkColor(match.away.color));
 	$('#color_away').val(match.away.color);
 
 	$('#match_type').val(match.settings.match_type);
@@ -541,13 +541,25 @@ function bconfClick(){
 }
 function color_homeChange(){
 	match.home.color = $('#color_home').val();
-	$('#color_home').css('background', match.home.color);
-	$('#home').css('background', match.home.color);
+	$('#color_home').css('background', checkColor(match.home.color));
+	$('#home').css('background', checkColor(match.home.color));
 }
 function color_awayChange(){
 	match.away.color = $('#color_away').val();
-	$('#color_away').css('background', match.away.color);
-	$('#away').css('background', match.away.color);
+	$('#color_away').css('background', checkColor(match.away.color));
+	$('#away').css('background', checkColor(match.away.color));
+}
+function checkColor(color){
+	switch(color){
+		case "brown":
+			return "#623412";
+		case "orange":
+			return "#FE5000";
+		case "white":
+			return "#D3D3D3";
+		default:
+			return color;
+	}
 }
 function match_typeChange(){
 	$('#custom_match').hide();
@@ -751,10 +763,10 @@ function incomingSettings(newsettings){
 
 	match.home.team = newsettings.home_name;
 	match.home.color = newsettings.home_color;
-	$('#home').css('background', match.home.color);
+	$('#home').css('background', checkColor(match.home.color));
 	match.away.team = newsettings.away_name;
 	match.away.color = newsettings.away_color;
-	$('#away').css('background', match.away.color);
+	$('#away').css('background', checkColor(match.away.color));
 	setNewSettings(newsettings);
 
 	updateTimer();

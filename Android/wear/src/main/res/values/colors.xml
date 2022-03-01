@@ -5,13 +5,12 @@
 
     <color name="black" tools:keep="@color/black">#000</color>
     <color name="blue" tools:keep="@color/blue">#00F</color>
-    <color name="brown" tools:keep="@color/brown">#A52A2A</color>
+    <color name="brown" tools:keep="@color/brown">#623412</color>
     <color name="gold" tools:keep="@color/gold">#FFD700</color>
     <color name="green">#080</color>
-    <color name="orange" tools:keep="@color/orange">#FFA500</color>
+    <color name="orange" tools:keep="@color/orange">#FE5000</color>
     <color name="pink" tools:keep="@color/pink">#FFC0CB</color>
     <color name="purple" tools:keep="@color/purple">#808</color>
     <color name="red">#F00</color>
     <color name="white" tools:keep="@color/white">#D3D3D3</color>
-    <color name="lightgray" tools:keep="@color/lightgray">#D3D3D3</color>
 </resources>

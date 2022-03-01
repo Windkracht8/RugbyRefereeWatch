@@ -77,6 +77,7 @@ public class MainActivity extends FragmentActivity{
 
     private Handler handler_main;
     private static BroadcastReceiver settingsUpdateReceiver;
+    private static BroadcastReceiver screenOFFReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -159,6 +160,14 @@ public class MainActivity extends FragmentActivity{
         };
         registerReceiver(settingsUpdateReceiver, new IntentFilter("com.windkracht8.rrw.settings"));
 
+        screenOFFReceiver = new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context context, Intent intent){
+                Log.i("MainActivity", "Screen is OFF");
+            }
+        };
+        registerReceiver(screenOFFReceiver, new IntentFilter("android.intent.action.SCREEN_OFF"));
+
         readSettings();
         FileStore.file_cleanMatches(getBaseContext());
 
@@ -171,6 +180,7 @@ public class MainActivity extends FragmentActivity{
     protected void onDestroy(){
         super.onDestroy();
         unregisterReceiver(settingsUpdateReceiver);
+        unregisterReceiver(screenOFFReceiver);
     }
     @Override
     public void onBackPressed(){

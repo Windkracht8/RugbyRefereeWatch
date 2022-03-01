@@ -594,9 +594,7 @@ public class MainActivity extends AppCompatActivity{
             if(team.has("id") && !team.getString("id").equals(name)){
                 return name;
             }
-            String color = team.getString("color");
-            color = color.equals("lightgray") ? "white" : color;
-            return name + " (" + color + ")";
+            return name + " (" + team.getString("color") + ")";
         }catch(Exception e){
             Log.e("MainActivity", "getTeamName: " + e.getMessage());
         }

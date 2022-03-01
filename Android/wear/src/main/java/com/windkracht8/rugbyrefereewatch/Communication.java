@@ -32,65 +32,80 @@ public class Communication extends WearableListenerService{
                 Log.e("communication", "No requestType");
                 return;
             }
-            if(dataMap.getString("responseData") != null){return;}
+            if(dataMap.getString("responseData") != null) return;
 
-            String requestData = dataMap.getString("requestData");
-            Log.i("communication", requestType + ": " + requestData);
-            String responseData;
+            Log.i("communication", requestType);
             switch(requestType){
                 case "sync":
-                    if(requestData == null){
-                        Log.e("communication", "No requestData for request sync");
-                        return;
-                    }
-                    if(dataMap.getLong("timestamp") < lastSyncRequest){
-                        return;
-                    }
-                    lastSyncRequest = dataMap.getLong("timestamp");
-                    try{
-                        JSONObject responseData_json = new JSONObject();
-                        responseData_json.put("matches", FileStore.file_deletedMatches(getApplicationContext(), requestData));
-                        responseData_json.put("settings", MainActivity.getSettings(getBaseContext()));
-                        responseData = responseData_json.toString();
-                    }catch(Exception e){
-                        Log.e("communication", "sync: " + e.getMessage());
-                        responseData = "unexpected error";
-                    }
+                    onReceiveSync(requestType, dataMap);
                     break;
                 case "getMatches":
-                    if(requestData == null){
-                        Log.e("communication", "No requestData for request getMatches");
-                        return;
-                    }
-                    responseData = FileStore.file_deletedMatches(getApplicationContext(), requestData).toString();
+                    onReceiveGetMatches(requestType, dataMap);
                     break;
                 case "getMatch":
-                    responseData = MainActivity.match.toJson(getBaseContext()).toString();
+                    onReceiveGetMatch(requestType);
                     break;
                 case "prepare":
-                    if(requestData == null){
-                        Log.e("communication", "No requestData for request prepare");
-                        return;
-                    }
-                    try{
-                        JSONObject requestData_json = new JSONObject(requestData);
-                        if(MainActivity.incomingSettings(getBaseContext(), requestData_json)){
-                            responseData = "okilly dokilly";
-                            FileStore.file_storeSettings(getApplicationContext());
-                        }else{
-                            responseData = "match ongoing";
-                        }
-                        this.sendBroadcast(new Intent("com.windkracht8.rrw.settings"));
-                    }catch(Exception e){
-                        Log.e("communication", "prepare: " + e.getMessage());
-                        responseData = "unexpected error";
-                    }
+                    onReceivePrepare(requestType, dataMap);
                     break;
                 default:
                     Log.e("communication", "Did not understand message");
-                    responseData = "Did not understand message";
+                    sendRequest(requestType, "responseData", "Did not understand message");
             }
-            sendRequest(requestType, "responseData", responseData);
+        }
+    }
+
+    private void onReceiveSync(String requestType, DataMap dataMap){
+        String requestData = dataMap.getString("requestData");
+        if(requestData == null){
+            Log.e("communication", "No requestData for request sync");
+            return;
+        }
+        long timestamp = dataMap.getLong("timestamp");
+        if(timestamp < lastSyncRequest) return;
+        lastSyncRequest = timestamp;
+        try{
+            JSONObject responseData_json = new JSONObject();
+            responseData_json.put("matches", FileStore.file_deletedMatches(getApplicationContext(), requestData));
+            responseData_json.put("settings", MainActivity.getSettings(getBaseContext()));
+            sendRequest(requestType, "responseData", responseData_json.toString());
+        }catch(Exception e){
+            Log.e("communication", "sync: " + e.getMessage());
+            sendRequest(requestType, "responseData", "unexpected error");
+        }
+    }
+    private void onReceiveGetMatches(String requestType, DataMap dataMap){
+        String requestData = dataMap.getString("requestData");
+        if(requestData == null){
+            Log.e("communication", "No requestData for request getMatches");
+            return;
+        }
+        String responseData = FileStore.file_deletedMatches(getApplicationContext(), requestData).toString();
+        sendRequest(requestType, "responseData", responseData);
+    }
+    private void onReceiveGetMatch(String requestType){
+        //TODO: deal with error in getting match
+        String responseData = MainActivity.match.toJson(getBaseContext()).toString();
+        sendRequest(requestType, "responseData", responseData);
+    }
+    private void onReceivePrepare(String requestType, DataMap dataMap){
+        String requestData = dataMap.getString("requestData");
+        if(requestData == null){
+            Log.e("communication", "No requestData for request prepare");
+            return;
+        }
+        try{
+            JSONObject requestData_json = new JSONObject(requestData);
+            if(MainActivity.incomingSettings(getBaseContext(), requestData_json)){
+                sendRequest(requestType, "responseData", "okilly dokilly");
+                FileStore.file_storeSettings(getApplicationContext());
+            }else{
+                sendRequest(requestType, "responseData", "match ongoing");
+            }
+            this.sendBroadcast(new Intent("com.windkracht8.rrw.settings"));
+        }catch(Exception e){
+            Log.e("communication", "prepare: " + e.getMessage());
+            sendRequest(requestType, "responseData", "unexpected error");
         }
     }
 
