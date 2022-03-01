@@ -110,8 +110,13 @@ public class communication_tizen extends SAAgentV2{
     }
 
     public void findPeers(){
-        updateStatus("FINDING_PEERS");
-        findPeerAgents();
+        if(status.equals("DISCONNECTED") ||
+            status.equals("CONNECTION_LOST") ||
+            status.equals("ERROR")
+        ){
+            updateStatus("FINDING_PEERS");
+            findPeerAgents();
+        }
     }
 
     public void sendRequest(final String requestType, final JSONObject requestData){

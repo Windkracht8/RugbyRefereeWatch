@@ -13,5 +13,5 @@
     <color name="purple" tools:keep="@color/purple">#808</color>
     <color name="red">#F00</color>
     <color name="white" tools:keep="@color/white">#D3D3D3</color>
-
+    <color name="lightgray" tools:keep="@color/lightgray">#D3D3D3</color>
 </resources>

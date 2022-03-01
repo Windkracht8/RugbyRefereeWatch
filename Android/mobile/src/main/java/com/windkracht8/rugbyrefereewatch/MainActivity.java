@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
     private void initTizen(){
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
-            SAAgentV2.requestAgent(getApplicationContext(), communication_tizen.class.getName(), mAgentCallback1);
+            SAAgentV2.requestAgent(getApplicationContext(), communication_tizen.class.getName(), SAAgentCallback);
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
             updateStatus("DISCONNECTED");
         }catch(PackageManager.NameNotFoundException e){
@@ -348,9 +348,10 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private final SAAgentV2.RequestAgentCallback mAgentCallback1 = new SAAgentV2.RequestAgentCallback(){
+    private final SAAgentV2.RequestAgentCallback SAAgentCallback = new SAAgentV2.RequestAgentCallback(){
         @Override
         public void onAgentAvailable(SAAgentV2 agent){
+            if(!tizen_not_wear)return;
             comms_tizen = (communication_tizen) agent;
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }
@@ -369,12 +370,7 @@ public class MainActivity extends AppCompatActivity{
             gotError("Watch not found");
             return;
         }
-        if(comms_tizen.status.equals("DISCONNECTED") ||
-           comms_tizen.status.equals("CONNECTION_LOST") ||
-           comms_tizen.status.equals("ERROR")
-        ){
-            comms_tizen.findPeers();
-        }
+        comms_tizen.findPeers();
     }
     public void bSearchClick(){
         gotError("");
@@ -563,8 +559,7 @@ public class MainActivity extends AppCompatActivity{
         if(error.equals(getString(R.string.did_not_understand_message))){
             error = getString(R.string.update_watch_app);
         }
-        TextView tvError = findViewById(R.id.tvError);
-        tvError.setText(error);
+        ((TextView)findViewById(R.id.tvError)).setText(error);
     }
 
     public void tabHistoryClick(){
