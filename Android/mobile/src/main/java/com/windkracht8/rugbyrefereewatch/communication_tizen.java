@@ -74,7 +74,10 @@ public class communication_tizen extends SAAgentV2{
     protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode){
         Log.i("communication_tizen", "onError: " + errorCode);
         super.onError(peerAgent, errorMessage, errorCode);
+        updateStatus("FATAL");
         gotError(errorMessage);
+        closeConnection();
+        releaseAgent();
     }
 
     public class ServiceConnection extends SASocket{
