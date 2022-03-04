@@ -1,8 +1,8 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ public class FileStore{
             storeFile(context, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e("FileStore", "file_storeMatches: " + e.getMessage());
-            Toast.makeText(context, "Failed to save matches", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to save matches");
         }
     }
     //Return an array of stored matches
@@ -39,7 +39,7 @@ public class FileStore{
             return new JSONArray(sMatches);
         }catch(Exception e){
             Log.e("FileStore", "file_readMatches: " + e.getMessage());
-            Toast.makeText(context, "Failed to read matches", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to read matches");
         }
         return new JSONArray();
     }
@@ -57,7 +57,7 @@ public class FileStore{
             file_storeMatches(context, matches);
         }catch(Exception e){
             Log.e("FileStore", "file_cleanMatches: " + e.getMessage());
-            Toast.makeText(context, "Failed to cleanup matches", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to cleanup matches");
         }
     }
     //The phone sends a list of matches that can be deleted
@@ -79,7 +79,7 @@ public class FileStore{
             return matches;
         }catch(Exception e){
             Log.e("FileStore", "file_deletedMatches: " + e.getMessage());
-            Toast.makeText(context, "Failed to delete matches", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to delete matches");
         }
         return new JSONArray();
     }
@@ -100,19 +100,26 @@ public class FileStore{
             storeFile(context, R.string.settings_filename, jsonSettings.toString());
         }catch(Exception e){
             Log.e("FileStore", "file_storeSettings: " + e.getMessage());
-            Toast.makeText(context, "Failed to store settings", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to store settings");
         }
     }
-    public static JSONObject file_readSettings(Context context){
+    public static void file_readSettings(Context context){
+        int help_version = 0;
         try{
             String sSettings = getFileAsString(context, R.string.settings_filename);
-            if(sSettings.length() < 3){return null;}
-            return new JSONObject(sSettings);
+            if(sSettings.length() < 3){return;}
+            JSONObject jsonSettings = new JSONObject(sSettings);
+            MainActivity.readSettings(context, jsonSettings);
+            if(jsonSettings.has("help_version"))
+                help_version = jsonSettings.getInt("help_version");
         }catch(Exception e){
             Log.e("FileStore", "file_readSettings: " + e.getMessage());
-            Toast.makeText(context, "Failed to read settings", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to read settings");
         }
-        return null;
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "showHelp");
+        intent.putExtra("help_version", help_version);
+        context.sendBroadcast(intent);
     }
 
     private static String getFileAsString(Context context, int file){
@@ -129,7 +136,7 @@ public class FileStore{
             Log.i("FileStore", "file does not exists yet");
         }catch(Exception e){
             Log.e("FileStore", "getFileAsString: " + e.getMessage());
-            Toast.makeText(context, "Failed to read file", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to read file");
         }
         return "";
     }
@@ -141,7 +148,7 @@ public class FileStore{
             osr.close();
         }catch(Exception e){
             Log.e("FileStore", "storeFile: " + e.getMessage());
-            Toast.makeText(context, "Failed to store file", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Failed to store file");
         }
     }
 

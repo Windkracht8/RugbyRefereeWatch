@@ -84,7 +84,6 @@ public class Communication extends WearableListenerService{
         sendRequest(requestType, "responseData", responseData);
     }
     private void onReceiveGetMatch(String requestType){
-        //TODO: deal with error in getting match
         String responseData = MainActivity.match.toJson(getBaseContext()).toString();
         sendRequest(requestType, "responseData", responseData);
     }
@@ -102,7 +101,9 @@ public class Communication extends WearableListenerService{
             }else{
                 sendRequest(requestType, "responseData", "match ongoing");
             }
-            this.sendBroadcast(new Intent("com.windkracht8.rrw.settings"));
+            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+            intent.putExtra("intent_type", "onReceivePrepare");
+            this.sendBroadcast(intent);
         }catch(Exception e){
             Log.e("communication", "prepare: " + e.getMessage());
             sendRequest(requestType, "responseData", "unexpected error");

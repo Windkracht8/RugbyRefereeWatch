@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends FragmentActivity{
     private TextView battery;
@@ -76,11 +78,13 @@ public class MainActivity extends FragmentActivity{
     public final static int help_version = 1;
 
     private Handler handler_main;
-    private static BroadcastReceiver settingsUpdateReceiver;
-    private static BroadcastReceiver screenOFFReceiver;
+    private ExecutorService executorService;
+    private static BroadcastReceiver rrwReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        executorService = Executors.newFixedThreadPool(4);
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
         }else{
@@ -152,24 +156,33 @@ public class MainActivity extends FragmentActivity{
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        settingsUpdateReceiver = new BroadcastReceiver(){
+        rrwReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent){
-                updateAfterConfig();
+                if(!intent.hasExtra("intent_type")) return;
+                switch(intent.getStringExtra("intent_type")) {
+                    case "toast":
+                        if(!intent.hasExtra("message")) return;
+                        runOnUiThread(() -> Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show());
+                        break;
+                    case "showHelp":
+                        if(!intent.hasExtra("help_version")) return;
+                        if(intent.getIntExtra("help_version", 0) != help_version){
+                            help.showWelcome();
+                            help.setVisibility(View.VISIBLE);
+                            executorService.submit(() -> FileStore.file_storeSettings(context));
+                        }
+                        break;
+                    case "onReceivePrepare":
+                        updateAfterConfig();
+                        break;
+                }
             }
         };
-        registerReceiver(settingsUpdateReceiver, new IntentFilter("com.windkracht8.rrw.settings"));
+        registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
 
-        screenOFFReceiver = new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context context, Intent intent){
-                Log.i("MainActivity", "Screen is OFF");
-            }
-        };
-        registerReceiver(screenOFFReceiver, new IntentFilter("android.intent.action.SCREEN_OFF"));
-
-        readSettings();
-        FileStore.file_cleanMatches(getBaseContext());
+        executorService.submit(() -> FileStore.file_readSettings(getBaseContext()));
+        executorService.submit(() -> FileStore.file_cleanMatches(getBaseContext()));
 
         updateBattery();
         update();
@@ -179,8 +192,7 @@ public class MainActivity extends FragmentActivity{
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        unregisterReceiver(settingsUpdateReceiver);
-        unregisterReceiver(screenOFFReceiver);
+        unregisterReceiver(rrwReceiver);
     }
     @Override
     public void onBackPressed(){
@@ -188,7 +200,7 @@ public class MainActivity extends FragmentActivity{
             conf.save(match);
             updateAfterConfig();
             conf.setVisibility(View.GONE);
-            FileStore.file_storeSettings(getBaseContext());
+            executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(card.getVisibility() == View.VISIBLE){
@@ -286,7 +298,7 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
         updateScore();
 
-        FileStore.file_storeMatch(getBaseContext(), match);
+        executorService.submit(() -> FileStore.file_storeMatch(getBaseContext(), match));
     }
     public void bClearClick(){
         timer_status = "conf";
@@ -648,20 +660,15 @@ public class MainActivity extends FragmentActivity{
                 timer_type = settings_new.getInt("timer_type");
         }catch(Exception e){
             Log.e("MainActivity", "incomingSettings: " + e.getMessage());
-            Toast.makeText(context, "Problem with incoming settings", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Problem with incoming settings");
             return false;
         }
         return true;
     }
-    private void readSettings(){
-        JSONObject jsonSettings = FileStore.file_readSettings(getBaseContext());
+
+    public static void readSettings(Context context, JSONObject jsonSettings){
+        if(!timer_status.equals("conf")) return;
         try{
-            if(jsonSettings == null || !jsonSettings.has("help_version") || jsonSettings.getInt("help_version") != help_version){
-                help.showWelcome();
-                help.setVisibility(View.VISIBLE);
-                FileStore.file_storeSettings(getApplicationContext());
-                if(jsonSettings == null) return;
-            }
             record_player = jsonSettings.getBoolean("record_player");
             screen_on = jsonSettings.getBoolean("screen_on");
             timer_type = jsonSettings.getInt("timer_type");
@@ -674,7 +681,7 @@ public class MainActivity extends FragmentActivity{
             match.points_goal = jsonSettings.getInt("points_goal");
         }catch(Exception e){
             Log.e("MainActivity", "readSettings: " + e.getMessage());
-            Toast.makeText(getBaseContext(), "Problem with stored settings", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Problem with reading settings");
         }
     }
 
@@ -698,7 +705,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e("MainActivity", "getSettings: " + e.getMessage());
-            Toast.makeText(context, "Problem with sending settings", Toast.LENGTH_SHORT).show();
+            MainActivity.makeToast(context, "Problem with sending settings");
         }
         return ret;
     }
@@ -725,5 +732,11 @@ public class MainActivity extends FragmentActivity{
         final VibrationEffect ve = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
         vibrator.cancel();
         vibrator.vibrate(ve);
+    }
+    public static void makeToast(Context context, String message){
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "toast");
+        intent.putExtra("message", message);
+        context.sendBroadcast(intent);
     }
 }
