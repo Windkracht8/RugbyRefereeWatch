@@ -127,13 +127,16 @@ button, .button{
 #correct_title{
 	padding-bottom: 5vh;
 }
+#score{
+	overflow: hidden;
+}
 #score_inner, #foulplay_inner, #goal_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
 }
 .foulplay{
-	font-size: 20vh;
+	font-size: 16vh;
 	padding-top: 5vh;
 }
 #card_yellow{
