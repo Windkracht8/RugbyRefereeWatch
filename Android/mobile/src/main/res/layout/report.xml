@@ -72,6 +72,22 @@
                 android:text="@string/_0" />
         </TableRow>
         <TableRow
+            android:id="@+id/trPenTries" >
+            <TextView android:text="@string/pen_tries" />
+            <TextView
+                android:id="@+id/tvHomePenTries"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/pen_tries" />
+            <TextView
+                android:id="@+id/tvAwayPenTries"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+        <TableRow
             android:id="@+id/trGoals" >
             <TextView android:text="@string/goals" />
             <TextView
@@ -84,6 +100,38 @@
                 android:text="@string/goals" />
             <TextView
                 android:id="@+id/tvAwayGoals"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/trPenGoals" >
+            <TextView android:text="@string/pen_goals" />
+            <TextView
+                android:id="@+id/tvHomePenGoals"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/pen_goals" />
+            <TextView
+                android:id="@+id/tvAwayPenGoals"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/trDropGoals" >
+            <TextView android:text="@string/drop_goals" />
+            <TextView
+                android:id="@+id/tvHomeDropGoals"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/drop_goals" />
+            <TextView
+                android:id="@+id/tvAwayDropGoals"
                 android:gravity="end"
                 android:text="@string/_0" />
         </TableRow>

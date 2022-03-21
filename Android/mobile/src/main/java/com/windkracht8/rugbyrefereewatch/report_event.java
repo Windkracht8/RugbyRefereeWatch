@@ -47,7 +47,10 @@ public class report_event extends LinearLayout {
                 switch(text){
                     case "TRY":
                     case "CONVERSION":
-                    case "GOAL":
+                    case "PENALTY TRY":
+                    case "GOAL"://DEPRECATED
+                    case "PENALTY GOAL":
+                    case "DROP GOAL":
                         String score = event.getString("score");
                         tvMiddle.setText(score);
                         if(score.length() == 4){

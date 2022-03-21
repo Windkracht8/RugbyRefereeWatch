@@ -73,19 +73,54 @@ public class report extends LinearLayout{
             ((TextView)findViewById(R.id.tvHomeTries)).setText(home.getString("tries"));
             ((TextView)findViewById(R.id.tvAwayTries)).setText(away.getString("tries"));
 
-            if(!settings.has("points_con") || settings.getInt("points_con") == 0){
+            if(!settings.has("points_con") || settings.getInt("points_con") == 0 ||
+                    (home.getInt("cons") == 0 && away.getInt("cons") == 0)
+            ){
                 findViewById(R.id.trCons).setVisibility(View.GONE);
             }else{
                 ((TextView)findViewById(R.id.tvHomeCons)).setText(home.getString("cons"));
                 ((TextView)findViewById(R.id.tvAwayCons)).setText(away.getString("cons"));
                 findViewById(R.id.trCons).setVisibility(View.VISIBLE);
             }
-            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0){
+            if(!home.has("pen_tries") || !away.has("pen_tries") ||
+                    (home.getInt("pen_tries") == 0 && away.getInt("pen_tries") == 0)
+            ){
+                findViewById(R.id.trPenTries).setVisibility(View.GONE);
+            }else{
+                ((TextView)findViewById(R.id.tvHomePenTries)).setText(home.getString("pen_tries"));
+                ((TextView)findViewById(R.id.tvAwayPenTries)).setText(away.getString("pen_tries"));
+                findViewById(R.id.trPenTries).setVisibility(View.VISIBLE);
+            }
+            //DEPRECATED
+            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
+                    !home.has("goals") || !away.has("goals") ||
+                    (home.getInt("goals") == 0 && away.getInt("goals") == 0)
+            ){
                 findViewById(R.id.trGoals).setVisibility(View.GONE);
             }else{
                 ((TextView)findViewById(R.id.tvHomeGoals)).setText(home.getString("goals"));
                 ((TextView)findViewById(R.id.tvAwayGoals)).setText(away.getString("goals"));
                 findViewById(R.id.trGoals).setVisibility(View.VISIBLE);
+            }
+            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
+                    !home.has("pen_goals") || !away.has("pen_goals") ||
+                    (home.getInt("pen_goals") == 0 && away.getInt("pen_goals") == 0)
+            ){
+                findViewById(R.id.trPenGoals).setVisibility(View.GONE);
+            }else{
+                ((TextView)findViewById(R.id.tvHomePenGoals)).setText(home.getString("pen_goals"));
+                ((TextView)findViewById(R.id.tvAwayPenGoals)).setText(away.getString("pen_goals"));
+                findViewById(R.id.trPenGoals).setVisibility(View.VISIBLE);
+            }
+            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
+                    !home.has("drop_goals") || !away.has("drop_goals") ||
+                    (home.getInt("drop_goals") == 0 && away.getInt("drop_goals") == 0)
+            ){
+                findViewById(R.id.trDropGoals).setVisibility(View.GONE);
+            }else{
+                ((TextView)findViewById(R.id.tvHomeDropGoals)).setText(home.getString("drop_goals"));
+                ((TextView)findViewById(R.id.tvAwayDropGoals)).setText(away.getString("drop_goals"));
+                findViewById(R.id.trDropGoals).setVisibility(View.VISIBLE);
             }
             ((TextView)findViewById(R.id.tvHomeTot)).setText(home.getString("tot"));
             ((TextView)findViewById(R.id.tvAwayTot)).setText(away.getString("tot"));
@@ -149,7 +184,12 @@ public class report extends LinearLayout{
                         case "CONVERSION":
                             points = points_con;
                             break;
-                        case "GOAL":
+                        case "PENALTY TRY":
+                            points = points_try + points_con;
+                            break;
+                        case "GOAL"://DEPRECATED
+                        case "PENALTY GOAL":
+                        case "DROP GOAL":
                             points = points_goal;
                             break;
                     }
@@ -220,10 +260,14 @@ public class report extends LinearLayout{
             int points_goal = settings.getInt("points_goal");
             int home_tries = 0;
             int home_cons = 0;
-            int home_goals = 0;
+            int home_pen_tries = 0;
+            int home_pen_goals = 0;
+            int home_drop_goals = 0;
             int away_tries = 0;
             int away_cons = 0;
-            int away_goals = 0;
+            int away_pen_tries = 0;
+            int away_pen_goals = 0;
+            int away_drop_goals = 0;
             int score_home = 0;
             int score_away = 0;
 
@@ -252,12 +296,30 @@ public class report extends LinearLayout{
                             score_away += points_con;
                         }
                         break;
-                    case "GOAL":
+                    case "PENALTY TRY":
                         if(event.getString("team").equals("home")){
-                            home_goals++;
+                            home_pen_tries++;
+                            score_home += points_try + points_con;
+                        }else{
+                            away_pen_tries++;
+                            score_away += points_try + points_con;
+                        }
+                        break;
+                    case "PENALTY GOAL":
+                        if(event.getString("team").equals("home")){
+                            home_pen_goals++;
                             score_home += points_goal;
                         }else{
-                            away_goals++;
+                            away_pen_goals++;
+                            score_away += points_goal;
+                        }
+                        break;
+                    case "DROP GOAL":
+                        if(event.getString("team").equals("home")){
+                            home_drop_goals++;
+                            score_home += points_goal;
+                        }else{
+                            away_drop_goals++;
                             score_away += points_goal;
                         }
                         break;
@@ -278,7 +340,9 @@ public class report extends LinearLayout{
             home.put("tot", score_home);
             home.put("tries", home_tries);
             home.put("cons", home_cons);
-            home.put("goals", home_goals);
+            home.put("pen_tries", home_pen_tries);
+            home.put("pen_goals", home_pen_goals);
+            home.put("drop_goals", home_drop_goals);
             match.put("home", home);
 
             JSONObject away = match.getJSONObject("away");
@@ -287,7 +351,9 @@ public class report extends LinearLayout{
             away.put("tot", score_away);
             away.put("tries", away_tries);
             away.put("cons", away_cons);
-            away.put("goals", away_goals);
+            home.put("pen_tries", away_pen_tries);
+            away.put("pen_goals", away_pen_goals);
+            away.put("drop_goals", away_drop_goals);
             match.put("away", away);
 
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
@@ -343,18 +409,50 @@ public class report extends LinearLayout{
             shareBody.append(getShareSubject()).append("\n\n");
 
             JSONObject home = match.getJSONObject("home");
+            JSONObject away = match.getJSONObject("away");
+
+            boolean show_cons = home.has("cons") && away.has("cons") && (home.getInt("cons") == 0 || away.getInt("cons") == 0);
+            boolean show_pen_tries = home.has("pen_tries") && away.has("pen_tries") && (home.getInt("pen_tries") == 0 || away.getInt("pen_tries") == 0);
+            boolean show_goals = home.has("goals") && away.has("goals") && (home.getInt("goals") == 0 || away.getInt("goals") == 0);
+            boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") == 0 || away.getInt("pen_goals") == 0);
+            boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") == 0 || away.getInt("drop_goals") == 0);
             shareBody.append(MainActivity.getTeamName(home)).append("\n");
             shareBody.append("  Tries: ").append(home.getString("tries")).append("\n");
-            shareBody.append("  Conversions: ").append(home.getString("cons")).append("\n");
-            shareBody.append("  Goals: ").append(home.getString("goals")).append("\n");
+            if(show_cons){
+                shareBody.append("  Conversions: ").append(home.getString("cons")).append("\n");
+            }
+            if(show_pen_tries){
+                shareBody.append("  Penalty tries: ").append(home.getString("pen_tries")).append("\n");
+            }
+            if(show_goals){
+                shareBody.append("  Goals: ").append(home.getString("goals")).append("\n");
+            }
+            if(show_pen_goals){
+                shareBody.append("  Penalty goals: ").append(home.getString("pen_goals")).append("\n");
+            }
+            if(show_drop_goals){
+                shareBody.append("  Drop goals: ").append(home.getString("drop_goals")).append("\n");
+            }
             shareBody.append("  Total: ").append(home.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            JSONObject away = match.getJSONObject("away");
             shareBody.append(MainActivity.getTeamName(away)).append("\n");
             shareBody.append("  Tries: ").append(away.getString("tries")).append("\n");
-            shareBody.append("  Conversions: ").append(away.getString("cons")).append("\n");
-            shareBody.append("  Goals: ").append(away.getString("goals")).append("\n");
+            if(show_cons){
+                shareBody.append("  Conversions: ").append(away.getString("cons")).append("\n");
+            }
+            if(show_pen_tries){
+                shareBody.append("  Penalty tries: ").append(away.getString("pen_tries")).append("\n");
+            }
+            if(show_goals){
+                shareBody.append("  Goals: ").append(away.getString("goals")).append("\n");
+            }
+            if(show_pen_goals){
+                shareBody.append("  Penalty goals: ").append(away.getString("pen_goals")).append("\n");
+            }
+            if(show_drop_goals){
+                shareBody.append("  Drop goals: ").append(away.getString("drop_goals")).append("\n");
+            }
             shareBody.append("  Total: ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 

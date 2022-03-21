@@ -26,7 +26,7 @@ public class report_event_edit extends LinearLayout{
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
-        String[] a = new String[] {"TRY","CONVERSION","GOAL","YELLOW CARD","RED CARD"};
+        String[] a = new String[] {"TRY","CONVERSION","PENALTY TRY","PENALTY GOAL","DROP GOAL","YELLOW CARD","RED CARD"};
         ArrayAdapter<String> aa = new ArrayAdapter<>(what.getContext(), android.R.layout.simple_spinner_item, a);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         what.setAdapter(aa);
@@ -48,15 +48,21 @@ public class report_event_edit extends LinearLayout{
                 case "CONVERSION":
                     what.setSelection(1);
                     break;
-                case "GOAL":
+                case "PENALTY TRY":
                     what.setSelection(2);
                     break;
-                case "YELLOW CARD":
+                case "PENALTY GOAL":
                     what.setSelection(3);
+                    break;
+                case "DROP GOAL":
+                    what.setSelection(4);
+                    break;
+                case "YELLOW CARD":
+                    what.setSelection(5);
                     findViewById(R.id.reason).setVisibility(VISIBLE);
                     break;
                 case "RED CARD":
-                    what.setSelection(4);
+                    what.setSelection(6);
                     findViewById(R.id.reason).setVisibility(VISIBLE);
                     break;
                 default:
@@ -107,12 +113,18 @@ public class report_event_edit extends LinearLayout{
                     event.put("what", "CONVERSION");
                     break;
                 case 2:
-                    event.put("what", "GOAL");
+                    event.put("what", "PENALTY TRY");
                     break;
                 case 3:
-                    event.put("what", "YELLOW CARD");
+                    event.put("what", "PENALTY GOAL");
                     break;
                 case 4:
+                    event.put("what", "DROP GOAL");
+                    break;
+                case 5:
+                    event.put("what", "YELLOW CARD");
+                    break;
+                case 6:
                     event.put("what", "RED CARD");
                     break;
             }

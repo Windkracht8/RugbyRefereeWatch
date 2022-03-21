@@ -51,7 +51,10 @@
 
     <string name="tries">Tries</string>
     <string name="conversions">Conversions</string>
+    <string name="pen_tries">Penalty tries</string>
     <string name="goals">Goals</string>
+    <string name="pen_goals">Penalty goals</string>
+    <string name="drop_goals">Drop goals</string>
 
     <string name="status_STARTING">Starting</string>
     <string name="status_DISCONNECTED">Disconnected</string>
