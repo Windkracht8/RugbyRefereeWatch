@@ -7,10 +7,13 @@
     <string name="score_try_text">try</string>
     <string name="score_con_text">conversion</string>
     <string name="score_goal_text">goal</string>
-    <string name="cards_text">card</string>
+    <string name="foul_play_text">foul play</string>
     <string name="report_title">Report</string>
     <string name="correct_title">Tab to remove</string>
+    <string name="goal_pen_text">penalty</string>
+    <string name="goal_drop_text">drop</string>
     <string name="card_yellow_text">yellow</string>
+    <string name="penalty_try_text">penalty try</string>
     <string name="card_red_text">red</string>
     <string name="bConfWatch_desc">Watch configuration</string>
     <string name="battery_placeholder">100%</string>

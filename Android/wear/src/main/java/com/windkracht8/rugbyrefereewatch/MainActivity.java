@@ -49,7 +49,8 @@ public class MainActivity extends FragmentActivity{
     private ImageButton bConfWatch;
     private Conf conf;
     private Score score;
-    private Card card;
+    private Goal goal;
+    private FoulPlay foulPlay;
     private Correct correct;
     private Report report;
     private Help help;
@@ -60,9 +61,9 @@ public class MainActivity extends FragmentActivity{
     public static int vh10 = 0;
     public static int vh15 = 0;
     public static int vh18 = 0;
+    public static int vh20 = 0;
     public static int vh25 = 0;
     public static int vh30 = 0;
-    public static int vh40 = 0;
     public static int vh80 = 0;
     public static int vh90 = 0;
 
@@ -96,9 +97,9 @@ public class MainActivity extends FragmentActivity{
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
         vh18 = (int) (heightPixels * .18);
+        vh20 = (int) (heightPixels * .2);
         vh25 = heightPixels / 4;
         vh30 = (int) (heightPixels * .3);
-        vh40 = (int) (heightPixels * .4);
         vh80 = (int) (heightPixels * .8);
         vh90 = (int) (heightPixels * .9);
 
@@ -126,11 +127,14 @@ public class MainActivity extends FragmentActivity{
         score_try.setOnClickListener(v -> tryClick());
         TextView score_con = findViewById(R.id.score_con);
         score_con.setOnClickListener(v -> conversionClick());
-        TextView score_goal = findViewById(R.id.score_goal);
-        score_goal.setOnClickListener(v -> goalClick());
-        findViewById(R.id.cards).setOnClickListener(v -> cardsClick());
-        card = findViewById(R.id.card);
+        findViewById(R.id.score_goal).setOnClickListener(v -> goalClick());
+        goal = findViewById(R.id.goal);
+        findViewById(R.id.goal_drop).setOnClickListener(v -> goal_dropClick());
+        findViewById(R.id.goal_pen).setOnClickListener(v -> goal_penClick());
+        findViewById(R.id.foul_play).setOnClickListener(v -> foulPlayClick());
+        foulPlay = findViewById(R.id.card);
         findViewById(R.id.card_yellow).setOnClickListener(v -> card_yellowClick());
+        findViewById(R.id.penalty_try).setOnClickListener(v -> penalty_tryClick());
         findViewById(R.id.card_red).setOnClickListener(v -> card_redClick());
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
@@ -203,8 +207,8 @@ public class MainActivity extends FragmentActivity{
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
-        }else if(card.getVisibility() == View.VISIBLE){
-            card.setVisibility(View.GONE);
+        }else if(foulPlay.getVisibility() == View.VISIBLE){
+            foulPlay.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
         }else if(report.getVisibility() == View.VISIBLE){
@@ -392,7 +396,7 @@ public class MainActivity extends FragmentActivity{
         }
 
         score.update(match);
-        card.update();
+        foulPlay.update();
     }
     public int getColor(String name){
         return getResources().getColor(getResources().getIdentifier(name, "color", getPackageName()), getBaseContext().getTheme());
@@ -536,43 +540,64 @@ public class MainActivity extends FragmentActivity{
         match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
     public void goalClick(){
-        score.team.goals++;
-        updateScore();
+        goal.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
+    }
+    public void goal_penClick(){
+        score.team.pen_goals++;
+        updateScore();
+        goal.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("GOAL", score.team.id, score.player_no, 0);
+        match.logEvent("PENALTY GOAL", score.team.id, score.player_no, 0);
+    }
+    public void goal_dropClick(){
+        score.team.drop_goals++;
+        updateScore();
+        goal.setVisibility(View.GONE);
+        score.clear();
+        match.logEvent("DROP GOAL", score.team.id, score.player_no, 0);
     }
     public void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
                 match.home.cons*match.points_con +
-                match.home.goals*match.points_goal;
+                match.home.pen_tries*(match.points_try + match.points_con) +
+                match.home.pen_goals*match.points_goal +
+                match.home.drop_goals*match.points_goal;
         String tmp = match.home.tot + "";
         score_home.setText(tmp);
         match.away.tot = match.away.tries*match.points_try +
                 match.away.cons*match.points_con +
-                match.away.goals*match.points_goal;
+                match.away.pen_tries*(match.points_try + match.points_con) +
+                match.away.pen_goals*match.points_goal +
+                match.away.drop_goals*match.points_goal;
         tmp = match.away.tot + "";
         score_away.setText(tmp);
     }
-    public void cardsClick(){
-        card.setPlayer(score.player_no);
-        card.setVisibility(View.VISIBLE);
+    public void foulPlayClick(){
+        foulPlay.setPlayer(score.player_no);
+        foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
     public void card_yellowClick(){
         long time = getCurrentTimestamp();
-        match.logEvent("YELLOW CARD", score.team.id, card.player_no, time);
+        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
         score.team.addSinbin(time, end);
         updateSinbins();
-        card.setVisibility(View.GONE);
+        foulPlay.setVisibility(View.GONE);
         score.clear();
     }
-
+    public void penalty_tryClick(){
+        score.team.pen_tries++;
+        updateScore();
+        foulPlay.setVisibility(View.GONE);
+        score.clear();
+        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
+    }
     public void card_redClick(){
-        match.logEvent("RED CARD", score.team.id, card.player_no, 0);
-        card.setVisibility(View.GONE);
+        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
+        foulPlay.setVisibility(View.GONE);
         score.clear();
     }
 

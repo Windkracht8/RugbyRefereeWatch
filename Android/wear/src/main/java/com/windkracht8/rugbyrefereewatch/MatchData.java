@@ -80,8 +80,14 @@ public class MatchData{
             case "CONVERSION":
                 team_edit.cons--;
                 break;
-            case "GOAL":
-                team_edit.goals--;
+            case "PENALTY TRY":
+                team_edit.pen_tries--;
+                break;
+            case "PENALTY GOAL":
+                team_edit.pen_goals--;
+                break;
+            case "DROP GOAL":
+                team_edit.drop_goals--;
                 break;
         }
     }
@@ -103,7 +109,9 @@ public class MatchData{
         public int tot = 0;
         public int tries = 0;
         public int cons = 0;
-        public int goals = 0;
+        public int pen_tries = 0;
+        public int pen_goals = 0;
+        public int drop_goals = 0;
         public final ArrayList<sinbin> sinbins = new ArrayList<>();
         public boolean kickoff = false;
         public team(String id, String team, String color){
@@ -124,7 +132,9 @@ public class MatchData{
                 ret.put("tot", tot);
                 ret.put("tries", tries);
                 ret.put("cons", cons);
-                ret.put("goals", goals);
+                ret.put("pen_tries", pen_tries);
+                ret.put("pen_goals", pen_goals);
+                ret.put("drop_goals", drop_goals);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
                 Log.e("MatchData", "match.toJson: " + e.getMessage());

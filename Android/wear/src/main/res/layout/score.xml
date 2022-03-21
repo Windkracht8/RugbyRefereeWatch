@@ -51,11 +51,11 @@
         android:text="@string/score_goal_text"
         android:textColor="#FFF" />
     <TextView
-        android:id="@+id/cards"
+        android:id="@+id/foul_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="@string/cards_text"
+        android:text="@string/foul_play_text"
         android:textColor="#FFF" />
 </LinearLayout>

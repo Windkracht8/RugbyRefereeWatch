@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, goal_penClick, goal_goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, goal_penClick, goal_dropClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",

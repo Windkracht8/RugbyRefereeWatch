@@ -31,7 +31,9 @@ public class Correct extends ScrollView{
             MatchData.event event_data = match.events.get(i-1);
             if(!event_data.what.equals("TRY") &&
                     !event_data.what.equals("CONVERSION") &&
-                    !event_data.what.equals("GOAL") &&
+                    !event_data.what.equals("PENALTY TRY") &&
+                    !event_data.what.equals("PENALTY GOAL") &&
+                    !event_data.what.equals("DROP GOAL") &&
                     !event_data.what.equals("YELLOW CARD") &&
                     !event_data.what.equals("RED CARD")
             ){

@@ -19,7 +19,7 @@ public class Score extends LinearLayout{
     private TextView score_try;
     private TextView score_con;
     private TextView score_goal;
-    private TextView cards;
+    private TextView foul_play;
 
     public Score(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -31,7 +31,7 @@ public class Score extends LinearLayout{
         score_try = findViewById(R.id.score_try);
         score_con = findViewById(R.id.score_con);
         score_goal = findViewById(R.id.score_goal);
-        cards = findViewById(R.id.cards);
+        foul_play = findViewById(R.id.foul_play);
 
         String[] aPlayerNumbers = new String[] {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
         ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
@@ -62,13 +62,13 @@ public class Score extends LinearLayout{
             height = MainActivity.vh18;
         }else{
             findViewById(R.id.player_wrap).setVisibility(View.GONE);
-            height = MainActivity.vh25;
+            height = MainActivity.vh20;
         }
         ((TextView)findViewById(R.id.player_label)).setHeight(height);
         score_try.setHeight(height);
         score_con.setHeight(height);
         score_goal.setHeight(height);
-        cards.setHeight(height);
+        foul_play.setHeight(height);
     }
     public void clear(){
         player.setSelection(0);

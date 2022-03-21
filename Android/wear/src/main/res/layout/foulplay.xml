@@ -37,6 +37,13 @@
         android:text="@string/card_yellow_text"
         android:textColor="#FFEB3B" />
     <TextView
+        android:id="@+id/penalty_try"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/penalty_try_text" />
+    <TextView
         android:id="@+id/card_red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
