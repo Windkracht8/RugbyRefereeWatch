@@ -110,6 +110,11 @@ button, .button{
 	background: black;
 	font-size: 10vh;
 }
+.goal{
+	height: 30vh;
+	font-size: 20vh;
+	padding-top: 5vh;
+}
 #correct_overlay{
 	padding: 15vh 5vw 10vh 5vw;
 	min-height: 75vh;
@@ -123,13 +128,14 @@ button, .button{
 	height: 100vh;
 	padding-top: 0;
 }
-#score_inner, #foulplay_inner{
+#score_inner, #foulplay_inner, #goal_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
 }
 .foulplay{
 	font-size: 20vh;
+	padding-top: 5vh;
 }
 #card_yellow{
 	color: yellow;

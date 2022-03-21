@@ -30,8 +30,9 @@ var match = {
 		tot: 0,
 		tries: 0,
 		cons: 0,
-		pentries: 0,
-		goals: 0,
+		pen_tries: 0,
+		pen_goals: 0,
+		drop_goals: 0,
 		sinbins: [],
 		kickoff: 0
 	},
@@ -42,8 +43,9 @@ var match = {
 		tot: 0,
 		tries: 0,
 		cons: 0,
-		pentries: 0,
-		goals: 0,
+		pen_tries: 0,
+		pen_goals: 0,
+		drop_goals: 0,
 		sinbins: [],
 		kickoff: 0
 	},
@@ -204,8 +206,8 @@ function bfinishClick(){
 function bclearClick(){
 	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
 	updateTimer();
-	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pentries:0,goals:0,sinbins:[],kickoff:0};
-	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pentries:0,goals:0,sinbins:[],kickoff:0};
+	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,pen_goals:0,drop_goals:0,sinbins:[],kickoff:0};
+	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,pen_goals:0,drop_goals:0,sinbins:[],kickoff:0};
 	match.events = [];
 	match.matchid = 0;
 	updateScore();
@@ -367,7 +369,7 @@ function score_homeClick(){
 		return;
 	}
 	team_edit = match.home;
-	score_show();
+	showScore();
 }
 function score_awayClick(){
 	if(timer.status === "conf"){
@@ -383,23 +385,34 @@ function score_awayClick(){
 		return;
 	}
 	team_edit = match.away;
-	score_show();
+	showScore();
 }
-function score_show(){
+function showScore(){
 	$('#score_player').val(0);
-	$('#try').html(team_edit.tries);
-	$('#con').html(team_edit.cons);
-	$('#goal').html(team_edit.goals);
 
-	$('#score_con').css('display', match.settings.points_con === 0 ? 'none' : 'block');
-	$('#score_goal').css('display', match.settings.points_goal === 0 ? 'none' : 'block');
-	$('#penalty_try').css('display', match.settings.points_con === 0 ? 'none' : 'block');
-
+	var padding = 0;
+	if(match.settings.points_con === 0){
+		$('#score_con').css('display', 'none');
+		$('#penalty_try').css('display', 'none');
+		padding += 4;
+	}else{
+		$('#score_con').css('display', 'block');
+		$('#penalty_try').css('display', 'block');
+	}
+	if(match.settings.points_goal === 0){
+		$('#score_goal').css('display', 'none');
+		padding += 2;
+	}else{
+		$('#score_goal').css('display', 'block');
+	}
 	if(match.settings.record_player === 1){
 		$('#score_player_wrap').show();
 	}else{
 		$('#score_player_wrap').hide();
+		padding += 2;
 	}
+
+	$('.score').css('padding-bottom', padding + 'vh');
 	$('#score').show();
 }
 function tryClick(){
@@ -417,22 +430,35 @@ function conversionClick(){
 	logEvent("CONVERSION", team_edit, player);
 }
 function goalClick(){
-	team_edit.goals++;
-	updateScore();
 	$('#score').hide();
+	$('#goal').show();
+}
+function goal_penClick(){
+	team_edit.pen_goals++;
+	updateScore();
+	$('#goal').hide();
 	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
-	logEvent("GOAL", team_edit, player);
+	logEvent("PENALTY GOAL", team_edit, player);
+}
+function goal_dropClick(){
+	team_edit.drop_goals++;
+	updateScore();
+	$('#goal').hide();
+	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	logEvent("DROP GOAL", team_edit, player);
 }
 function updateScore(){
-	match.home.tot = match.home.tries*match.settings.points_try + 
-					match.home.cons*match.settings.points_con + 
-					match.home.pentries*(match.settings.points_try + match.settings.points_con) + 
-					match.home.goals*match.settings.points_goal;
+	match.home.tot = match.home.tries*match.settings.points_try +
+					match.home.cons*match.settings.points_con +
+					match.home.pen_tries*(match.settings.points_try + match.settings.points_con) +
+					match.home.pen_goals*match.settings.points_goal +
+					match.home.drop_goals*match.settings.points_goal;
 	$('#score_home').html(match.home.tot);
-	match.away.tot = match.away.tries*match.settings.points_try + 
-					match.away.cons*match.settings.points_con + 
-					match.away.pentries*(match.settings.points_try + match.settings.points_con) + 
-					match.away.goals*match.settings.points_goal;
+	match.away.tot = match.away.tries*match.settings.points_try +
+					match.away.cons*match.settings.points_con +
+					match.away.pen_tries*(match.settings.points_try + match.settings.points_con) +
+					match.away.pen_goals*match.settings.points_goal +
+					match.away.drop_goals*match.settings.points_goal;
 	$('#score_away').html(match.away.tot);
 }
 function foulplayClick(){
@@ -453,7 +479,7 @@ function card_yellowClick(){
 }
 
 function penalty_tryClick(){
-	team_edit.pentries++;
+	team_edit.pen_tries++;
 	updateScore();
 	$('#foulplay').hide();
 	var player = match.settings.record_player === 1 ? $('#foulplay_player').val() : null;
@@ -473,7 +499,8 @@ function showCorrect(){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
 			value.what !== "PENALTY TRY" &&
-			value.what !== "GOAL" &&
+			value.what !== "PENALTY GOAL" &&
+			value.what !== "DROP GOAL" &&
 			value.what !== "YELLOW CARD" &&
 			value.what !== "RED CARD" 
 		){
@@ -506,10 +533,13 @@ function removeEvent(index){
 			team_edit.cons--;
 			break;
 		case "PENALTY TRY":
-			team_edit.pentries--;
+			team_edit.pen_tries--;
 			break;
-		case "GOAL":
-			team_edit.goals--;
+		case "PENALTY GOAL":
+			team_edit.pen_goals--;
+			break;
+		case "DROP GOAL":
+			team_edit.drop_goals--;
 			break;
 		case "YELLOW CARD":
 			var id = match.events[index].id;

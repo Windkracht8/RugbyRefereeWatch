@@ -53,10 +53,14 @@
 		<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
 		<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
 	</select></div>
-	<div id="score_try" onclick="tryClick()">try <span id="try">0</span></div>
-	<div id="score_con" onclick="conversionClick()">conversion <span id="con">0</span></div>
-	<div id="score_goal" onclick="goalClick()">goal <span id="goal">0</span></div>
-	<div onclick="foulplayClick()">foul play</div>
+	<div id="score_try" class="score" onclick="tryClick()">try</div>
+	<div id="score_con" class="score" onclick="conversionClick()">conversion</div>
+	<div id="score_goal" class="score" onclick="goalClick()">goal</div>
+	<div class="score" onclick="foulplayClick()">foul play</div>
+</div></div>
+<div id="goal" class="overlay"><div id="goal_inner">
+	<div id="goal_pen" class="goal" onclick="goal_penClick()">penalty</div>
+	<div id="goal_drop" class="goal" onclick="goal_dropClick()">drop</div>
 </div></div>
 <div id="foulplay" class="overlay"><div id="foulplay_inner">
 	<div id="foulplay_player_wrap">player <select id="foulplay_player" class="w8blue">
