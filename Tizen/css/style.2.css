@@ -111,26 +111,34 @@ button, .button{
 	font-size: 10vh;
 }
 #correct_overlay{
-	padding: 10vh 0;
-	min-height: 80vh;
+	padding: 15vh 5vw 10vh 5vw;
+	min-height: 75vh;
 	font-size: 10vw;
+	width: 90vw;
 }
-#score, #card{
-	height: 80vh;
+#correct_title{
+	padding-bottom: 5vh;
 }
-#score_inner, #card_inner{
+#score, #foulplay{
+	height: 100vh;
+	padding-top: 0;
+}
+#score_inner, #foulplay_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
 }
-#card_yellow, #card_red{
-	font-size: 25vh;
+.foulplay{
+	font-size: 20vh;
 }
 #card_yellow{
 	color: yellow;
 }
 #card_red{
 	color: red;
+}
+#penalty_try{
+	color: white;
 }
 #conf input{
 	text-align: right;
@@ -164,7 +172,7 @@ button, .button{
 }
 .helptopic{
 	font-size: 10vh;
-	color: var(--w8blue-color);
+	color: #2bd2e3;
 }
 .slider{
 	position: absolute;

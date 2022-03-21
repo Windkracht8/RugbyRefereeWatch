@@ -114,23 +114,30 @@ button, .button{
 	font-size: 10vh;
 }
 #correct_overlay{
-	padding: 10vh 0;
-	height: 80vh;
+	padding: 15vh 5vw 10vh 5vw;
+	height: 75vh;
 	font-size: 10vw;
+	width: 90vw;
 }
-#score_inner, #card_inner{
+#correct_title{
+	padding-bottom: 5vh;
+}
+#score_inner, #foulplay_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
 }
-#card_yellow, #card_red{
-	font-size: 25vh;
+.foulplay{
+	font-size: 20vh;
 }
 #card_yellow{
 	color: yellow;
 }
 #card_red{
 	color: red;
+}
+#penalty_try{
+	color: white;
 }
 #conf input{
 	text-align: right;

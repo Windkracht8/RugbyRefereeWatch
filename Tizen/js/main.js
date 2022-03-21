@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, cardsClick, card_yellowClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -30,6 +30,7 @@ var match = {
 		tot: 0,
 		tries: 0,
 		cons: 0,
+		pentries: 0,
 		goals: 0,
 		sinbins: [],
 		kickoff: 0
@@ -41,6 +42,7 @@ var match = {
 		tot: 0,
 		tries: 0,
 		cons: 0,
+		pentries: 0,
 		goals: 0,
 		sinbins: [],
 		kickoff: 0
@@ -104,7 +106,7 @@ function back(){
 		});
 		if(backdone === false){
 			if(timer.status !== "conf" && timer.status !== "finished"){
-				correctShow();
+				showCorrect();
 			}else{
 				tizen.power.release("SCREEN");
 				tizen.application.getCurrentApplication().exit();
@@ -202,8 +204,8 @@ function bfinishClick(){
 function bclearClick(){
 	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
 	updateTimer();
-	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,goals:0,sinbins:[],kickoff:0};
-	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,goals:0,sinbins:[],kickoff:0};
+	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pentries:0,goals:0,sinbins:[],kickoff:0};
+	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pentries:0,goals:0,sinbins:[],kickoff:0};
 	match.events = [];
 	match.matchid = 0;
 	updateScore();
@@ -389,9 +391,9 @@ function score_show(){
 	$('#con').html(team_edit.cons);
 	$('#goal').html(team_edit.goals);
 
-	$('#score_try').css('display', match.settings.points_try === 0 ? 'none' : 'block');
 	$('#score_con').css('display', match.settings.points_con === 0 ? 'none' : 'block');
 	$('#score_goal').css('display', match.settings.points_goal === 0 ? 'none' : 'block');
+	$('#penalty_try').css('display', match.settings.points_con === 0 ? 'none' : 'block');
 
 	if(match.settings.record_player === 1){
 		$('#score_player_wrap').show();
@@ -424,22 +426,24 @@ function goalClick(){
 function updateScore(){
 	match.home.tot = match.home.tries*match.settings.points_try + 
 					match.home.cons*match.settings.points_con + 
+					match.home.pentries*(match.settings.points_try + match.settings.points_con) + 
 					match.home.goals*match.settings.points_goal;
 	$('#score_home').html(match.home.tot);
 	match.away.tot = match.away.tries*match.settings.points_try + 
 					match.away.cons*match.settings.points_con + 
+					match.away.pentries*(match.settings.points_try + match.settings.points_con) + 
 					match.away.goals*match.settings.points_goal;
 	$('#score_away').html(match.away.tot);
 }
-function cardsClick(){
-	$('#card_player').val($('#score_player').val());
-	$('#card').show();
+function foulplayClick(){
+	$('#foulplay_player').val($('#score_player').val());
+	$('#foulplay').show();
 	$('#score').hide();
 }
 
 function card_yellowClick(){
-	$('#card').hide();
-	var id = logEvent("YELLOW CARD", team_edit, $('#card_player').val());
+	$('#foulplay').hide();
+	var id = logEvent("YELLOW CARD", team_edit, $('#foulplay_player').val());
 
 	var end = timer.timer + (match.settings.sinbin*60000);
 	end = Math.ceil(end/1000)*1000;
@@ -448,17 +452,27 @@ function card_yellowClick(){
 	updateSinbins();
 }
 
-function card_redClick(){
-	$('#card').hide();
-	logEvent("RED CARD", team_edit, $('#card_player').val());
+function penalty_tryClick(){
+	team_edit.pentries++;
+	updateScore();
+	$('#foulplay').hide();
+	var player = match.settings.record_player === 1 ? $('#foulplay_player').val() : null;
+	logEvent("PENALTY TRY", team_edit, player);
+
 }
 
-function correctShow(){
+function card_redClick(){
+	$('#foulplay').hide();
+	logEvent("RED CARD", team_edit, $('#foulplay_player').val());
+}
+
+function showCorrect(){
 	var items = "";
 	var item = "";
 	$.each(match.events, function(index, value){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
+			value.what !== "PENALTY TRY" &&
 			value.what !== "GOAL" &&
 			value.what !== "YELLOW CARD" &&
 			value.what !== "RED CARD" 
@@ -466,7 +480,7 @@ function correctShow(){
 			return;
 		}
 
-		item = '<span onclick="removeEvent(\'' + index + '\')">';
+		item = '<div onclick="removeEvent(\'' + index + '\')">';
 		item += value.timer;
 		item += ' ' + value.what;
 		if(value.team){
@@ -475,7 +489,7 @@ function correctShow(){
 		if(value.who){
 			item += ' ' + value.who;
 		}
-		item += '</span><br>';
+		item += '</div>';
 		items = item + items;
 	});
 
@@ -490,6 +504,9 @@ function removeEvent(index){
 			break;
 		case "CONVERSION":
 			team_edit.cons--;
+			break;
+		case "PENALTY TRY":
+			team_edit.pentries--;
 			break;
 		case "GOAL":
 			team_edit.goals--;
@@ -647,13 +664,13 @@ function record_playerChanged(){
 	if(match.settings.record_player === 1){
 		$('#score').css('font-size', '15vh');
 		$('#score_player_wrap').show();
-		$('#card_yellow, #card_red').css('height', '');
-		$('#card_player_wrap').show();
+		$('.foulplay').css('height', '');
+		$('#foulplay_player_wrap').show();
 	}else{
 		$('#score').css('font-size', '17vh');
 		$('#score_player_wrap').hide();
-		$('#card_yellow, #card_red').css('height', '40vh');
-		$('#card_player_wrap').hide();
+		$('.foulplay').css('height', '30vh');
+		$('#foulplay_player_wrap').hide();
 	}
 }
 function screen_onChanged(){

@@ -56,10 +56,10 @@
 	<div id="score_try" onclick="tryClick()">try <span id="try">0</span></div>
 	<div id="score_con" onclick="conversionClick()">conversion <span id="con">0</span></div>
 	<div id="score_goal" onclick="goalClick()">goal <span id="goal">0</span></div>
-	<div onclick="cardsClick()">card</div>
+	<div onclick="foulplayClick()">foul play</div>
 </div></div>
-<div id="card" class="overlay"><div id="card_inner">
-	<div id="card_player_wrap">player <select id="card_player" class="w8blue">
+<div id="foulplay" class="overlay"><div id="foulplay_inner">
+	<div id="foulplay_player_wrap">player <select id="foulplay_player" class="w8blue">
 		<option>0</option>
 		<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
 		<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
@@ -72,11 +72,12 @@
 		<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
 		<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
 	</select></div>
-	<button id="card_yellow" onclick="card_yellowClick()">yellow</button>
-	<button id="card_red" onclick="card_redClick()">red</button>
+	<button id="card_yellow" class="foulplay" onclick="card_yellowClick()">yellow</button>
+	<button id="penalty_try" class="foulplay" onclick="penalty_tryClick()">penalty try</button>
+	<button id="card_red" class="foulplay" onclick="card_redClick()">red</button>
 </div></div>
 <div id="correct_overlay" class="overlay">
-	<div class="w8blue">Tab to remove</div>
+	<div id="correct_title" class="w8blue">Tab to remove</div>
 	<div id="correct"></div>
 </div>
 <div id="conf" class="overlay">
