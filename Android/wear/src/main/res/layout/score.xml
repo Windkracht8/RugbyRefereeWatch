@@ -4,10 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
     <LinearLayout
         android:id="@+id/player_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="5"
+        android:visibility="gone"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/player_label"
@@ -16,20 +23,19 @@
             android:autoSizeTextType="uniform"
             android:gravity="end"
             android:text="@string/player_label_text"
-            android:textColor="#FFF"
-            android:layout_weight="2"/>
+            android:textColor="#FFF" />
         <Spinner
             android:id="@+id/player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/player_desc"
-            android:minHeight="32dp"
-            android:layout_weight="1" />
+            android:minHeight="32dp" />
     </LinearLayout>
     <TextView
         android:id="@+id/score_try"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:autoSizeTextType="uniform"
         android:gravity="center"
         android:text="@string/score_try_text"
@@ -38,6 +44,7 @@
         android:id="@+id/score_con"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:autoSizeTextType="uniform"
         android:gravity="center"
         android:text="@string/score_con_text"
@@ -46,6 +53,7 @@
         android:id="@+id/score_goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:autoSizeTextType="uniform"
         android:gravity="center"
         android:text="@string/score_goal_text"
@@ -54,8 +62,13 @@
         android:id="@+id/foul_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="5"
         android:autoSizeTextType="uniform"
         android:gravity="center"
         android:text="@string/foul_play_text"
         android:textColor="#FFF" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
 </LinearLayout>

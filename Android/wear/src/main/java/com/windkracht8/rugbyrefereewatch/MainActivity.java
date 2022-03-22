@@ -60,8 +60,6 @@ public class MainActivity extends FragmentActivity{
     public static int vh5 = 0;
     public static int vh10 = 0;
     public static int vh15 = 0;
-    public static int vh18 = 0;
-    public static int vh20 = 0;
     public static int vh25 = 0;
     public static int vh30 = 0;
     public static int vh80 = 0;
@@ -96,8 +94,6 @@ public class MainActivity extends FragmentActivity{
         vh5 = heightPixels / 20;
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
-        vh18 = (int) (heightPixels * .18);
-        vh20 = (int) (heightPixels * .2);
         vh25 = heightPixels / 4;
         vh30 = (int) (heightPixels * .3);
         vh80 = (int) (heightPixels * .8);
@@ -207,6 +203,8 @@ public class MainActivity extends FragmentActivity{
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
+        }else if(goal.getVisibility() == View.VISIBLE){
+            goal.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
@@ -396,7 +394,6 @@ public class MainActivity extends FragmentActivity{
         }
 
         score.update(match);
-        foulPlay.update();
     }
     public int getColor(String name){
         return getResources().getColor(getResources().getIdentifier(name, "color", getPackageName()), getBaseContext().getTheme());
