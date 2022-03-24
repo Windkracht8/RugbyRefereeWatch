@@ -826,13 +826,17 @@ function settingsRead(newsettings){
 	}
 	setNewSettings(newsettings);
 	if(!newsettings.hasOwnProperty('help_version')){
-		$('#help_welcome').show();
-		showHelp();
-		file_storeSettings(match.settings);
+		noStoredSettings();
 	}else if(newsettings.help_version !== match.settings.help_version){
 		showHelp();
 		file_storeSettings(match.settings);
 	}
+}
+
+function noStoredSettings(){
+	$('#help_intro').show();
+	showHelp();
+	file_storeSettings(match.settings);
 }
 
 function showHelp(){
