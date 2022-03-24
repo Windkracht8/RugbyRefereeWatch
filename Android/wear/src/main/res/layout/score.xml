@@ -4,33 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
+    <Spinner
+        android:id="@+id/score_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-    <LinearLayout
-        android:id="@+id/player_wrap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:layout_weight="5"
-        android:visibility="gone"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/player_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoSizeTextType="uniform"
-            android:gravity="end"
-            android:text="@string/player_label_text"
-            android:textColor="#FFF" />
-        <Spinner
-            android:id="@+id/player"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/player_desc"
-            android:minHeight="32dp" />
-    </LinearLayout>
+        android:layout_gravity="center"
+        android:contentDescription="@string/player_desc" />
     <TextView
         android:id="@+id/score_try"
         android:layout_width="match_parent"

@@ -177,7 +177,7 @@ button, .button{
 	height: 70vh;
 	overflow: auto;
 }
-#help_intro{
+#help_welcome{
 	display: none;
 }
 .helptopic{

@@ -49,7 +49,6 @@ public class MainActivity extends FragmentActivity{
     private ImageButton bConfWatch;
     private Conf conf;
     private Score score;
-    private Goal goal;
     private FoulPlay foulPlay;
     private Correct correct;
     private Report report;
@@ -74,7 +73,7 @@ public class MainActivity extends FragmentActivity{
     public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
-    public final static int help_version = 1;
+    public final static int help_version = 2;
 
     private Handler handler_main;
     private ExecutorService executorService;
@@ -124,9 +123,6 @@ public class MainActivity extends FragmentActivity{
         TextView score_con = findViewById(R.id.score_con);
         score_con.setOnClickListener(v -> conversionClick());
         findViewById(R.id.score_goal).setOnClickListener(v -> goalClick());
-        goal = findViewById(R.id.goal);
-        findViewById(R.id.goal_drop).setOnClickListener(v -> goal_dropClick());
-        findViewById(R.id.goal_pen).setOnClickListener(v -> goal_penClick());
         findViewById(R.id.foul_play).setOnClickListener(v -> foulPlayClick());
         foulPlay = findViewById(R.id.card);
         findViewById(R.id.card_yellow).setOnClickListener(v -> card_yellowClick());
@@ -167,10 +163,14 @@ public class MainActivity extends FragmentActivity{
                         break;
                     case "showHelp":
                         if(!intent.hasExtra("help_version")) return;
-                        if(intent.getIntExtra("help_version", 0) != help_version){
-                            help.showWelcome();
-                            help.setVisibility(View.VISIBLE);
-                            executorService.submit(() -> FileStore.file_storeSettings(context));
+                        switch(intent.getIntExtra("help_version", 0)){
+                            case help_version:
+                                break;
+                            case 0:
+                                help.showWelcome();
+                            default:
+                                help.setVisibility(View.VISIBLE);
+                                executorService.submit(() -> FileStore.file_storeSettings(context));
                         }
                         break;
                     case "onReceivePrepare":
@@ -203,8 +203,6 @@ public class MainActivity extends FragmentActivity{
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
-        }else if(goal.getVisibility() == View.VISIBLE){
-            goal.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
@@ -537,36 +535,23 @@ public class MainActivity extends FragmentActivity{
         match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
     public void goalClick(){
-        goal.setVisibility(View.VISIBLE);
+        score.team.goals++;
+        updateScore();
         score.setVisibility(View.GONE);
-    }
-    public void goal_penClick(){
-        score.team.pen_goals++;
-        updateScore();
-        goal.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("PENALTY GOAL", score.team.id, score.player_no, 0);
-    }
-    public void goal_dropClick(){
-        score.team.drop_goals++;
-        updateScore();
-        goal.setVisibility(View.GONE);
-        score.clear();
-        match.logEvent("DROP GOAL", score.team.id, score.player_no, 0);
+        match.logEvent("GOAL", score.team.id, score.player_no, 0);
     }
     public void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
                 match.home.cons*match.points_con +
                 match.home.pen_tries*(match.points_try + match.points_con) +
-                match.home.pen_goals*match.points_goal +
-                match.home.drop_goals*match.points_goal;
+                match.home.goals*match.points_goal;
         String tmp = match.home.tot + "";
         score_home.setText(tmp);
         match.away.tot = match.away.tries*match.points_try +
                 match.away.cons*match.points_con +
                 match.away.pen_tries*(match.points_try + match.points_con) +
-                match.away.pen_goals*match.points_goal +
-                match.away.drop_goals*match.points_goal;
+                match.away.goals*match.points_goal;
         tmp = match.away.tot + "";
         score_away.setText(tmp);
     }

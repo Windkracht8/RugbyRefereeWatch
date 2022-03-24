@@ -58,10 +58,6 @@
 	<div id="score_goal" class="score" onclick="goalClick()">goal</div>
 	<div class="score" onclick="foulplayClick()">foul play</div>
 </div></div>
-<div id="goal" class="overlay"><div id="goal_inner">
-	<div id="goal_pen" class="goal" onclick="goal_penClick()">penalty</div>
-	<div id="goal_drop" class="goal" onclick="goal_dropClick()">drop</div>
-</div></div>
 <div id="foulplay" class="overlay"><div id="foulplay_inner">
 	<div id="foulplay_player_wrap">player <select id="foulplay_player" class="w8blue">
 		<option>0</option>
@@ -180,7 +176,9 @@
 	<div id="report"></div>
 </div>
 <div id="help" class="overlay" onclick="this.style.display='none'">
-	<div id="help_intro"><div class="helptopic">Welcome</div>Here are a few tips to get you familiar with this app.<br><br></div>
+	<div id="help_welcome"><div class="helptopic">Welcome</div>Here are a few tips to get you familiar with this app.<br><br></div>
+	<div class="helptopic">New stuff</div>
+	Looking for penalty kick? Check under foul play.
 	<div class="helptopic">Corrections</div>
 	During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.
 	<br><br><div class="helptopic">Kick off</div>

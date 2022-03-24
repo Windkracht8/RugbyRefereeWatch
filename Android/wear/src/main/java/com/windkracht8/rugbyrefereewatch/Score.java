@@ -15,7 +15,7 @@ public class Score extends LinearLayout{
     public MatchData.team team;
     public int player_no;
 
-    private Spinner player;
+    private Spinner score_player;
     private TextView score_try;
     private TextView score_con;
     private TextView score_goal;
@@ -26,7 +26,7 @@ public class Score extends LinearLayout{
         if(inflater == null){Toast.makeText(context, "Failed to show score screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.score, this, true);
 
-        player = findViewById(R.id.player);
+        score_player = findViewById(R.id.score_player);
         score_try = findViewById(R.id.score_try);
         score_con = findViewById(R.id.score_con);
         score_goal = findViewById(R.id.score_goal);
@@ -34,8 +34,8 @@ public class Score extends LinearLayout{
         String[] aPlayerNumbers = new String[] {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
         ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
         aaPlayerNumbers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        player.setAdapter(aaPlayerNumbers);
-        player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        score_player.setAdapter(aaPlayerNumbers);
+        score_player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 player_no = position;
@@ -53,15 +53,7 @@ public class Score extends LinearLayout{
         score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);
-
-        if(MainActivity.record_player){
-            findViewById(R.id.player_wrap).setVisibility(View.VISIBLE);
-        }else{
-            findViewById(R.id.player_wrap).setVisibility(View.GONE);
-        }
+        score_player.setVisibility(MainActivity.record_player ? View.VISIBLE : View.GONE);
     }
-    public void clear(){
-        player.setSelection(0);
-    }
-
+    public void clear(){score_player.setSelection(0);}
 }

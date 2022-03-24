@@ -62,6 +62,8 @@
 
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
+    <string name="help_news_title">New stuff</string>
+    <string name="help_news">Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
     <string name="help_corrections">During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.</string>
     <string name="help_kickoff_title">Kick off</string>
