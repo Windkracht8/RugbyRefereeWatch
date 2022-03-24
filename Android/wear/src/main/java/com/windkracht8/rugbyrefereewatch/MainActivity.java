@@ -308,7 +308,6 @@ public class MainActivity extends FragmentActivity{
         timer_period_ended = false;
         timer_period = 0;
         match.clear();
-        match = new MatchData();
         updateScore();
         updateButtons();
         updateAfterConfig();

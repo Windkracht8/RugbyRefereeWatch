@@ -91,7 +91,6 @@ public class report extends LinearLayout{
                 ((TextView)findViewById(R.id.tvAwayPenTries)).setText(away.getString("pen_tries"));
                 findViewById(R.id.trPenTries).setVisibility(View.VISIBLE);
             }
-            //DEPRECATED
             if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
                     !home.has("goals") || !away.has("goals") ||
                     (home.getInt("goals") == 0 && away.getInt("goals") == 0)
@@ -187,7 +186,7 @@ public class report extends LinearLayout{
                         case "PENALTY TRY":
                             points = points_try + points_con;
                             break;
-                        case "GOAL"://DEPRECATED
+                        case "GOAL":
                         case "PENALTY GOAL":
                         case "DROP GOAL":
                             points = points_goal;

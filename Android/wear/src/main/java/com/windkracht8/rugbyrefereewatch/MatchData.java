@@ -54,12 +54,12 @@ public class MatchData{
         return ret;
     }
     public void clear(){
-        for(sinbin sinbin_data : home.sinbins){
-            sinbin_data.hide = true;
-        }
-        for(sinbin sinbin_data : away.sinbins){
-            sinbin_data.hide = true;
-        }
+        home.sinbins.clear();
+        away.sinbins.clear();
+        events.clear();
+        match_id = 0;
+        home.team = "home";
+        away.team = "away";
     }
     public void removeEvent(event event_del){
         events.remove(event_del);

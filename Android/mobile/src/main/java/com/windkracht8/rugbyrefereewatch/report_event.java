@@ -48,7 +48,7 @@ public class report_event extends LinearLayout {
                     case "TRY":
                     case "CONVERSION":
                     case "PENALTY TRY":
-                    case "GOAL"://DEPRECATED
+                    case "GOAL":
                     case "PENALTY GOAL":
                     case "DROP GOAL":
                         String score = event.getString("score");
