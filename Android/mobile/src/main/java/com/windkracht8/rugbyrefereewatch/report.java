@@ -260,11 +260,13 @@ public class report extends LinearLayout{
             int home_tries = 0;
             int home_cons = 0;
             int home_pen_tries = 0;
+            int home_goals = 0;
             int home_pen_goals = 0;
             int home_drop_goals = 0;
             int away_tries = 0;
             int away_cons = 0;
             int away_pen_tries = 0;
+            int away_goals = 0;
             int away_pen_goals = 0;
             int away_drop_goals = 0;
             int score_home = 0;
@@ -304,6 +306,15 @@ public class report extends LinearLayout{
                             score_away += points_try + points_con;
                         }
                         break;
+                    case "GOAL":
+                        if(event.getString("team").equals("home")){
+                            home_goals++;
+                            score_home += points_goal;
+                        }else{
+                            away_goals++;
+                            score_away += points_goal;
+                        }
+                        break;
                     case "PENALTY GOAL":
                         if(event.getString("team").equals("home")){
                             home_pen_goals++;
@@ -340,6 +351,7 @@ public class report extends LinearLayout{
             home.put("tries", home_tries);
             home.put("cons", home_cons);
             home.put("pen_tries", home_pen_tries);
+            home.put("goals", home_goals);
             home.put("pen_goals", home_pen_goals);
             home.put("drop_goals", home_drop_goals);
             match.put("home", home);
@@ -350,7 +362,8 @@ public class report extends LinearLayout{
             away.put("tot", score_away);
             away.put("tries", away_tries);
             away.put("cons", away_cons);
-            home.put("pen_tries", away_pen_tries);
+            away.put("pen_tries", away_pen_tries);
+            away.put("goals", away_goals);
             away.put("pen_goals", away_pen_goals);
             away.put("drop_goals", away_drop_goals);
             match.put("away", away);
@@ -410,11 +423,11 @@ public class report extends LinearLayout{
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
-            boolean show_cons = home.has("cons") && away.has("cons") && (home.getInt("cons") == 0 || away.getInt("cons") == 0);
-            boolean show_pen_tries = home.has("pen_tries") && away.has("pen_tries") && (home.getInt("pen_tries") == 0 || away.getInt("pen_tries") == 0);
-            boolean show_goals = home.has("goals") && away.has("goals") && (home.getInt("goals") == 0 || away.getInt("goals") == 0);
-            boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") == 0 || away.getInt("pen_goals") == 0);
-            boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") == 0 || away.getInt("drop_goals") == 0);
+            boolean show_cons = home.has("cons") && away.has("cons") && (home.getInt("cons") > 0 || away.getInt("cons") > 0);
+            boolean show_pen_tries = home.has("pen_tries") && away.has("pen_tries") && (home.getInt("pen_tries") > 0 || away.getInt("pen_tries") > 0);
+            boolean show_goals = home.has("goals") && away.has("goals") && (home.getInt("goals") > 0 || away.getInt("goals") > 0);
+            boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") > 0 || away.getInt("pen_goals") > 0);
+            boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") > 0 || away.getInt("drop_goals") > 0);
             shareBody.append(MainActivity.getTeamName(home)).append("\n");
             shareBody.append("  Tries: ").append(home.getString("tries")).append("\n");
             if(show_cons){

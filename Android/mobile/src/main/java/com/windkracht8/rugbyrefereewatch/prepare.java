@@ -1,6 +1,8 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ public class prepare extends LinearLayout{
     private Button bWatchSettings;
     private Spinner sTimerType;
     private boolean watch_settings = false;
+    private boolean has_changed = false;
 
     public prepare(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -63,6 +66,7 @@ public class prepare extends LinearLayout{
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+                has_changed = true;
                 switch(position){
                     case 0://15s
                         etTimePeriod.setText(String.valueOf(40));
@@ -129,6 +133,17 @@ public class prepare extends LinearLayout{
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        etHomeName.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
+        });
+        etAwayName.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
+        });
+
         sHomeColor.setAdapter(adapter);
         for(int i=0;i<sHomeColor.getCount();i++){
             if(sHomeColor.getItemAtPosition(i).equals("green")){
@@ -136,6 +151,13 @@ public class prepare extends LinearLayout{
                 break;
             }
         }
+        sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){has_changed = true;}
+            public void onNothingSelected(AdapterView<?> adapterView){
+                has_changed = true;
+            }
+        });
+
         sAwayColor.setAdapter(adapter);
         for(int i=0;i<sAwayColor.getCount();i++){
             if(sAwayColor.getItemAtPosition(i).equals("red")){
@@ -143,6 +165,12 @@ public class prepare extends LinearLayout{
                 break;
             }
         }
+        sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){has_changed = true;}
+            public void onNothingSelected(AdapterView<?> adapterView){
+                has_changed = true;
+            }
+        });
 
         String[] aCountType = new String[] {"count up", "count down"};
         ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
@@ -193,6 +221,7 @@ public class prepare extends LinearLayout{
         return settings;
     }
     public void gotSettings(JSONObject settings){
+        if(has_changed){return;}
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
             if(settings.has("home_color")) selectItem(sHomeColor, settings.getString("home_color"));

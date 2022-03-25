@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, goal_penClick, goal_dropClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -51,7 +51,7 @@ var match = {
 	matchid: 0
 };
 
-window.onload = function () {
+window.onload = function(){
 	document.addEventListener('tizenhwkey', function(e){
 		if(e.keyName === "back"){
 			back();
@@ -484,8 +484,7 @@ function showCorrect(){
 		if(value.what !== "TRY" &&
 			value.what !== "CONVERSION" &&
 			value.what !== "PENALTY TRY" &&
-			value.what !== "PENALTY GOAL" &&
-			value.what !== "DROP GOAL" &&
+			value.what !== "GOAL" &&
 			value.what !== "YELLOW CARD" &&
 			value.what !== "RED CARD" 
 		){
@@ -834,7 +833,7 @@ function settingsRead(newsettings){
 }
 
 function noStoredSettings(){
-	$('#help_intro').show();
+	$('#help_welcome').show();
 	showHelp();
 	file_storeSettings(match.settings);
 }

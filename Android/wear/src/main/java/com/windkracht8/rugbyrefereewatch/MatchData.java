@@ -54,12 +54,22 @@ public class MatchData{
         return ret;
     }
     public void clear(){
-        home.sinbins.clear();
-        away.sinbins.clear();
-        events.clear();
         match_id = 0;
+        events.clear();
         home.team = "home";
+        home.tot = 0;
+        home.tries = 0;
+        home.cons = 0;
+        home.pen_tries = 0;
+        home.goals = 0;
+        home.sinbins.clear();
         away.team = "away";
+        away.tot = 0;
+        away.tries = 0;
+        away.cons = 0;
+        away.pen_tries = 0;
+        away.goals = 0;
+        away.sinbins.clear();
     }
     public void removeEvent(event event_del){
         events.remove(event_del);
@@ -67,9 +77,9 @@ public class MatchData{
 
         switch(event_del.what){
             case "YELLOW CARD":
-                for(sinbin sinbin : team_edit.sinbins){
-                    if(event_del.id == sinbin.id){
-                        sinbin.hide = true;
+                for(sinbin sb : team_edit.sinbins){
+                    if(event_del.id == sb.id){
+                        team_edit.sinbins.remove(sb);
                         return;
                     }
                 }
@@ -118,6 +128,14 @@ public class MatchData{
         public void addSinbin(long id, long end){
             sinbin sb = new sinbin(id, end);
             sinbins.add(sb);
+        }
+        public boolean hasSinbin(long id){
+            for(sinbin sb : sinbins){
+                if(id == sb.id){
+                    return true;
+                }
+            }
+            return false;
         }
         public JSONObject toJson(Context context){
             JSONObject ret = new JSONObject();

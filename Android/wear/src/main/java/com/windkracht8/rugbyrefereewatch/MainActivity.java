@@ -473,7 +473,7 @@ public class MainActivity extends FragmentActivity{
         }
         for(int i = al_sinbins_ui.size(); i > 0; i--){
             Sinbin sinbin_ui = al_sinbins_ui.get(i-1);
-            if(sinbin_ui.sinbin.hide){
+            if(!team.hasSinbin(sinbin_ui.sinbin.id) || sinbin_ui.sinbin.hide){
                 llSinbins.removeView(sinbin_ui);
                 al_sinbins_ui.remove(sinbin_ui);
             }else{

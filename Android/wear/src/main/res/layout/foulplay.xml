@@ -7,7 +7,7 @@
     android:layout_marginEnd="10dp"
     android:orientation="vertical">
     <Spinner
-        android:id="@+id/foulplay_player"
+        android:id="@+id/foulPlay_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
