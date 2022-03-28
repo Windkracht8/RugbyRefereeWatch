@@ -469,7 +469,6 @@ function penalty_tryClick(){
 	$('#foulplay').hide();
 	var player = match.settings.record_player === 1 ? $('#foulplay_player').val() : null;
 	logEvent("PENALTY TRY", team_edit, player);
-
 }
 
 function card_redClick(){

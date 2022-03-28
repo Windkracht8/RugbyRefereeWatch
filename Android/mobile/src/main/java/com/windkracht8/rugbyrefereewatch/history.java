@@ -134,7 +134,7 @@ public class history extends LinearLayout{
             Log.i("history", "matches file does not exists yet");
         }catch(Exception e){
             Log.e("history", "loadMatches matches: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to read message from storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Failed to read matches from storage", Toast.LENGTH_SHORT).show();
         }
         showMatches();
 
@@ -162,11 +162,9 @@ public class history extends LinearLayout{
     }
     private void showMatches(){
         try{
-            if(llMatches.getChildCount() > 0)
-                llMatches.removeAllViews();
-            Context context = getContext();
+            if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
             for(int i = 0; i < matches.size(); i++){
-                llMatches.addView(new history_match(context, matches.get(i), this, i == matches.size()-1));
+                llMatches.addView(new history_match(getContext(), matches.get(i), this, i == matches.size()-1));
             }
         }catch(Exception e){
             Log.e("history", "showMatches: " + e.getMessage());
@@ -176,10 +174,7 @@ public class history extends LinearLayout{
 
     public void storeMatches(){
         try{
-            JSONArray jaMatches = new JSONArray();
-            for(int i=0; i < matches.size(); i++){
-                jaMatches.put(matches.get(i));
-            }
+            JSONArray jaMatches = new JSONArray(matches);
             FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
             osr.write(jaMatches.toString());
@@ -232,6 +227,7 @@ public class history extends LinearLayout{
             }
         }
         storeMatches();
+        showMatches();
         selectionChanged();
     }
     public void selectionChanged(){
@@ -260,13 +256,14 @@ public class history extends LinearLayout{
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
                     storeMatches();
+                    showMatches();
                     return;
                 }
             }
         }catch(Exception e){
             Log.e("history", "updateMatch: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to update match", Toast.LENGTH_SHORT).show();
         }
+        Toast.makeText(getContext(), "Failed to update match", Toast.LENGTH_SHORT).show();
     }
 
     public void exportSelected(){

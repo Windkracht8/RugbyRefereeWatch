@@ -31,6 +31,8 @@
     <string name="bGetMatches_text">Get matches from watch</string>
     <string name="cbScreenOn_text">Keep screen on</string>
     <string name="bExport_text">Export selected</string>
+    <string name="bSaveCustom_text">Save match type</string>
+    <string name="bDelCustom_text">Delete match type</string>
     <string name="etPointsTry_text">Points for Try</string>
     <string name="etPointsCon_text">Points for Conversion</string>
     <string name="etPointsGoal_text">Points for Goal</string>
@@ -70,6 +72,7 @@
 
     <string name="matches_filename">matches.json</string>
     <string name="deleted_matches_filename">deleted_matches.json</string>
+    <string name="match_types_filename">match_types.json</string>
 
     <string name="os_wear">WearOS</string>
     <string name="os_tizen">Tizen</string>

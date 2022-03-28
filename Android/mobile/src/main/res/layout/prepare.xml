@@ -87,6 +87,32 @@
                     android:contentDescription="@string/sMatchType_desc"/>
             </TableRow>
             <TableRow
+                android:id="@+id/trSaveCustom"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/bSaveCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="@string/bSaveCustom_text"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:layout_span="2" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trDelCustom"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/bDelCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="@string/bDelCustom_text"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:layout_span="2" />
+            </TableRow>
+            <TableRow
                 android:id="@+id/trTimePeriod"
                 android:visibility="gone">
                 <TextView

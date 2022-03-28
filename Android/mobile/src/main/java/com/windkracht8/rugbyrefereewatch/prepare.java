@@ -1,5 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,9 +15,20 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.LinearLayout;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class prepare extends LinearLayout{
     private EditText etHomeName;
@@ -36,12 +48,16 @@ public class prepare extends LinearLayout{
     private Spinner sTimerType;
     private boolean watch_settings = false;
     private boolean has_changed = false;
+    private JSONArray customMatchTypes;
+    private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
     public prepare(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, "Failed to show prepare", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.prepare, this, true);
+
+        customMatchTypes = new JSONArray();
 
         etHomeName = findViewById(R.id.etHomeName);
         etAwayName = findViewById(R.id.etAwayName);
@@ -59,7 +75,6 @@ public class prepare extends LinearLayout{
         bWatchSettings = findViewById(R.id.bWatchSettings);
         sTimerType = findViewById(R.id.sTimerType);
 
-        String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
@@ -67,6 +82,7 @@ public class prepare extends LinearLayout{
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 has_changed = true;
+                findViewById(R.id.trDelCustom).setVisibility(View.GONE);
                 switch(position){
                     case 0://15s
                         etTimePeriod.setText(String.valueOf(40));
@@ -109,6 +125,7 @@ public class prepare extends LinearLayout{
                         etPointsGoal.setText("0");
                         break;
                     case 5://custom
+                        findViewById(R.id.trSaveCustom).setVisibility(View.VISIBLE);
                         findViewById(R.id.trTimePeriod).setVisibility(View.VISIBLE);
                         findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
                         findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
@@ -116,8 +133,18 @@ public class prepare extends LinearLayout{
                         findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
                         findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
                         break;
+                    default:
+                        findViewById(R.id.trDelCustom).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trTimePeriod).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsTry).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
+                        findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
+                        loadCustomMatchType(sMatchType.getSelectedItem().toString());
                 }
                 if(position != 5){
+                    findViewById(R.id.trSaveCustom).setVisibility(View.GONE);
                     findViewById(R.id.trTimePeriod).setVisibility(View.GONE);
                     findViewById(R.id.trPeriodCount).setVisibility(View.GONE);
                     findViewById(R.id.trSinbin).setVisibility(View.GONE);
@@ -178,6 +205,10 @@ public class prepare extends LinearLayout{
         sTimerType.setAdapter(aaCountType);
 
         bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
+        findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
+        findViewById(R.id.bDelCustom).setOnClickListener(view -> bDelCustomClick());
+
+        loadCustomMatchTypes();
     }
 
     private void bWatchSettingsClick(){
@@ -252,4 +283,141 @@ public class prepare extends LinearLayout{
             }
         }
     }
+    private void loadCustomMatchTypes(){
+        try{
+            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.match_types_filename));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder text = new StringBuilder();
+            String line;
+            while((line = br.readLine()) != null){
+                text.append(line);
+            }
+            br.close();
+            String sMatches = text.toString();
+            JSONArray jsonMatchTypes = new JSONArray(sMatches);
+            for(int i = 0; i < jsonMatchTypes.length(); i++){
+                customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
+            }
+            loadCustomMatchTypesSpinner();
+        }catch(FileNotFoundException e){
+            Log.i("prepare", "match types file does not exists yet");
+        }catch(Exception e){
+            Log.e("prepare", "loadCustomMatchTypes: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void loadCustomMatchTypesSpinner(){
+        try{
+            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(aMatchTypes));
+            for(int i = 0; i < customMatchTypes.length(); i++){
+                alMatchTypes.add(customMatchTypes.getJSONObject(i).getString("name"));
+            }
+            ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, alMatchTypes);
+            aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            sMatchType.setAdapter(aaMatchTypes);
+        }catch(Exception e){
+            Log.e("prepare", "loadCustomMatchTypes: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void loadCustomMatchType(String name){
+        try{
+            for(int i=0; i < customMatchTypes.length(); i++){
+                JSONObject matchType = customMatchTypes.getJSONObject(i);
+                if(matchType.getString("name").equals(name)){
+                    etTimePeriod.setText(matchType.getString("period_time"));
+                    etPeriodCount.setText(matchType.getString("period_count"));
+                    etSinbin.setText(matchType.getString("sinbin"));
+                    etPointsTry.setText(matchType.getString("points_try"));
+                    etPointsCon.setText(matchType.getString("points_con"));
+                    etPointsGoal.setText(matchType.getString("points_goal"));
+                }
+            }
+        }catch(Exception e){
+            Log.e("prepare", "loadCustomMatchType: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void bDelCustomClick(){
+        String name = sMatchType.getSelectedItem().toString();
+        try{
+            for(int i=0; i < customMatchTypes.length(); i++){
+                JSONObject matchType = customMatchTypes.getJSONObject(i);
+                if(matchType.getString("name").equals(name)){
+                    customMatchTypes.remove(i);
+                    break;
+                }
+            }
+            storeCustomMatchTypes();
+            loadCustomMatchTypesSpinner();
+        }catch(Exception e){
+            Log.e("prepare", "bDelCustomClick: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to delete match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void bSaveCustomClick(){
+        final EditText etName = new EditText(getContext());
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("Save custom match type")
+                .setView(etName)
+                .setPositiveButton("Save", (dialog1, which) -> saveCustomMatch(etName.getText().toString()))
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
+    }
+    private void saveCustomMatch(String name){
+        try{
+            boolean overwrite = false;
+            for(int i=0; i < customMatchTypes.length(); i++){
+                JSONObject matchType = customMatchTypes.getJSONObject(i);
+                if(matchType.getString("name").equals(name)){
+                    overwrite = true;
+                    customMatch(matchType);
+                }
+            }
+            if(!overwrite){
+                JSONObject matchType = new JSONObject();
+                matchType.put("name", name);
+                customMatch(matchType);
+                customMatchTypes.put(matchType);
+            }
+            storeCustomMatchTypes();
+            loadCustomMatchTypesSpinner();
+            SpinnerAdapter sa = sMatchType.getAdapter();
+            for(int i=sa.getCount()-1; i>=0; i--){
+                if(sa.getItem(i).toString().equals(name)) {
+                    sMatchType.setSelection(i);
+                }
+            }
+        }catch(Exception e){
+            Log.e("prepare", "saveCustomMatch: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void customMatch(JSONObject cm){
+        try{
+            cm.put("period_time", etTimePeriod.getText().toString());
+            cm.put("period_count", etPeriodCount.getText().toString());
+            cm.put("sinbin", etSinbin.getText().toString());
+            cm.put("points_try", etPointsTry.getText().toString());
+            cm.put("points_con", etPointsCon.getText().toString());
+            cm.put("points_goal", etPointsGoal.getText().toString());
+        }catch(Exception e){
+            Log.e("prepare", "customMatch: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void storeCustomMatchTypes(){
+        try{
+            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
+            OutputStreamWriter osr = new OutputStreamWriter(fos);
+            osr.write(customMatchTypes.toString());
+            osr.close();
+        }catch(Exception e){
+            Log.e("prepare", "storeCustomMatch: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
