@@ -457,4 +457,5 @@ public class TabPrepare extends LinearLayout{
         }
         return false;
     }
+    public JSONArray getCustomMatchTypes(){return customMatchTypes;}
 }

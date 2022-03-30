@@ -98,15 +98,13 @@ public class TabHistory extends LinearLayout{
             }
         }
     }
-    public JSONObject getDeletedMatches(){
+    public JSONArray getDeletedMatches(){
         try{
             JSONArray jaDeletedMatches = new JSONArray();
             for(int i=0; i < deleted_matches.size(); i++){
                 jaDeletedMatches.put(deleted_matches.get(i));
             }
-            JSONObject joDeletedMatches = new JSONObject();
-            joDeletedMatches.put("deleted_matches", jaDeletedMatches);
-            return joDeletedMatches;
+            return jaDeletedMatches;
         }catch(Exception e){
             Log.e("TabHistory", "getDeletedMatches: " + e.getMessage());
         }

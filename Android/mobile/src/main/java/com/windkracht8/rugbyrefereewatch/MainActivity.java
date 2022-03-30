@@ -386,7 +386,15 @@ public class MainActivity extends AppCompatActivity{
         setButtonProcessing(R.id.bGetMatches);
         if(cantSendRequest()){return;}
         gotError("");
-        sendRequest( "getMatches", tabHistory.getDeletedMatches());
+        try {
+            JSONObject requestData = new JSONObject();
+            requestData.put("deleted_matches", tabHistory.getDeletedMatches());
+            requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
+            sendRequest("getMatches", requestData);
+        }catch(Exception e){
+            Log.e("MainActivity", "bGetMatchesClick exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Failed to request matches from watch", Toast.LENGTH_SHORT).show();
+        }
     }
     public void bGetMatchClick(){
         setButtonProcessing(R.id.bGetMatch);
@@ -469,7 +477,14 @@ public class MainActivity extends AppCompatActivity{
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 if(cantSendRequest()){break;}
                 gotError("");
-                sendRequest( "sync", tabHistory.getDeletedMatches());
+                try {
+                    JSONObject requestData = new JSONObject();
+                    requestData.put("deleted_matches", tabHistory.getDeletedMatches());
+                    requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
+                    sendRequest("sync", requestData);
+                }catch(Exception e){
+                    Log.e("MainActivity", "updateStatus CONNECTED exception: " + e.getMessage());
+                }
                 break;
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
