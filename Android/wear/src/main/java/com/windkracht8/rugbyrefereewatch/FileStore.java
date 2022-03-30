@@ -67,11 +67,11 @@ public class FileStore{
             JSONArray deleted_matches = request_data_jo.getJSONArray("deleted_matches");
 
             JSONArray matches = file_readMatches(context);
-            for(int i = matches.length(); i > 0; i--){
-                for(int j = 0; j < deleted_matches.length(); j++){
-                    JSONObject match = matches.getJSONObject(i-1);
-                    if(match.getLong("matchid") == deleted_matches.getLong(j)){
-                        matches.remove(i-1);
+            for(int d = 0; d < deleted_matches.length(); d++){
+                for(int m = matches.length()-1; m >= 0; m--){
+                    JSONObject match = matches.getJSONObject(m);
+                    if(match.getLong("matchid") == deleted_matches.getLong(d)){
+                        matches.remove(m);
                     }
                 }
             }
