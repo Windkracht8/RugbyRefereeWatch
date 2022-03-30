@@ -226,6 +226,7 @@ public class TabPrepare extends LinearLayout{
         watch_settings = !watch_settings;
     }
     public JSONObject getSettings(){
+        if(checkSettings()) return null;
         JSONObject settings = new JSONObject();
         try{
             settings.put("home_name", etHomeName.getText());
@@ -245,8 +246,8 @@ public class TabPrepare extends LinearLayout{
                 settings.put("timer_type", sTimerType.getSelectedItemPosition());
             }
         }catch(Exception e){
-            Log.e("TabReport", "getSettings: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to get settings from watch", Toast.LENGTH_SHORT).show();
+            Log.e("TabPrepare", "getSettings: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to send settings to watch", Toast.LENGTH_SHORT).show();
             return null;
         }
         return settings;
@@ -271,7 +272,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getInt("screen_on") == 1);
             if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
         }catch(Exception e){
-            Log.e("TabReport", "gotSettings: " + e.getMessage());
+            Log.e("TabPrepare", "gotSettings: " + e.getMessage());
             Toast.makeText(getContext(), "Problem with settings from watch", Toast.LENGTH_SHORT).show();
         }
     }
@@ -301,9 +302,9 @@ public class TabPrepare extends LinearLayout{
             }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.i("TabReport", "match types file does not exists yet");
+            Log.i("TabPrepare", "match types file does not exists yet");
         }catch(Exception e){
-            Log.e("TabReport", "loadCustomMatchTypes: " + e.getMessage());
+            Log.e("TabPrepare", "loadCustomMatchTypes: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
         }
     }
@@ -317,7 +318,7 @@ public class TabPrepare extends LinearLayout{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e("TabReport", "loadCustomMatchTypes: " + e.getMessage());
+            Log.e("TabPrepare", "loadCustomMatchTypes: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
         }
     }
@@ -335,7 +336,7 @@ public class TabPrepare extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("TabReport", "loadCustomMatchType: " + e.getMessage());
+            Log.e("TabPrepare", "loadCustomMatchType: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -352,11 +353,12 @@ public class TabPrepare extends LinearLayout{
             storeCustomMatchTypes();
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
-            Log.e("TabReport", "bDelCustomClick: " + e.getMessage());
+            Log.e("TabPrepare", "bDelCustomClick: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to delete match type", Toast.LENGTH_SHORT).show();
         }
     }
     private void bSaveCustomClick(){
+        if(checkSettings()) return;
         final EditText etName = new EditText(getContext());
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Save custom match type")
@@ -391,7 +393,7 @@ public class TabPrepare extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("TabReport", "saveCustomMatch: " + e.getMessage());
+            Log.e("TabPrepare", "saveCustomMatch: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -404,7 +406,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_con", etPointsCon.getText().toString());
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
-            Log.e("TabReport", "customMatch: " + e.getMessage());
+            Log.e("TabPrepare", "customMatch: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -415,9 +417,44 @@ public class TabPrepare extends LinearLayout{
             osr.write(customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e("TabReport", "storeCustomMatch: " + e.getMessage());
+            Log.e("TabPrepare", "storeCustomMatch: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }
-
+    private boolean checkSettings(){
+        if(checkSettingsEditText(etHomeName, false)){
+            Toast.makeText(getContext(), "Home name can't be empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if(checkSettingsEditText(etAwayName, false)){
+            Toast.makeText(getContext(), "Away name can't be empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if(checkSettingsEditText(etTimePeriod, false)){
+            Toast.makeText(getContext(), "Time/period can't be empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if(checkSettingsEditText(etPeriodCount, false)){
+            Toast.makeText(getContext(), "Period count can't be empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        checkSettingsEditText(etSinbin, true);
+        if(checkSettingsEditText(etPointsTry, false)){
+            Toast.makeText(getContext(), "Points for Try can't be empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        checkSettingsEditText(etPointsCon, true);
+        checkSettingsEditText(etPointsGoal, true);
+        return false;
+    }
+    private boolean checkSettingsEditText(EditText check, boolean nullable){
+        if(check.getText().length() < 1){
+            if(nullable){
+                check.setText("0");
+            }else{
+                return true;
+            }
+        }
+        return false;
+    }
 }

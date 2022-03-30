@@ -122,6 +122,40 @@ public class FileStore{
         context.sendBroadcast(intent);
     }
 
+    public static void file_storeCustomMatchTypes(Context context){
+        try{
+            FileOutputStream fos = context.openFileOutput(context.getString(R.string.match_types_filename), Context.MODE_PRIVATE);
+            OutputStreamWriter osr = new OutputStreamWriter(fos);
+            osr.write(Conf.customMatchTypes.toString());
+            osr.close();
+        }catch(Exception e){
+            Log.e("FileStore", "file_storeCustomMatchTypes: " + e.getMessage());
+            MainActivity.makeToast(context, "Failed to store match types");
+        }
+    }
+    public static void file_readCustomMatchTypes(Context context){
+        try{
+            FileInputStream fis = context.openFileInput(context.getString(R.string.match_types_filename));
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder text = new StringBuilder();
+            String line;
+            while((line = br.readLine()) != null){
+                text.append(line);
+            }
+            br.close();
+            String sMatches = text.toString();
+            JSONArray jsonMatchTypes = new JSONArray(sMatches);
+            for(int i = 0; i < jsonMatchTypes.length(); i++){
+                Conf.customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
+            }
+        }catch(FileNotFoundException e){
+            Log.i("FileStore", "match types file does not exists yet");
+        }catch(Exception e){
+            Log.e("FileStore", "file_readCustomMatchTypes: " + e.getMessage());
+            MainActivity.makeToast(context, "Failed to read custom match types from storage");
+        }
+    }
     private static String getFileAsString(Context context, int file){
         try{
             FileInputStream fis = context.openFileInput(context.getString(file));

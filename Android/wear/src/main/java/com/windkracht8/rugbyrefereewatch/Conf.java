@@ -1,7 +1,9 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +14,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Conf extends ScrollView{
     private Spinner color_home;
@@ -26,6 +34,8 @@ public class Conf extends ScrollView{
     private SwitchCompat record_player;
     private SwitchCompat screen_on;
     private Spinner timer_type;
+    public static JSONArray customMatchTypes;
+    private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
     private boolean onlyWatchSettings = false;
 
@@ -34,6 +44,8 @@ public class Conf extends ScrollView{
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, "Failed to show correction screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf, this, true);
+
+        customMatchTypes = new JSONArray();
 
         color_home = findViewById(R.id.color_home);
         color_away = findViewById(R.id.color_away);
@@ -99,6 +111,8 @@ public class Conf extends ScrollView{
                     case 5://custom
                         findViewById(R.id.custom_match).setVisibility(View.VISIBLE);
                         break;
+                    default://custom match type
+                        loadCustomMatchType(match_type.getSelectedItem().toString());
                 }
                 if(position != 5){
                     findViewById(R.id.custom_match).setVisibility(View.GONE);
@@ -139,9 +153,14 @@ public class Conf extends ScrollView{
     }
 
     public void load(MatchData match){
+        loadCustomMatchTypesSpinner();
         selectItem(color_home, match.home.color);
         selectItem(color_away, match.away.color);
-        selectItem(match_type, match.match_type);
+        if(!selectItem(match_type, match.match_type)){
+            //TODO: Add new custom match type
+            addCustomMatchType(match);
+            selectItem(match_type, match.match_type);
+        }
 
         period_time.setSelection(match.period_time-1);
         period_count.setSelection(match.period_count-1);
@@ -168,13 +187,14 @@ public class Conf extends ScrollView{
         timer_type.setLayoutParams(lp);
         onlyWatchSettings = true;
     }
-    private void selectItem(Spinner spin, String str){
+    private boolean selectItem(Spinner spin, String str){
         for(int i=0;i<spin.getCount();i++){
             if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
-                return;
+                return true;
             }
         }
+        return false;
     }
     public void save(MatchData match){
         if(!onlyWatchSettings){
@@ -193,4 +213,62 @@ public class Conf extends ScrollView{
         MainActivity.screen_on = screen_on.isChecked();
         MainActivity.timer_type = timer_type.getSelectedItemPosition();
     }
+
+    private void addCustomMatchType(MatchData match){
+        try{
+            JSONObject match_type = new JSONObject();
+            match_type.put("name", match.match_type);
+            match_type.put("period_time", match.period_time);
+            match_type.put("period_count", match.period_count);
+            match_type.put("sinbin", match.sinbin);
+            match_type.put("points_try", match.points_try);
+            match_type.put("points_con", match.points_con);
+            match_type.put("points_goal", match.points_goal);
+            customMatchTypes.put(match_type);
+            loadCustomMatchTypesSpinner();
+
+            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+            intent.putExtra("intent_type", "storeCustomMatchTypes");
+            getContext().sendBroadcast(intent);
+        }catch(Exception e){
+            Log.e("Conf", "addCustomMatchType: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to store custom match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadCustomMatchTypesSpinner(){
+        if(customMatchTypes.length() == 0) return;
+        try{
+            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(aMatchTypes));
+            for(int i = 0; i < customMatchTypes.length(); i++){
+                alMatchTypes.add(customMatchTypes.getJSONObject(i).getString("name"));
+            }
+            ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, alMatchTypes);
+            aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            match_type.setAdapter(aaMatchTypes);
+        }catch(Exception e){
+            Log.e("Conf", "loadCustomMatchTypesSpinner: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void loadCustomMatchType(String name){
+        try{
+            for(int i=0; i < customMatchTypes.length(); i++){
+                JSONObject matchType = customMatchTypes.getJSONObject(i);
+                if(matchType.getString("name").equals(name)){
+                    selectItem(period_time, matchType.getString("period_time"));
+                    selectItem(period_count, matchType.getString("period_count"));
+                    selectItem(sinbin, matchType.getString("sinbin"));
+                    selectItem(points_try, matchType.getString("points_try"));
+                    selectItem(points_con, matchType.getString("points_con"));
+                    selectItem(points_goal, matchType.getString("points_goal"));
+                    return;
+                }
+            }
+        }catch(Exception e){
+            Log.e("TabReport", "loadCustomMatchType: " + e.getMessage());
+            Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

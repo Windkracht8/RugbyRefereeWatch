@@ -173,6 +173,9 @@ public class MainActivity extends FragmentActivity{
                                 executorService.submit(() -> FileStore.file_storeSettings(context));
                         }
                         break;
+                    case "storeCustomMatchTypes":
+                        executorService.submit(() -> FileStore.file_storeCustomMatchTypes(context));
+                        break;
                     case "onReceivePrepare":
                         updateAfterConfig();
                         break;
@@ -182,6 +185,7 @@ public class MainActivity extends FragmentActivity{
         registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
 
         executorService.submit(() -> FileStore.file_readSettings(getBaseContext()));
+        executorService.submit(() -> FileStore.file_readCustomMatchTypes(getBaseContext()));
         executorService.submit(() -> FileStore.file_cleanMatches(getBaseContext()));
 
         updateBattery();

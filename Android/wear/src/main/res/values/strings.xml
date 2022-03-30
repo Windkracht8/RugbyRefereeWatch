@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Rugby Referee Watch</string>
     <string name="matches_filename" translatable="false">matches.json</string>
+    <string name="match_types_filename" translatable="false">match_types.json</string>
     <string name="settings_filename" translatable="false">settings.json</string>
     <string name="timer_placeholder">0:00</string>
     <string name="score_try_text">try</string>
