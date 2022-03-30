@@ -236,6 +236,51 @@ public class Conf extends ScrollView{
         }
     }
 
+    public static void syncCustomMatchTypes(Context context, String request_data){
+        try{
+            JSONObject request_data_jo = new JSONObject(request_data);
+            if(!request_data_jo.has("custom_match_types")) return;//fine for now, probably old version of phone app
+            JSONArray customMatchTypes_phone = request_data_jo.getJSONArray("custom_match_types");
+            //TODO: first loop through local and remove that are no longer there
+
+            for(int l=customMatchTypes.length()-1; l>=0; l--){
+                JSONObject matchType = customMatchTypes.getJSONObject(l);
+                boolean found = false;
+                for (int p = 0; p < customMatchTypes_phone.length(); p++){
+                    JSONObject matchType_phone = customMatchTypes_phone.getJSONObject(p);
+                    if(matchType_phone.getString("name").equals(matchType.getString("name"))){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) customMatchTypes.remove(l);
+            }
+            for(int p=0; p < customMatchTypes_phone.length(); p++){
+                JSONObject matchType_phone = customMatchTypes_phone.getJSONObject(p);
+                boolean found = false;
+                for(int l=0; l < customMatchTypes.length(); l++){
+                    JSONObject matchType = customMatchTypes.getJSONObject(l);
+                    if(matchType_phone.getString("name").equals(matchType.getString("name"))){
+                        found = true;
+                        matchType.put("period_time", matchType_phone.getInt("period_time"));
+                        matchType.put("period_count", matchType_phone.getInt("period_count"));
+                        matchType.put("sinbin", matchType_phone.getInt("sinbin"));
+                        matchType.put("points_try", matchType_phone.getInt("points_try"));
+                        matchType.put("points_con", matchType_phone.getInt("points_con"));
+                        matchType.put("points_goal", matchType_phone.getInt("points_goal"));
+                        break;
+                    }
+                }
+                if(!found){
+                    customMatchTypes.put(matchType_phone);
+                }
+            }
+        }catch(Exception e){
+            Log.e("Conf", "syncCustomMatchTypes: " + e.getMessage());
+            MainActivity.makeToast(context, "Failed to sync match types");
+        }
+    }
+
     private void loadCustomMatchTypesSpinner(){
         if(customMatchTypes.length() == 0) return;
         try{
