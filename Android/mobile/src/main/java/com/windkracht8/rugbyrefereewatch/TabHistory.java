@@ -162,9 +162,17 @@ public class TabHistory extends LinearLayout{
     }
     private void showMatches(){
         try{
+            matches.sort((m1, m2) -> {
+                try{
+                    return Long.compare(m1.getLong("matchid"), m2.getLong("matchid"));
+                }catch (Exception e){
+                    Log.i("TabHistory", "failed to sort matches");
+                }
+                return 0;
+            });
             if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
-            for(int i = 0; i < matches.size(); i++){
-                llMatches.addView(new HistoryMatch(getContext(), matches.get(i), this, i == matches.size()-1));
+            for(int i = matches.size()-1; i >= 0; i--){
+                llMatches.addView(new HistoryMatch(getContext(), matches.get(i), this, i == 0));
             }
         }catch(Exception e){
             Log.e("TabHistory", "showMatches: " + e.getMessage());
