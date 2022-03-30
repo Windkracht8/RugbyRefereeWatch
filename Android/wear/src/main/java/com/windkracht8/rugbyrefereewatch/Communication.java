@@ -84,6 +84,7 @@ public class Communication extends WearableListenerService{
         sendRequest(requestType, "responseData", responseData);
     }
     private void onReceiveGetMatch(String requestType){
+        if(MainActivity.match == null)return;
         String responseData = MainActivity.match.toJson(getBaseContext()).toString();
         sendRequest(requestType, "responseData", responseData);
     }

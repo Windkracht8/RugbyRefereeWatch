@@ -24,14 +24,14 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
-public class communication_wear extends WearableListenerService implements DataClient.OnDataChangedListener{
+public class CommsWear extends WearableListenerService implements DataClient.OnDataChangedListener{
     private DataClient dataClient;
     public String status;
     private Handler handler_main;
 
     @SuppressWarnings("unused")
-    public communication_wear(){}
-    public communication_wear(Context context){
+    public CommsWear(){}
+    public CommsWear(Context context){
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
         status = "Searching";
@@ -85,13 +85,13 @@ public class communication_wear extends WearableListenerService implements DataC
             }
             if(dataMap.getString("responseData") == null){return;}
             String responseData = dataMap.getString("responseData");
-            Log.i("communication_wear", "Received " + requestType + ": " + responseData);
+            Log.i("CommsWear", "Received " + requestType + ": " + responseData);
             gotResponse(requestType, responseData);
         }
     }
 
     public static void sendRequest(Context context, final String requestType, final JSONObject requestData){
-        Log.i("communication_wear", "sendRequest: " + requestType);
+        Log.i("CommsWear", "sendRequest: " + requestType);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/rrw");
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());
         putDataMapReq.getDataMap().putString("requestType", requestType);
@@ -105,7 +105,7 @@ public class communication_wear extends WearableListenerService implements DataC
     }
 
     private static void gotError(Context context, final String error){
-        Log.e("communication_wear", "gotError: " + error);
+        Log.e("CommsWear", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "wear");

@@ -14,10 +14,10 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 
-public class report_event_edit extends LinearLayout{
+public class ReportEventEdit extends LinearLayout{
     private JSONObject event;
-    public report_event_edit(Context context){super(context);}
-    public report_event_edit(Context context, JSONObject event){
+    public ReportEventEdit(Context context){super(context);}
+    public ReportEventEdit(Context context, JSONObject event){
         super(context);
         this.event = event;
 
@@ -82,7 +82,7 @@ public class report_event_edit extends LinearLayout{
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
             }
         }catch(Exception e){
-            Log.e("report_event_edit", "report_event_edit: " + e.getMessage());
+            Log.e("ReportEventEdit", "ReportEventEdit: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
@@ -92,11 +92,10 @@ public class report_event_edit extends LinearLayout{
         try{
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intent_type", "bDelClick");
-            intent.putExtra("source", "report");
             intent.putExtra("event_id", event.getInt("id"));
             getContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("report_event_edit", "bDelClick: " + e.getMessage());
+            Log.e("ReportEventEdit", "bDelClick: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to delete event", Toast.LENGTH_SHORT).show();
         }
     }
@@ -141,7 +140,7 @@ public class report_event_edit extends LinearLayout{
             String who = ((EditText)findViewById(R.id.who)).getText().toString();
             if(event.has("who") || who.length() > 0) event.put("who", Integer.parseInt(who));
         }catch(Exception e){
-            Log.e("report_event_edit", "toJson: " + e.getMessage());
+            Log.e("ReportEventEdit", "toJson: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to save match", Toast.LENGTH_SHORT).show();
         }
         return event;

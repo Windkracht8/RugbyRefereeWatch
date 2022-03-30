@@ -264,7 +264,8 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
     }
     public void bRestClick(){
-        if(match.events.get(match.events.size()-1).what.equals("Time off")){
+        //How did someone get here with no events in the match?
+        if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("Time off")){
             match.events.remove(match.events.size()-1);
         }
         match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null, 0);
@@ -316,7 +317,9 @@ public class MainActivity extends FragmentActivity{
     private void updateButtons(){
         String ui_status = "";
         bOverTimer.setVisibility(View.GONE);
+        bOverTimer.setOnClickListener(null);
         bBottom.setVisibility(View.GONE);
+        bBottom.setOnClickListener(null);
         bConf.setVisibility(View.GONE);
         bConfWatch.setVisibility(View.GONE);
         findViewById(R.id.button_background).setVisibility(View.GONE);

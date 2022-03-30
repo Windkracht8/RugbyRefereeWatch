@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class report extends LinearLayout{
+public class TabReport extends LinearLayout{
     private LinearLayout llEvents;
 
     private JSONObject match;
@@ -31,11 +31,11 @@ public class report extends LinearLayout{
 
     private int view = 0;
 
-    public report(Context context, AttributeSet attrs){
+    public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
-        inflater.inflate(R.layout.report, this, true);
+        inflater.inflate(R.layout.tab_report, this, true);
 
         TextView tvTime = findViewById(R.id.tvTime);
         tvTime.measure(0, 0);
@@ -147,13 +147,13 @@ public class report extends LinearLayout{
                 JSONObject event = events.getJSONObject(i);
                 switch(view){
                     case 0:
-                        llEvents.addView(new report_event(context, event));
+                        llEvents.addView(new ReportEvent(context, event));
                         break;
                     case 1:
-                        llEvents.addView(new report_event_full(context, event, match));
+                        llEvents.addView(new ReportEventFull(context, event, match));
                         break;
                     case 2:
-                        llEvents.addView(new report_event_edit(context, event));
+                        llEvents.addView(new ReportEventEdit(context, event));
                         break;
                 }
             }
@@ -236,7 +236,7 @@ public class report extends LinearLayout{
     public void bDelClick(int event_id){
         try{
             for(int i=0; i<llEvents.getChildCount(); i++) {
-                report_event_edit ree = (report_event_edit) llEvents.getChildAt(i);
+                ReportEventEdit ree = (ReportEventEdit) llEvents.getChildAt(i);
                 JSONObject event = ree.toJson();
                 if(event.getInt("id") == event_id){
                     llEvents.removeViewAt(i);
@@ -274,7 +274,7 @@ public class report extends LinearLayout{
 
             JSONArray events = new JSONArray();
             for(int i=0; i<llEvents.getChildCount(); i++){
-                report_event_edit ree = (report_event_edit)llEvents.getChildAt(i);
+                ReportEventEdit ree = (ReportEventEdit)llEvents.getChildAt(i);
                 JSONObject event = ree.toJson();
                 String what = event.getString("what");
                 String score = score_home + ":" + score_away;
@@ -370,7 +370,6 @@ public class report extends LinearLayout{
 
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intent_type", "updateMatch");
-            intent.putExtra("source", "report");
             intent.putExtra("match", match.toString());
             getContext().sendBroadcast(intent);
             gotMatch(match);

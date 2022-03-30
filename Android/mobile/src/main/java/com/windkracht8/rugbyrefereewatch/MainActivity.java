@@ -45,8 +45,8 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity{
     private GestureDetector gestureDetector;
-    private communication_tizen comms_tizen = null;
-    private communication_wear comms_wear = null;
+    private CommsTizen comms_tizen = null;
+    private CommsWear comms_wear = null;
     private SharedPreferences.Editor sharedPreferences_editor;
 
     private long back_press_time;
@@ -54,23 +54,23 @@ public class MainActivity extends AppCompatActivity{
     private boolean tizen_not_wear = true;
     private Handler handler_main;
 
-    private history hHistory;
-    private report rReport;
-    private prepare pPrepare;
+    private TabHistory tabHistory;
+    private TabReport tabReport;
+    private TabPrepare tabPrepare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
-        hHistory = findViewById(R.id.hHistory);
-        rReport = findViewById(R.id.rReport);
-        pPrepare = findViewById(R.id.pPrepare);
+        tabHistory = findViewById(R.id.tabHistory);
+        tabReport = findViewById(R.id.tabReport);
+        tabPrepare = findViewById(R.id.tabPrepare);
         findViewById(R.id.bConnect).setOnClickListener(view -> bConnectClick());
         findViewById(R.id.bSearch).setOnClickListener(view -> bSearchClick());
-        findViewById(R.id.tabHistory).setOnClickListener(view -> tabHistoryClick());
-        findViewById(R.id.tabReport).setOnClickListener(view -> tabReportClick());
-        findViewById(R.id.tabPrepare).setOnClickListener(view -> tabPrepareClick());
+        findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
+        findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
+        findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
         findViewById(R.id.bGetMatches).setOnClickListener(view -> bGetMatchesClick());
         findViewById(R.id.bGetMatch).setOnClickListener(view -> bGetMatchClick());
         findViewById(R.id.bPrepare).setOnClickListener(view -> bPrepareClick());
@@ -109,9 +109,9 @@ public class MainActivity extends AppCompatActivity{
         rrwReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent){
-                if(!intent.hasExtra("intent_type") || !intent.hasExtra("source")){return;}
-                if(tizen_not_wear && intent.getStringExtra("source").equals("wear")){return;}
-                if(!tizen_not_wear && intent.getStringExtra("source").equals("tizen")){return;}
+                if(!intent.hasExtra("intent_type")){return;}
+                if(tizen_not_wear && intent.hasExtra("source") && intent.getStringExtra("source").equals("wear")){return;}
+                if(!tizen_not_wear && intent.hasExtra("source") && intent.getStringExtra("source").equals("tizen")){return;}
                 switch(intent.getStringExtra("intent_type")){
                     case "gotError":
                         if(!intent.hasExtra("error")){return;}
@@ -130,11 +130,11 @@ public class MainActivity extends AppCompatActivity{
                         break;
                     case "bDelClick":
                         if(!intent.hasExtra("event_id")){return;}
-                        rReport.bDelClick(intent.getIntExtra("event_id", 0));
+                        tabReport.bDelClick(intent.getIntExtra("event_id", 0));
                         break;
                     case "updateMatch":
                         if(!intent.hasExtra("match")){return;}
-                        hHistory.updateMatch(intent.getStringExtra("match"));
+                        tabHistory.updateMatch(intent.getStringExtra("match"));
                         break;
                     case "exportMatches":
                         exportMatches();
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
     private void initTizen(){
         try{
             getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
-            SAAgentV2.requestAgent(getApplicationContext(), communication_tizen.class.getName(), SAAgentCallback);
+            SAAgentV2.requestAgent(getApplicationContext(), CommsTizen.class.getName(), SAAgentCallback);
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
             updateStatus("DISCONNECTED");
         }catch(PackageManager.NameNotFoundException e){
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity{
             findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.wearable.app"))));
             return;
         }
-        comms_wear = new communication_wear(getApplicationContext());
+        comms_wear = new CommsWear(getApplicationContext());
         findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
         findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
         findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity{
             br.close();
             String matches_new_s = text.toString();
             JSONArray matches_new_ja = new JSONArray(matches_new_s);
-            hHistory.gotMatches(matches_new_ja);
+            tabHistory.gotMatches(matches_new_ja);
         }catch(Exception e){
             Log.e("MainActivity", "handleIntent read file: " + e.getMessage());
             Toast.makeText(getApplicationContext(), "Problem with matches received from watch", Toast.LENGTH_SHORT).show();
@@ -276,13 +276,13 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onBackPressed(){
         handler_main.removeCallbacks(this::explainDoubleBack);
-        if(hHistory.getVisibility() == View.VISIBLE){
-            if(hHistory.unselect()) return;
-        }else if(rReport.getVisibility() == View.VISIBLE){
-            tabHistoryClick();
+        if(tabHistory.getVisibility() == View.VISIBLE){
+            if(tabHistory.unselect()) return;
+        }else if(tabReport.getVisibility() == View.VISIBLE){
+            tabHistoryLabelClick();
             return;
-        }else if(pPrepare.getVisibility() == View.VISIBLE){
-            tabReportClick();
+        }else if(tabPrepare.getVisibility() == View.VISIBLE){
+            tabReportLabelClick();
             return;
         }
         Date date = new Date();
@@ -333,18 +333,18 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void onSwipeRight(){//TODO: does not work if swiping below content
-        if(rReport.getVisibility() == View.VISIBLE){
-            tabHistoryClick();
-        }else if(pPrepare.getVisibility() == View.VISIBLE){
-            tabReportClick();
+        if(tabReport.getVisibility() == View.VISIBLE){
+            tabHistoryLabelClick();
+        }else if(tabPrepare.getVisibility() == View.VISIBLE){
+            tabReportLabelClick();
         }
     }
 
     public void onSwipeLeft(){
-        if(hHistory.getVisibility() == View.VISIBLE){
-            tabReportClick();
-        }else if(rReport.getVisibility() == View.VISIBLE){
-            tabPrepareClick();
+        if(tabHistory.getVisibility() == View.VISIBLE){
+            tabReportLabelClick();
+        }else if(tabReport.getVisibility() == View.VISIBLE){
+            tabPrepareLabelClick();
         }
     }
 
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onAgentAvailable(SAAgentV2 agent){
             if(!tizen_not_wear)return;
-            comms_tizen = (communication_tizen) agent;
+            comms_tizen = (CommsTizen) agent;
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }
 
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity{
         setButtonProcessing(R.id.bGetMatches);
         if(cantSendRequest()){return;}
         gotError("");
-        sendRequest( "getMatches", hHistory.getDeletedMatches());
+        sendRequest( "getMatches", tabHistory.getDeletedMatches());
     }
     public void bGetMatchClick(){
         setButtonProcessing(R.id.bGetMatch);
@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity{
         setButtonProcessing(R.id.bPrepare);
         if(cantSendRequest()){return;}
         gotError("");
-        JSONObject requestData = pPrepare.getSettings();
+        JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
             gotError("Error with settings");
             return;
@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity{
         if(tizen_not_wear){
             comms_tizen.sendRequest(requestType, requestData);
         }else{
-            communication_wear.sendRequest(this, requestType, requestData);
+            CommsWear.sendRequest(this, requestType, requestData);
         }
     }
     private boolean cantSendRequest(){
@@ -426,8 +426,8 @@ public class MainActivity extends AppCompatActivity{
     private void historyMatchClick(String match){
         try{
             JSONObject match_json = new JSONObject(match);
-            rReport.gotMatch(match_json);
-            tabReportClick();
+            tabReport.gotMatch(match_json);
+            tabReportLabelClick();
         }catch(Exception e){
             gotError("Issue with match: " + e.getMessage());
             Toast.makeText(getApplicationContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
@@ -469,7 +469,7 @@ public class MainActivity extends AppCompatActivity{
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 if(cantSendRequest()){break;}
                 gotError("");
-                sendRequest( "sync", hHistory.getDeletedMatches());
+                sendRequest( "sync", tabHistory.getDeletedMatches());
                 break;
             case "OFFLINE":
                 status = getString(R.string.status_OFFLINE);
@@ -522,8 +522,8 @@ public class MainActivity extends AppCompatActivity{
                     if(!syncResponse.has("matches") || !syncResponse.has("settings")){
                         Log.e("MainActivity", "incomplete response");
                     }
-                    hHistory.gotMatches(syncResponse.getJSONArray("matches"));
-                    pPrepare.gotSettings(syncResponse.getJSONObject("settings"));
+                    tabHistory.gotMatches(syncResponse.getJSONArray("matches"));
+                    tabPrepare.gotSettings(syncResponse.getJSONObject("settings"));
                     break;
                 case "getMatches":
                     Log.i("MainActivity.gotResponse", "getMatches");
@@ -531,7 +531,7 @@ public class MainActivity extends AppCompatActivity{
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 2){gotError("invalid response");break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
-                    hHistory.gotMatches(getMatchesResponse);
+                    tabHistory.gotMatches(getMatchesResponse);
                     break;
                 case "getMatch":
                     Log.i("MainActivity.gotResponse", "getMatch");
@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity{
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 1){gotError("invalid response");break;}
                     JSONObject getMatchResponse = new JSONObject(responseData);
-                    rReport.gotMatch(getMatchResponse);
+                    tabReport.gotMatch(getMatchResponse);
                     break;
                 case "prepare":
                     Log.i("MainActivity.gotResponse", "prepare");
@@ -562,29 +562,29 @@ public class MainActivity extends AppCompatActivity{
         ((TextView)findViewById(R.id.tvError)).setText(error);
     }
 
-    public void tabHistoryClick(){
-        findViewById(R.id.tabHistory).setBackgroundResource(R.drawable.tab_active);
-        findViewById(R.id.tabReport).setBackgroundResource(0);
-        findViewById(R.id.tabPrepare).setBackgroundResource(0);
-        hHistory.setVisibility(View.VISIBLE);
-        rReport.setVisibility(View.GONE);
-        pPrepare.setVisibility(View.GONE);
+    public void tabHistoryLabelClick(){
+        findViewById(R.id.tabHistoryLabel).setBackgroundResource(R.drawable.tab_active);
+        findViewById(R.id.tabReportLabel).setBackgroundResource(0);
+        findViewById(R.id.tabPrepareLabel).setBackgroundResource(0);
+        tabHistory.setVisibility(View.VISIBLE);
+        tabReport.setVisibility(View.GONE);
+        tabPrepare.setVisibility(View.GONE);
     }
-    public void tabReportClick(){
-        findViewById(R.id.tabHistory).setBackgroundResource(0);
-        findViewById(R.id.tabReport).setBackgroundResource(R.drawable.tab_active);
-        findViewById(R.id.tabPrepare).setBackgroundResource(0);
-        hHistory.setVisibility(View.GONE);
-        rReport.setVisibility(View.VISIBLE);
-        pPrepare.setVisibility(View.GONE);
+    public void tabReportLabelClick(){
+        findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
+        findViewById(R.id.tabReportLabel).setBackgroundResource(R.drawable.tab_active);
+        findViewById(R.id.tabPrepareLabel).setBackgroundResource(0);
+        tabHistory.setVisibility(View.GONE);
+        tabReport.setVisibility(View.VISIBLE);
+        tabPrepare.setVisibility(View.GONE);
     }
-    public void tabPrepareClick(){
-        findViewById(R.id.tabHistory).setBackgroundResource(0);
-        findViewById(R.id.tabReport).setBackgroundResource(0);
-        findViewById(R.id.tabPrepare).setBackgroundResource(R.drawable.tab_active);
-        hHistory.setVisibility(View.GONE);
-        rReport.setVisibility(View.GONE);
-        pPrepare.setVisibility(View.VISIBLE);
+    public void tabPrepareLabelClick(){
+        findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
+        findViewById(R.id.tabReportLabel).setBackgroundResource(0);
+        findViewById(R.id.tabPrepareLabel).setBackgroundResource(R.drawable.tab_active);
+        tabHistory.setVisibility(View.GONE);
+        tabReport.setVisibility(View.GONE);
+        tabPrepare.setVisibility(View.VISIBLE);
     }
 
     public static String getTeamName(JSONObject team){
@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity{
             try{
                 outputStream = getContentResolver().openOutputStream(uri);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-                bw.write(hHistory.export_matches.toString());
+                bw.write(tabHistory.export_matches.toString());
                 bw.flush();
                 bw.close();
             }catch(Exception e){

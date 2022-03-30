@@ -12,9 +12,9 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 
-public class report_event extends LinearLayout {
-    public report_event(Context context){super(context);}
-    public report_event(Context context, JSONObject event){
+public class ReportEvent extends LinearLayout {
+    public ReportEvent(Context context){super(context);}
+    public ReportEvent(Context context, JSONObject event){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -43,7 +43,7 @@ public class report_event extends LinearLayout {
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else{
-                tvMiddle.setWidth(report.score_width);
+                tvMiddle.setWidth(TabReport.score_width);
                 switch(text){
                     case "TRY":
                     case "CONVERSION":
@@ -74,10 +74,10 @@ public class report_event extends LinearLayout {
                             tvRight.setText(text);
                         }
 
-                        int width = (this.getWidth()-report.score_width)/2-report.timer_width;
+                        int width = (this.getWidth()-TabReport.score_width)/2-TabReport.timer_width;
                         tvLeft.setWidth(width);
-                        tvLeftTime.setWidth(report.timer_width);
-                        tvRightTime.setWidth(report.timer_width);
+                        tvLeftTime.setWidth(TabReport.timer_width);
+                        tvRightTime.setWidth(TabReport.timer_width);
                         tvRight.setWidth(width);
                         if(event.has("reason")){
                             ((TextView)findViewById(R.id.tvReason)).setText(event.getString("reason"));
@@ -89,7 +89,7 @@ public class report_event extends LinearLayout {
                 }
             }
         }catch(Exception e){
-            Log.e("report_event", "report_event: " + e.getMessage());
+            Log.e("ReportEvent", "ReportEvent: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }

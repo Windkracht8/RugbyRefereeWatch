@@ -11,9 +11,9 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 
-public class report_event_full extends LinearLayout{
-    public report_event_full(Context context){super(context);}
-    public report_event_full(Context context, JSONObject event, JSONObject match){
+public class ReportEventFull extends LinearLayout{
+    public ReportEventFull(Context context){super(context);}
+    public ReportEventFull(Context context, JSONObject event, JSONObject match){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -22,17 +22,17 @@ public class report_event_full extends LinearLayout{
 
         try{
             TextView tvTime = findViewById(R.id.tvTime);
-            tvTime.setWidth(report.time_width);
+            tvTime.setWidth(TabReport.time_width);
             tvTime.setText(event.getString("time"));
 
             TextView tvTimer = findViewById(R.id.tvTimer);
-            tvTimer.setWidth(report.score_width);
+            tvTimer.setWidth(TabReport.score_width);
             String timer = event.getString("timer").replace(":", "'");
             tvTimer.setText(timer);
 
             if(event.has("score")){
                 TextView tvScore = findViewById(R.id.tvScore);
-                tvScore.setWidth(report.score_width);
+                tvScore.setWidth(TabReport.score_width);
                 String score = event.getString("score");
                 tvScore.setText(score);
                 if(score.length() == 4){
@@ -56,7 +56,7 @@ public class report_event_full extends LinearLayout{
                 tvWho.setText(event.getString("who"));
             }
         }catch(Exception e){
-            Log.e("report_event_full", "report_event_full: " + e.getMessage());
+            Log.e("ReportEventFull", "ReportEventFull: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }

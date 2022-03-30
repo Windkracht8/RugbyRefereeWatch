@@ -19,14 +19,14 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class history_match extends LinearLayout{
-    history hParent;
+public class HistoryMatch extends LinearLayout{
+    TabHistory hParent;
     public JSONObject match;
     private TextView tvName;
     public boolean is_selected = false;
 
-    public history_match(Context context){super(context);}
-    public history_match(Context context, JSONObject match, history hParent, boolean last){
+    public HistoryMatch(Context context){super(context);}
+    public HistoryMatch(Context context, JSONObject match, TabHistory hParent, boolean last){
         super(context);
         this.hParent = hParent;
         this.match = match;
@@ -48,7 +48,7 @@ public class history_match extends LinearLayout{
 
             tvName.setText(name_s);
         }catch(Exception e){
-            Log.e("history_match", "history_match: " + e.getMessage());
+            Log.e("HistoryMatch", "HistoryMatch: " + e.getMessage());
             Toast.makeText(context, "Failed to show match in history", Toast.LENGTH_SHORT).show();
         }
     }
@@ -83,7 +83,6 @@ public class history_match extends LinearLayout{
                     }else{
                         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                         intent.putExtra("intent_type", "historyMatchClick");
-                        intent.putExtra("source", "history_match");
                         intent.putExtra("match", match.toString());
                         getContext().sendBroadcast(intent);
                         performClick();

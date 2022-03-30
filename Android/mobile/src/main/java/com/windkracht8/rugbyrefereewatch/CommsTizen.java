@@ -9,18 +9,18 @@ import android.widget.Toast;
 import com.samsung.android.sdk.accessory.*;
 import org.json.JSONObject;
 
-public class communication_tizen extends SAAgentV2{
+public class CommsTizen extends SAAgentV2{
     public String status = "DISCONNECTED";
 
     private ServiceConnection mConnectionHandler = null;
 
-    public communication_tizen(Context context){
+    public CommsTizen(Context context){
         super("RugbyRefereeWatch", context, ServiceConnection.class);
         SA mAccessory = new SA();
         try{
             mAccessory.initialize(context);
         }catch(Exception e){
-            Log.e("communication_tizen", "construct: " + e);
+            Log.e("CommsTizen", "construct: " + e);
             updateStatus("FATAL");
             gotError(e.getMessage());
             releaseAgent();
@@ -72,7 +72,7 @@ public class communication_tizen extends SAAgentV2{
 
     @Override
     protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode){
-        Log.i("communication_tizen", "onError: " + errorCode);
+        Log.i("CommsTizen", "onError: " + errorCode);
         super.onError(peerAgent, errorMessage, errorCode);
         updateStatus("FATAL");
         gotError(errorMessage);
@@ -87,7 +87,7 @@ public class communication_tizen extends SAAgentV2{
 
         @Override
         public void onError(int channelId, String errorMessage, int errorCode){
-            Log.i("communication_tizen", "ServiceConnection.onError: " + errorCode);
+            Log.i("CommsTizen", "ServiceConnection.onError: " + errorCode);
             gotError(errorCode + ": "  + errorMessage);
         }
 
@@ -95,7 +95,7 @@ public class communication_tizen extends SAAgentV2{
         public void onReceive(int channelId, byte[] data){
             try{
                 String sData = new String(data);
-                Log.i("communication_tizen", "ServiceConnection.onReceive: " + sData);
+                Log.i("CommsTizen", "ServiceConnection.onReceive: " + sData);
                 JSONObject responseMessage = new JSONObject(sData);
                 gotResponse(responseMessage);
             }catch(Exception e){
@@ -135,7 +135,7 @@ public class communication_tizen extends SAAgentV2{
             Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
             return;
         }
-        Log.i("communication_tizen", "sendRequest: " + requestMessage);
+        Log.i("CommsTizen", "sendRequest: " + requestMessage);
         try{
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
         }catch(IOException e){
@@ -160,7 +160,7 @@ public class communication_tizen extends SAAgentV2{
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotError(final String error){
-        Log.e("communication_tizen", "gotError: " + error);
+        Log.e("CommsTizen", "gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "tizen");
@@ -176,7 +176,7 @@ public class communication_tizen extends SAAgentV2{
             intent.putExtra("responseData", responseMessage.getString("responseData"));
             getApplicationContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("communication_tizen", "gotResponse error: " + e.getMessage());
+            Log.e("CommsTizen", "gotResponse error: " + e.getMessage());
             gotError("Invalid response");
         }
     }

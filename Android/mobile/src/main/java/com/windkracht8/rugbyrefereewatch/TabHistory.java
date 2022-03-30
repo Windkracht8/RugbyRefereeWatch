@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-public class history extends LinearLayout{
+public class TabHistory extends LinearLayout{
     private LinearLayout llMatches;
     private Button bExport;
     private Button bDelete;
@@ -30,11 +30,11 @@ public class history extends LinearLayout{
     public JSONArray export_matches;
     public boolean selecting = false;
 
-    public history(Context context, AttributeSet attrs){
+    public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, "Failed to show history", Toast.LENGTH_SHORT).show(); return;}
-        inflater.inflate(R.layout.history, this, true);
+        inflater.inflate(R.layout.tab_history, this, true);
 
         llMatches = findViewById(R.id.llMatches);
         bExport = findViewById(R.id.bExport);
@@ -53,7 +53,7 @@ public class history extends LinearLayout{
                 insertMatch(match_new);
             }
         }catch(Exception e){
-            Log.e("history", "gotMatches: " + e.getMessage());
+            Log.e("TabHistory", "gotMatches: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to load history", Toast.LENGTH_SHORT).show();
         }
         showMatches();
@@ -78,7 +78,7 @@ public class history extends LinearLayout{
             }
             matches.add(match_new);
         }catch(Exception e){
-            Log.e("history", "insertMatch: " + e.getMessage());
+            Log.e("TabHistory", "insertMatch: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to add match to history", Toast.LENGTH_SHORT).show();
         }
     }
@@ -90,7 +90,7 @@ public class history extends LinearLayout{
                 new_matches.add(match_new.getLong("matchid"));
             }
         }catch(Exception e){
-            Log.e("history", "cleanDeletedMatches: " + e.getMessage());
+            Log.e("TabHistory", "cleanDeletedMatches: " + e.getMessage());
         }
         for(int i = deleted_matches.size()-1; i >= 0; i--){
             if(!new_matches.contains(deleted_matches.get(i))){
@@ -108,7 +108,7 @@ public class history extends LinearLayout{
             joDeletedMatches.put("deleted_matches", jaDeletedMatches);
             return joDeletedMatches;
         }catch(Exception e){
-            Log.e("history", "getDeletedMatches: " + e.getMessage());
+            Log.e("TabHistory", "getDeletedMatches: " + e.getMessage());
         }
         return null;
     }
@@ -131,9 +131,9 @@ public class history extends LinearLayout{
                 matches.add(jsonMatches.getJSONObject(i));
             }
         }catch(FileNotFoundException e){
-            Log.i("history", "matches file does not exists yet");
+            Log.i("TabHistory", "matches file does not exists yet");
         }catch(Exception e){
-            Log.e("history", "loadMatches matches: " + e.getMessage());
+            Log.e("TabHistory", "loadMatches matches: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read matches from storage", Toast.LENGTH_SHORT).show();
         }
         showMatches();
@@ -155,19 +155,19 @@ public class history extends LinearLayout{
                 deleted_matches.add(jsonDeletedMatches.getLong(i));
             }
         }catch(FileNotFoundException e){
-            Log.i("history", "deleted_matches file does not exists yet");
+            Log.i("TabHistory", "deleted_matches file does not exists yet");
         }catch(Exception e){
-            Log.e("history", "loadMatches deleted_matches: " + e.getMessage());
+            Log.e("TabHistory", "loadMatches deleted_matches: " + e.getMessage());
         }
     }
     private void showMatches(){
         try{
             if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
             for(int i = 0; i < matches.size(); i++){
-                llMatches.addView(new history_match(getContext(), matches.get(i), this, i == matches.size()-1));
+                llMatches.addView(new HistoryMatch(getContext(), matches.get(i), this, i == matches.size()-1));
             }
         }catch(Exception e){
-            Log.e("history", "showMatches: " + e.getMessage());
+            Log.e("TabHistory", "showMatches: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show history", Toast.LENGTH_SHORT).show();
         }
     }
@@ -180,7 +180,7 @@ public class history extends LinearLayout{
             osr.write(jaMatches.toString());
             osr.close();
         }catch(Exception e){
-            Log.e("history", "storeMatches matches: " + e.getMessage());
+            Log.e("TabHistory", "storeMatches matches: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match", Toast.LENGTH_SHORT).show();
         }
         try{
@@ -193,7 +193,7 @@ public class history extends LinearLayout{
             osr.write(jaDeletedMatches.toString());
             osr.close();
         }catch(Exception e){
-            Log.e("history", "storeMatches deleted_matches: " + e.getMessage());
+            Log.e("TabHistory", "storeMatches deleted_matches: " + e.getMessage());
         }
     }
 
@@ -203,8 +203,8 @@ public class history extends LinearLayout{
         bDelete.setVisibility(View.GONE);
         for(int i=0; i < llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("history_match")){
-                if(((history_match)child).unselect()) ret = true;
+            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+                if(((HistoryMatch)child).unselect()) ret = true;
             }
         }
         return ret;
@@ -212,13 +212,13 @@ public class history extends LinearLayout{
     public void deleteSelected(){
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("history_match")){
-                history_match tmp = (history_match)child;
+            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+                HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     try{
                         deleted_matches.add(matches.get(i).getLong("matchid"));
                     }catch(Exception e){
-                        Log.e("history", "delete match exception: " + e.getMessage());
+                        Log.e("TabHistory", "delete match exception: " + e.getMessage());
                         Toast.makeText(getContext(), "Failed to delete match", Toast.LENGTH_SHORT).show();
                     }
                     matches.remove(i);
@@ -236,8 +236,8 @@ public class history extends LinearLayout{
         selecting = false;
         for(int i=0; i < llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("history_match")){
-                history_match tmp = (history_match)child;
+            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+                HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     bExport.setVisibility(View.VISIBLE);
                     bDelete.setVisibility(View.VISIBLE);
@@ -261,7 +261,7 @@ public class history extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("history", "updateMatch: " + e.getMessage());
+            Log.e("TabHistory", "updateMatch: " + e.getMessage());
         }
         Toast.makeText(getContext(), "Failed to update match", Toast.LENGTH_SHORT).show();
     }
@@ -270,8 +270,8 @@ public class history extends LinearLayout{
         export_matches = new JSONArray();
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("history_match")){
-                history_match tmp = (history_match)child;
+            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+                HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     export_matches.put(tmp.match);
                 }
@@ -280,7 +280,6 @@ public class history extends LinearLayout{
         unselect();
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "exportMatches");
-        intent.putExtra("source", "history");
         getContext().sendBroadcast(intent);
     }
 }

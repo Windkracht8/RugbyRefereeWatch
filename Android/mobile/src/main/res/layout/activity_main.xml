@@ -70,7 +70,7 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/ivIcon">
         <TextView
-            android:id="@+id/tabHistory"
+            android:id="@+id/tabHistoryLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -79,7 +79,7 @@
             android:text="@string/history"
             android:textAllCaps="true" />
         <TextView
-            android:id="@+id/tabReport"
+            android:id="@+id/tabReportLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -87,7 +87,7 @@
             android:text="@string/report"
             android:textAllCaps="true" />
         <TextView
-            android:id="@+id/tabPrepare"
+            android:id="@+id/tabPrepareLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -95,8 +95,8 @@
             android:text="@string/prepare"
             android:textAllCaps="true" />
     </LinearLayout>
-    <com.windkracht8.rugbyrefereewatch.history
-        android:id="@+id/hHistory"
+    <com.windkracht8.rugbyrefereewatch.TabHistory
+        android:id="@+id/tabHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -104,8 +104,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
-    <com.windkracht8.rugbyrefereewatch.report
-        android:id="@+id/rReport"
+    <com.windkracht8.rugbyrefereewatch.TabReport
+        android:id="@+id/tabReport"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -114,8 +114,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llTabs" />
-    <com.windkracht8.rugbyrefereewatch.prepare
-        android:id="@+id/pPrepare"
+    <com.windkracht8.rugbyrefereewatch.TabPrepare
+        android:id="@+id/tabPrepare"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
