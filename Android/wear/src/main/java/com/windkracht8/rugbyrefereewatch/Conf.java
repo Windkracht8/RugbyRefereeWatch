@@ -157,7 +157,6 @@ public class Conf extends ScrollView{
         selectItem(color_home, match.home.color);
         selectItem(color_away, match.away.color);
         if(!selectItem(match_type, match.match_type)){
-            //TODO: Add new custom match type
             addCustomMatchType(match);
             selectItem(match_type, match.match_type);
         }

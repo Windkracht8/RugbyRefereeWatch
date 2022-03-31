@@ -636,6 +636,17 @@ function match_typeChange(){
 		case "custom":
 			$('#custom_match').show();
 			break;
+		default:
+			custom_match_types.forEach(function(match_type){
+				if(match_type.name === $('#match_type').val()){
+					$('#period_time').val(match_type.period_time);
+					$('#period_count').val(match_type.period_count);
+					$('#sinbin').val(match_type.sinbin);
+					$('#points_try').val(match_type.points_try);
+					$('#points_con').val(match_type.points_con);
+					$('#points_goal').val(match_type.points_goal);
+				}
+			});
 	}
 	period_timeChange();
 	period_countChange();
@@ -841,7 +852,7 @@ function noStoredSettings(){
 function addCustomMatchType(match_type){
 	custom_match_types.push(match_type);
 	loadCustomMatchTypesSelect();
-	file_storeCustomMatchTypes();
+	file_storeCustomMatchTypes(custom_match_types);
 }
 function syncCustomMatchTypes(requestData){
 	if(typeof(requestData) === "undefined" || typeof(requestData.custom_match_types) === "undefined"){return;}
@@ -874,7 +885,7 @@ function syncCustomMatchTypes(requestData){
 
 	if(hasupdate){
 		loadCustomMatchTypesSelect();
-		file_storeCustomMatchTypes();
+		file_storeCustomMatchTypes(custom_match_types);
 	}
 }
 function customMatchTypesRead(newcustom_match_types){
@@ -886,6 +897,27 @@ function loadCustomMatchTypesSelect(){
 		$("#match_type option")[i].remove();
 	}
 	custom_match_types.forEach(function(match_type){$("#match_type").append("<option>" + match_type.name + "</option>");});
+}
+function checkMatchType(newsettings){
+	for(var i=0; i<custom_match_types.length; i++){
+		if(newsettings.match_type === custom_match_types[i].name){
+			return;
+		}
+	}
+	for(var i=0; i<$("#match_type option").length; i++){
+		if(newsettings.match_type === $("#match_type option")[i].innerText){
+			return;
+		}
+	}
+	addCustomMatchType({
+		"name": newsettings.match_type,
+        "period_time": newsettings.period_time,
+        "period_count": newsettings.period_count,
+        "sinbin": newsettings.sinbin,
+        "points_try": newsettings.points_try,
+        "points_con": newsettings.points_con,
+        "points_goal": newsettings.points_goal
+	});
 }
 
 function showHelp(){
@@ -914,6 +946,7 @@ function setNewSettings(newsettings){
 		match.settings.timer_type = newsettings.timer_type;
 		timer_typeChanged();
 	}
+	checkMatchType(newsettings);
 }
 function beep(){
 	console.log("beep beep");

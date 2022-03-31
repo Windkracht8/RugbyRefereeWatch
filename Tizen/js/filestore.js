@@ -11,7 +11,7 @@ var settings_filename = "settings.json";
 var settings_path = dirname + "/" + settings_filename;
 var file_settings;
 
-var match_types_filename = "settings.json";
+var match_types_filename = "match_types.json";
 var match_types_path = dirname + "/" + match_types_filename;
 var file_match_types;
 
@@ -277,7 +277,7 @@ function file_storeCustomMatchTypes(newcustom_match_types){
 		file_match_types.openStream(
 			"w",
 			function(fs){
-				fs.write(JSON.stringify(match_types_path));
+				fs.write(JSON.stringify(newcustom_match_types));
 				fs.close();
 			},
 			function(e){
