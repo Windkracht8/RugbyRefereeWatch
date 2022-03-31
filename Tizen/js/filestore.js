@@ -1,5 +1,5 @@
-/* global getCurrentTimestamp, settingsRead, noStoredSettings */
-/* exported file_init, file_storeMatch, file_deletedMatches, file_storeSettings */
+/* global getCurrentTimestamp, settingsRead, noStoredSettings, customMatchTypesRead */
+/* exported file_init, file_storeMatch, file_deletedMatches, file_storeSettings, file_storeCustomMatchTypes */
 var useFileHandle = typeof(tizen.filesystem.openFile) === "function";
 var dirname = "wgt-private";
 var matches_filename = "matches.json";
@@ -11,15 +11,20 @@ var settings_filename = "settings.json";
 var settings_path = dirname + "/" + settings_filename;
 var file_settings;
 
+var match_types_filename = "settings.json";
+var match_types_path = dirname + "/" + match_types_filename;
+var file_match_types;
+
 function file_init(){
 	if(useFileHandle){
 		file_readSettings();
+		file_readCustomMatchTypes();
 		file_cleanMatches();
 	}else{
 		try{
 			tizen.filesystem.resolve(dirname,
 				function(dir){
-					tizen.filesystem.resolve(settings_path,
+				tizen.filesystem.resolve(settings_path,
 						function(foundfile){
 							file_settings = foundfile;
 							file_readSettings();
@@ -30,6 +35,19 @@ function file_init(){
 								console.log("file_init failed to create settings file");
 							}
 							noStoredSettings();
+						},
+						"rw"
+					);
+					tizen.filesystem.resolve(match_types_path,
+						function(foundfile){
+							file_match_types = foundfile;
+							file_readCustomMatchTypes();
+						},
+						function(){
+							file_match_types = dir.createFile(match_types_filename);
+							if(typeof(file_match_types) === "undefined"){
+								console.log("file_init failed to create match settings file");
+							}
 						},
 						"rw"
 					);
@@ -242,3 +260,64 @@ function file_readSettings(){
 	noStoredSettings();
 }
 
+function file_storeCustomMatchTypes(newcustom_match_types){
+	if(useFileHandle){
+		try {
+			file_match_types = tizen.filesystem.openFile(match_types_path, "w");
+			file_match_types.writeString(JSON.stringify(newcustom_match_types));
+			file_match_types.close();
+		}catch(e){
+			console.log("file_storeCustomMatchTypes exception " + e.message);
+		}
+		return;
+	}
+
+	if(typeof(file_match_types) === "undefined"){return;}
+	try {
+		file_match_types.openStream(
+			"w",
+			function(fs){
+				fs.write(JSON.stringify(match_types_path));
+				fs.close();
+			},
+			function(e){
+				console.log("file_storeCustomMatchTypes error " + e.message);
+				return;
+			}
+		);
+	}catch(e){
+		console.log("file_storeCustomMatchTypes exception " + e.message);
+		return;
+	}
+}
+function file_readCustomMatchTypes(){
+	if(useFileHandle){
+		try {
+			file_match_types = tizen.filesystem.openFile(match_types_path, "r");
+			var str = file_match_types.readString();
+			if(str.length > 10){
+				customMatchTypesRead(JSON.parse(str));
+			}
+			file_match_types.close();
+		}catch(e){
+			console.log("file_readCustomMatchTypes exception " + e.message);
+		}
+		return;
+	}
+
+	if(typeof(file_match_types) === "undefined"){return;}
+	try {
+		file_match_types.readAsText(
+			function(str){
+				if(str.length > 10){
+					customMatchTypesRead(JSON.parse(str));
+				}
+			},
+			function(e){
+				console.log("file_readCustomMatchTypes error " + e.message);
+			}
+		);
+	}catch(e){
+		console.log("file_readCustomMatchTypes exception " + e.message);
+	}
+}

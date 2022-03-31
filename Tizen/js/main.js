@@ -1,5 +1,5 @@
-/* global $, file_init, file_storeMatch, file_storeSettings */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -50,6 +50,7 @@ var match = {
 	events: [],
 	matchid: 0
 };
+var custom_match_types = [];
 
 window.onload = function(){
 	document.addEventListener('tizenhwkey', function(e){
@@ -835,6 +836,56 @@ function noStoredSettings(){
 	$('#help_welcome').show();
 	showHelp();
 	file_storeSettings(match.settings);
+}
+
+function addCustomMatchType(match_type){
+	custom_match_types.push(match_type);
+	loadCustomMatchTypesSelect();
+	file_storeCustomMatchTypes();
+}
+function syncCustomMatchTypes(requestData){
+	if(typeof(requestData) === "undefined" || typeof(requestData.custom_match_types) === "undefined"){return;}
+
+	var hasupdate = false;
+
+	custom_match_types = custom_match_types.filter(function(match_type){
+		for(var p=0; p<requestData.custom_match_types.length; p++){
+			if(match_type.name === requestData.custom_match_types[p].name){
+				return true;
+			}
+		}
+		hasupdate = true;
+		return false;
+    });
+
+	requestData.custom_match_types.forEach(function(match_type){
+		var found = false;
+		for(var l=0; l<custom_match_types.length; l++){
+			if(match_type.name === custom_match_types[l].name){
+				found = true;
+				break;
+			}
+		}
+		if(!found){
+			hasupdate = true;
+			custom_match_types.push(match_type);
+		}
+	});
+
+	if(hasupdate){
+		loadCustomMatchTypesSelect();
+		file_storeCustomMatchTypes();
+	}
+}
+function customMatchTypesRead(newcustom_match_types){
+	custom_match_types = newcustom_match_types;
+	loadCustomMatchTypesSelect();
+}
+function loadCustomMatchTypesSelect(){
+	for(var i=$("#match_type option").length-1; i>=6; i--){
+		$("#match_type option")[i].remove();
+	}
+	custom_match_types.forEach(function(match_type){$("#match_type").append("<option>" + match_type.name + "</option>");});
 }
 
 function showHelp(){

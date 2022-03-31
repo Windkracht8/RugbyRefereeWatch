@@ -239,7 +239,7 @@ public class Conf extends ScrollView{
     public static void syncCustomMatchTypes(Context context, String request_data){
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
-            if(!request_data_jo.has("custom_match_types")) return;//fine for now, probably old version of phone app
+            if(!request_data_jo.has("custom_match_types")) return;
             JSONArray customMatchTypes_phone = request_data_jo.getJSONArray("custom_match_types");
             //TODO: first loop through local and remove that are no longer there
 

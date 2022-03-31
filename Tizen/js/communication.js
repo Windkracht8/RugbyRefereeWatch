@@ -21,10 +21,12 @@ var communicationListener = {
 					temp["matches"] = matches;
 					temp["settings"] = getSettings();
 					responseData = JSON.stringify(temp);
+					syncCustomMatchTypes(requestMessage_js.requestData);
 					break;
 				case "getMatches":
 					file_deletedMatches(requestMessage_js.requestData);
 					responseData = JSON.stringify(matches);
+					syncCustomMatchTypes(requestMessage_js.requestData);
 					break;
 				case "getMatch":
 					responseData = JSON.stringify(match);
