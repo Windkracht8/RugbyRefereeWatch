@@ -10,7 +10,7 @@
         android:orientation="horizontal">
         <Button
             android:id="@+id/bDel"
-            android:layout_width="48dp"
+            android:layout_width="40dp"
             android:layout_height="48dp"
             android:text="@string/x"
             android:textColor="#F00"
