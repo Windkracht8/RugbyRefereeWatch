@@ -50,6 +50,9 @@ public class TabPrepare extends LinearLayout{
     private boolean has_changed = false;
     private JSONArray customMatchTypes;
     private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
+    private int sMatchTypePosition = 0;
+    private final int sHomeColorPosition = 4;
+    private final int sAwayColorPosition = 8;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -81,6 +84,8 @@ public class TabPrepare extends LinearLayout{
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+                if(position == sMatchTypePosition) return;
+                sMatchTypePosition = position;
                 has_changed = true;
                 findViewById(R.id.trDelCustom).setVisibility(View.GONE);
                 switch(position){
@@ -179,10 +184,10 @@ public class TabPrepare extends LinearLayout{
             }
         }
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){has_changed = true;}
-            public void onNothingSelected(AdapterView<?> adapterView){
-                has_changed = true;
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position != sHomeColorPosition) has_changed = true;
             }
+            public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
         sAwayColor.setAdapter(adapter);
@@ -193,16 +198,17 @@ public class TabPrepare extends LinearLayout{
             }
         }
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){has_changed = true;}
-            public void onNothingSelected(AdapterView<?> adapterView){
-                has_changed = true;
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position != sAwayColorPosition) has_changed = true;
             }
+            public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
         String[] aCountType = new String[] {"count up", "count down"};
         ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
         aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sTimerType.setAdapter(aaCountType);
+        sTimerType.setSelection(1);
 
         bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
         findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
