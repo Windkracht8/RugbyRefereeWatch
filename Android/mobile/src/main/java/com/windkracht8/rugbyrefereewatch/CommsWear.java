@@ -25,12 +25,11 @@ import java.util.Date;
 import java.util.List;
 
 public class CommsWear extends WearableListenerService implements DataClient.OnDataChangedListener{
-    private DataClient dataClient;
+    private final DataClient dataClient;
     public String status;
     private Handler handler_main;
+    private boolean isCheckIfConnected = false;
 
-    @SuppressWarnings("unused")
-    public CommsWear(){}
     public CommsWear(Context context){
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
@@ -44,30 +43,39 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         context.sendBroadcast(intent);
     }
     public void checkIfConnected(Context context){
-        if(status.equals("CONNECTED")) return;
+        if(isCheckIfConnected) return;
+        isCheckIfConnected = true;
         Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
         nodeListTask.addOnCompleteListener(task ->{
             if(task.isSuccessful()){
                 for(Node node : task.getResult()){
                     if(node.isNearby()){
-                        status = "CONNECTED";
-                        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                        intent.putExtra("intent_type", "updateStatus");
-                        intent.putExtra("source", "wear");
-                        intent.putExtra("status_new", status);
-                        context.sendBroadcast(intent);
+                        if(!status.equals("CONNECTED")) {
+                            status = "CONNECTED";
+                            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+                            intent.putExtra("intent_type", "updateStatus");
+                            intent.putExtra("source", "wear");
+                            intent.putExtra("status_new", status);
+                            context.sendBroadcast(intent);
+                        }
+                        if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
+                        isCheckIfConnected = false;
+                        handler_main.postDelayed(() -> checkIfConnected(context), 10000);
                         return;
                     }
                 }
             }
-            status = "OFFLINE";
-            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-            intent.putExtra("intent_type", "updateStatus");
-            intent.putExtra("source", "wear");
-            intent.putExtra("status_new", status);
-            context.sendBroadcast(intent);
+            if(!status.equals("OFFLINE")) {
+                status = "OFFLINE";
+                Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+                intent.putExtra("intent_type", "updateStatus");
+                intent.putExtra("source", "wear");
+                intent.putExtra("status_new", status);
+                context.sendBroadcast(intent);
+            }
             if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
-            handler_main.postDelayed(() -> checkIfConnected(context), 60000);
+            isCheckIfConnected = false;
+            handler_main.postDelayed(() -> checkIfConnected(context), 10000);
         });
     }
     public void stop(){
