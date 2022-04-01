@@ -29,7 +29,9 @@ var communicationListener = {
 					syncCustomMatchTypes(requestMessage_js.requestData);
 					break;
 				case "getMatch":
-					responseData = JSON.stringify(match);
+					var responseData_js = match;
+					responseData_js.timer = timer;
+					responseData = JSON.stringify(responseData_js);
 					break;
 				case "prepare":
 					if(incomingSettings(requestMessage_js.requestData)){

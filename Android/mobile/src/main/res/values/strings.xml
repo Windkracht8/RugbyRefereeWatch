@@ -46,6 +46,7 @@
     <string name="sTimerType_text">Timer type</string>
     <string name="etHomeName_text">Home name</string>
     <string name="etAwayName_text">Away name</string>
+    <string name="tvNoEdit_text">match has not finished, cannot edit now</string>
 
     <string name="history">History</string>
     <string name="report">Report</string>

@@ -215,6 +215,13 @@
             android:layout_height="wrap_content"
             android:text="@string/tvScore_placeholder"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/tvNoEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="@string/tvNoEdit_text" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -6,7 +6,7 @@ var timer = {
 	timer: 0,
 	start: 0,
 	start_timeoff: 0,
-	periodended: false,
+	period_ended: false,
 	period: 0
 };
 var match = {
@@ -180,7 +180,7 @@ function brestClick(){
 
 	timer.status = "rest";
 	timer.start = getCurrentTimestamp();
-	timer.periodended = false;
+	timer.period_ended = false;
 	$('#timer').css('color', "unset");
 	$.each(match.home.sinbins, function(index, value){
 		value.end = value.end - timer.timer;
@@ -203,7 +203,7 @@ function bfinishClick(){
 	file_storeMatch(match);
 }
 function bclearClick(){
-	timer = {status:"conf",timer:0,start:0,start_timeoff:0,periodended:false,period:0};
+	timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0};
 	updateTimer();
 	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,sinbins:[],kickoff:0};
 	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,sinbins:[],kickoff:0};
@@ -221,7 +221,7 @@ function bclearClick(){
 }
 
 function updateButtons(){
-	var timerstatus = "";
+	var timerstatus_html = "";
 	$('.bottombutton, .overtimerbutton, #bconfwatch').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
@@ -233,21 +233,21 @@ function updateButtons(){
 			$('#bresume').show();
 			$('#brest').show();
 			$('#bconfwatch').show();
-			timerstatus = "time off";
+			timerstatus_html = "time off";
 			break;
 		case "rest":
 			$('#bnext').show();
 			$('#bfinish').show();
 			$('#bconfwatch').show();
-			timerstatus = "rest";
+			timerstatus_html = "rest";
 			break;
 		case "finished":
 			$('#breport').show();
 			$('#bclear').show();
-			timerstatus = "finished";
+			timerstatus_html = "finished";
 			break;
 	}
-	$('#timerstatus').html(timerstatus);
+	$('#timerstatus').html(timerstatus_html);
 	updateTimer();
 }
 
@@ -302,8 +302,8 @@ function updateTimer(){
 
 	$('#timer').html(temp + prettyTimer(millisecs));
 
-	if(!timer.periodended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
-		timer.periodended = true;
+	if(!timer.period_ended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
+		timer.period_ended = true;
 		$('#timer').css('color', "red");
 		beep();
 	}

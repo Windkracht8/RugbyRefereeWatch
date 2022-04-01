@@ -434,7 +434,7 @@ public class MainActivity extends AppCompatActivity{
     private void historyMatchClick(String match){
         try{
             JSONObject match_json = new JSONObject(match);
-            tabReport.gotMatch(match_json);
+            tabReport.loadMatch(match_json);
             tabReportLabelClick();
         }catch(Exception e){
             gotError("Issue with match: " + e.getMessage());

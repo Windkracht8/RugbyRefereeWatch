@@ -266,10 +266,13 @@ public class TabHistory extends LinearLayout{
                     return;
                 }
             }
+            if(match.has("timer")) match.remove("timer");
+            matches.add(match);
+            storeMatches();
+            showMatches();
         }catch(Exception e){
             Log.e("TabHistory", "updateMatch: " + e.getMessage());
         }
-        Toast.makeText(getContext(), "Failed to update match", Toast.LENGTH_SHORT).show();
     }
 
     public void exportSelected(){
