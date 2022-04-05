@@ -226,20 +226,6 @@
                     android:layout_span="2" />
             </TableRow>
             <TableRow
-                android:id="@+id/trRecordPlayer"
-                android:visibility="gone">
-                <TextView
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:labelFor="@+id/etRecordPlayer"
-                    android:text="@string/etRecordPlayer_text"
-                    android:textSize="18sp" />
-                <CheckBox
-                    android:id="@+id/cbRecordPlayer"
-                    android:layout_height="48dp"
-                    android:importantForAutofill="no" />
-            </TableRow>
-            <TableRow
                 android:id="@+id/trScreenOn"
                 android:visibility="gone">
                 <TextView
@@ -266,6 +252,34 @@
                 <Spinner
                     android:id="@+id/sTimerType"
                     android:layout_height="48dp" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trRecordPlayer"
+                android:visibility="gone">
+                <TextView
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:labelFor="@+id/etRecordPlayer"
+                    android:text="@string/etRecordPlayer_text"
+                    android:textSize="18sp" />
+                <CheckBox
+                    android:id="@+id/cbRecordPlayer"
+                    android:layout_height="48dp"
+                    android:importantForAutofill="no" />
+            </TableRow>
+            <TableRow
+                android:id="@+id/trRecordPens"
+                android:visibility="gone">
+                <TextView
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:labelFor="@+id/etRecordPens"
+                    android:text="@string/etRecordPens_text"
+                    android:textSize="18sp" />
+                <CheckBox
+                    android:id="@+id/cbRecordPens"
+                    android:layout_height="48dp"
+                    android:importantForAutofill="no" />
             </TableRow>
         </TableLayout>
     </ScrollView>

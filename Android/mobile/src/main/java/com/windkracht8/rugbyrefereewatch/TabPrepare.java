@@ -43,6 +43,7 @@ public class TabPrepare extends LinearLayout{
     private EditText etPointsCon;
     private EditText etPointsGoal;
     private CheckBox cbRecordPlayer;
+    private CheckBox cbRecordPens;
     private CheckBox cbScreenOn;
     private Button bWatchSettings;
     private Spinner sTimerType;
@@ -73,10 +74,11 @@ public class TabPrepare extends LinearLayout{
         etPointsTry = findViewById(R.id.etPointsTry);
         etPointsCon = findViewById(R.id.etPointsCon);
         etPointsGoal = findViewById(R.id.etPointsGoal);
-        cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
-        cbScreenOn = findViewById(R.id.cbScreenOn);
         bWatchSettings = findViewById(R.id.bWatchSettings);
+        cbScreenOn = findViewById(R.id.cbScreenOn);
         sTimerType = findViewById(R.id.sTimerType);
+        cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
+        cbRecordPens = findViewById(R.id.cbRecordPens);
 
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -219,14 +221,16 @@ public class TabPrepare extends LinearLayout{
 
     private void bWatchSettingsClick(){
         if(watch_settings){
-            findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
             findViewById(R.id.trScreenOn).setVisibility(View.GONE);
             findViewById(R.id.trTimerType).setVisibility(View.GONE);
+            findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
+            findViewById(R.id.trRecordPens).setVisibility(View.GONE);
             bWatchSettings.setText(R.string.watch_settings);
         }else{
-            findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
             findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
             findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
+            findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
+            findViewById(R.id.trRecordPens).setVisibility(View.VISIBLE);
             bWatchSettings.setText(R.string.no_watch_settings);
         }
         watch_settings = !watch_settings;
@@ -247,9 +251,10 @@ public class TabPrepare extends LinearLayout{
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
             if(watch_settings){
-                settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
                 settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
                 settings.put("timer_type", sTimerType.getSelectedItemPosition());
+                settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
+                settings.put("record_pens", cbRecordPens.isChecked() ? 1 : 0);
             }
         }catch(Exception e){
             Log.e("TabPrepare", "getSettings: " + e.getMessage());
@@ -274,9 +279,10 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("points_con")) etPointsCon.setText(String.valueOf(settings.getInt("points_con")));
             if(settings.has("points_goal")) etPointsGoal.setText(String.valueOf(settings.getInt("points_goal")));
 
-            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
             if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getInt("screen_on") == 1);
             if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
+            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
+            if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
         }catch(Exception e){
             Log.e("TabPrepare", "gotSettings: " + e.getMessage());
             Toast.makeText(getContext(), "Problem with settings from watch", Toast.LENGTH_SHORT).show();

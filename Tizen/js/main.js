@@ -869,9 +869,10 @@ function getSettings(){
 	ret["points_try"] = match.settings.points_try;
 	ret["points_con"] = match.settings.points_con;
 	ret["points_goal"] = match.settings.points_goal;
-	ret["record_player"] = match.settings.record_player;
 	ret["screen_on"] = match.settings.screen_on;
 	ret["timer_type"] = match.settings.timer_type;
+	ret["record_player"] = match.settings.record_player;
+	ret["record_pens"] = match.settings.record_pens;
 	return ret;
 }
 
