@@ -24,6 +24,7 @@ import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -578,6 +579,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void tabHistoryLabelClick(){
+        hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabReportLabel).setBackgroundResource(0);
         findViewById(R.id.tabPrepareLabel).setBackgroundResource(0);
@@ -586,6 +588,7 @@ public class MainActivity extends AppCompatActivity{
         tabPrepare.setVisibility(View.GONE);
     }
     public void tabReportLabelClick(){
+        hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
         findViewById(R.id.tabReportLabel).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabPrepareLabel).setBackgroundResource(0);
@@ -594,12 +597,17 @@ public class MainActivity extends AppCompatActivity{
         tabPrepare.setVisibility(View.GONE);
     }
     public void tabPrepareLabelClick(){
+        hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
         findViewById(R.id.tabReportLabel).setBackgroundResource(0);
         findViewById(R.id.tabPrepareLabel).setBackgroundResource(R.drawable.tab_active);
         tabHistory.setVisibility(View.GONE);
         tabReport.setVisibility(View.GONE);
         tabPrepare.setVisibility(View.VISIBLE);
+    }
+    private void hideKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager)getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getRootView().getApplicationWindowToken(),0);
     }
 
     public static String getTeamName(JSONObject team){
