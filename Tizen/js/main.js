@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -19,6 +19,7 @@ var match = {
 		points_con: 2,
 		points_goal: 3,
 		record_player: 0,
+		record_penalties: 0,
 		screen_on: 1,
 		timer_type: 1,//0:up, 1:down
 		help_version: 2
@@ -32,6 +33,7 @@ var match = {
 		cons: 0,
 		pen_tries: 0,
 		goals: 0,
+		pens: 0,
 		sinbins: [],
 		kickoff: 0
 	},
@@ -44,6 +46,7 @@ var match = {
 		cons: 0,
 		pen_tries: 0,
 		goals: 0,
+		pens: 0,
 		sinbins: [],
 		kickoff: 0
 	},
@@ -76,6 +79,7 @@ window.onload = function(){
 	update();
 	updateButtons();
 	record_playerChanged();
+	record_penaltiesChanged();
 
 	function onScreenStateChanged(previousState, newState) {
 	    if(newState === 'SCREEN_NORMAL'){
@@ -199,14 +203,15 @@ function bfinishClick(){
 	timer.status = "finished";
 	updateButtons();
 	updateScore();
+	$('#conf, #timer_type').css("font-size", "unset");
 
 	file_storeMatch(match);
 }
 function bclearClick(){
 	timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0};
 	updateTimer();
-	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,sinbins:[],kickoff:0};
-	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,sinbins:[],kickoff:0};
+	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
+	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
 	match.events = [];
 	match.matchid = 0;
 	updateScore();
@@ -353,6 +358,18 @@ function updateBattery(battery){
 	}
 }
 
+function pen_homeClick(){
+	if(timer.status === "conf"){return;}
+	match.home.pens++;
+	updateScore();
+	logEvent("PENALTY", match.home, null);
+}
+function pen_awayClick(){
+	if(timer.status === "conf"){return;}
+	match.away.pens++;
+	updateScore();
+	logEvent("PENALTY", match.away, null);
+}
 var team_edit = match.home;
 function score_homeClick(){
 	if(timer.status === "conf"){
@@ -446,6 +463,9 @@ function updateScore(){
 					match.away.pen_tries*(match.settings.points_try + match.settings.points_con) +
 					match.away.goals*match.settings.points_goal;
 	$('#score_away').html(match.away.tot);
+
+	$('#pen_home').html(match.home.pens);
+	$('#pen_away').html(match.away.pens);
 }
 function foulplayClick(){
 	$('#foulplay_player').val($('#score_player').val());
@@ -485,6 +505,7 @@ function showCorrect(){
 			value.what !== "CONVERSION" &&
 			value.what !== "PENALTY TRY" &&
 			value.what !== "GOAL" &&
+			value.what !== "PENALTY" &&
 			value.what !== "YELLOW CARD" &&
 			value.what !== "RED CARD" 
 		){
@@ -522,6 +543,9 @@ function removeEvent(index){
 		case "GOAL":
 			team_edit.goals--;
 			break;
+		case "PENALTY":
+			team_edit.pens--;
+			break;
 		case "YELLOW CARD":
 			var id = match.events[index].id;
 			$.each(team_edit.sinbins, function (index, value){
@@ -541,6 +565,7 @@ function removeEvent(index){
 }
 function bconfwatchClick(){
 	if(timer.status === "conf" || timer.status === "running"){return;}
+	$('#conf, #timer_type').css("font-size", "8vh");
 	$('#matchSettings').hide();
 	$('#helpSettings').hide();
 	bconfClick();
@@ -561,6 +586,7 @@ function bconfClick(){
 	$('#points_goal').val(match.settings.points_goal);
 
 	$('#record_player').prop('checked', match.settings.record_player === 1 ? true : false);
+	$('#record_penalties').prop('checked', match.settings.record_penalties === 1 ? true : false);
 	$('#screen_on').prop('checked', match.settings.screen_on === 1 ? true : false);
 	$('#timer_type').val(match.settings.timer_type);
 
@@ -678,10 +704,6 @@ function record_playerChange(){
 	match.settings.record_player = $('#record_player').is(":checked") ? 1: 0;
 	record_playerChanged();
 }
-function screen_onChange(){
-	match.settings.screen_on = $('#screen_on').is(":checked") ? 1: 0;
-	screen_onChanged();
-}
 function record_playerChanged(){
 	if(match.settings.record_player === 1){
 		$('#score').css('font-size', '15vh');
@@ -690,6 +712,23 @@ function record_playerChanged(){
 		$('#score').css('font-size', '17vh');
 		$('#score_player_wrap').hide();
 	}
+}
+function record_penaltiesChange(){
+	match.settings.record_penalties = $('#record_penalties').is(":checked") ? 1: 0;
+	record_penaltiesChanged();
+}
+function record_penaltiesChanged(){
+	if(match.settings.record_penalties === 1){
+		$('#timerstatus').hide();
+		$('#pen').show();
+	}else{
+		$('#timerstatus').show();
+		$('#pen').hide();
+	}
+}
+function screen_onChange(){
+	match.settings.screen_on = $('#screen_on').is(":checked") ? 1: 0;
+	screen_onChanged();
 }
 function screen_onChanged(){
 	if(match.settings.screen_on === 1){
@@ -934,10 +973,6 @@ function setNewSettings(newsettings){
 	match.settings.points_try = newsettings.points_try;
 	match.settings.points_con = newsettings.points_con;
 	match.settings.points_goal = newsettings.points_goal;
-	if(newsettings.hasOwnProperty('record_player')){
-		match.settings.record_player = newsettings.record_player;
-		record_playerChanged();
-	}
 	if(newsettings.hasOwnProperty('screen_on')){
 		match.settings.screen_on = newsettings.screen_on;
 		screen_onChanged();
@@ -945,6 +980,14 @@ function setNewSettings(newsettings){
 	if(newsettings.hasOwnProperty('timer_type')){
 		match.settings.timer_type = newsettings.timer_type;
 		timer_typeChanged();
+	}
+	if(newsettings.hasOwnProperty('record_player')){
+		match.settings.record_player = newsettings.record_player;
+		record_playerChanged();
+	}
+	if(newsettings.hasOwnProperty('record_penalties')){
+		match.settings.record_penalties = newsettings.record_penalties;
+		record_penaltiesChanged();
 	}
 	checkMatchType(newsettings);
 }

@@ -74,6 +74,26 @@ select, input, button{
 	font-size: 15vh;
 	z-index: 3;
 }
+#pen_home{
+	position: fixed;
+	left: 0;
+	top: 76vh;
+	width: 50vw;
+	z-index: 2;
+}
+#pen_label{
+	position: fixed;
+	left: 0;
+	top: 76vh;
+	width: 100vw;
+}
+#pen_away{
+	position: fixed;
+	right: 0;
+	top: 76vh;
+	width: 50vw;
+	z-index: 2;
+}
 button, .button{
 	width: 100vw;
 	color: var(--w8blue-color);
@@ -148,11 +168,21 @@ button, .button{
 #penalty_try{
 	color: white;
 }
+#conf{
+	height: 94vh;
+	padding: 2vh 0;
+}
 #conf input{
 	text-align: right;
 }
 #conf select{
 	text-align: center;
+}
+.conf_item{
+	padding-bottom: 2vh;
+}
+#helpSettings{
+	padding-top: 2vh;
 }
 #custom_match{
 	display: none;

@@ -29,6 +29,7 @@
 	<div id="sinbins_away"></div>
 </div>
 <div id="timer" onclick="timerClick()">40:00</div>
+<div id="pen"><div id="pen_home" onclick="pen_homeClick()">0</div><div id="pen_label">pen</div><div id="pen_away" onclick="pen_awayClick()">0</div></div>
 <div id="timerstatus"></div>
 <div id="bconf" class="button bottombutton" onclick="bconfClick()"><img src="res/gear.png"></div>
 <button id="bstart" class="overtimerbutton" onclick="bresumeClick()">start</button>
@@ -83,89 +84,113 @@
 <div id="conf" class="overlay">
 	<div class="w8blue">Config</div>
 	<div id="matchSettings">
-		Home<br>
-		<select id="color_home" onchange="color_homeChange()">
-			<option>black</option>
-			<option>blue</option>
-			<option>brown</option>
-			<option>gold</option>
-			<option>green</option>
-			<option>orange</option>
-			<option>pink</option>
-			<option>purple</option>
-			<option>red</option>
-			<option>white</option>
-		</select><br>
-		Away<br>
-		<select id="color_away" onchange="color_awayChange()">
-			<option>black</option>
-			<option>blue</option>
-			<option>brown</option>
-			<option>gold</option>
-			<option>green</option>
-			<option>orange</option>
-			<option>pink</option>
-			<option>purple</option>
-			<option>red</option>
-			<option>white</option>
-		</select><br>
-		Match type<br>
-		<select id="match_type" class="w8blue" onchange="match_typeChange()">
-			<option selected>15s</option><option>10s</option><option>7s</option>
-			<option>beach 7s</option><option>beach 5s</option><option>custom</option>
-		</select><br>
-		<div id="custom_match">
-			Time/period<br>
-			<select id="period_time" class="w8blue" onchange="period_timeChange()">
-				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-				<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
-				<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
-				<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
-				<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
-				<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
-				<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
-				<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
-			</select><br>
-			Period count<br>
-			<select id="period_count" class="w8blue" onchange="period_countChange()">
-				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-			</select><br>
-			Sinbin<br>
-			<select id="sinbin" class="w8blue" onchange="sinbinChange()">
-				<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-				<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-				<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
-				<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
-			</select><br>
-			Points try<br>
-			<select id="points_try" class="w8blue" onchange="points_tryChange()">
-				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-			</select><br>
-			Points conversion<br>
-			<select id="points_con" class="w8blue" onchange="points_conChange()">
-				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-			</select><br>
-			Points goal<br>
-			<select id="points_goal" class="w8blue" onchange="points_goalChange()">
-				<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
-				<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+		<div class="conf_item">
+			Home<br>
+			<select id="color_home" onchange="color_homeChange()">
+				<option>black</option>
+				<option>blue</option>
+				<option>brown</option>
+				<option>gold</option>
+				<option>green</option>
+				<option>orange</option>
+				<option>pink</option>
+				<option>purple</option>
+				<option>red</option>
+				<option>white</option>
 			</select>
 		</div>
+		<div class="conf_item">
+			Away<br>
+			<select id="color_away" onchange="color_awayChange()">
+				<option>black</option>
+				<option>blue</option>
+				<option>brown</option>
+				<option>gold</option>
+				<option>green</option>
+				<option>orange</option>
+				<option>pink</option>
+				<option>purple</option>
+				<option>red</option>
+				<option>white</option>
+			</select>
+		</div>
+		<div class="conf_item">
+			Match type<br>
+			<select id="match_type" class="w8blue" onchange="match_typeChange()">
+				<option selected>15s</option><option>10s</option><option>7s</option>
+				<option>beach 7s</option><option>beach 5s</option><option>custom</option>
+			</select>
+		</div>
+		<div id="custom_match">
+			<div class="conf_item">
+				Time/period<br>
+				<select id="period_time" class="w8blue" onchange="period_timeChange()">
+					<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+					<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+					<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+					<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+					<option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+					<option>26</option><option>27</option><option>28</option><option>29</option><option>30</option>
+					<option>31</option><option>32</option><option>33</option><option>34</option><option>35</option>
+					<option>36</option><option>37</option><option>38</option><option>39</option><option>40</option>
+					<option>41</option><option>42</option><option>43</option><option>44</option><option>45</option>
+					<option>46</option><option>47</option><option>48</option><option>49</option><option>50</option>
+				</select>
+			</div>
+			<div class="conf_item">
+				Period count<br>
+				<select id="period_count" class="w8blue" onchange="period_countChange()">
+					<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+				</select>
+			</div>
+			<div class="conf_item">
+				Sinbin<br>
+				<select id="sinbin" class="w8blue" onchange="sinbinChange()">
+					<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+					<option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+					<option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+					<option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+				</select>
+			</div>
+			<div class="conf_item">
+				Points try<br>
+				<select id="points_try" class="w8blue" onchange="points_tryChange()">
+					<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+					<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+				</select>
+			</div>
+			<div class="conf_item">
+				Points conversion<br>
+				<select id="points_con" class="w8blue" onchange="points_conChange()">
+					<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+					<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+				</select>
+			</div>
+			<div class="conf_item">
+				Points goal<br>
+				<select id="points_goal" class="w8blue" onchange="points_goalChange()">
+					<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+					<option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+				</select>
+			</div>
+		</div>
 	</div>
-	Record player<br>
-	<label class="switch w8blue"><input id="record_player" onchange="record_playerChange()" type="checkbox"><span class="slider"></span></label>
-	<br>
-	Screen on<br>
-	<label class="switch w8blue"><input id="screen_on" onchange="screen_onChange()" type="checkbox"><span class="slider"></span></label>
-	<br>
-	Timer type<br>
-	<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
-		<option value="0">Count up</option><option value="1">Count down</option>
-	</select>
+	<div class="conf_item">
+		<label for="screen_on">Screen on</label><br>
+		<label class="switch w8blue"><input id="screen_on" onchange="screen_onChange()" type="checkbox"><span class="slider"></span></label>
+	</div>
+	<div class="conf_item">
+		Timer type<br>
+		<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
+			<option value="0">Count up</option><option value="1">Count down</option>
+		</select>
+	</div>
+	<div class="conf_item">
+		<label for="record_player">Record player</label><br>
+		<label class="switch w8blue"><input id="record_player" onchange="record_playerChange()" type="checkbox"><span class="slider"></span></label>
+	</div>
+	<label for="record_penalties">Record penalties</label><br>
+	<label class="switch w8blue"><input id="record_penalties" onchange="record_penaltiesChange()" type="checkbox"><span class="slider"></span></label>
 	<div id="helpSettings">
 		Help<br>
 		<button class="w8blue" onclick="showHelp()">Show help</button>
