@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_penaltiesChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -742,11 +742,18 @@ function requestScreen_on(){
 		tizen.power.request("SCREEN", "SCREEN_NORMAL");
 	}
 }
-function timer_typeChange(){
-	match.settings.timer_type = parseInt($('#timer_type').val());
+function timer_typeClick(){
+	match.settings.timer_type = match.settings.timer_type === 0 ? 1 : 0;
 	timer_typeChanged();
 }
 function timer_typeChanged(){
+	if(match.settings.timer_type === 0){
+		$('#timer_type_0').show();
+		$('#timer_type_1').hide();
+	}else{
+		$('#timer_type_0').hide();
+		$('#timer_type_1').show();
+	}
 	updateTimer();
 }
 
@@ -943,8 +950,8 @@ function checkMatchType(newsettings){
 			return;
 		}
 	}
-	for(var i=0; i<$("#match_type option").length; i++){
-		if(newsettings.match_type === $("#match_type option")[i].innerText){
+	for(var j=0; j<$("#match_type option").length; j++){
+		if(newsettings.match_type === $("#match_type option")[j].innerText){
 			return;
 		}
 	}

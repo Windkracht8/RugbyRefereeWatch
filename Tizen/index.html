@@ -179,11 +179,10 @@
 		<label for="screen_on">Screen on</label><br>
 		<label class="switch w8blue"><input id="screen_on" onchange="screen_onChange()" type="checkbox"><span class="slider"></span></label>
 	</div>
-	<div class="conf_item">
+	<div class="conf_item" onclick="timer_typeClick()">
 		Timer type<br>
-		<select id="timer_type" class="w8blue" onchange="timer_typeChange()">
-			<option value="0">Count up</option><option value="1">Count down</option>
-		</select>
+		<div id="timer_type_0" class="w8blue">Count up</div>
+		<div id="timer_type_1" class="w8blue">Count down</div>
 	</div>
 	<div class="conf_item">
 		<label for="record_player">Record player</label><br>

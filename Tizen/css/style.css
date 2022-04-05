@@ -187,6 +187,9 @@ button, .button{
 #custom_match{
 	display: none;
 }
+#timer_type_0{
+	display: none;
+}
 #report{
 	font-size: 7vw;
 	padding: 5vh 0 20vh;
