@@ -26,7 +26,7 @@ public class ReportEventEdit extends LinearLayout{
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
-        String[] a = new String[] {"TRY","CONVERSION","PENALTY TRY","GOAL","PENALTY GOAL","DROP GOAL","YELLOW CARD","RED CARD"};
+        String[] a = new String[] {"TRY","CONVERSION","PENALTY TRY","GOAL","PENALTY GOAL","DROP GOAL","YELLOW CARD","RED CARD","PENALTY"};
         ArrayAdapter<String> aa = new ArrayAdapter<>(what.getContext(), android.R.layout.simple_spinner_item, a);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         what.setAdapter(aa);
@@ -67,6 +67,9 @@ public class ReportEventEdit extends LinearLayout{
                 case "RED CARD":
                     what.setSelection(7);
                     findViewById(R.id.reason).setVisibility(VISIBLE);
+                    break;
+                case "PENALTY":
+                    what.setSelection(8);
                     break;
                 default:
                     this.setVisibility(GONE);
@@ -131,6 +134,9 @@ public class ReportEventEdit extends LinearLayout{
                     break;
                 case 7:
                     event.put("what", "RED CARD");
+                    break;
+                case 8:
+                    event.put("what", "PENALTY");
                     break;
             }
 

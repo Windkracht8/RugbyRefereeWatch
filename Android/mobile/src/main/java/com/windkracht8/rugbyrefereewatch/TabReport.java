@@ -145,6 +145,16 @@ public class TabReport extends LinearLayout{
                 ((TextView)findViewById(R.id.tvAwayDropGoals)).setText(away.getString("drop_goals"));
                 findViewById(R.id.trDropGoals).setVisibility(View.VISIBLE);
             }
+            if(!home.has("pens") || !away.has("pens") ||
+                    (home.getInt("pens") == 0 && away.getInt("pens") == 0)
+            ){
+                findViewById(R.id.trPens).setVisibility(View.GONE);
+            }else{
+                ((TextView)findViewById(R.id.tvHomePens)).setText(home.getString("pens"));
+                ((TextView)findViewById(R.id.tvAwayPens)).setText(away.getString("pens"));
+                findViewById(R.id.trPens).setVisibility(View.VISIBLE);
+            }
+
             ((TextView)findViewById(R.id.tvHomeTot)).setText(home.getString("tot"));
             ((TextView)findViewById(R.id.tvAwayTot)).setText(away.getString("tot"));
 
@@ -286,12 +296,14 @@ public class TabReport extends LinearLayout{
             int home_goals = 0;
             int home_pen_goals = 0;
             int home_drop_goals = 0;
+            int home_pens = 0;
             int away_tries = 0;
             int away_cons = 0;
             int away_pen_tries = 0;
             int away_goals = 0;
             int away_pen_goals = 0;
             int away_drop_goals = 0;
+            int away_pens = 0;
             int score_home = 0;
             int score_away = 0;
 
@@ -356,6 +368,13 @@ public class TabReport extends LinearLayout{
                             score_away += points_goal;
                         }
                         break;
+                    case "PENALTY":
+                        if(event.getString("team").equals("home")){
+                            home_pens++;
+                        }else{
+                            away_pens++;
+                        }
+                        break;
                     default:
                         if(what.startsWith("Result")){
                             what = what.substring(0, what.lastIndexOf(' ')) + " " + score;
@@ -377,6 +396,7 @@ public class TabReport extends LinearLayout{
             home.put("goals", home_goals);
             home.put("pen_goals", home_pen_goals);
             home.put("drop_goals", home_drop_goals);
+            home.put("pens", home_pens);
             match.put("home", home);
 
             JSONObject away = match.getJSONObject("away");
@@ -389,6 +409,7 @@ public class TabReport extends LinearLayout{
             away.put("goals", away_goals);
             away.put("pen_goals", away_pen_goals);
             away.put("drop_goals", away_drop_goals);
+            away.put("pens", away_pens);
             match.put("away", away);
 
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
@@ -450,6 +471,7 @@ public class TabReport extends LinearLayout{
             boolean show_goals = home.has("goals") && away.has("goals") && (home.getInt("goals") > 0 || away.getInt("goals") > 0);
             boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") > 0 || away.getInt("pen_goals") > 0);
             boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") > 0 || away.getInt("drop_goals") > 0);
+            boolean show_pens = home.has("pens") && away.has("pens") && (home.getInt("pens") > 0 || away.getInt("pens") > 0);
             shareBody.append(MainActivity.getTeamName(home)).append("\n");
             shareBody.append("  Tries: ").append(home.getString("tries")).append("\n");
             if(show_cons){
@@ -466,6 +488,9 @@ public class TabReport extends LinearLayout{
             }
             if(show_drop_goals){
                 shareBody.append("  Drop goals: ").append(home.getString("drop_goals")).append("\n");
+            }
+            if(show_pens){
+                shareBody.append("  Penalties: ").append(home.getString("pens")).append("\n");
             }
             shareBody.append("  Total: ").append(home.getString("tot")).append("\n");
             shareBody.append("\n");
@@ -486,6 +511,9 @@ public class TabReport extends LinearLayout{
             }
             if(show_drop_goals){
                 shareBody.append("  Drop goals: ").append(away.getString("drop_goals")).append("\n");
+            }
+            if(show_pens){
+                shareBody.append("  Penalties: ").append(away.getString("pens")).append("\n");
             }
             shareBody.append("  Total: ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");

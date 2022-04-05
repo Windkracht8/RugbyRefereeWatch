@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_penaltiesChange, showReport, showMessage */
+/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showReport, showMessage */
 
 var timer = {
 	status: "conf",
@@ -19,7 +19,7 @@ var match = {
 		points_con: 2,
 		points_goal: 3,
 		record_player: 0,
-		record_penalties: 0,
+		record_pens: 0,
 		screen_on: 1,
 		timer_type: 1,//0:up, 1:down
 		help_version: 2
@@ -79,7 +79,7 @@ window.onload = function(){
 	update();
 	updateButtons();
 	record_playerChanged();
-	record_penaltiesChanged();
+	record_pensChanged();
 
 	function onScreenStateChanged(previousState, newState) {
 	    if(newState === 'SCREEN_NORMAL'){
@@ -586,7 +586,7 @@ function bconfClick(){
 	$('#points_goal').val(match.settings.points_goal);
 
 	$('#record_player').prop('checked', match.settings.record_player === 1 ? true : false);
-	$('#record_penalties').prop('checked', match.settings.record_penalties === 1 ? true : false);
+	$('#record_pens').prop('checked', match.settings.record_pens === 1 ? true : false);
 	$('#screen_on').prop('checked', match.settings.screen_on === 1 ? true : false);
 	$('#timer_type').val(match.settings.timer_type);
 
@@ -713,12 +713,12 @@ function record_playerChanged(){
 		$('#score_player_wrap').hide();
 	}
 }
-function record_penaltiesChange(){
-	match.settings.record_penalties = $('#record_penalties').is(":checked") ? 1: 0;
-	record_penaltiesChanged();
+function record_pensChange(){
+	match.settings.record_pens = $('#record_pens').is(":checked") ? 1: 0;
+	record_pensChanged();
 }
-function record_penaltiesChanged(){
-	if(match.settings.record_penalties === 1){
+function record_pensChanged(){
+	if(match.settings.record_pens === 1){
 		$('#timerstatus').hide();
 		$('#pen').show();
 	}else{
@@ -992,9 +992,9 @@ function setNewSettings(newsettings){
 		match.settings.record_player = newsettings.record_player;
 		record_playerChanged();
 	}
-	if(newsettings.hasOwnProperty('record_penalties')){
-		match.settings.record_penalties = newsettings.record_penalties;
-		record_penaltiesChanged();
+	if(newsettings.hasOwnProperty('record_pens')){
+		match.settings.record_pens = newsettings.record_pens;
+		record_pensChanged();
 	}
 	checkMatchType(newsettings);
 }
