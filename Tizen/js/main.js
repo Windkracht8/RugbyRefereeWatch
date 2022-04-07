@@ -22,7 +22,7 @@ var match = {
 		record_pens: 0,
 		screen_on: 1,
 		timer_type: 1,//0:up, 1:down
-		help_version: 2
+		help_version: 3
 	},
 	home: {
 		id: "home",
