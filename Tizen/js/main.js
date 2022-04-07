@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bresumeClick, brestClick, bfinishClick, bclearClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showReport, showMessage */
+/* exported timerClick, bovertimerClick, bbottomClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showMessage */
 
 var timer = {
 	status: "conf",
@@ -134,21 +134,18 @@ function timerClick(){
 		timer.start_timeoff = getCurrentTimestamp();
 		logEvent("Time off", null, null);
 		updateButtons();
-		startTimeOffBuzz();
+		setTimeout(timeOffBuzz, 15000);
 	}
 }
 
-function startTimeOffBuzz(){
-	setTimeout(timeOffBuzz, 15000);
-}
 function timeOffBuzz(){
 	if(timer.status === "timeoff"){
 		beep();
-		startTimeOffBuzz();
+		setTimeout(timeOffBuzz, 15000);
 	}
-	
 }
-function bresumeClick(){
+
+function bovertimerClick(){
 	switch(timer.status){
 		case "conf":
 			match.matchid = getCurrentTimestamp();
@@ -173,86 +170,173 @@ function bresumeClick(){
 			//get ready for next period
 			timer.status = "ready";
 			break;
+		case "finished":
+			showReport();
+			break;
+		default://ignore
+			return;
 	}
 	updateButtons();
 }
-function brestClick(){
-	if(match.events[match.events.length-1].what === "Time off"){
-		match.events.splice(match.events.length-1, 1);
+
+function bbottomClick(){
+	switch(timer.status){
+		case "conf":
+			showConf();
+			break;
+		case "timeoff":
+			if(match.events[match.events.length-1].what === "Time off"){
+				match.events.splice(match.events.length-1, 1);
+			}
+			logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
+
+			timer.status = "rest";
+			timer.start = getCurrentTimestamp();
+			timer.period_ended = false;
+			$('#timer').css('color', "unset");
+			$.each(match.home.sinbins, function(index, value){
+				value.end = value.end - timer.timer;
+			});
+			$.each(match.away.sinbins, function(index, value){
+				value.end = value.end - timer.timer;
+			});
+			updateButtons();
+
+			var kickoffTeam = getKickoffTeam();
+			if(kickoffTeam !== null){
+				$('#score_' + kickoffTeam.id).html(kickoffTeam.tot + " KICK");
+			}
+			break;
+		case "rest":
+			timer.status = "finished";
+			updateButtons();
+			updateScore();
+			$('#conf, #timer_type').css("font-size", "unset");
+
+			file_storeMatch(match);
+			break;
+		case "finished":
+			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0};
+			updateTimer();
+			match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
+			match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
+			match.events = [];
+			match.matchid = 0;
+			updateScore();
+			updateButtons();
+			$('#sinbins_home').html("");
+			$('#sinbins_away').html("");
+			$('#home').css('background', checkColor(match.home.color));
+			$('#away').css('background', checkColor(match.away.color));
+			$('#matchSettings').show();
+			$('#helpSettings').show();
+			$('#bconf').show();
+			break;
+		default://ignore
+			return;
 	}
-	logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
-
-	timer.status = "rest";
-	timer.start = getCurrentTimestamp();
-	timer.period_ended = false;
-	$('#timer').css('color', "unset");
-	$.each(match.home.sinbins, function(index, value){
-		value.end = value.end - timer.timer;
-	});
-	$.each(match.away.sinbins, function(index, value){
-		value.end = value.end - timer.timer;
-	});
 	updateButtons();
-
-	var kickoffTeam = getKickoffTeam();
-	if(kickoffTeam !== null){
-		$('#score_' + kickoffTeam.id).html(kickoffTeam.tot + " KICK");
-	}
-}
-function bfinishClick(){
-	timer.status = "finished";
-	updateButtons();
-	updateScore();
-	$('#conf, #timer_type').css("font-size", "unset");
-
-	file_storeMatch(match);
-}
-function bclearClick(){
-	timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0};
-	updateTimer();
-	match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
-	match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
-	match.events = [];
-	match.matchid = 0;
-	updateScore();
-	updateButtons();
-	$('#sinbins_home').html("");
-	$('#sinbins_away').html("");
-	$('#home').css('background', checkColor(match.home.color));
-	$('#away').css('background', checkColor(match.away.color));
-	$('#matchSettings').show();
-	$('#helpSettings').show();
-	$('#bconf').show();
 }
 
 function updateButtons(){
-	var timerstatus_html = "";
-	$('.bottombutton, .overtimerbutton, #bconfwatch').each(function (){$(this).hide();});
 	switch(timer.status){
 		case "conf":
-			$('#bconf').show();
+			$('#bovertimer').html('start');
+			$('#bovertimer').show();
+			$('#bbottom').html('<img src="res/gear.png">');
+			$('#bbottom').show();
+			$('#bconfwatch').hide();
+			break;
 		case "ready":
-			$('#bstart').show();
+			if(timer.period >= match.settings.period_count){
+				if(timer.period === match.settings.period_count){
+					$('#bovertimer').html('start extra time');
+				}else{
+					$('#bovertimer').html('start extra time ' + (timer.period-match.settings.period_count+1));
+				}
+			}else{
+				switch(timer.period){
+					case 1:
+						$('#bovertimer').html('start 2nd');
+						break;
+					case 2:
+						$('#bovertimer').html('start 3rd');
+						break;
+					default:
+						$('#bovertimer').html('start ' + timer.period + "th");
+						break;
+				}
+			}
+			$('#bovertimer').show();
+			$('#bbottom').hide();
+			$('#bconfwatch').hide();
 			break;
 		case "timeoff":
-			$('#bresume').show();
-			$('#brest').show();
+			$('#bovertimer').html('resume');
+			$('#bovertimer').show();
+			if(match.settings.period_count === 2 && timer.period === 1){
+				$('#bbottom').html('half time');
+			}else if(timer.period > match.settings.period_count){
+				if(timer.period === match.settings.period_count+1){
+					$('#bbottom').html('end extra');
+				}else{
+					$('#bbottom').html('end extra ' + (timer.period-match.settings.period_count));
+				}
+			}else{
+				switch(timer.period){
+					case 1:
+						$('#bbottom').html('end 1st');
+						break;
+					case 2:
+						$('#bbottom').html('end 2nd');
+						break;
+					case 3:
+						$('#bbottom').html('end 3rd');
+						break;
+					default:
+						$('#bbottom').html('end ' + timer.period + "th");
+						break;
+				}
+			}
+			$('#bbottom').show();
 			$('#bconfwatch').show();
-			timerstatus_html = "time off";
 			break;
 		case "rest":
-			$('#bnext').show();
-			$('#bfinish').show();
-			$('#bconfwatch').show();
-			timerstatus_html = "rest";
+			if(match.settings.period_count === 2 && timer.period === 1){
+				$('#bovertimer').html('2nd half');
+			}else if(timer.period >= match.settings.period_count){
+				if(timer.period === match.settings.period_count){
+					$('#bovertimer').html('extra time');
+				}else{
+					$('#bovertimer').html('extra time ' + (timer.period-match.settings.period_count+1));
+				}
+			}else{
+				switch(timer.period){
+					case 2:
+						$('#bovertimer').html('3rd period');
+						break;
+					default:
+						$('#bovertimer').html(timer.period + "th period");
+						break;
+				}
+			}
+			$('#bovertimer').show();
+			$('#bbottom').html('finish');
+			$('#bbottom').show();
+			$('#bconfwatch').hide();
 			break;
 		case "finished":
-			$('#breport').show();
-			$('#bclear').show();
-			timerstatus_html = "finished";
+			$('#bovertimer').html('report');
+			$('#bovertimer').show();
+			$('#bbottom').html('clear');
+			$('#bbottom').show();
+			$('#bconfwatch').hide();
 			break;
+		default:
+			$('#bovertimer').hide();
+			$('#bbottom').hide();
+			$('#bconfwatch').hide();
 	}
-	$('#timerstatus').html(timerstatus_html);
 	updateTimer();
 }
 
@@ -568,9 +652,9 @@ function bconfwatchClick(){
 	$('#conf, #timer_type').css("font-size", "8vh");
 	$('#matchSettings').hide();
 	$('#helpSettings').hide();
-	bconfClick();
+	showConf();
 }
-function bconfClick(){
+function showConf(){
 	$('#color_home').css('background', checkColor(match.home.color));
 	$('#color_home').val(match.home.color);
 	$('#color_away').css('background', checkColor(match.away.color));
@@ -718,13 +802,7 @@ function record_pensChange(){
 	record_pensChanged();
 }
 function record_pensChanged(){
-	if(match.settings.record_pens === 1){
-		$('#timerstatus').hide();
-		$('#pen').show();
-	}else{
-		$('#timerstatus').show();
-		$('#pen').hide();
-	}
+	$('#pen').css('display', match.settings.record_pens === 1 ? 'block' : 'none');
 }
 function screen_onChange(){
 	match.settings.screen_on = $('#screen_on').is(":checked") ? 1: 0;
@@ -758,14 +836,20 @@ function timer_typeChanged(){
 }
 
 function getPeriodName(){
+	if(timer.period > match.settings.period_count){
+		if(timer.period === match.settings.period_count+1){
+			return "extra time";
+		}else{
+			return "extra time " + (timer.period-match.settings.period_count);
+		}
+	}
+	
 	if(match.settings.period_count === 2){
 		switch(timer.period){
 			case 1:
 				return "first half";
 			case 2:
 				return "second half";
-			default:
-				return "extra time";
 		}
 	}
 	return "period " + timer.period;

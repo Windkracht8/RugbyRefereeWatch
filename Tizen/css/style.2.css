@@ -64,13 +64,25 @@ select, input, button{
 	font-size: 30vh;
 	z-index: 1;
 }
-#timerstatus{
+#pen_home{
 	position: fixed;
 	left: 0;
-	top: 72vh;
+	top: 76vh;
+	width: 50vw;
+	z-index: 2;
+}
+#pen_label{
+	position: fixed;
+	left: 0;
+	top: 76vh;
 	width: 100vw;
-	font-size: 15vh;
-	z-index: 3;
+}
+#pen_away{
+	position: fixed;
+	right: 0;
+	top: 76vh;
+	width: 50vw;
+	z-index: 2;
 }
 button, .button{
 	width: 100vw;
@@ -110,11 +122,6 @@ button, .button{
 	background: black;
 	font-size: 10vh;
 }
-.goal{
-	height: 30vh;
-	font-size: 20vh;
-	padding-top: 5vh;
-}
 #correct_overlay{
 	padding: 15vh 5vw 10vh 5vw;
 	min-height: 75vh;
@@ -124,11 +131,14 @@ button, .button{
 #correct_title{
 	padding-bottom: 5vh;
 }
+#score{
+	overflow: hidden;
+}
 #score, #foulplay{
 	height: 100vh;
 	padding-top: 0;
 }
-#score_inner, #foulplay_inner, #goal_inner{
+#score_inner, #foulplay_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
@@ -146,11 +156,21 @@ button, .button{
 #penalty_try{
 	color: white;
 }
+#conf{
+	height: 94vh;
+	padding: 2vh 0;
+}
 #conf input{
 	text-align: right;
 }
 #conf select{
 	text-align: center;
+}
+.conf_item{
+	padding-bottom: 2vh;
+}
+#helpSettings{
+	padding-top: 2vh;
 }
 #custom_match{
 	display: none;

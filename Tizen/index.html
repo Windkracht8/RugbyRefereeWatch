@@ -30,15 +30,9 @@
 </div>
 <div id="timer" onclick="timerClick()">40:00</div>
 <div id="pen"><div id="pen_home" onclick="pen_homeClick()">0</div><div id="pen_label">pen</div><div id="pen_away" onclick="pen_awayClick()">0</div></div>
-<div id="timerstatus"></div>
-<div id="bconf" class="button bottombutton" onclick="bconfClick()"><img src="res/gear.png"></div>
-<button id="bstart" class="overtimerbutton" onclick="bresumeClick()">start</button>
-<button id="bresume" class="overtimerbutton" onclick="bresumeClick()">resume</button>
-<button id="brest" class="bottombutton" onclick="brestClick()">rest</button>
-<button id="bnext" class="overtimerbutton" onclick="bresumeClick()">next</button>
-<button id="bfinish" class="bottombutton" onclick="bfinishClick()">finish</button>
-<button id="breport" class="overtimerbutton" onclick="showReport()">report</button>
-<button id="bclear" class="bottombutton" onclick="bclearClick()">clear</button>
+
+<button id="bovertimer" class="overtimerbutton" onclick="bovertimerClick()">Start</button>
+<button id="bbottom" class="bottombutton" onclick="bbottomClick()"><img src="res/gear.png"></button>
 
 <div id="score" class="overlay"><div id="score_inner">
 	<div id="score_player_wrap">player <select id="score_player" class="w8blue">

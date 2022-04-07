@@ -66,14 +66,6 @@ select, input, button{
 	font-size: 30vh;
 	z-index: 1;
 }
-#timerstatus{
-	position: fixed;
-	left: 0;
-	top: 72vh;
-	width: 100vw;
-	font-size: 15vh;
-	z-index: 3;
-}
 #pen_home{
 	position: fixed;
 	left: 0;
@@ -133,11 +125,6 @@ button, .button{
 	background: black;
 	font-size: 10vh;
 }
-.goal{
-	height: 30vh;
-	font-size: 20vh;
-	padding-top: 5vh;
-}
 #correct_overlay{
 	padding: 15vh 5vw 10vh 5vw;
 	height: 75vh;
@@ -150,7 +137,7 @@ button, .button{
 #score{
 	overflow: hidden;
 }
-#score_inner, #foulplay_inner, #goal_inner{
+#score_inner, #foulplay_inner{
 	position: relative;
 	top: 50%;
 	transform: translate(0, -50%);
