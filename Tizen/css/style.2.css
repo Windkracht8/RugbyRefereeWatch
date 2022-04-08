@@ -156,23 +156,19 @@ button, .button{
 #penalty_try{
 	color: white;
 }
-#conf{
-	height: 94vh;
-	padding: 2vh 0;
-}
 #conf input{
 	text-align: right;
 }
 #conf select{
 	text-align: center;
 }
-.conf_item{
-	padding-bottom: 2vh;
-}
 #helpSettings{
 	padding-top: 2vh;
 }
 #custom_match{
+	display: none;
+}
+#timer_type_0{
 	display: none;
 }
 #report{

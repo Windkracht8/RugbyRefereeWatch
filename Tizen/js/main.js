@@ -276,6 +276,8 @@ function updateButtons(){
 			$('#bovertimer').show();
 			if(match.settings.period_count === 2 && timer.period === 1){
 				$('#bbottom').html('half time');
+			}else if(match.settings.period_count === 2 && timer.period === 2){
+					$('#bbottom').html('full time');
 			}else if(timer.period > match.settings.period_count){
 				if(timer.period === match.settings.period_count+1){
 					$('#bbottom').html('end extra');
