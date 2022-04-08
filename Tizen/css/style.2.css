@@ -171,6 +171,16 @@ button, .button{
 #timer_type_0{
 	display: none;
 }
+#extratime_wrap{
+	position: absolute;
+	bottom: 5vh;
+	left: 0;
+	right: 0;
+}
+#extratime{
+	display: none;
+	color: #2bd2e3;
+}
 #report{
 	font-size: 7vw;
 	padding: 5vh 0 20vh;

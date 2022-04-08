@@ -1,5 +1,5 @@
 /* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bovertimerClick, bbottomClick, bconfwatchClick, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showMessage */
+/* exported timerClick, bovertimerClick, bbottomClick, bconfwatchClick, extratimeChange, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showMessage */
 
 var timer = {
 	status: "conf",
@@ -7,7 +7,9 @@ var timer = {
 	start: 0,
 	start_timeoff: 0,
 	period_ended: false,
-	period: 0
+	period: 0,
+	period_time: 40,
+	type: 1
 };
 var match = {
 	settings: {
@@ -169,6 +171,7 @@ function bovertimerClick(){
 		case "rest":
 			//get ready for next period
 			timer.status = "ready";
+			timer.type = match.settings.timer_type;
 			break;
 		case "finished":
 			showReport();
@@ -193,6 +196,7 @@ function bbottomClick(){
 			timer.status = "rest";
 			timer.start = getCurrentTimestamp();
 			timer.period_ended = false;
+			timer.type = 0;
 			$('#timer').css('color', "unset");
 			$.each(match.home.sinbins, function(index, value){
 				value.end = value.end - timer.timer;
@@ -200,7 +204,6 @@ function bbottomClick(){
 			$.each(match.away.sinbins, function(index, value){
 				value.end = value.end - timer.timer;
 			});
-			updateButtons();
 
 			var kickoffTeam = getKickoffTeam();
 			if(kickoffTeam !== null){
@@ -209,21 +212,20 @@ function bbottomClick(){
 			break;
 		case "rest":
 			timer.status = "finished";
-			updateButtons();
+			timer.type = match.settings.timer_type;
 			updateScore();
 			$('#conf, #timer_type').css("font-size", "unset");
 
 			file_storeMatch(match);
 			break;
 		case "finished":
-			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0};
+			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0,period_time:match.settings.period_time,type:match.settings.timer_type};
 			updateTimer();
 			match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
 			match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
 			match.events = [];
 			match.matchid = 0;
 			updateScore();
-			updateButtons();
 			$('#sinbins_home').html("");
 			$('#sinbins_away').html("");
 			$('#home').css('background', checkColor(match.home.color));
@@ -246,15 +248,19 @@ function updateButtons(){
 			$('#bbottom').html('<img src="res/gear.png">');
 			$('#bbottom').show();
 			$('#bconfwatch').hide();
+			$('#extratime').hide();
 			break;
 		case "ready":
 			if(timer.period >= match.settings.period_count){
+				$('#extratime').show();
+				extratimeChange();
 				if(timer.period === match.settings.period_count){
 					$('#bovertimer').html('start extra time');
 				}else{
 					$('#bovertimer').html('start extra time ' + (timer.period-match.settings.period_count+1));
 				}
 			}else{
+				$('#extratime').hide();
 				switch(timer.period){
 					case 1:
 						$('#bovertimer').html('start 2nd');
@@ -302,6 +308,7 @@ function updateButtons(){
 			}
 			$('#bbottom').show();
 			$('#bconfwatch').show();
+			$('#extratime').hide();
 			break;
 		case "rest":
 			if(match.settings.period_count === 2 && timer.period === 1){
@@ -326,6 +333,7 @@ function updateButtons(){
 			$('#bbottom').html('finish');
 			$('#bbottom').show();
 			$('#bconfwatch').hide();
+			$('#extratime').hide();
 			break;
 		case "finished":
 			$('#bovertimer').html('report');
@@ -333,11 +341,13 @@ function updateButtons(){
 			$('#bbottom').html('clear');
 			$('#bbottom').show();
 			$('#bconfwatch').hide();
+			$('#extratime').hide();
 			break;
 		default:
 			$('#bovertimer').hide();
 			$('#bbottom').hide();
 			$('#bconfwatch').hide();
+			$('#extratime').hide();
 	}
 	updateTimer();
 }
@@ -383,8 +393,8 @@ function updateTimer(){
 	timer.timer = millisecs;
 
 	var temp = "";
-	if(match.settings.timer_type === 1 && timer.status !== "rest"){
-		millisecs = (match.settings.period_time * 60000) - millisecs;
+	if(timer.type === 1){
+		millisecs = (timer.period_time * 60000) - millisecs;
 	}
 	if(millisecs < 0){
 		millisecs -= millisecs * 2;
@@ -393,7 +403,7 @@ function updateTimer(){
 
 	$('#timer').html(temp + prettyTimer(millisecs));
 
-	if(!timer.period_ended && timer.status === "running" && timer.timer > match.settings.period_time * 60000){
+	if(!timer.period_ended && timer.status === "running" && timer.timer > timer.period_time * 60000){
 		timer.period_ended = true;
 		$('#timer').css('color', "red");
 		beep();
@@ -769,6 +779,7 @@ function match_typeChange(){
 }
 function period_timeChange(){
 	match.settings.period_time = parseInt($('#period_time').val());
+	timer.period_time = match.settings.period_time;
 	updateTimer();
 }
 function period_countChange(){
@@ -824,6 +835,7 @@ function requestScreen_on(){
 }
 function timer_typeClick(){
 	match.settings.timer_type = match.settings.timer_type === 0 ? 1 : 0;
+	timer.type = match.settings.timer_type;
 	timer_typeChanged();
 }
 function timer_typeChanged(){
@@ -881,7 +893,7 @@ function getTeamName(id){
 
 function logEvent(what, team, who){
 	var id = Date.now();
-	var currenttimer = timer.timer + ((timer.period-1)*match.settings.period_time*60000);
+	var currenttimer = timer.timer + ((timer.period-1)*timer.period_time*60000);
 	var temp = '{"id":' + id +
 				',"time":"' + $('#time').html() + '"' +
 				',"timer":"' + prettyTimer(currenttimer) + '"' +
@@ -1062,6 +1074,7 @@ function showHelp(){
 function setNewSettings(newsettings){
 	match.settings.match_type = newsettings.match_type;
 	match.settings.period_time = newsettings.period_time;
+	timer.period_time = match.settings.period_time;
 	match.settings.period_count = newsettings.period_count;
 	match.settings.sinbin = newsettings.sinbin;
 	match.settings.points_try = newsettings.points_try;
@@ -1073,6 +1086,7 @@ function setNewSettings(newsettings){
 	}
 	if(newsettings.hasOwnProperty('timer_type')){
 		match.settings.timer_type = newsettings.timer_type;
+		timer.type = match.settings.timer_type;
 		timer_typeChanged();
 	}
 	if(newsettings.hasOwnProperty('record_player')){
@@ -1085,6 +1099,20 @@ function setNewSettings(newsettings){
 	}
 	checkMatchType(newsettings);
 }
+
+function extratimeChange(){
+	switch($('#extratime').val()){
+		case "UP":
+			timer.type = 0;
+			timer.period_time = match.settings.period_time;
+			break;
+		default:
+			timer.type = match.settings.timer_type;
+			timer.period_time = parseInt($('#extratime').val());
+	}
+	updateTimer();
+}
+
 function beep(){
 	console.log("beep beep");
 	navigator.vibrate([500, 500, 500]);

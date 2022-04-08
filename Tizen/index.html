@@ -33,6 +33,13 @@
 
 <button id="bovertimer" class="overtimerbutton" onclick="bovertimerClick()">Start</button>
 <button id="bbottom" class="bottombutton" onclick="bbottomClick()"><img src="res/gear.png"></button>
+<div id="extratime_wrap">
+	<select id="extratime" onchange="extratimeChange()">
+		<option value="UP">count up</option>
+		<option value="5">5 min</option>
+		<option value="10">10 min</option>
+	</select>
+</div>
 
 <div id="score" class="overlay"><div id="score_inner">
 	<div id="score_player_wrap">player <select id="score_player" class="w8blue">
