@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -33,7 +34,7 @@ public class Conf extends ScrollView{
     private Spinner points_goal;
     private SwitchCompat record_player;
     private SwitchCompat screen_on;
-    private Spinner timer_type;
+    private Button timer_type;
     public static JSONArray customMatchTypes;
     private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
@@ -146,10 +147,17 @@ public class Conf extends ScrollView{
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        aTemp = new String[] {"count up", "count down"};
-        aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
-        aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        timer_type.setAdapter(aaTemp);
+        timer_type.setOnClickListener(v -> timer_typeClicked());
+    }
+
+    public void timer_typeClicked(){
+        if(MainActivity.timer_type == 1){
+            MainActivity.timer_type = 0;
+            timer_type.setText(R.string.timer_type_up);
+        }else{
+            MainActivity.timer_type = 1;
+            timer_type.setText(R.string.timer_type_down);
+        }
     }
 
     public void load(MatchData match){
@@ -170,13 +178,11 @@ public class Conf extends ScrollView{
 
         record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
-        timer_type.setSelection(MainActivity.timer_type);
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) timer_type.getLayoutParams();
-        lp.setMargins(0, 0, 0, 40);
-        timer_type.setLayoutParams(lp);
+        timer_type.setText(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
         findViewById(R.id.matchSettings).setVisibility(View.VISIBLE);
         findViewById(R.id.helpSettings).setVisibility(View.VISIBLE);
         onlyWatchSettings = false;
+        findViewById(R.id.conf).scrollTo(0,0);
     }
     public void onlyWatchSettings(){
         findViewById(R.id.matchSettings).setVisibility(View.GONE);
@@ -210,7 +216,6 @@ public class Conf extends ScrollView{
         }
         MainActivity.record_player = record_player.isChecked();
         MainActivity.screen_on = screen_on.isChecked();
-        MainActivity.timer_type = timer_type.getSelectedItemPosition();
     }
 
     private void addCustomMatchType(MatchData match){
