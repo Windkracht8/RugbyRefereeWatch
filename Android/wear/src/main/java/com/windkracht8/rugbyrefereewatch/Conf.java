@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -38,12 +37,10 @@ public class Conf extends ScrollView{
     public static JSONArray customMatchTypes;
     private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
-    private boolean onlyWatchSettings = false;
-
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show correction screen", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, "Failed to show conf screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf, this, true);
 
         customMatchTypes = new JSONArray();
@@ -147,50 +144,38 @@ public class Conf extends ScrollView{
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        timer_type.setOnClickListener(v -> timer_typeClicked());
+        timer_type.setOnClickListener(v -> {
+            if(MainActivity.timer_type == 1){
+                MainActivity.timer_type = 0;
+                timer_type.setText(R.string.timer_type_up);
+            }else{
+                MainActivity.timer_type = 1;
+                timer_type.setText(R.string.timer_type_down);
+            }
+        });
     }
 
-    public void timer_typeClicked(){
-        if(MainActivity.timer_type == 1){
-            MainActivity.timer_type = 0;
-            timer_type.setText(R.string.timer_type_up);
-        }else{
-            MainActivity.timer_type = 1;
-            timer_type.setText(R.string.timer_type_down);
-        }
-    }
-
-    public void load(MatchData match){
+    public void show(){
         loadCustomMatchTypesSpinner();
-        selectItem(color_home, match.home.color);
-        selectItem(color_away, match.away.color);
-        if(!selectItem(match_type, match.match_type)){
-            addCustomMatchType(match);
-            selectItem(match_type, match.match_type);
+        selectItem(color_home, MainActivity.match.home.color);
+        selectItem(color_away, MainActivity.match.away.color);
+        if(!selectItem(match_type, MainActivity.match.match_type)){
+            addCustomMatchType(MainActivity.match);
+            selectItem(match_type, MainActivity.match.match_type);
         }
 
-        period_time.setSelection(match.period_time-1);
-        period_count.setSelection(match.period_count-1);
-        sinbin.setSelection(match.sinbin-1);
-        points_try.setSelection(match.points_try);
-        points_con.setSelection(match.points_con);
-        points_goal.setSelection(match.points_goal);
+        period_time.setSelection(MainActivity.match.period_time-1);
+        period_count.setSelection(MainActivity.match.period_count-1);
+        sinbin.setSelection(MainActivity.match.sinbin-1);
+        points_try.setSelection(MainActivity.match.points_try);
+        points_con.setSelection(MainActivity.match.points_con);
+        points_goal.setSelection(MainActivity.match.points_goal);
 
         record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setText(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
-        findViewById(R.id.matchSettings).setVisibility(View.VISIBLE);
-        findViewById(R.id.helpSettings).setVisibility(View.VISIBLE);
-        onlyWatchSettings = false;
         findViewById(R.id.conf).scrollTo(0,0);
-    }
-    public void onlyWatchSettings(){
-        findViewById(R.id.matchSettings).setVisibility(View.GONE);
-        findViewById(R.id.helpSettings).setVisibility(View.GONE);
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) timer_type.getLayoutParams();
-        lp.setMargins(0, 0, 0, 0);
-        timer_type.setLayoutParams(lp);
-        onlyWatchSettings = true;
+        this.setVisibility(View.VISIBLE);
     }
     private boolean selectItem(Spinner spin, String str){
         for(int i=0;i<spin.getCount();i++){
@@ -201,21 +186,20 @@ public class Conf extends ScrollView{
         }
         return false;
     }
-    public void save(MatchData match){
-        if(!onlyWatchSettings){
-            match.home.color = color_home.getSelectedItem().toString();
-            match.away.color = color_away.getSelectedItem().toString();
-            match.match_type = match_type.getSelectedItem().toString();
+    public void onBackPressed(){
+        MainActivity.match.home.color = color_home.getSelectedItem().toString();
+        MainActivity.match.away.color = color_away.getSelectedItem().toString();
+        MainActivity.match.match_type = match_type.getSelectedItem().toString();
 
-            match.period_time = period_time.getSelectedItemPosition() + 1;
-            match.period_count = period_count.getSelectedItemPosition() + 1;
-            match.sinbin = sinbin.getSelectedItemPosition() + 1;
-            match.points_try = points_try.getSelectedItemPosition();
-            match.points_con = points_con.getSelectedItemPosition();
-            match.points_goal = points_goal.getSelectedItemPosition();
-        }
+        MainActivity.match.period_time = period_time.getSelectedItemPosition() + 1;
+        MainActivity.match.period_count = period_count.getSelectedItemPosition() + 1;
+        MainActivity.match.sinbin = sinbin.getSelectedItemPosition() + 1;
+        MainActivity.match.points_try = points_try.getSelectedItemPosition();
+        MainActivity.match.points_con = points_con.getSelectedItemPosition();
+        MainActivity.match.points_goal = points_goal.getSelectedItemPosition();
         MainActivity.record_player = record_player.isChecked();
         MainActivity.screen_on = screen_on.isChecked();
+        this.setVisibility(View.GONE);
     }
 
     private void addCustomMatchType(MatchData match){

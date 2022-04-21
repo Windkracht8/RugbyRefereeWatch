@@ -188,6 +188,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <com.windkracht8.rugbyrefereewatch.ConfWatch
+        android:id="@+id/confWatch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <com.windkracht8.rugbyrefereewatch.Score
         android:id="@+id/score"
         android:layout_width="match_parent"
@@ -199,7 +208,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <com.windkracht8.rugbyrefereewatch.FoulPlay
-        android:id="@+id/card"
+        android:id="@+id/foulPlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

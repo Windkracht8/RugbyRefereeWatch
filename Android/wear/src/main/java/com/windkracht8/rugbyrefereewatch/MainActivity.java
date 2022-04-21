@@ -48,6 +48,7 @@ public class MainActivity extends FragmentActivity{
     private ImageButton bConf;
     private ImageButton bConfWatch;
     private Conf conf;
+    private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
     private Correct correct;
@@ -112,11 +113,12 @@ public class MainActivity extends FragmentActivity{
         tTimerStatus = findViewById(R.id.tTimerStatus);
         bOverTimer = findViewById(R.id.bOverTimer);
         bBottom = findViewById(R.id.bBottom);
-        bConf = findViewById(R.id.bConf);
-        bConf.setOnClickListener(v -> bConfClick());
-        bConfWatch = findViewById(R.id.bConfWatch);
-        bConfWatch.setOnClickListener(v -> bConfWatchClick());
         conf = findViewById(R.id.conf);
+        bConf = findViewById(R.id.bConf);
+        bConf.setOnClickListener(v -> conf.show());
+        confWatch = findViewById(R.id.confWatch);
+        bConfWatch = findViewById(R.id.bConfWatch);
+        bConfWatch.setOnClickListener(v -> confWatch.show());
         score = findViewById(R.id.score);
         TextView score_try = findViewById(R.id.score_try);
         score_try.setOnClickListener(v -> tryClick());
@@ -124,7 +126,7 @@ public class MainActivity extends FragmentActivity{
         score_con.setOnClickListener(v -> conversionClick());
         findViewById(R.id.score_goal).setOnClickListener(v -> goalClick());
         findViewById(R.id.foul_play).setOnClickListener(v -> foulPlayClick());
-        foulPlay = findViewById(R.id.card);
+        foulPlay = findViewById(R.id.foulPlay);
         findViewById(R.id.card_yellow).setOnClickListener(v -> card_yellowClick());
         findViewById(R.id.penalty_try).setOnClickListener(v -> penalty_tryClick());
         findViewById(R.id.card_red).setOnClickListener(v -> card_redClick());
@@ -201,9 +203,12 @@ public class MainActivity extends FragmentActivity{
     @Override
     public void onBackPressed(){
         if(conf.getVisibility() == View.VISIBLE){
-            conf.save(match);
+            conf.onBackPressed();
             updateAfterConfig();
-            conf.setVisibility(View.GONE);
+            executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
+        }else if(confWatch.getVisibility() == View.VISIBLE){
+            confWatch.onBackPressed();
+            updateAfterConfig();
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
@@ -596,16 +601,6 @@ public class MainActivity extends FragmentActivity{
     public void correctClicked(){
         updateScore();
         updateSinbins();
-    }
-
-    public void bConfWatchClick(){
-        conf.load(match);
-        conf.onlyWatchSettings();
-        conf.setVisibility(View.VISIBLE);
-    }
-    public void bConfClick(){
-        conf.load(match);
-        conf.setVisibility(View.VISIBLE);
     }
 
     public static long getCurrentTimestamp(){
