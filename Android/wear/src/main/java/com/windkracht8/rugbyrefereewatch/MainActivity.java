@@ -757,4 +757,21 @@ public class MainActivity extends FragmentActivity{
         intent.putExtra("message", message);
         context.sendBroadcast(intent);
     }
+    public static JSONObject getTimer(){
+        JSONObject ret = new JSONObject();
+        try{
+            ret.put("status", timer_status);
+            ret.put("timer", timer_timer);
+            ret.put("start", timer_start);
+            ret.put("start_time_off", timer_start_time_off);
+            ret.put("period_ended", timer_period_ended);
+            ret.put("period", timer_period);
+            ret.put("period_time", match.period_time);
+            ret.put("type", timer_type);
+        }catch(Exception e){
+            Log.e("MainActivity", "getTimer: " + e.getMessage());
+            return null;
+        }
+        return ret;
+    }
 }

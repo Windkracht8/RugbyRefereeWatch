@@ -86,9 +86,15 @@ public class Communication extends WearableListenerService{
         Conf.syncCustomMatchTypes(getBaseContext(), requestData);
     }
     private void onReceiveGetMatch(String requestType){
-        if(MainActivity.match == null)return;
-        String responseData = MainActivity.match.toJson(getBaseContext()).toString();
-        sendRequest(requestType, "responseData", responseData);
+        if(MainActivity.match == null) return;
+        try{
+            JSONObject responseData = MainActivity.match.toJson(getBaseContext());
+            responseData.put("timer", MainActivity.getTimer());
+            sendRequest(requestType, "responseData", responseData.toString());
+        }catch(Exception e){
+            Log.e("communication", "getMatch: " + e.getMessage());
+            sendRequest(requestType, "responseData", "unexpected error");
+        }
     }
     private void onReceivePrepare(String requestType, DataMap dataMap){
         String requestData = dataMap.getString("requestData");
