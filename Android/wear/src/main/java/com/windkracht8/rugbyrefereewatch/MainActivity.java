@@ -42,7 +42,6 @@ public class MainActivity extends FragmentActivity{
     private LinearLayout sinbins_home;
     private LinearLayout sinbins_away;
     private TextView tTimer;
-    private TextView tTimerStatus;
     private Button bOverTimer;
     private Button bBottom;
     private ImageButton bConf;
@@ -59,9 +58,7 @@ public class MainActivity extends FragmentActivity{
     public static int heightPixels = 0;
     public static int vh5 = 0;
     public static int vh10 = 0;
-    public static int vh15 = 0;
-    public static int vh25 = 0;
-    public static int vh30 = 0;
+    public static int vh20 = 0;
     public static int vh80 = 0;
     public static int vh90 = 0;
 
@@ -84,21 +81,6 @@ public class MainActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         executorService = Executors.newFixedThreadPool(4);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-            heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
-        }else{
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            heightPixels = displayMetrics.heightPixels;
-        }
-        vh5 = heightPixels / 20;
-        vh10 = heightPixels / 10;
-        vh15 = (int) (heightPixels * .15);
-        vh25 = heightPixels / 4;
-        vh30 = (int) (heightPixels * .3);
-        vh80 = (int) (heightPixels * .8);
-        vh90 = (int) (heightPixels * .9);
-
         setContentView(R.layout.activity_main);
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
@@ -110,7 +92,6 @@ public class MainActivity extends FragmentActivity{
         sinbins_away = findViewById(R.id.sinbins_away);
         tTimer = findViewById(R.id.tTimer);
         tTimer.setOnClickListener(v -> timerClick());
-        tTimerStatus = findViewById(R.id.tTimerStatus);
         bOverTimer = findViewById(R.id.bOverTimer);
         bBottom = findViewById(R.id.bBottom);
         conf = findViewById(R.id.conf);
@@ -136,20 +117,31 @@ public class MainActivity extends FragmentActivity{
         help = findViewById(R.id.help);
         findViewById(R.id.bHelp).setOnClickListener(v -> showHelp());
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
+        }else{
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            heightPixels = displayMetrics.heightPixels;
+        }
+        vh5 = heightPixels / 20;
+        vh10 = heightPixels / 10;
+        vh20 = (int) (heightPixels * .2);
+        vh80 = (int) (heightPixels * .8);
+        vh90 = (int) (heightPixels * .9);
         //Resize elements for the heightPixels
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
+        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (heightPixels * .15));
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        findViewById(R.id.sinbin_space).setMinimumHeight(vh15);
-        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
-        tTimerStatus.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
+        ((TextView)findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (heightPixels * .35));
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bOverTimer.setMinimumHeight(vh30);
+        bOverTimer.setMinimumHeight((int) (heightPixels * .3));
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bBottom.setMinimumHeight(vh25);
-        bConf.setMaxHeight(vh15);
-        bConfWatch.setMaxHeight(vh25);
+        bBottom.setMinimumHeight((int) (heightPixels * .25));
+        bConf.getLayoutParams().height = vh20;
+        bConfWatch.getLayoutParams().height = vh20;
 
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
@@ -324,7 +316,6 @@ public class MainActivity extends FragmentActivity{
         updateSinbins();
     }
     private void updateButtons(){
-        String ui_status = "";
         bOverTimer.setVisibility(View.GONE);
         bOverTimer.setOnClickListener(null);
         bBottom.setVisibility(View.GONE);
@@ -350,7 +341,6 @@ public class MainActivity extends FragmentActivity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
-                ui_status = "time off";
                 break;
             case "rest":
                 bOverTimer.setText(R.string.next);
@@ -361,7 +351,6 @@ public class MainActivity extends FragmentActivity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
-                ui_status = "rest";
                 break;
             case "finished":
                 bOverTimer.setText(R.string.report);
@@ -371,10 +360,8 @@ public class MainActivity extends FragmentActivity{
                 bBottom.setOnClickListener(v -> bClearClick());
                 bBottom.setVisibility(View.VISIBLE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
-                ui_status = "finished";
                 break;
         }
-        tTimerStatus.setText(ui_status);
         updateTimer();
     }
     private void update(){
