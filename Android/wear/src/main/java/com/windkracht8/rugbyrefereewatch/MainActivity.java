@@ -43,6 +43,8 @@ public class MainActivity extends FragmentActivity{
     private LinearLayout sinbins_away;
     private TextView tTimer;
     private Button bOverTimer;
+    private Button bPenHome;
+    private Button bPenAway;
     private Button bBottom;
     private ImageButton bConf;
     private ImageButton bConfWatch;
@@ -66,9 +68,10 @@ public class MainActivity extends FragmentActivity{
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
     public static int timer_period = 0;
-    public static boolean record_player = false;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
+    public static boolean record_player = false;
+    public static boolean record_pens = false;
     public final static int help_version = 2;
 
     private Handler handler_main;
@@ -114,6 +117,10 @@ public class MainActivity extends FragmentActivity{
         report = findViewById(R.id.report);
         help = findViewById(R.id.help);
         findViewById(R.id.bHelp).setOnClickListener(v -> showHelp());
+        bPenHome = findViewById(R.id.bPenHome);
+        bPenHome.setOnClickListener(v -> bPenHomeClick());
+        bPenAway = findViewById(R.id.bPenAway);
+        bPenAway.setOnClickListener(v -> bPenAwayClick());
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
@@ -385,6 +392,9 @@ public class MainActivity extends FragmentActivity{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
+        findViewById(R.id.pen).setVisibility(MainActivity.record_pens ? View.VISIBLE : View.GONE);
+        findViewById(R.id.pen_label).setVisibility(MainActivity.record_pens ? View.VISIBLE : View.GONE);
+
         score.update(match);
     }
     public int getColor(String name){
@@ -482,6 +492,18 @@ public class MainActivity extends FragmentActivity{
         battery.setText(tmp);
         handler_main.postDelayed(this::updateBattery, 10000);
     }
+    public void bPenHomeClick(){
+        if(timer_status.equals("conf")){return;}
+        match.home.pens++;
+        updateScore();
+        match.logEvent("PENALTY", match.home.id, null, 0);
+    }
+    public void bPenAwayClick(){
+        if(timer_status.equals("conf")){return;}
+        match.away.pens++;
+        updateScore();
+        match.logEvent("PENALTY", match.away.id, null, 0);
+    }
     public void score_homeClick(){
         if(timer_status.equals("conf")){
             if(match.home.kickoff){
@@ -540,14 +562,15 @@ public class MainActivity extends FragmentActivity{
                 match.home.cons*match.points_con +
                 match.home.pen_tries*(match.points_try + match.points_con) +
                 match.home.goals*match.points_goal;
-        String tmp = match.home.tot + "";
-        score_home.setText(tmp);
+        score_home.setText(String.valueOf(match.home.tot));
         match.away.tot = match.away.tries*match.points_try +
                 match.away.cons*match.points_con +
                 match.away.pen_tries*(match.points_try + match.points_con) +
                 match.away.goals*match.points_goal;
-        tmp = match.away.tot + "";
-        score_away.setText(tmp);
+        score_away.setText(String.valueOf(match.away.tot));
+
+        bPenHome.setText(String.valueOf(match.home.pens));
+        bPenAway.setText(String.valueOf(match.away.pens));
     }
     public void foulPlayClick(){
         foulPlay.setPlayer(score.player_no);
@@ -645,6 +668,8 @@ public class MainActivity extends FragmentActivity{
 
             if(settings_new.has("record_player"))
                 record_player = settings_new.getInt("record_player") == 1;
+            if(settings_new.has("record_pens"))
+                record_pens = settings_new.getInt("record_pens") == 1;
             if(settings_new.has("screen_on"))
                 screen_on = settings_new.getInt("screen_on") == 1;
             if(settings_new.has("timer_type"))
@@ -661,6 +686,7 @@ public class MainActivity extends FragmentActivity{
         if(!timer_status.equals("conf")) return;
         try{
             record_player = jsonSettings.getBoolean("record_player");
+            if(jsonSettings.has("record_pens")) record_pens = jsonSettings.getBoolean("record_pens");
             screen_on = jsonSettings.getBoolean("screen_on");
             timer_type = jsonSettings.getInt("timer_type");
             match.match_type = jsonSettings.getString("match_type");
@@ -691,6 +717,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("points_con", match.points_con);
             ret.put("points_goal", match.points_goal);
             ret.put("record_player", record_player ? 1 : 0);
+            ret.put("record_pens", record_pens ? 1 : 0);
             ret.put("screen_on", screen_on ? 1 : 0);
             ret.put("timer_type", timer_type);
             ret.put("help_version", help_version);

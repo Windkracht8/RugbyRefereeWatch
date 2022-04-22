@@ -62,6 +62,7 @@ public class MatchData{
         home.cons = 0;
         home.pen_tries = 0;
         home.goals = 0;
+        home.pens = 0;
         home.sinbins.clear();
         away.team = "away";
         away.tot = 0;
@@ -69,6 +70,7 @@ public class MatchData{
         away.cons = 0;
         away.pen_tries = 0;
         away.goals = 0;
+        away.pens = 0;
         away.sinbins.clear();
     }
     public void removeEvent(event event_del){
@@ -92,6 +94,9 @@ public class MatchData{
                 break;
             case "PENALTY TRY":
                 team_edit.pen_tries--;
+                break;
+            case "PENALTY":
+                team_edit.pens--;
                 break;
             case "GOAL":
                 team_edit.goals--;
@@ -118,6 +123,7 @@ public class MatchData{
         public int cons = 0;
         public int pen_tries = 0;
         public int goals = 0;
+        public int pens = 0;
         public final ArrayList<sinbin> sinbins = new ArrayList<>();
         public boolean kickoff = false;
         public team(String id, String team, String color){
@@ -148,6 +154,7 @@ public class MatchData{
                 ret.put("cons", cons);
                 ret.put("pen_tries", pen_tries);
                 ret.put("goals", goals);
+                ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
                 Log.e("MatchData", "match.toJson: " + e.getMessage());

@@ -21,6 +21,9 @@
     <string name="_0">0</string>
     <string name="_0_kick">0 KICK</string>
     <string name="tTimer_placeholder">00:00</string>
+    <string name="pen_label_text">pen</string>
+    <string name="bPenHome_desc">home penalty count</string>
+    <string name="bPenAway_desc">away penalty count</string>
     <string name="bOverTimer_text">start</string>
     <string name="bBottom_text">conf</string>
     <string name="bConf_desc">configuration</string>
@@ -34,11 +37,15 @@
     <string name="points_try_text">points try</string>
     <string name="points_con_text">points conversion</string>
     <string name="points_goal_text">points goal</string>
-    <string name="record_player_text">Record player</string>
     <string name="screen_on_text">Screen on</string>
+    <string name="screen_on_desc">screen on</string>
     <string name="timer_type_text">Timer type</string>
     <string name="timer_type_down">Count down</string>
     <string name="timer_type_up">Count up</string>
+    <string name="record_player_text">Record player</string>
+    <string name="record_player_desc">record player</string>
+    <string name="record_pens_text">Record penalties</string>
+    <string name="record_pens_desc">record penalties</string>
     <string name="color_away_desc">Color away select</string>
     <string name="color_home_desc">Color home select</string>
     <string name="match_type_desc">Match type selection</string>
@@ -58,13 +65,11 @@
     <string name="report">report</string>
     <string name="clear">clear</string>
     <string name="player_desc">player</string>
-    <string name="record_player_desc">record player</string>
-    <string name="screen_on_desc">screen on</string>
 
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
     <string name="help_news_title">New stuff</string>
-    <string name="help_news">Looking for penalty kick? Check under foul play.</string>
+    <string name="help_news">Do you want to record penalties? You can enable that in the settings. Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
     <string name="help_corrections">During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.</string>
     <string name="help_kickoff_title">Kick off</string>

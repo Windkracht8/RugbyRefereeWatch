@@ -87,6 +87,7 @@ public class FileStore{
         try{
             JSONObject jsonSettings = new JSONObject();
             jsonSettings.put("record_player", MainActivity.record_player);
+            jsonSettings.put("record_pens", MainActivity.record_pens);
             jsonSettings.put("screen_on", MainActivity.screen_on);
             jsonSettings.put("timer_type", MainActivity.timer_type);
             jsonSettings.put("help_version", MainActivity.help_version);

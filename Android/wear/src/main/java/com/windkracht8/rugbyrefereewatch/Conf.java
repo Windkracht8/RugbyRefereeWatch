@@ -31,9 +31,10 @@ public class Conf extends ScrollView{
     private Spinner points_try;
     private Spinner points_con;
     private Spinner points_goal;
-    private SwitchCompat record_player;
     private SwitchCompat screen_on;
     private Button timer_type;
+    private SwitchCompat record_player;
+    private SwitchCompat record_pens;
     public static JSONArray customMatchTypes;
     private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
@@ -54,9 +55,10 @@ public class Conf extends ScrollView{
         points_try = findViewById(R.id.points_try);
         points_con = findViewById(R.id.points_con);
         points_goal = findViewById(R.id.points_goal);
-        record_player = findViewById(R.id.record_player);
         screen_on = findViewById(R.id.screen_on);
         timer_type = findViewById(R.id.timer_type);
+        record_player = findViewById(R.id.record_player);
+        record_pens = findViewById(R.id.record_pens);
 
         String[] aTemp = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
         ArrayAdapter<String> aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
@@ -144,17 +146,22 @@ public class Conf extends ScrollView{
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        timer_type.setOnClickListener(v -> {
-            if(MainActivity.timer_type == 1){
-                MainActivity.timer_type = 0;
-                timer_type.setText(R.string.timer_type_up);
-            }else{
-                MainActivity.timer_type = 1;
-                timer_type.setText(R.string.timer_type_down);
-            }
-        });
-    }
+        findViewById(R.id.screen_on_text).setOnClickListener(v -> screen_on.toggle());
+        findViewById(R.id.timer_type_text).setOnClickListener(v -> toggleTimerType());
+        timer_type.setOnClickListener(v -> toggleTimerType());
+        findViewById(R.id.record_player_text).setOnClickListener(v -> record_player.toggle());
+        findViewById(R.id.record_pens_text).setOnClickListener(v -> record_pens.toggle());
 
+    }
+    private void toggleTimerType(){
+        if(MainActivity.timer_type == 1){
+            MainActivity.timer_type = 0;
+            timer_type.setText(R.string.timer_type_up);
+        }else{
+            MainActivity.timer_type = 1;
+            timer_type.setText(R.string.timer_type_down);
+        }
+    }
     public void show(){
         loadCustomMatchTypesSpinner();
         selectItem(color_home, MainActivity.match.home.color);
@@ -171,9 +178,10 @@ public class Conf extends ScrollView{
         points_con.setSelection(MainActivity.match.points_con);
         points_goal.setSelection(MainActivity.match.points_goal);
 
-        record_player.setChecked(MainActivity.record_player);
         screen_on.setChecked(MainActivity.screen_on);
         timer_type.setText(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
+        record_player.setChecked(MainActivity.record_player);
+        record_pens.setChecked(MainActivity.record_pens);
         findViewById(R.id.conf).scrollTo(0,0);
         this.setVisibility(View.VISIBLE);
     }
@@ -197,8 +205,9 @@ public class Conf extends ScrollView{
         MainActivity.match.points_try = points_try.getSelectedItemPosition();
         MainActivity.match.points_con = points_con.getSelectedItemPosition();
         MainActivity.match.points_goal = points_goal.getSelectedItemPosition();
-        MainActivity.record_player = record_player.isChecked();
         MainActivity.screen_on = screen_on.isChecked();
+        MainActivity.record_player = record_player.isChecked();
+        MainActivity.record_pens = record_pens.isChecked();
         this.setVisibility(View.GONE);
     }
 
