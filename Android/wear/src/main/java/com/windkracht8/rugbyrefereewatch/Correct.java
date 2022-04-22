@@ -15,11 +15,6 @@ public class Correct extends ScrollView{
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, "Failed to show correction screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.correct, this, true);
-
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, MainActivity.vh10, 0, MainActivity.vh10);
-        findViewById(R.id.list_wrap).setLayoutParams(params);
-        findViewById(R.id.list_wrap).setMinimumHeight(MainActivity.vh80);
     }
     public void load(MatchData match){
         this.match = match;

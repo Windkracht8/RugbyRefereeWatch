@@ -56,11 +56,9 @@ public class MainActivity extends FragmentActivity{
 
     public static MatchData match;
     public static int heightPixels = 0;
-    public static int vh5 = 0;
+    public static int vh7 = 0;
     public static int vh10 = 0;
     public static int vh20 = 0;
-    public static int vh80 = 0;
-    public static int vh90 = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
@@ -124,12 +122,10 @@ public class MainActivity extends FragmentActivity{
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
         }
-        vh5 = heightPixels / 20;
+        //Resize elements for the heightPixels
+        vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
         vh20 = (int) (heightPixels * .2);
-        vh80 = (int) (heightPixels * .8);
-        vh90 = (int) (heightPixels * .9);
-        //Resize elements for the heightPixels
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (heightPixels * .15));
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
