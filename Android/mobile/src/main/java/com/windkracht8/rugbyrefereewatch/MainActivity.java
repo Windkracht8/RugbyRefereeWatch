@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity{
             gotError(getString(R.string.first_connect));
             return true;
         }
-        if(!tizen_not_wear && !comms_wear.status.equals("CONNECTED") && !comms_wear.status.equals("OFFLINE")){
+        if(!tizen_not_wear && (comms_wear == null || (!comms_wear.status.equals("CONNECTED") && !comms_wear.status.equals("OFFLINE")))){
             gotError(getString(R.string.first_connect));
             return true;
         }
