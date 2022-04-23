@@ -422,15 +422,18 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     private boolean cantSendRequest(){
-        if(tizen_not_wear && (comms_tizen == null || !comms_tizen.status.equals("CONNECTED"))){
-            gotError(getString(R.string.first_connect));
-            return true;
+        if(tizen_not_wear && comms_tizen != null &&
+                comms_tizen.status.equals("CONNECTED")){
+            return false;
         }
-        if(!tizen_not_wear && (comms_wear == null || (!comms_wear.status.equals("CONNECTED") && !comms_wear.status.equals("OFFLINE")))){
-            gotError(getString(R.string.first_connect));
-            return true;
+        if(!tizen_not_wear && comms_wear != null && (
+                comms_wear.status.equals("CONNECTED") ||
+                comms_wear.status.equals("OFFLINE")
+        )){
+            return false;
         }
-        return false;
+        gotError(getString(R.string.first_connect));
+        return true;
     }
     private void historyMatchClick(String match){
         try{
