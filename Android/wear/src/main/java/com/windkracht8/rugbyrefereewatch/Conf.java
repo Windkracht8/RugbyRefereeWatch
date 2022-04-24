@@ -179,7 +179,7 @@ public class Conf extends ScrollView{
         points_goal.setSelection(MainActivity.match.points_goal);
 
         screen_on.setChecked(MainActivity.screen_on);
-        timer_type.setText(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
+        timer_type.setText(MainActivity.match.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
         record_player.setChecked(MainActivity.record_player);
         record_pens.setChecked(MainActivity.record_pens);
         findViewById(R.id.conf).scrollTo(0,0);
@@ -200,6 +200,7 @@ public class Conf extends ScrollView{
         MainActivity.match.match_type = match_type.getSelectedItem().toString();
 
         MainActivity.match.period_time = period_time.getSelectedItemPosition() + 1;
+        MainActivity.timer_period_time = MainActivity.match.period_time;
         MainActivity.match.period_count = period_count.getSelectedItemPosition() + 1;
         MainActivity.match.sinbin = sinbin.getSelectedItemPosition() + 1;
         MainActivity.match.points_try = points_try.getSelectedItemPosition();

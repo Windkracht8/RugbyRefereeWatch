@@ -320,19 +320,16 @@ function updateButtons(){
 					$('#bovertimer').html('extra time ' + (timer.period-match.settings.period_count+1));
 				}
 			}else{
-				switch(timer.period){
-					case 2:
-						$('#bovertimer').html('3rd period');
-						break;
-					default:
-						$('#bovertimer').html(timer.period + "th period");
-						break;
+				if(timer.period == 2){
+					$('#bovertimer').html('3rd period');
+				}else{
+					$('#bovertimer').html(timer.period + "th period");
 				}
 			}
 			$('#bovertimer').show();
 			$('#bbottom').html('finish');
 			$('#bbottom').show();
-			$('#bconfwatch').hide();
+			$('#bconfwatch').show();
 			$('#extratime').hide();
 			break;
 		case "finished":

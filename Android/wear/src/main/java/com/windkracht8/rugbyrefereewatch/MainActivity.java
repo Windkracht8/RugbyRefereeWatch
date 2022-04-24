@@ -17,9 +17,12 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ public class MainActivity extends FragmentActivity{
     private Button bPenAway;
     private Button bBottom;
     private ImageButton bConf;
+    private Spinner extraTime;
     private ImageButton bConfWatch;
     private Conf conf;
     private ConfWatch confWatch;
@@ -60,13 +64,13 @@ public class MainActivity extends FragmentActivity{
     public static int heightPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
-    public static int vh20 = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
+    public static int timer_period_time = 0;
     public static int timer_period = 0;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
@@ -94,13 +98,29 @@ public class MainActivity extends FragmentActivity{
         tTimer = findViewById(R.id.tTimer);
         tTimer.setOnClickListener(v -> timerClick());
         bOverTimer = findViewById(R.id.bOverTimer);
+        bOverTimer.setOnClickListener(v -> bOverTimerClick());
         bBottom = findViewById(R.id.bBottom);
+        bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v -> conf.show());
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v -> confWatch.show());
+        extraTime = findViewById(R.id.extraTime);
+        String[] aTemp = new String[] {"count up", "2 min", "5 min", "10 min"};
+        ArrayAdapter<String> aaTemp = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_spinner_item, aTemp);
+        aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        extraTime.setAdapter(aaTemp);
+        extraTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+                extraTimeChange();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView){}
+        });
+
         score = findViewById(R.id.score);
         TextView score_try = findViewById(R.id.score_try);
         score_try.setOnClickListener(v -> tryClick());
@@ -132,17 +152,20 @@ public class MainActivity extends FragmentActivity{
         //Resize elements for the heightPixels
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
-        vh20 = (int) (heightPixels * .2);
+        int vh15 = (int) (heightPixels * .15);
+        int vh20 = (int) (heightPixels * .2);
+        int vh25 = (int) (heightPixels * .25);
+        int vh30 = (int) (heightPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (heightPixels * .15));
+        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         ((TextView)findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (heightPixels * .35));
+        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bOverTimer.setMinimumHeight((int) (heightPixels * .3));
+        bOverTimer.setMinimumHeight(vh30);
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bBottom.setMinimumHeight((int) (heightPixels * .25));
+        bBottom.setMinimumHeight(vh25);
         bConf.getLayoutParams().height = vh20;
         bConfWatch.getLayoutParams().height = vh20;
 
@@ -240,7 +263,7 @@ public class MainActivity extends FragmentActivity{
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
-    public void bResumeClick(){
+    public void bOverTimerClick(){
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
@@ -263,107 +286,197 @@ public class MainActivity extends FragmentActivity{
             case "rest":
                 //get ready for next period
                 timer_status = "ready";
+                timer_type = match.timer_type;
                 break;
+            case "finished":
+                showReport();
+                break;
+            default://ignore
+                return;
         }
         updateButtons();
     }
-    public void bRestClick(){
-        //How did someone get here with no events in the match?
-        if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("Time off")){
-            match.events.remove(match.events.size()-1);
-        }
-        match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null, 0);
+    public void bBottomClick(){
+        switch(timer_status){
+            case "time_off":
+                //How did someone get here with no events in the match?
+                if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("Time off")){
+                    match.events.remove(match.events.size()-1);
+                }
+                match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null, 0);
 
-        timer_status = "rest";
-        timer_start = getCurrentTimestamp();
-        timer_period_ended = false;
-        tTimer.setTextColor(getResources().getColor(R.color.pure_white, getBaseContext().getTheme()));
+                timer_status = "rest";
+                timer_start = getCurrentTimestamp();
+                timer_period_ended = false;
+                timer_type = 0;
+                tTimer.setTextColor(getResources().getColor(R.color.pure_white, getBaseContext().getTheme()));
 
-        for(MatchData.sinbin sb : match.home.sinbins){
-            sb.end = sb.end - timer_timer;
-        }
-        for(MatchData.sinbin sb : match.away.sinbins){
-            sb.end = sb.end - timer_timer;
+                for(MatchData.sinbin sb : match.home.sinbins){
+                    sb.end = sb.end - timer_timer;
+                }
+                for(MatchData.sinbin sb : match.away.sinbins){
+                    sb.end = sb.end - timer_timer;
+                }
+
+                String kickoffTeam = getKickoffTeam();
+                if(kickoffTeam != null){
+                    if(kickoffTeam.equals("home")){
+                        kickoffTeam = match.home.tot + " KICK";
+                        score_home.setText(kickoffTeam);
+                    }else{
+                        kickoffTeam = match.away.tot + " KICK";
+                        score_away.setText(kickoffTeam);
+                    }
+                }
+                break;
+            case "rest":
+                timer_status = "finished";
+                timer_period_time = match.period_time;
+                timer_type = match.timer_type;
+                updateScore();
+
+                executorService.submit(() -> FileStore.file_storeMatch(getBaseContext(), match));
+                break;
+            case "finished":
+                timer_status = "conf";
+                timer_timer = 0;
+                timer_start = 0;
+                timer_start_time_off = 0;
+                timer_period_ended = false;
+                timer_period = 0;
+                match.clear();
+                updateScore();
+                updateAfterConfig();
+                updateSinbins();
+                break;
+            default://ignore
+                return;
         }
         updateButtons();
-
-        String kickoffTeam = getKickoffTeam();
-        if(kickoffTeam != null){
-            if(kickoffTeam.equals("home")){
-                kickoffTeam = match.home.tot + " KICK";
-                score_home.setText(kickoffTeam);
-            }else{
-                kickoffTeam = match.away.tot + " KICK";
-                score_away.setText(kickoffTeam);
-            }
-        }
-    }
-    public void bFinishClick(){
-        timer_status = "finished";
-        updateButtons();
-        updateScore();
-
-        executorService.submit(() -> FileStore.file_storeMatch(getBaseContext(), match));
-    }
-    public void bClearClick(){
-        timer_status = "conf";
-        timer_timer = 0;
-        timer_start = 0;
-        timer_start_time_off = 0;
-        timer_period_ended = false;
-        timer_period = 0;
-        match.clear();
-        updateScore();
-        updateButtons();
-        updateAfterConfig();
-        updateSinbins();
     }
     private void updateButtons(){
-        bOverTimer.setVisibility(View.GONE);
-        bOverTimer.setOnClickListener(null);
-        bBottom.setVisibility(View.GONE);
-        bBottom.setOnClickListener(null);
-        bConf.setVisibility(View.GONE);
-        bConfWatch.setVisibility(View.GONE);
-        findViewById(R.id.button_background).setVisibility(View.GONE);
+        String bOverTimerText;
+        String bBottomText;
         switch(timer_status){
             case "conf":
-                bConf.setVisibility(View.VISIBLE);
-            case "ready":
+                bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setText(R.string.start);
-                bOverTimer.setOnClickListener(v -> bResumeClick());
                 bOverTimer.setVisibility(View.VISIBLE);
+                bBottom.setVisibility(View.GONE);
+                bConf.setVisibility(View.VISIBLE);
+                extraTime.setVisibility(View.GONE);
+                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
+                break;
+            case "ready":
+                bConfWatch.setVisibility(View.GONE);
+                bOverTimerText = "start ";
+                if(timer_period >= match.period_count){
+                    extraTime.setVisibility(View.VISIBLE);
+                    extraTimeChange();
+                    if(timer_period == match.period_count){
+                        bOverTimerText += "extra time";
+                    }else{
+                        bOverTimerText += "extra time " + (timer_period-match.period_count+1);
+                    }
+                }else{
+                    extraTime.setVisibility(View.GONE);
+                    switch(timer_period){
+                        case 1:
+                            bOverTimerText += "2nd";
+                            break;
+                        case 2:
+                            bOverTimerText += "3rd";
+                            break;
+                        default:
+                            bOverTimerText += timer_period + "th";
+                            break;
+                    }
+                }
+                bOverTimer.setText(bOverTimerText);
+                bOverTimer.setVisibility(View.VISIBLE);
+                bBottom.setVisibility(View.GONE);
+                bConf.setVisibility(View.GONE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "time_off":
-                bOverTimer.setText(R.string.resume);
-                bOverTimer.setOnClickListener(v -> bResumeClick());
-                bOverTimer.setVisibility(View.VISIBLE);
-                bBottom.setText(R.string.rest);
-                bBottom.setOnClickListener(v -> bRestClick());
-                bBottom.setVisibility(View.VISIBLE);
                 bConfWatch.setVisibility(View.VISIBLE);
+                bOverTimer.setText(R.string.resume);
+                bOverTimer.setVisibility(View.VISIBLE);
+
+                bBottomText = "end ";
+                if(match.period_count == 2 && timer_period == 1){
+                    bBottomText = "half time";
+                }else if(match.period_count == 2 && timer_period == 2){
+                    bBottomText = "full time";
+                }else if(timer_period > match.period_count){
+                    if(timer_period == match.period_count+1){
+                        bBottomText += "extra";
+                    }else{
+                        bBottomText += "extra " + (timer_period-match.period_count);
+                    }
+                }else{
+                    switch(timer_period){
+                        case 1:
+                            bBottomText += "1st";
+                            break;
+                        case 2:
+                            bBottomText += "2nd";
+                            break;
+                        case 3:
+                            bBottomText += "3rd";
+                            break;
+                        default:
+                            bBottomText += timer_period + "th";
+                            break;
+                    }
+                }
+                bBottom.setText(bBottomText);
+                bBottom.setVisibility(View.VISIBLE);
+                bConf.setVisibility(View.GONE);
+                extraTime.setVisibility(View.GONE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "rest":
-                bOverTimer.setText(R.string.next);
-                bOverTimer.setOnClickListener(v -> bResumeClick());
+                bConfWatch.setVisibility(View.VISIBLE);
+                if(match.period_count == 2 && timer_period == 1){
+                    bOverTimerText ="2nd half";
+                }else if(timer_period >= match.period_count){
+                    if(timer_period == match.period_count){
+                        bOverTimerText ="extra time";
+                    }else{
+                        bOverTimerText ="extra time " + (timer_period-match.period_count+1);
+                    }
+                }else{
+                    if(timer_period == 2){
+                        bOverTimerText = "3rd period";
+                    }else{
+                        bOverTimerText = timer_period + "th period";
+                    }
+                }
+                bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
                 bBottom.setText(R.string.finish);
-                bBottom.setOnClickListener(v -> bFinishClick());
                 bBottom.setVisibility(View.VISIBLE);
-                bConfWatch.setVisibility(View.VISIBLE);
+                extraTime.setVisibility(View.GONE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "finished":
+                bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setText(R.string.report);
-                bOverTimer.setOnClickListener(v -> showReport());
                 bOverTimer.setVisibility(View.VISIBLE);
                 bBottom.setText(R.string.clear);
-                bBottom.setOnClickListener(v -> bClearClick());
                 bBottom.setVisibility(View.VISIBLE);
+                bConf.setVisibility(View.GONE);
+                extraTime.setVisibility(View.GONE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
+            default:
+                bConfWatch.setVisibility(View.GONE);
+                bOverTimer.setVisibility(View.GONE);
+                bBottom.setVisibility(View.GONE);
+                bConf.setVisibility(View.GONE);
+                extraTime.setVisibility(View.GONE);
+                findViewById(R.id.button_background).setVisibility(View.GONE);
         }
         updateTimer();
     }
@@ -426,8 +539,8 @@ public class MainActivity extends FragmentActivity{
         timer_timer = milli_secs;
 
         String temp = "";
-        if(timer_type == 1 && !timer_status.equals("rest")){
-            milli_secs = ((long)match.period_time * 60000) - milli_secs;
+        if(timer_type == 1){
+            milli_secs = ((long)timer_period_time * 60000) - milli_secs;
         }
         if(milli_secs < 0){
             milli_secs -= milli_secs * 2;
@@ -436,7 +549,7 @@ public class MainActivity extends FragmentActivity{
         temp += prettyTimer(milli_secs);
         tTimer.setText(temp);
 
-        if(!timer_period_ended && timer_status.equals("running") && timer_timer > (long)match.period_time * 60000){
+        if(!timer_period_ended && timer_status.equals("running") && timer_timer > (long)timer_period_time * 60000){
             timer_period_ended = true;
             tTimer.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
             beep(getBaseContext());
@@ -660,6 +773,7 @@ public class MainActivity extends FragmentActivity{
             match.away.color = settings_new.getString("away_color");
             match.match_type = settings_new.getString("match_type");
             match.period_time = settings_new.getInt("period_time");
+            timer_period_time = match.period_time;
             match.period_count = settings_new.getInt("period_count");
             match.sinbin = settings_new.getInt("sinbin");
             match.points_try = settings_new.getInt("points_try");
@@ -672,8 +786,10 @@ public class MainActivity extends FragmentActivity{
                 record_pens = settings_new.getInt("record_pens") == 1;
             if(settings_new.has("screen_on"))
                 screen_on = settings_new.getInt("screen_on") == 1;
-            if(settings_new.has("timer_type"))
-                timer_type = settings_new.getInt("timer_type");
+            if(settings_new.has("timer_type")) {
+                match.timer_type = settings_new.getInt("timer_type");
+                timer_type = match.timer_type;
+            }
         }catch(Exception e){
             Log.e("MainActivity", "incomingSettings: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with incoming settings");
@@ -688,9 +804,11 @@ public class MainActivity extends FragmentActivity{
             record_player = jsonSettings.getBoolean("record_player");
             if(jsonSettings.has("record_pens")) record_pens = jsonSettings.getBoolean("record_pens");
             screen_on = jsonSettings.getBoolean("screen_on");
-            timer_type = jsonSettings.getInt("timer_type");
+            match.timer_type = jsonSettings.getInt("timer_type");
+            timer_type = match.timer_type;
             match.match_type = jsonSettings.getString("match_type");
             match.period_time = jsonSettings.getInt("period_time");
+            timer_period_time = match.period_time;
             match.period_count = jsonSettings.getInt("period_count");
             match.sinbin = jsonSettings.getInt("sinbin");
             match.points_try = jsonSettings.getInt("points_try");
@@ -719,13 +837,34 @@ public class MainActivity extends FragmentActivity{
             ret.put("record_player", record_player ? 1 : 0);
             ret.put("record_pens", record_pens ? 1 : 0);
             ret.put("screen_on", screen_on ? 1 : 0);
-            ret.put("timer_type", timer_type);
+            ret.put("timer_type", match.timer_type);
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e("MainActivity", "getSettings: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with sending settings");
         }
         return ret;
+    }
+
+    public void extraTimeChange(){
+        switch(extraTime.getSelectedItemPosition()){
+            case 1://2 min
+                timer_type = match.timer_type;
+                timer_period_time = 2;
+                break;
+            case 2://5 min
+                timer_type = match.timer_type;
+                timer_period_time = 5;
+                break;
+            case 3://10 min
+                timer_type = match.timer_type;
+                timer_period_time = 10;
+                break;
+            default://UP
+                timer_type = 0;
+                timer_period_time = match.period_time;
+        }
+        updateTimer();
     }
 
     static final long[] buzz_pattern = {300,500,300,500,300,500};
@@ -766,7 +905,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("start_time_off", timer_start_time_off);
             ret.put("period_ended", timer_period_ended);
             ret.put("period", timer_period);
-            ret.put("period_time", match.period_time);
+            ret.put("period_time", timer_period_time);
             ret.put("type", timer_type);
         }catch(Exception e){
             Log.e("MainActivity", "getTimer: " + e.getMessage());

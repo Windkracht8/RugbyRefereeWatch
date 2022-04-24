@@ -10,8 +10,6 @@
     <string name="foul_play_text">foul play</string>
     <string name="report_title">Report</string>
     <string name="correct_title">Tab to remove</string>
-    <string name="goal_pen_text">penalty</string>
-    <string name="goal_drop_text">drop</string>
     <string name="card_yellow_text">yellow</string>
     <string name="penalty_try_text">penalty try</string>
     <string name="card_red_text">red</string>
@@ -59,12 +57,11 @@
     <string name="bHelp">show help</string>
     <string name="start">start</string>
     <string name="resume">resume</string>
-    <string name="rest">rest</string>
-    <string name="next">next</string>
     <string name="finish">finish</string>
     <string name="report">report</string>
     <string name="clear">clear</string>
     <string name="player_desc">player</string>
+    <string name="extraTime_desc">Extra time selection</string>
 
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>

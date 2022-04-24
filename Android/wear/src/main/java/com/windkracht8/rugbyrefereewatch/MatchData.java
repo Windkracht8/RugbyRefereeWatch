@@ -18,6 +18,7 @@ public class MatchData{
     public String match_type = "15s";
     public int period_time = 40;
     public int period_count = 2;
+    public int timer_type = 1;
     public int sinbin = 10;
     public int points_try = 5;
     public int points_con = 2;
