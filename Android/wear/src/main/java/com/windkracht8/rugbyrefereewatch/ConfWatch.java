@@ -27,11 +27,8 @@ public class ConfWatch extends LinearLayout {
         record_player_cw = findViewById(R.id.record_player_cw);
         record_pens_cw = findViewById(R.id.record_pens_cw);
 
-        findViewById(R.id.screen_on_cw_text).setOnClickListener(v -> screen_on_cw.toggle());
         findViewById(R.id.timer_type_cw_text).setOnClickListener(v -> toggleTimerType());
         timer_type_cw.setOnClickListener(v -> toggleTimerType());
-        findViewById(R.id.record_player_cw_text).setOnClickListener(v -> record_player_cw.toggle());
-        findViewById(R.id.record_pens_cw_text).setOnClickListener(v -> record_pens_cw.toggle());
     }
     private void toggleTimerType(){
         if(MainActivity.timer_type == 1){

@@ -1,85 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:gravity="center"
         android:text="@string/conf_title"
-        android:textColor="@color/w8blue"
-        android:textSize="20sp" />
+        android:textColor="@color/w8blue" />
     <!-- the first SwitchCompat does not style properly -->
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:visibility="gone"/>
-    <TextView
-        android:id="@+id/screen_on_cw_text"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/screen_on_text"
-        android:textSize="20sp"/>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/screen_on_cw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:contentDescription="@string/screen_on_desc"
-        android:minHeight="48dp" />
-    <TextView
-        android:id="@+id/timer_type_cw_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/timer_type_text"
-        android:textSize="20sp"/>
-    <Button
-        android:id="@+id/timer_type_cw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:text="@string/timer_type_down"
-        android:textAllCaps="false"
-        android:textColor="@color/w8blue"/>
-    <TextView
-        android:id="@+id/record_player_cw_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/record_player_text"
-        android:textSize="20sp" />
+        android:gravity="center" >
+        <TextView
+            android:id="@+id/timer_type_cw_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/timer_type_text" />
+        <Button
+            android:id="@+id/timer_type_cw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/timer_type_down"
+            android:textAllCaps="false"
+            android:textColor="@color/w8blue"/>
+    </LinearLayout>
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/record_player_cw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_gravity="center"
-        android:contentDescription="@string/record_player_desc"
-        android:minHeight="48dp" />
-    <TextView
-        android:id="@+id/record_pens_cw_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="@string/record_pens_text"
-        android:textSize="20sp" />
+        android:text="@string/record_player_text" />
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/record_pens_cw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        android:contentDescription="@string/record_pens_desc"
-        android:minHeight="48dp" />
+        android:layout_weight="2"
+        android:text="@string/record_pens_text" />
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/screen_on_cw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:text="@string/screen_on_text" />
 </LinearLayout>
