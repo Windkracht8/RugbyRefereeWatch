@@ -104,6 +104,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());
         putDataMapReq.getDataMap().putString("requestType", requestType);
         if(requestData != null){
+            Log.i("CommsWear", "requestData: " + requestData);
             putDataMapReq.getDataMap().putString("requestData", requestData.toString());
         }
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
@@ -121,6 +122,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         context.sendBroadcast(intent);
     }
     private void gotResponse(final String requestType, final String responseData){
+        Log.i("CommsWear", "gotResponse: " + requestType + " " + responseData);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotResponse");
         intent.putExtra("source", "wear");

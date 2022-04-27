@@ -168,6 +168,7 @@ public class CommsTizen extends SAAgentV2{
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotResponse(final JSONObject responseMessage){
+        Log.i("CommsWear", "gotResponse: " + responseMessage.toString());
         try{
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intent_type", "gotResponse");
