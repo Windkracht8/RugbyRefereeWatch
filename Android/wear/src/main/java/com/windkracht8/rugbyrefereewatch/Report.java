@@ -17,7 +17,7 @@ public class Report extends ScrollView{
         if(inflater == null){Toast.makeText(context, "Failed to show report", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report, this, true);
 
-        findViewById(R.id.list_wrap).setOnClickListener(v -> this.setVisibility(GONE));
+        findViewById(R.id.llReport).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
     public void load(MatchData match){

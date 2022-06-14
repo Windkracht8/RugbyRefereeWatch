@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="rrw" parent="Theme.AppCompat">
+        <item name="android:windowSwipeToDismiss">false</item>
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>

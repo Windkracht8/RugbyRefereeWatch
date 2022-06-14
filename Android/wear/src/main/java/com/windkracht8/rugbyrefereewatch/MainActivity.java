@@ -15,6 +15,7 @@ import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -81,12 +82,27 @@ public class MainActivity extends FragmentActivity{
     private Handler handler_main;
     private ExecutorService executorService;
     private static BroadcastReceiver rrwReceiver;
+
+    private static float startY = 0;
+    private static float startX = 0;
+    private static final int SWIPE_THRESHOLD = 5000;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 5000;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         executorService = Executors.newFixedThreadPool(4);
-
         setContentView(R.layout.activity_main);
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            findViewById(R.id.main).setOnTouchListener(this::onTouch);
+            findViewById(R.id.tTimer).setOnTouchListener(this::onTouch);
+            findViewById(R.id.bOverTimer).setOnTouchListener(this::onTouch);
+            findViewById(R.id.conf).setOnTouchListener(this::onTouch);
+            findViewById(R.id.llConf).setOnTouchListener(this::onTouch);
+            findViewById(R.id.confWatch).setOnTouchListener(this::onTouch);
+            findViewById(R.id.correct).setOnTouchListener(this::onTouch);
+            findViewById(R.id.llCorrect).setOnTouchListener(this::onTouch);
+        }
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
         score_home = findViewById(R.id.score_home);
@@ -245,6 +261,30 @@ public class MainActivity extends FragmentActivity{
                 correctShow();
             }
         }
+    }
+
+    private boolean onTouch(View v, MotionEvent event){
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                startY = event.getY();
+                startX = event.getX();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                float diffY = (event.getY() - startY) * event.getYPrecision();
+                float diffX = (event.getX() - startX) * event.getXPrecision();
+                if(Math.abs(diffX) > Math.abs(diffY)){
+                    float velocity = (Math.abs(diffX) / (event.getEventTime() - event.getDownTime())) * 1000;
+                    if(Math.abs(diffX) > SWIPE_THRESHOLD && velocity > SWIPE_VELOCITY_THRESHOLD){
+                        if(diffX > 0){
+                            onBackPressed();
+                        }
+                        return true;
+                    }
+                }
+                return v.performClick();
+        }
+        return true;
     }
 
     public void timerClick(){
