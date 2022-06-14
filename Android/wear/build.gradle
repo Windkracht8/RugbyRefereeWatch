@@ -8,8 +8,8 @@ android {
         applicationId "com.windkracht8.rugbyrefereewatch"
         minSdk 28
         targetSdk 32
-        versionCode 161
-        versionName "1.6.1"
+        versionCode 162
+        versionName "1.6.2"
     }
 
     buildTypes {
@@ -24,6 +24,6 @@ android {
 dependencies {
     implementation 'com.google.android.gms:play-services-wearable:17.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.wear:wear:1.2.0'
 }
