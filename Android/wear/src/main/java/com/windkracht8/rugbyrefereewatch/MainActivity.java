@@ -84,7 +84,7 @@ public class MainActivity extends FragmentActivity{
     private ExecutorService executorService;
     private static BroadcastReceiver rrwReceiver;
 
-    private static long backtime = 0;
+    private static long back_time = 0;
     private static float startY = 0;
     private static float startX = 0;
     private static final int SWIPE_THRESHOLD = 5000;
@@ -246,8 +246,8 @@ public class MainActivity extends FragmentActivity{
     }
     @Override
     public void onBackPressed(){
-        if(backtime > getCurrentTimestamp() - 500){return;}
-        backtime = getCurrentTimestamp();
+        if(back_time > getCurrentTimestamp() - 500){return;}
+        back_time = getCurrentTimestamp();
         if(conf.getVisibility() == View.VISIBLE){
             conf.onBackPressed();
             updateAfterConfig();
