@@ -84,6 +84,7 @@ public class MainActivity extends FragmentActivity{
     private ExecutorService executorService;
     private static BroadcastReceiver rrwReceiver;
 
+    private static long backtime = 0;
     private static float startY = 0;
     private static float startX = 0;
     private static final int SWIPE_THRESHOLD = 5000;
@@ -105,14 +106,21 @@ public class MainActivity extends FragmentActivity{
         executorService = Executors.newFixedThreadPool(4);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.main).setOnTouchListener(this::onTouch);
-        findViewById(R.id.tTimer).setOnTouchListener(this::onTouch);
-        findViewById(R.id.bOverTimer).setOnTouchListener(this::onTouch);
-        findViewById(R.id.conf).setOnTouchListener(this::onTouch);
-        findViewById(R.id.llConf).setOnTouchListener(this::onTouch);
-        findViewById(R.id.confWatch).setOnTouchListener(this::onTouch);
-        findViewById(R.id.correct).setOnTouchListener(this::onTouch);
-        findViewById(R.id.llCorrect).setOnTouchListener(this::onTouch);
+        int[] ids = new int[]{R.id.main,R.id.tTimer,R.id.bOverTimer,R.id.conf,
+                R.id.conf_label,R.id.color_home_text,R.id.color_home,R.id.color_away_text,
+                R.id.color_away,R.id.match_type_text,R.id.period_time_text,R.id.period_time,
+                R.id.period_count_text,R.id.period_count,R.id.sinbin_text,R.id.sinbin,
+                R.id.points_try_text,R.id.points_try,R.id.points_con_text,R.id.points_con,
+                R.id.points_goal_text,R.id.points_goal,R.id.screen_on_text,R.id.screen_on,
+                R.id.timer_type_text,R.id.timer_type,R.id.record_player_text,R.id.record_player,
+                R.id.record_pens_text,R.id.record_pens,R.id.bHelp_text,R.id.bHelp,R.id.confWatch,
+                R.id.conf_watch_label,R.id.timer_type_cw_text,R.id.timer_type_cw,
+                R.id.record_player_cw_text,R.id.record_player_cw,R.id.record_pens_cw_text,
+                R.id.record_pens_cw,R.id.screen_on_cw_text,R.id.screen_on_cw,R.id.correct,
+                R.id.llCorrect,R.id.score_player,R.id.score_try,R.id.score_con,R.id.score_goal,
+                R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,
+                R.id.card_red};
+        for(int id : ids){findViewById(id).setOnTouchListener(this::onTouch);}
 
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
@@ -238,6 +246,8 @@ public class MainActivity extends FragmentActivity{
     }
     @Override
     public void onBackPressed(){
+        if(backtime > getCurrentTimestamp() - 500){return;}
+        backtime = getCurrentTimestamp();
         if(conf.getVisibility() == View.VISIBLE){
             conf.onBackPressed();
             updateAfterConfig();

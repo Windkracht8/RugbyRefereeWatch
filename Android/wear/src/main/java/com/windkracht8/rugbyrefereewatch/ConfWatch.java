@@ -24,7 +24,7 @@ public class ConfWatch extends LinearLayout {
         if(inflater == null){ Toast.makeText(context, "Failed to show conf screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf_watch, this, true);
 
-        TextView config_cw_text = findViewById(R.id.config_cw_text);
+        TextView config_cw_text = findViewById(R.id.conf_watch_label);
         config_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh7);
 
         TextView timer_type_cw_text = findViewById(R.id.timer_type_cw_text);

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/llConf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -14,6 +13,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp">
         <TextView
+            android:id="@+id/conf_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -21,6 +21,7 @@
             android:textColor="@color/w8blue"
             android:textSize="20sp" />
         <TextView
+            android:id="@+id/color_home_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -33,6 +34,7 @@
             android:minHeight="48dp"
             android:contentDescription="@string/color_home_desc"/>
         <TextView
+            android:id="@+id/color_away_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -45,6 +47,7 @@
             android:minHeight="48dp"
             android:contentDescription="@string/color_away_desc"/>
         <TextView
+            android:id="@+id/match_type_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -63,6 +66,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/period_time_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -75,6 +79,7 @@
                 android:contentDescription="@string/period_time_desc"
                 android:minHeight="48dp" />
             <TextView
+                android:id="@+id/period_count_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -87,6 +92,7 @@
                 android:contentDescription="@string/period_count_desc"
                 android:minHeight="48dp" />
             <TextView
+                android:id="@+id/sinbin_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -99,6 +105,7 @@
                 android:contentDescription="@string/sinbin_desc"
                 android:minHeight="48dp" />
             <TextView
+                android:id="@+id/points_try_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -111,6 +118,7 @@
                 android:contentDescription="@string/points_try_desc"
                 android:minHeight="48dp" />
             <TextView
+                android:id="@+id/points_con_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -123,6 +131,7 @@
                 android:contentDescription="@string/points_con_desc"
                 android:minHeight="48dp" />
             <TextView
+                android:id="@+id/points_goal_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -207,6 +216,7 @@
             android:contentDescription="@string/record_pens_desc"
             android:minHeight="48dp" />
         <TextView
+            android:id="@+id/bHelp_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
