@@ -64,6 +64,7 @@ public class MainActivity extends FragmentActivity{
     public static MatchData match;
     public static int heightPixels = 0;
     public static int vh7 = 0;
+    public static int vh8 = 0;
     public static int vh10 = 0;
 
     private static String timer_status = "conf";
@@ -90,19 +91,29 @@ public class MainActivity extends FragmentActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
+        }else{
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            heightPixels = displayMetrics.heightPixels;
+        }
+        vh7 = (int) (heightPixels * .07);
+        vh8 = (int) (heightPixels * .08);
+        vh10 = heightPixels / 10;
+
         executorService = Executors.newFixedThreadPool(4);
         setContentView(R.layout.activity_main);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            findViewById(R.id.main).setOnTouchListener(this::onTouch);
-            findViewById(R.id.tTimer).setOnTouchListener(this::onTouch);
-            findViewById(R.id.bOverTimer).setOnTouchListener(this::onTouch);
-            findViewById(R.id.conf).setOnTouchListener(this::onTouch);
-            findViewById(R.id.llConf).setOnTouchListener(this::onTouch);
-            findViewById(R.id.confWatch).setOnTouchListener(this::onTouch);
-            findViewById(R.id.correct).setOnTouchListener(this::onTouch);
-            findViewById(R.id.llCorrect).setOnTouchListener(this::onTouch);
-        }
+        findViewById(R.id.main).setOnTouchListener(this::onTouch);
+        findViewById(R.id.tTimer).setOnTouchListener(this::onTouch);
+        findViewById(R.id.bOverTimer).setOnTouchListener(this::onTouch);
+        findViewById(R.id.conf).setOnTouchListener(this::onTouch);
+        findViewById(R.id.llConf).setOnTouchListener(this::onTouch);
+        findViewById(R.id.confWatch).setOnTouchListener(this::onTouch);
+        findViewById(R.id.correct).setOnTouchListener(this::onTouch);
+        findViewById(R.id.llCorrect).setOnTouchListener(this::onTouch);
+
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
         score_home = findViewById(R.id.score_home);
@@ -158,16 +169,7 @@ public class MainActivity extends FragmentActivity{
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-            heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
-        }else{
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            heightPixels = displayMetrics.heightPixels;
-        }
         //Resize elements for the heightPixels
-        vh7 = (int) (heightPixels * .07);
-        vh10 = heightPixels / 10;
         int vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
         int vh25 = (int) (heightPixels * .25);

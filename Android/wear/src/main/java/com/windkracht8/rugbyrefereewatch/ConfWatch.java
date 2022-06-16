@@ -2,10 +2,12 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
@@ -22,13 +24,35 @@ public class ConfWatch extends LinearLayout {
         if(inflater == null){ Toast.makeText(context, "Failed to show conf screen", Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf_watch, this, true);
 
-        screen_on_cw = findViewById(R.id.screen_on_cw);
-        timer_type_cw = findViewById(R.id.timer_type_cw);
-        record_player_cw = findViewById(R.id.record_player_cw);
-        record_pens_cw = findViewById(R.id.record_pens_cw);
+        TextView config_cw_text = findViewById(R.id.config_cw_text);
+        config_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh7);
 
-        findViewById(R.id.timer_type_cw_text).setOnClickListener(v -> toggleTimerType());
+        TextView timer_type_cw_text = findViewById(R.id.timer_type_cw_text);
+        timer_type_cw_text.setOnClickListener(v -> toggleTimerType());
+        timer_type_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
+        timer_type_cw = findViewById(R.id.timer_type_cw);
         timer_type_cw.setOnClickListener(v -> toggleTimerType());
+        timer_type_cw.setPadding(0,0,0,0);
+        timer_type_cw.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
+
+        TextView record_player_cw_text = findViewById(R.id.record_player_cw_text);
+        record_player_cw_text.setOnClickListener(v -> record_player_cw.toggle());
+        record_player_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
+        record_player_cw = findViewById(R.id.record_player_cw);
+        record_player_cw.getLayoutParams().height = MainActivity.vh8;
+
+        TextView record_pens_cw_text = findViewById(R.id.record_pens_cw_text);
+        record_pens_cw_text.setOnClickListener(v -> record_pens_cw.toggle());
+        record_pens_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
+        record_pens_cw = findViewById(R.id.record_pens_cw);
+        record_pens_cw.getLayoutParams().height = MainActivity.vh8;
+
+        TextView screen_on_cw_text = findViewById(R.id.screen_on_cw_text);
+        screen_on_cw_text.setOnClickListener(v -> screen_on_cw.toggle());
+        screen_on_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
+        screen_on_cw = findViewById(R.id.screen_on_cw);
+        screen_on_cw.getLayoutParams().height = MainActivity.vh8;
+
     }
     private void toggleTimerType(){
         if(MainActivity.timer_type == 1){
@@ -41,16 +65,16 @@ public class ConfWatch extends LinearLayout {
     }
 
     public void show(){
-        screen_on_cw.setChecked(MainActivity.screen_on);
         timer_type_cw.setText(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
         record_player_cw.setChecked(MainActivity.record_player);
         record_pens_cw.setChecked(MainActivity.record_pens);
+        screen_on_cw.setChecked(MainActivity.screen_on);
         this.setVisibility(View.VISIBLE);
     }
     public void onBackPressed(){
-        MainActivity.screen_on = screen_on_cw.isChecked();
         MainActivity.record_player = record_player_cw.isChecked();
         MainActivity.record_pens = record_pens_cw.isChecked();
+        MainActivity.screen_on = screen_on_cw.isChecked();
         this.setVisibility(View.GONE);
     }
 }
