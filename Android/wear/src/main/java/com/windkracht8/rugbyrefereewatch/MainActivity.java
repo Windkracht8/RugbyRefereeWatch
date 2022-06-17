@@ -64,7 +64,6 @@ public class MainActivity extends FragmentActivity{
     public static MatchData match;
     public static int heightPixels = 0;
     public static int vh7 = 0;
-    public static int vh8 = 0;
     public static int vh10 = 0;
 
     private static String timer_status = "conf";
@@ -100,7 +99,6 @@ public class MainActivity extends FragmentActivity{
             heightPixels = displayMetrics.heightPixels;
         }
         vh7 = (int) (heightPixels * .07);
-        vh8 = (int) (heightPixels * .08);
         vh10 = heightPixels / 10;
 
         executorService = Executors.newFixedThreadPool(4);

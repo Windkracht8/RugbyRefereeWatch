@@ -40,9 +40,8 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/record_player_cw"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center"
-        android:minHeight="48dp"
         android:contentDescription="@string/record_player_desc" />
     <TextView
         android:id="@+id/record_pens_cw_text"
@@ -53,9 +52,8 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/record_pens_cw"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center"
-        android:minHeight="48dp"
         android:contentDescription="@string/record_pens_desc" />
     <TextView
         android:id="@+id/screen_on_cw_text"
@@ -66,8 +64,7 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/screen_on_cw"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center"
-        android:minHeight="48dp"
         android:contentDescription="@string/screen_on_desc"/>
 </LinearLayout>

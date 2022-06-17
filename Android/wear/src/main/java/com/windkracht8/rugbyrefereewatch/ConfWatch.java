@@ -18,6 +18,7 @@ public class ConfWatch extends LinearLayout {
     private SwitchCompat record_player_cw;
     private SwitchCompat record_pens_cw;
 
+    private static boolean fixed_height = false;
     public ConfWatch(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -29,30 +30,36 @@ public class ConfWatch extends LinearLayout {
 
         TextView timer_type_cw_text = findViewById(R.id.timer_type_cw_text);
         timer_type_cw_text.setOnClickListener(v -> toggleTimerType());
-        timer_type_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
         timer_type_cw = findViewById(R.id.timer_type_cw);
         timer_type_cw.setOnClickListener(v -> toggleTimerType());
         timer_type_cw.setPadding(0,0,0,0);
-        timer_type_cw.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
 
         TextView record_player_cw_text = findViewById(R.id.record_player_cw_text);
         record_player_cw_text.setOnClickListener(v -> record_player_cw.toggle());
-        record_player_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
         record_player_cw = findViewById(R.id.record_player_cw);
-        record_player_cw.getLayoutParams().height = MainActivity.vh8;
+        record_player_cw.getLayoutParams().height = 0;
 
         TextView record_pens_cw_text = findViewById(R.id.record_pens_cw_text);
         record_pens_cw_text.setOnClickListener(v -> record_pens_cw.toggle());
-        record_pens_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
         record_pens_cw = findViewById(R.id.record_pens_cw);
-        record_pens_cw.getLayoutParams().height = MainActivity.vh8;
+        record_pens_cw.getLayoutParams().height = 0;
 
         TextView screen_on_cw_text = findViewById(R.id.screen_on_cw_text);
         screen_on_cw_text.setOnClickListener(v -> screen_on_cw.toggle());
-        screen_on_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh8);
         screen_on_cw = findViewById(R.id.screen_on_cw);
-        screen_on_cw.getLayoutParams().height = MainActivity.vh8;
+        screen_on_cw.getLayoutParams().height = 0;
 
+        findViewById(R.id.record_player_cw).getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if(fixed_height || record_player_cw.getMeasuredHeight() == 0){return;}
+            fixed_height = true;
+            int height_rest = (MainActivity.heightPixels-(record_player_cw.getMeasuredHeight()*3))/8;
+
+            timer_type_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, height_rest);
+            timer_type_cw.setTextSize(TypedValue.COMPLEX_UNIT_PX, height_rest);
+            record_player_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, height_rest);
+            record_pens_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, height_rest);
+            screen_on_cw_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, height_rest);
+        });
     }
     private void toggleTimerType(){
         if(MainActivity.timer_type == 1){
