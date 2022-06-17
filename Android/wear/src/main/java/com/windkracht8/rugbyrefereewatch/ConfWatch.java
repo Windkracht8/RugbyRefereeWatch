@@ -69,6 +69,7 @@ public class ConfWatch extends LinearLayout {
             MainActivity.timer_type = 1;
             timer_type_cw.setText(R.string.timer_type_down);
         }
+        MainActivity.match.timer_type = MainActivity.timer_type;
     }
 
     public void show(){

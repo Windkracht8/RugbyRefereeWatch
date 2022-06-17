@@ -146,12 +146,7 @@ public class Conf extends ScrollView{
         color_home.setAdapter(adapter);
         color_away.setAdapter(adapter);
 
-        findViewById(R.id.screen_on_text).setOnClickListener(v -> screen_on.toggle());
-        findViewById(R.id.timer_type_text).setOnClickListener(v -> toggleTimerType());
         timer_type.setOnClickListener(v -> toggleTimerType());
-        findViewById(R.id.record_player_text).setOnClickListener(v -> record_player.toggle());
-        findViewById(R.id.record_pens_text).setOnClickListener(v -> record_pens.toggle());
-
     }
     private void toggleTimerType(){
         if(MainActivity.timer_type == 1){
@@ -161,6 +156,7 @@ public class Conf extends ScrollView{
             MainActivity.timer_type = 1;
             timer_type.setText(R.string.timer_type_down);
         }
+        MainActivity.match.timer_type = MainActivity.timer_type;
     }
     public void show(){
         loadCustomMatchTypesSpinner();

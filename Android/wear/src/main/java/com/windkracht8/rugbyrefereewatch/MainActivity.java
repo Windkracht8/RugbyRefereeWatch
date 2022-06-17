@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity{
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
-    public static int timer_period_time = 0;
+    public static int timer_period_time = 40;
     public static int timer_period = 0;
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
@@ -86,8 +86,8 @@ public class MainActivity extends FragmentActivity{
     private static long back_time = 0;
     private static float startY = 0;
     private static float startX = 0;
-    private static final int SWIPE_THRESHOLD = 5000;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 5000;
+    private static final int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 1000;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
