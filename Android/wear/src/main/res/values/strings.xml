@@ -9,7 +9,7 @@
     <string name="score_goal_text">goal</string>
     <string name="foul_play_text">foul play</string>
     <string name="report_title">Report</string>
-    <string name="correct_title">Tab to remove</string>
+    <string name="correct_title">Tap to remove</string>
     <string name="card_yellow_text">yellow</string>
     <string name="penalty_try_text">penalty try</string>
     <string name="card_red_text">red</string>

@@ -259,8 +259,8 @@
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/etRecordPlayer"
-                    android:text="@string/etRecordPlayer_text"
+                    android:labelFor="@+id/cbRecordPlayer"
+                    android:text="@string/cbRecordPlayer_text"
                     android:textSize="18sp" />
                 <CheckBox
                     android:id="@+id/cbRecordPlayer"
@@ -273,8 +273,8 @@
                 <TextView
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:labelFor="@+id/etRecordPens"
-                    android:text="@string/etRecordPens_text"
+                    android:labelFor="@+id/cbRecordPens"
+                    android:text="@string/cbRecordPens_text"
                     android:textSize="18sp" />
                 <CheckBox
                     android:id="@+id/cbRecordPens"

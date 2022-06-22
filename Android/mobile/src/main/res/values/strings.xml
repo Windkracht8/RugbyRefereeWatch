@@ -42,8 +42,8 @@
     <string name="etPeriodCount_text">Period count</string>
     <string name="etSinbin_text">Sinbin</string>
     <string name="sMatchType_text">Match type</string>
-    <string name="etRecordPlayer_text">Record player #</string>
-    <string name="etRecordPens_text">Record penalties</string>
+    <string name="cbRecordPlayer_text">Record player #</string>
+    <string name="cbRecordPens_text">Record penalties</string>
     <string name="sTimerType_text">Timer type</string>
     <string name="etHomeName_text">Home name</string>
     <string name="etAwayName_text">Away name</string>
