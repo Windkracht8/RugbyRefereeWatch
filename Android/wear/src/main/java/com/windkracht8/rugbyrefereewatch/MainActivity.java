@@ -1,5 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -88,6 +89,8 @@ public class MainActivity extends FragmentActivity{
     private static float startX = 0;
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 1000;
+
+    @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -155,10 +158,8 @@ public class MainActivity extends FragmentActivity{
         });
 
         score = findViewById(R.id.score);
-        TextView score_try = findViewById(R.id.score_try);
-        score_try.setOnClickListener(v -> tryClick());
-        TextView score_con = findViewById(R.id.score_con);
-        score_con.setOnClickListener(v -> conversionClick());
+        findViewById(R.id.score_try).setOnClickListener(v -> tryClick());
+        findViewById(R.id.score_con).setOnClickListener(v -> conversionClick());
         findViewById(R.id.score_goal).setOnClickListener(v -> goalClick());
         findViewById(R.id.foul_play).setOnClickListener(v -> foulPlayClick());
         foulPlay = findViewById(R.id.foulPlay);
@@ -561,7 +562,29 @@ public class MainActivity extends FragmentActivity{
         score.update(match);
     }
     public int getColor(String name){
-        return getResources().getColor(getResources().getIdentifier(name, "color", getPackageName()), getBaseContext().getTheme());
+        switch(name){
+            case "black":
+                return getResources().getColor(R.color.black, null);
+            case "blue":
+                return getResources().getColor(R.color.blue, null);
+            case "brown":
+                return getResources().getColor(R.color.brown, null);
+            case "gold":
+                return getResources().getColor(R.color.gold, null);
+            case "green":
+                return getResources().getColor(R.color.green, null);
+            case "orange":
+                return getResources().getColor(R.color.orange, null);
+            case "pink":
+                return getResources().getColor(R.color.pink, null);
+            case "purple":
+                return getResources().getColor(R.color.purple, null);
+            case "red":
+                return getResources().getColor(R.color.red, null);
+            case "white":
+                return getResources().getColor(R.color.white, null);
+        }
+        return getResources().getColor(R.color.black, null);
     }
     public long updateTime(){
         Date date = new Date();

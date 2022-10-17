@@ -2,12 +2,12 @@ plugins {
     id 'com.android.application'
 }
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.windkracht8.rugbyrefereewatch"
         minSdk 28
-        targetSdk 32
+        targetSdk 33
         versionCode 164
         versionName "1.6.4"
     }
@@ -19,11 +19,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'com.windkracht8.rugbyrefereewatch'
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
+    implementation 'com.google.android.gms:play-services-wearable:18.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.wear:wear:1.2.0'
 }
