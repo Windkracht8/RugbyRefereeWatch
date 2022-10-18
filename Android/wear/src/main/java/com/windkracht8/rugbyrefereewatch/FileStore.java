@@ -98,6 +98,8 @@ public class FileStore{
             jsonSettings.put("points_try", MainActivity.match.points_try);
             jsonSettings.put("points_con", MainActivity.match.points_con);
             jsonSettings.put("points_goal", MainActivity.match.points_goal);
+            jsonSettings.put("home_color", MainActivity.match.home.color);
+            jsonSettings.put("away_color", MainActivity.match.away.color);
             storeFile(context, R.string.settings_filename, jsonSettings.toString());
         }catch(Exception e){
             Log.e("FileStore", "file_storeSettings: " + e.getMessage());

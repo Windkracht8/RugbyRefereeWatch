@@ -887,6 +887,8 @@ public class MainActivity extends FragmentActivity{
             match.points_try = jsonSettings.getInt("points_try");
             match.points_con = jsonSettings.getInt("points_con");
             match.points_goal = jsonSettings.getInt("points_goal");
+            if(jsonSettings.has("home_color")) match.home.color = jsonSettings.getString("home_color");
+            if(jsonSettings.has("away_color")) match.away.color = jsonSettings.getString("away_color");
         }catch(Exception e){
             Log.e("MainActivity", "readSettings: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with reading settings");
