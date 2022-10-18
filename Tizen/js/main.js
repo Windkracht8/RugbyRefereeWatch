@@ -105,7 +105,7 @@ function back(){
 			if($(this).is(":visible")){
 				$(this).hide();
 				if($(this).attr("id") === "conf"){
-					file_storeSettings(match.settings);
+					storeSettings();
 				}
 				backdone = true;
 				return false;
@@ -947,7 +947,7 @@ function incomingSettings(newsettings){
 
 	updateTimer();
 
-	file_storeSettings(match.settings);
+	storeSettings();
 	return true;
 }
 
@@ -981,14 +981,20 @@ function settingsRead(newsettings){
 		noStoredSettings();
 	}else if(newsettings.help_version !== match.settings.help_version){
 		showHelp();
-		file_storeSettings(match.settings);
+		storeSettings();
 	}
 }
 
 function noStoredSettings(){
 	$('#help_welcome').show();
 	showHelp();
-	file_storeSettings(match.settings);
+}
+
+function storeSettings(){
+	var newsettings = JSON.parse(JSON.stringify(match.settings));
+	newsettings.home_color = match.home.color;
+	newsettings.away_color = match.away.color;
+	file_storeSettings(newsettings);
 }
 
 function addCustomMatchType(match_type){
@@ -1093,6 +1099,14 @@ function setNewSettings(newsettings){
 	if(newsettings.hasOwnProperty('record_pens')){
 		match.settings.record_pens = newsettings.record_pens;
 		record_pensChanged();
+	}
+	if(newsettings.hasOwnProperty('home_color')){
+		$('#color_home').val(newsettings.home_color);
+		color_homeChange();
+	}
+	if(newsettings.hasOwnProperty('away_color')){
+		$('#color_away').val(newsettings.away_color);
+		color_awayChange();
 	}
 	checkMatchType(newsettings);
 }
