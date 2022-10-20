@@ -77,4 +77,5 @@
     <string name="help_storage">Matches will be stored on the watch for 14 days, use the companion app on your phone to download them.</string>
     <string name="help_help_title">Get help</string>
     <string name="help_help">From the settings you can open this screen. Find the support contacts in the App Store for more help.</string>
+    <string name="splash_image">splash image</string>
 </resources>

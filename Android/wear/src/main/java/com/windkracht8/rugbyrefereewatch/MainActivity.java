@@ -202,6 +202,9 @@ public class MainActivity extends FragmentActivity{
             public void onReceive(Context context, Intent intent){
                 if(!intent.hasExtra("intent_type")) return;
                 switch(intent.getStringExtra("intent_type")) {
+                    case "hideSplash":
+                        runOnUiThread(() -> hideSplash());
+                        break;
                     case "toast":
                         if(!intent.hasExtra("message")) return;
                         runOnUiThread(() -> Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show());
@@ -237,6 +240,7 @@ public class MainActivity extends FragmentActivity{
         update();
         updateButtons();
         updateAfterConfig();
+        handler_main.postDelayed(this::hideSplash, 1000);
     }
     @Override
     protected void onDestroy(){
@@ -893,6 +897,9 @@ public class MainActivity extends FragmentActivity{
             Log.e("MainActivity", "readSettings: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with reading settings");
         }
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "hideSplash");
+        context.sendBroadcast(intent);
     }
 
     public static JSONObject getSettings(Context context){
@@ -988,4 +995,5 @@ public class MainActivity extends FragmentActivity{
         }
         return ret;
     }
+    public void hideSplash(){findViewById(R.id.splash).setVisibility(View.GONE);}
 }
