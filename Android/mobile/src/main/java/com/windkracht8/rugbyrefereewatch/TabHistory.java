@@ -114,6 +114,7 @@ public class TabHistory extends LinearLayout{
     private void loadMatches(){
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
+            if(fis == null) return;//Probably because of viewing in IDE
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
 

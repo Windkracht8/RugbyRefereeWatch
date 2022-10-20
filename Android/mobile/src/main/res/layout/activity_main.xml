@@ -15,9 +15,7 @@
     <Spinner
         android:id="@+id/sOS"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="32dp"
-        android:textSize="20sp"
+        android:layout_height="48dp"
         android:contentDescription="@string/sOS_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sOS" />
     <TextView
         android:id="@+id/tvError"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center|top"
         android:textColor="@android:color/holo_red_dark"
@@ -66,13 +64,13 @@
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/ivIcon">
         <TextView
             android:id="@+id/tabHistoryLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/tab_active"
             android:gravity="center"
@@ -81,7 +79,7 @@
         <TextView
             android:id="@+id/tabReportLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/report"
@@ -89,7 +87,7 @@
         <TextView
             android:id="@+id/tabPrepareLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/prepare"

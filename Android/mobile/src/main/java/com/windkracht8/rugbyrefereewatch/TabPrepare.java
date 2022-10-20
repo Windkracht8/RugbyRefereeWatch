@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -299,8 +300,10 @@ public class TabPrepare extends LinearLayout{
     private void loadCustomMatchTypes(){
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.match_types_filename));
+            if(fis == null) return;//Probably because of viewing in IDE
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
+
             StringBuilder text = new StringBuilder();
             String line;
             while((line = br.readLine()) != null){
@@ -372,6 +375,11 @@ public class TabPrepare extends LinearLayout{
     private void bSaveCustomClick(){
         if(checkSettings()) return;
         final EditText etName = new EditText(getContext());
+        etName.setHint("Custom match name");
+        etName.setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                                    48,
+                                    etName.getResources().getDisplayMetrics())
+        );
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Save custom match type")
                 .setView(etName)
