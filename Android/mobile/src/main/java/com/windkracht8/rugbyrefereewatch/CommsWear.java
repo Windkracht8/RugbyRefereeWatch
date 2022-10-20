@@ -33,8 +33,9 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
     public CommsWear(Context context){
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
+        if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
         status = "Searching";
-        checkIfConnected(context);
+        checkIfConnected(context, 10000);
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "updateStatus");
@@ -42,11 +43,28 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         intent.putExtra("status_new", status);
         context.sendBroadcast(intent);
     }
-    public void checkIfConnected(Context context){
+    public void search(Context context){
+        handler_main.removeCallbacksAndMessages(null);
+        checkIfConnected(context, 1000);
+        handler_main.postDelayed(() -> searchTimeout(context), 45000);
+    }
+    private void searchTimeout(Context context){
+        Log.i("searchTimeout", "1");
+        handler_main.removeCallbacksAndMessages(null);
+        status = "OFFLINE";
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "updateStatus");
+        intent.putExtra("source", "wear");
+        intent.putExtra("status_new", status);
+        context.sendBroadcast(intent);
+        handler_main.postDelayed(() -> checkIfConnected(context, 10000), 10000);
+    }
+    public void checkIfConnected(Context context, int timeout){
         if(isCheckIfConnected) return;
         isCheckIfConnected = true;
         Task<List<Node>> nodeListTask = Wearable.getNodeClient(context).getConnectedNodes();
         nodeListTask.addOnCompleteListener(task ->{
+            isCheckIfConnected = false;
             if(task.isSuccessful()){
                 for(Node node : task.getResult()){
                     if(node.isNearby()){
@@ -58,9 +76,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
                             intent.putExtra("status_new", status);
                             context.sendBroadcast(intent);
                         }
-                        if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
-                        isCheckIfConnected = false;
-                        handler_main.postDelayed(() -> checkIfConnected(context), 10000);
+                        handler_main.postDelayed(() -> checkIfConnected(context, 10000), 10000);
                         return;
                     }
                 }
@@ -73,9 +89,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
                 intent.putExtra("status_new", status);
                 context.sendBroadcast(intent);
             }
-            if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
-            isCheckIfConnected = false;
-            handler_main.postDelayed(() -> checkIfConnected(context), 10000);
+            handler_main.postDelayed(() -> checkIfConnected(context, timeout), timeout);
         });
     }
     public void stop(){

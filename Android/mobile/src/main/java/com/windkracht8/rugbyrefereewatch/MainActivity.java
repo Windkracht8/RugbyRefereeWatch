@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity{
         gotError("");
         ((TextView)findViewById(R.id.tvStatus)).setText(R.string.status_SEARCHING);
         findViewById(R.id.bSearch).setVisibility(View.GONE);
-        comms_wear.checkIfConnected(getApplicationContext());
+        comms_wear.search(getApplicationContext());
     }
     private void setButtonProcessing(int vid){
         findViewById(vid).setEnabled(false);
