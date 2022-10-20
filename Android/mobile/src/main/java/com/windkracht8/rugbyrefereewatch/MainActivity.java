@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -46,6 +47,8 @@ import java.io.OutputStreamWriter;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity{
+    private static final String TIZEN_PACKAGE_NAME = "com.samsung.accessory";
+    private static final String WEAR_PACKAGE_NAME = "com.google.android.wearable.app";
     private GestureDetector gestureDetector;
     private CommsTizen comms_tizen = null;
     private CommsWear comms_wear = null;
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity{
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
         if(!sharedPreferences.contains("tizen_not_wear")){
-            tizen_not_wear = guessTizenNotWear();
+            tizen_not_wear = hasPackage(TIZEN_PACKAGE_NAME);
             sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
             sharedPreferences_editor.apply();
         }else{
@@ -150,9 +153,13 @@ public class MainActivity extends AppCompatActivity{
         handleIntent();
         handler_main = new Handler(Looper.getMainLooper());
     }
-    private boolean guessTizenNotWear(){
+    private boolean hasPackage(String packageName){
         try{
-            getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                getPackageManager().getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0));
+            }else{
+                getPackageManager().getPackageInfo(packageName, 0);
+            }
             return true;
         }catch(PackageManager.NameNotFoundException e){
             return false;
@@ -180,17 +187,16 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     private void initTizen(){
-        try{
-            getPackageManager().getPackageInfo("com.samsung.accessory", PackageManager.GET_ACTIVITIES);
-            SAAgentV2.requestAgent(getApplicationContext(), CommsTizen.class.getName(), SAAgentCallback);
-            findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
-            updateStatus("DISCONNECTED");
-        }catch(PackageManager.NameNotFoundException e){
+        if(!hasPackage(TIZEN_PACKAGE_NAME)){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noTizenLib);
             findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.samsung.accessory"))));
+            return;
         }
+        SAAgentV2.requestAgent(getApplicationContext(), CommsTizen.class.getName(), SAAgentCallback);
+        findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
+        updateStatus("DISCONNECTED");
     }
     private void destroyTizen(){
         if(comms_tizen != null){
@@ -200,9 +206,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     private void initWear(){
-        try{
-            getPackageManager().getPackageInfo("com.google.android.wearable.app", PackageManager.GET_META_DATA);
-        }catch(PackageManager.NameNotFoundException e){
+        if(!hasPackage(WEAR_PACKAGE_NAME)){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);

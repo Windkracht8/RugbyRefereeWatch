@@ -49,7 +49,6 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         handler_main.postDelayed(() -> searchTimeout(context), 45000);
     }
     private void searchTimeout(Context context){
-        Log.i("searchTimeout", "1");
         handler_main.removeCallbacksAndMessages(null);
         status = "OFFLINE";
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
