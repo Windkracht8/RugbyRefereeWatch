@@ -96,6 +96,7 @@ window.onload = function(){
 	if(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.core.api.version").charAt(0) < 3){
 		$('#stylesheet').attr("href", "css/style.2.css");
 	}
+	setTimeout(hideSplash, 1000);
 };
  
 function back(){
@@ -221,15 +222,13 @@ function bbottomClick(){
 		case "finished":
 			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0,period_time:match.settings.period_time,type:match.settings.timer_type};
 			updateTimer();
-			match.home = {id:"home",team:"home",color:"green",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
-			match.away = {id:"away",team:"away",color:"red",tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
+			match.home = {id:"home",team:"home",color:match.home.color,tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
+			match.away = {id:"away",team:"away",color:match.away.color,tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
 			match.events = [];
 			match.matchid = 0;
 			updateScore();
 			$('#sinbins_home').html("");
 			$('#sinbins_away').html("");
-			$('#home').css('background', checkColor(match.home.color));
-			$('#away').css('background', checkColor(match.away.color));
 			$('#matchSettings').show();
 			$('#helpSettings').show();
 			$('#bconf').show();
@@ -320,7 +319,7 @@ function updateButtons(){
 					$('#bovertimer').html('extra time ' + (timer.period-match.settings.period_count+1));
 				}
 			}else{
-				if(timer.period == 2){
+				if(timer.period === 2){
 					$('#bovertimer').html('3rd period');
 				}else{
 					$('#bovertimer').html(timer.period + "th period");
@@ -983,6 +982,7 @@ function settingsRead(newsettings){
 		showHelp();
 		storeSettings();
 	}
+	hideSplash();
 }
 
 function noStoredSettings(){
@@ -1138,3 +1138,5 @@ function showMessage(message){
 	$('#message').append(message);
 	$('#message').show();
 }
+
+function hideSplash(){$('#splash').hide();}

@@ -1,4 +1,4 @@
-/* global match, matches, showMessage, incomingSettings, file_deletedMatches, getSettings */
+/* global match, matches, showMessage, incomingSettings, file_deletedMatches, getSettings, syncCustomMatchTypes, timer */
 var SAAgent;
 
 var communicationListener = {

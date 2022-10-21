@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://windkracht8.com/RugbyRefereeWatch" version="1.7.3" viewmodes="maximized">
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://windkracht8.com/RugbyRefereeWatch" version="1.7.4" viewmodes="maximized">
     <tizen:application id="lTZ15rKyhY.RugbyRefereeWatch" package="lTZ15rKyhY" required_version="2.3"/>
     <author href="https://github.com/windkracht8/rugbyrefereewatch" email="rrw@windkracht8.com">Windkracht8</author>
     <content src="index.html"/>
