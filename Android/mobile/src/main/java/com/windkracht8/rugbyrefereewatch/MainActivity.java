@@ -152,7 +152,11 @@ public class MainActivity extends AppCompatActivity{
 
         handleIntent();
         handler_main = new Handler(Looper.getMainLooper());
+
+        findViewById(R.id.scrollHistory).setOnTouchListener(this::onTouchEventScrollViews);
+        findViewById(R.id.scrollReport).setOnTouchListener(this::onTouchEventScrollViews);
     }
+
     private boolean hasPackage(String packageName){
         try{
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
@@ -308,17 +312,14 @@ public class MainActivity extends AppCompatActivity{
     public boolean onTouchEvent(MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
+    private boolean onTouchEventScrollViews(View v, MotionEvent event){
+        return gestureDetector.onTouchEvent(event);
+    }
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
         @Override
-        public boolean onDown(MotionEvent e){
-            return true;
-        }
-
-        @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
-            boolean result = false;
             try{
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
@@ -329,17 +330,17 @@ public class MainActivity extends AppCompatActivity{
                         }else{
                             onSwipeLeft();
                         }
-                        result = true;
+                        return true;
                     }
                 }
             }catch(Exception e){
                 Log.e("MainActivity", "onFling: " + e.getMessage());
             }
-            return result;
+            return false;
         }
     }
 
-    public void onSwipeRight(){//TODO: does not work if swiping below content
+    public void onSwipeRight(){
         if(tabReport.getVisibility() == View.VISIBLE){
             tabHistoryLabelClick();
         }else if(tabPrepare.getVisibility() == View.VISIBLE){
