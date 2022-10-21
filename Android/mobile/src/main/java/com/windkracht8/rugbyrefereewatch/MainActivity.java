@@ -154,9 +154,10 @@ public class MainActivity extends AppCompatActivity{
         handler_main = new Handler(Looper.getMainLooper());
 
         findViewById(R.id.scrollHistory).setOnTouchListener(this::onTouchEventScrollViews);
+        findViewById(R.id.llMatches).setOnTouchListener(this::onTouchEventScrollViews);
         findViewById(R.id.scrollReport).setOnTouchListener(this::onTouchEventScrollViews);
+        findViewById(R.id.scrollPrepare).setOnTouchListener(this::onTouchEventScrollViews);
     }
-
     private boolean hasPackage(String packageName){
         try{
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
@@ -312,6 +313,7 @@ public class MainActivity extends AppCompatActivity{
     public boolean onTouchEvent(MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
+    @SuppressWarnings("unused")
     private boolean onTouchEventScrollViews(View v, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
