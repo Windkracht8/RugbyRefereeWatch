@@ -4,8 +4,8 @@
     <string name="ivIcon_desc">icon</string>
     <string name="sOS_desc">Watch OS selection</string>
     <string name="svMatches_desc">History of matches</string>
-    <string name="etAwayName_desc">Away name entry</string>
-    <string name="etHomeName_desc">Home name entry</string>
+    <string name="etAwayName_desc">Away name</string>
+    <string name="etHomeName_desc">Home name</string>
     <string name="sHomeColor_desc">Home color selection</string>
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_desc">Match type selection</string>

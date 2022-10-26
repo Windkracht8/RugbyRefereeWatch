@@ -35,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center|top"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="@android:color/holo_red_light"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
