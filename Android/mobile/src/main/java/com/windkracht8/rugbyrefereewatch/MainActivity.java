@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity{
 
         String scheme = intent.getScheme();
         if(scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0){
-            Log.e(MainActivity.RRW_LOG_TAG , "MainActivity.handleIntent Non supported scheme: " + scheme);
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.handleIntent Non supported scheme: " + scheme);
             return;
         }
         try{
