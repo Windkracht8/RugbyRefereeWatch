@@ -89,7 +89,7 @@ public class ReportEvent extends LinearLayout {
                 }
             }
         }catch(Exception e){
-            Log.e("ReportEvent", "ReportEvent: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }

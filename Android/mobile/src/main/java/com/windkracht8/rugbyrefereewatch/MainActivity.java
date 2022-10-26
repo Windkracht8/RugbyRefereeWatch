@@ -47,6 +47,7 @@ import java.io.OutputStreamWriter;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity{
+    public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
     private static final String TIZEN_PACKAGE_NAME = "com.samsung.accessory";
     private static final String WEAR_PACKAGE_NAME = "com.google.android.wearable.app";
     private GestureDetector gestureDetector;
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity{
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noTizenLib);
-            findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.samsung.accessory"))));
+            findViewById(R.id.tvError).setOnClickListener(view -> installClick(TIZEN_PACKAGE_NAME));
             return;
         }
         SAAgentV2.requestAgent(getApplicationContext(), CommsTizen.class.getName(), SAAgentCallback);
@@ -215,13 +216,16 @@ public class MainActivity extends AppCompatActivity{
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);
-            findViewById(R.id.tvError).setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.wearable.app"))));
+            findViewById(R.id.tvError).setOnClickListener(view -> installClick(WEAR_PACKAGE_NAME));
             return;
         }
         comms_wear = new CommsWear(getApplicationContext());
         findViewById(R.id.bGetMatches).setVisibility(View.VISIBLE);
         findViewById(R.id.bGetMatch).setVisibility(View.VISIBLE);
         findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
+    }
+    private void installClick(String packageName){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
     }
     private void destroyWear(){
         if(comms_wear != null){
@@ -236,7 +240,7 @@ public class MainActivity extends AppCompatActivity{
 
         String scheme = intent.getScheme();
         if(scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0){
-            Log.e("MainActivity" , "Non supported scheme: " + scheme);
+            Log.e(MainActivity.RRW_LOG_TAG , "MainActivity.handleIntent Non supported scheme: " + scheme);
             return;
         }
         try{
@@ -255,7 +259,7 @@ public class MainActivity extends AppCompatActivity{
             JSONArray matches_new_ja = new JSONArray(matches_new_s);
             tabHistory.gotMatches(matches_new_ja);
         }catch(Exception e){
-            Log.e("MainActivity", "handleIntent read file: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.handleIntent Read file Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), "Problem with matches received from watch", Toast.LENGTH_SHORT).show();
         }
     }
@@ -336,7 +340,7 @@ public class MainActivity extends AppCompatActivity{
                     }
                 }
             }catch(Exception e){
-                Log.e("MainActivity", "onFling: " + e.getMessage());
+                Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.onFling Exception: " + e.getMessage());
             }
             return false;
         }
@@ -368,7 +372,7 @@ public class MainActivity extends AppCompatActivity{
 
         @Override
         public void onError(int errorCode, String errorMessage){
-            Log.e("MainActivity", "Agent initialization error: " + errorCode + ". ErrorMsg: " + errorMessage);
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.SAAgentCallback.onError: " + errorCode + ". ErrorMsg: " + errorMessage);
             gotError(errorMessage);
         }
     };
@@ -402,7 +406,7 @@ public class MainActivity extends AppCompatActivity{
             requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
             sendRequest("getMatches", requestData);
         }catch(Exception e){
-            Log.e("MainActivity", "bGetMatchesClick exception: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.bGetMatchesClick Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), "Failed to request matches from watch", Toast.LENGTH_SHORT).show();
         }
     }
@@ -496,7 +500,7 @@ public class MainActivity extends AppCompatActivity{
                     requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
                     sendRequest("sync", requestData);
                 }catch(Exception e){
-                    Log.e("MainActivity", "updateStatus CONNECTED exception: " + e.getMessage());
+                    Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.updateStatus CONNECTED Exception: " + e.getMessage());
                 }
                 break;
             case "OFFLINE":
@@ -544,17 +548,17 @@ public class MainActivity extends AppCompatActivity{
         try{
             switch(requestType){
                 case "sync":
-                    Log.i("MainActivity.gotResponse", "sync");
+                    Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse sync");
                     if(responseType != 1){break;}//Silently ignore for now
                     JSONObject syncResponse = new JSONObject(responseData);
                     if(!syncResponse.has("matches") || !syncResponse.has("settings")){
-                        Log.e("MainActivity", "incomplete response");
+                        Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse sync: Incomplete response");
                     }
                     tabHistory.gotMatches(syncResponse.getJSONArray("matches"));
                     tabPrepare.gotSettings(syncResponse.getJSONObject("settings"));
                     break;
                 case "getMatches":
-                    Log.i("MainActivity.gotResponse", "getMatches");
+                    Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatches");
                     findViewById(R.id.bGetMatches).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 2){gotError("invalid response");break;}
@@ -562,7 +566,7 @@ public class MainActivity extends AppCompatActivity{
                     tabHistory.gotMatches(getMatchesResponse);
                     break;
                 case "getMatch":
-                    Log.i("MainActivity.gotResponse", "getMatch");
+                    Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatch");
                     findViewById(R.id.bGetMatch).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 1){gotError("invalid response");break;}
@@ -570,7 +574,7 @@ public class MainActivity extends AppCompatActivity{
                     tabReport.gotMatch(getMatchResponse);
                     break;
                 case "prepare":
-                    Log.i("MainActivity.gotResponse", "prepare");
+                    Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse prepare");
                     findViewById(R.id.bPrepare).setEnabled(true);
                     if(!responseData.equals("okilly dokilly")){
                         gotError(responseData);
@@ -583,7 +587,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     public void gotError(String error){
-        Log.i("MainActivity.gotError", error);
+        Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotError: " + error);
         if(error.equals(getString(R.string.did_not_understand_message))){
             error = getString(R.string.update_watch_app);
         }
@@ -631,7 +635,7 @@ public class MainActivity extends AppCompatActivity{
             }
             return name + " (" + team.getString("color") + ")";
         }catch(Exception e){
-            Log.e("MainActivity", "getTeamName: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getTeamName Exception: " + e.getMessage());
         }
         return name;
     }
@@ -659,7 +663,7 @@ public class MainActivity extends AppCompatActivity{
                 bw.flush();
                 bw.close();
             }catch(Exception e){
-                Log.e("MainActivity", "onActivityResult: " + e.getMessage());
+                Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.onActivityResult Exception: " + e.getMessage());
                 Toast.makeText(getApplicationContext(), "Failed to export matches", Toast.LENGTH_SHORT).show();
             }
         }

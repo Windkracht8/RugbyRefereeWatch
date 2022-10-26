@@ -20,7 +20,7 @@ public class CommsTizen extends SAAgentV2{
         try{
             mAccessory.initialize(context);
         }catch(Exception e){
-            Log.e("CommsTizen", "construct: " + e);
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.construct Exception: " + e);
             updateStatus("FATAL");
             gotError(e.getMessage());
             releaseAgent();
@@ -72,7 +72,7 @@ public class CommsTizen extends SAAgentV2{
 
     @Override
     protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode){
-        Log.i("CommsTizen", "onError: " + errorCode);
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.onError: " + errorCode);
         super.onError(peerAgent, errorMessage, errorCode);
         updateStatus("FATAL");
         gotError(errorMessage);
@@ -87,7 +87,7 @@ public class CommsTizen extends SAAgentV2{
 
         @Override
         public void onError(int channelId, String errorMessage, int errorCode){
-            Log.i("CommsTizen", "ServiceConnection.onError: " + errorCode);
+            Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.ServiceConnection.onError: " + errorCode);
             gotError(errorCode + ": "  + errorMessage);
         }
 
@@ -95,7 +95,7 @@ public class CommsTizen extends SAAgentV2{
         public void onReceive(int channelId, byte[] data){
             try{
                 String sData = new String(data);
-                Log.i("CommsTizen", "ServiceConnection.onReceive: " + sData);
+                Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.ServiceConnection.onReceive: " + sData);
                 JSONObject responseMessage = new JSONObject(sData);
                 gotResponse(responseMessage);
             }catch(Exception e){
@@ -135,7 +135,7 @@ public class CommsTizen extends SAAgentV2{
             Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
             return;
         }
-        Log.i("CommsTizen", "sendRequest: " + requestMessage);
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest: " + requestMessage);
         try{
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
         }catch(IOException e){
@@ -160,7 +160,7 @@ public class CommsTizen extends SAAgentV2{
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotError(final String error){
-        Log.e("CommsTizen", "gotError: " + error);
+        Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "tizen");
@@ -168,7 +168,7 @@ public class CommsTizen extends SAAgentV2{
         getApplicationContext().sendBroadcast(intent);
     }
     private void gotResponse(final JSONObject responseMessage){
-        Log.i("CommsWear", "gotResponse: " + responseMessage.toString());
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.gotResponse: " + responseMessage.toString());
         try{
             Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
             intent.putExtra("intent_type", "gotResponse");
@@ -177,7 +177,7 @@ public class CommsTizen extends SAAgentV2{
             intent.putExtra("responseData", responseMessage.getString("responseData"));
             getApplicationContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("CommsTizen", "gotResponse error: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.gotResponse Exception: " + e.getMessage());
             gotError("Invalid response");
         }
     }

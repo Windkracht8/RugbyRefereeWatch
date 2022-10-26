@@ -29,12 +29,12 @@ public class Communication extends WearableListenerService{
             DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
             String requestType = dataMap.getString("requestType");
             if(requestType == null){
-                Log.e("communication", "No requestType");
+                Log.e(MainActivity.RRW_LOG_TAG, "Communication.onDataChanged No requestType");
                 return;
             }
             if(dataMap.getString("responseData") != null) return;
 
-            Log.i("communication", requestType);
+            Log.i(MainActivity.RRW_LOG_TAG, "Communication.onDataChanged requestType: " + requestType);
             switch(requestType){
                 case "sync":
                     onReceiveSync(requestType, dataMap);
@@ -49,7 +49,7 @@ public class Communication extends WearableListenerService{
                     onReceivePrepare(requestType, dataMap);
                     break;
                 default:
-                    Log.e("communication", "Did not understand message");
+                    Log.e(MainActivity.RRW_LOG_TAG, "Communication.onDataChanged Did not understand message");
                     sendRequest(requestType, "responseData", "Did not understand message");
             }
         }
@@ -58,7 +58,7 @@ public class Communication extends WearableListenerService{
     private void onReceiveSync(String requestType, DataMap dataMap){
         String requestData = dataMap.getString("requestData");
         if(requestData == null){
-            Log.e("communication", "No requestData for request sync");
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceiveSync No requestData for request sync");
             return;
         }
         long timestamp = dataMap.getLong("timestamp");
@@ -71,14 +71,14 @@ public class Communication extends WearableListenerService{
             sendRequest(requestType, "responseData", responseData_json.toString());
             Conf.syncCustomMatchTypes(getBaseContext(), requestData);
         }catch(Exception e){
-            Log.e("communication", "sync: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceiveSync Exception: " + e.getMessage());
             sendRequest(requestType, "responseData", "unexpected error");
         }
     }
     private void onReceiveGetMatches(String requestType, DataMap dataMap){
         String requestData = dataMap.getString("requestData");
         if(requestData == null){
-            Log.e("communication", "No requestData for request getMatches");
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceiveGetMatches No requestData for request getMatches");
             return;
         }
         String responseData = FileStore.file_deletedMatches(getApplicationContext(), requestData).toString();
@@ -92,14 +92,14 @@ public class Communication extends WearableListenerService{
             responseData.put("timer", MainActivity.getTimer());
             sendRequest(requestType, "responseData", responseData.toString());
         }catch(Exception e){
-            Log.e("communication", "getMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceiveGetMatch Exception: " + e.getMessage());
             sendRequest(requestType, "responseData", "unexpected error");
         }
     }
     private void onReceivePrepare(String requestType, DataMap dataMap){
         String requestData = dataMap.getString("requestData");
         if(requestData == null){
-            Log.e("communication", "No requestData for request prepare");
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceivePrepare No requestData for request prepare");
             return;
         }
         try{
@@ -114,13 +114,13 @@ public class Communication extends WearableListenerService{
             intent.putExtra("intent_type", "onReceivePrepare");
             this.sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("communication", "prepare: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Communication.onReceivePrepare Exception: " + e.getMessage());
             sendRequest(requestType, "responseData", "unexpected error");
         }
     }
 
     public void sendRequest(final String requestType, final String requestDataType, final String requestData){
-        Log.i("communication", "sendRequest: " + requestType);
+        Log.i(MainActivity.RRW_LOG_TAG, "Communication.sendRequest: " + requestType);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/rrw");
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());
         putDataMapReq.getDataMap().putString("requestType", requestType);
@@ -129,6 +129,6 @@ public class Communication extends WearableListenerService{
         putDataReq.setUrgent();
         DataClient dataClient = Wearable.getDataClient(getApplicationContext());
         Task<DataItem> putDataTask = dataClient.putDataItem(putDataReq);
-        putDataTask.addOnFailureListener(exception -> Log.e("communication", "sendRequest failed: " + exception.getMessage()));
+        putDataTask.addOnFailureListener(exception -> Log.e(MainActivity.RRW_LOG_TAG, "Communication.sendRequest Exception: " + exception.getMessage()));
     }
 }

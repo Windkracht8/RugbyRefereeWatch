@@ -56,7 +56,7 @@ public class ReportEventFull extends LinearLayout{
                 tvWho.setText(event.getString("who"));
             }
         }catch(Exception e){
-            Log.e("ReportEventFull", "ReportEventFull: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "ReportEventFull.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }

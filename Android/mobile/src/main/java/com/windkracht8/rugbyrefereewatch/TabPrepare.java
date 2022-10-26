@@ -258,7 +258,7 @@ public class TabPrepare extends LinearLayout{
                 settings.put("record_pens", cbRecordPens.isChecked() ? 1 : 0);
             }
         }catch(Exception e){
-            Log.e("TabPrepare", "getSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to send settings to watch", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -285,7 +285,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
         }catch(Exception e){
-            Log.e("TabPrepare", "gotSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Problem with settings from watch", Toast.LENGTH_SHORT).show();
         }
     }
@@ -317,9 +317,9 @@ public class TabPrepare extends LinearLayout{
             }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.i("TabPrepare", "match types file does not exists yet");
+            Log.i(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
-            Log.e("TabPrepare", "loadCustomMatchTypes: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
         }
     }
@@ -333,7 +333,7 @@ public class TabPrepare extends LinearLayout{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e("TabPrepare", "loadCustomMatchTypes: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
         }
     }
@@ -351,7 +351,7 @@ public class TabPrepare extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("TabPrepare", "loadCustomMatchType: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -368,7 +368,7 @@ public class TabPrepare extends LinearLayout{
             storeCustomMatchTypes();
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
-            Log.e("TabPrepare", "bDelCustomClick: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to delete match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -410,10 +410,10 @@ public class TabPrepare extends LinearLayout{
             for(int i=sa.getCount()-1; i>=0; i--){
                 if(sa.getItem(i).toString().equals(name)) {
                     sMatchType.setSelection(i);
-                }
+             }
             }
         }catch(Exception e){
-            Log.e("TabPrepare", "saveCustomMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -426,7 +426,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_con", etPointsCon.getText().toString());
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
-            Log.e("TabPrepare", "customMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -437,7 +437,7 @@ public class TabPrepare extends LinearLayout{
             osr.write(customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e("TabPrepare", "storeCustomMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
         }
     }

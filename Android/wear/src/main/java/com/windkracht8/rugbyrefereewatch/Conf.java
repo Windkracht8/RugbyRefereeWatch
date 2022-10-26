@@ -225,7 +225,7 @@ public class Conf extends ScrollView{
             intent.putExtra("intent_type", "storeCustomMatchTypes");
             getContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("Conf", "addCustomMatchType: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Conf.addCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to store custom match type", Toast.LENGTH_SHORT).show();
         }
     }
@@ -269,7 +269,7 @@ public class Conf extends ScrollView{
                 }
             }
         }catch(Exception e){
-            Log.e("Conf", "syncCustomMatchTypes: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to sync match types");
         }
     }
@@ -285,7 +285,7 @@ public class Conf extends ScrollView{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             match_type.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e("Conf", "loadCustomMatchTypesSpinner: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Conf.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
         }
     }
@@ -304,7 +304,7 @@ public class Conf extends ScrollView{
                 }
             }
         }catch(Exception e){
-            Log.e("TabReport", "loadCustomMatchType: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "Conf.loadCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
         }
     }

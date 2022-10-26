@@ -73,7 +73,7 @@ public class TabReport extends LinearLayout{
                 return;
             }
         }catch(Exception e){
-            Log.e("TabReport", "gotMatch timer.status: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.gotMatch timer.status Exception: " + e.getMessage());
             return;
         }
 
@@ -160,7 +160,7 @@ public class TabReport extends LinearLayout{
 
             showEvents();
         }catch(Exception e){
-            Log.e("TabReport", "gotMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.gotMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
 
@@ -191,7 +191,7 @@ public class TabReport extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("TabReport", "showEvents: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
@@ -234,7 +234,7 @@ public class TabReport extends LinearLayout{
                 event.put("score",  score_home + ":" + score_away);
             }
         }catch(Exception e){
-            Log.e("TabReport", "getScore: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
     }
@@ -277,7 +277,7 @@ public class TabReport extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e("TabReport", "bDelClick: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to delete", Toast.LENGTH_SHORT).show();
         }
     }
@@ -418,7 +418,7 @@ public class TabReport extends LinearLayout{
             getContext().sendBroadcast(intent);
             loadMatch(match);
         }catch(Exception e){
-            Log.e("TabReport", "bSaveClick: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_SHORT).show();
         }
     }
@@ -432,7 +432,7 @@ public class TabReport extends LinearLayout{
         try{
             context.startActivity(Intent.createChooser(intent, "Share match report"));
         }catch(Exception e){
-            Log.e("TabReport", "bShareClick: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
             Toast.makeText(context, "Failed to share", Toast.LENGTH_SHORT).show();
         }
     }
@@ -453,7 +453,7 @@ public class TabReport extends LinearLayout{
             shareSubject += " " + MainActivity.getTeamName(away);
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
-            Log.e("TabReport", "getShareSubject: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to share", Toast.LENGTH_SHORT).show();
         }
         return shareSubject;
@@ -544,7 +544,7 @@ public class TabReport extends LinearLayout{
             }
 
         }catch(Exception e){
-            Log.e("TabReport", "getShareBody: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to share", Toast.LENGTH_SHORT).show();
         }
         return shareBody.toString();

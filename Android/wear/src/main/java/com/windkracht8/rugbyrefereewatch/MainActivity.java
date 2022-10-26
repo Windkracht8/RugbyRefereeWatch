@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends FragmentActivity{
+    public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
     private TextView battery;
     private TextView time;
     private TextView score_home;
@@ -868,7 +869,7 @@ public class MainActivity extends FragmentActivity{
                 timer_type = match.timer_type;
             }
         }catch(Exception e){
-            Log.e("MainActivity", "incomingSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with incoming settings");
             return false;
         }
@@ -894,7 +895,7 @@ public class MainActivity extends FragmentActivity{
             if(jsonSettings.has("home_color")) match.home.color = jsonSettings.getString("home_color");
             if(jsonSettings.has("away_color")) match.away.color = jsonSettings.getString("away_color");
         }catch(Exception e){
-            Log.e("MainActivity", "readSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with reading settings");
         }
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
@@ -922,7 +923,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("timer_type", match.timer_type);
             ret.put("help_version", help_version);
         }catch(Exception e){
-            Log.e("MainActivity", "getSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Problem with sending settings");
         }
         return ret;
@@ -990,7 +991,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("period_time", timer_period_time);
             ret.put("type", timer_type);
         }catch(Exception e){
-            Log.e("MainActivity", "getTimer: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getTimer Exception: " + e.getMessage());
             return null;
         }
         return ret;

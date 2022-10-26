@@ -49,7 +49,7 @@ public class MatchData{
             }
             ret.put("events", events_json);
         }catch(JSONException e){
-            Log.e("MatchData", "toJson: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
             Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
         }
         return ret;
@@ -113,7 +113,7 @@ public class MatchData{
             }
         }
         events.add(evt);
-        Log.i("MatchData" , "log_event: " + what + " " + team + " " + who);
+        Log.i(MainActivity.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
     }
     public static class team{
         public final String id;
@@ -158,7 +158,7 @@ public class MatchData{
                 ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
-                Log.e("MatchData", "match.toJson: " + e.getMessage());
+                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
             }
             return ret;
@@ -192,7 +192,7 @@ public class MatchData{
                     }
                 }
             }catch(JSONException e){
-                Log.e("MatchData" , "event.toJson: " + e.getMessage());
+                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
             }
             return evt;

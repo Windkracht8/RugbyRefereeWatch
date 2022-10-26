@@ -48,7 +48,7 @@ public class HistoryMatch extends LinearLayout{
 
             tvName.setText(name_s);
         }catch(Exception e){
-            Log.e("HistoryMatch", "HistoryMatch: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
             Toast.makeText(context, "Failed to show match in history", Toast.LENGTH_SHORT).show();
         }
     }

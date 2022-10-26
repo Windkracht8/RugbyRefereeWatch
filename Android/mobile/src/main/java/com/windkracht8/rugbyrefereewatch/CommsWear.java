@@ -101,23 +101,23 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
             DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
             String requestType = dataMap.getString("requestType");
             if(requestType == null){
-                Log.e("communication", "No requestType");
+                Log.e(MainActivity.RRW_LOG_TAG, "CommsWear.onDataChanged No requestType");
                 return;
             }
             if(dataMap.getString("responseData") == null){return;}
             String responseData = dataMap.getString("responseData");
-            Log.i("CommsWear", "Received " + requestType + ": " + responseData);
+            Log.i(MainActivity.RRW_LOG_TAG, "CommsWear.onDataChanged: " + requestType + ": " + responseData);
             gotResponse(requestType, responseData);
         }
     }
 
     public static void sendRequest(Context context, final String requestType, final JSONObject requestData){
-        Log.i("CommsWear", "sendRequest: " + requestType);
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsWear.sendRequest requestType: " + requestType);
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/rrw");
         putDataMapReq.getDataMap().putLong("timestamp", (new Date()).getTime());
         putDataMapReq.getDataMap().putString("requestType", requestType);
         if(requestData != null){
-            Log.i("CommsWear", "requestData: " + requestData);
+            Log.i(MainActivity.RRW_LOG_TAG, "CommsWear.sendRequest requestData: " + requestData);
             putDataMapReq.getDataMap().putString("requestData", requestData.toString());
         }
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
@@ -127,7 +127,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
     }
 
     private static void gotError(Context context, final String error){
-        Log.e("CommsWear", "gotError: " + error);
+        Log.e(MainActivity.RRW_LOG_TAG, "CommsWear.gotError: " + error);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "wear");
@@ -135,7 +135,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         context.sendBroadcast(intent);
     }
     private void gotResponse(final String requestType, final String responseData){
-        Log.i("CommsWear", "gotResponse: " + requestType + " " + responseData);
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsWear.gotResponse: " + requestType + " " + responseData);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotResponse");
         intent.putExtra("source", "wear");

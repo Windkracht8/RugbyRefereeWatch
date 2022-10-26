@@ -27,7 +27,7 @@ public class FileStore{
         try{
             storeFile(context, R.string.matches_filename, matches.toString());
         }catch(Exception e){
-            Log.e("FileStore", "file_storeMatches: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_storeMatches Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to save matches");
         }
     }
@@ -38,7 +38,7 @@ public class FileStore{
             if(sMatches.length() < 3){return new JSONArray();}
             return new JSONArray(sMatches);
         }catch(Exception e){
-            Log.e("FileStore", "file_readMatches: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_readMatches Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to read matches");
         }
         return new JSONArray();
@@ -56,7 +56,7 @@ public class FileStore{
             }
             file_storeMatches(context, matches);
         }catch(Exception e){
-            Log.e("FileStore", "file_cleanMatches: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_cleanMatches Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to cleanup matches");
         }
     }
@@ -78,7 +78,7 @@ public class FileStore{
             file_storeMatches(context, matches);
             return matches;
         }catch(Exception e){
-            Log.e("FileStore", "file_deletedMatches: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_deletedMatches Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to delete matches");
         }
         return new JSONArray();
@@ -102,7 +102,7 @@ public class FileStore{
             jsonSettings.put("away_color", MainActivity.match.away.color);
             storeFile(context, R.string.settings_filename, jsonSettings.toString());
         }catch(Exception e){
-            Log.e("FileStore", "file_storeSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to store settings");
         }
     }
@@ -116,7 +116,7 @@ public class FileStore{
             if(jsonSettings.has("help_version"))
                 help_version = jsonSettings.getInt("help_version");
         }catch(Exception e){
-            Log.e("FileStore", "file_readSettings: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to read settings");
         }
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
@@ -132,7 +132,7 @@ public class FileStore{
             osr.write(Conf.customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e("FileStore", "file_storeCustomMatchTypes: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_storeCustomMatchTypes Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to store match types");
         }
     }
@@ -153,9 +153,9 @@ public class FileStore{
                 Conf.customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
             }
         }catch(FileNotFoundException e){
-            Log.i("FileStore", "match types file does not exists yet");
+            Log.i(MainActivity.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
-            Log.e("FileStore", "file_readCustomMatchTypes: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to read custom match types from storage");
         }
     }
@@ -170,9 +170,9 @@ public class FileStore{
             br.close();
             return text.toString();
         }catch(FileNotFoundException e){
-            Log.i("FileStore", "file does not exists yet");
+            Log.i(MainActivity.RRW_LOG_TAG, "FileStore.getFileAsString File does not exist yet");
         }catch(Exception e){
-            Log.e("FileStore", "getFileAsString: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to read file");
         }
         return "";
@@ -184,7 +184,7 @@ public class FileStore{
             osr.write(content);
             osr.close();
         }catch(Exception e){
-            Log.e("FileStore", "storeFile: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
             MainActivity.makeToast(context, "Failed to store file");
         }
     }

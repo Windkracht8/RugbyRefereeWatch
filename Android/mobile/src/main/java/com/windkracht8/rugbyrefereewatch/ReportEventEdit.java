@@ -85,7 +85,7 @@ public class ReportEventEdit extends LinearLayout{
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
             }
         }catch(Exception e){
-            Log.e("ReportEventEdit", "ReportEventEdit: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
         }
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
@@ -98,7 +98,7 @@ public class ReportEventEdit extends LinearLayout{
             intent.putExtra("event_id", event.getInt("id"));
             getContext().sendBroadcast(intent);
         }catch(Exception e){
-            Log.e("ReportEventEdit", "bDelClick: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to delete event", Toast.LENGTH_SHORT).show();
         }
     }
@@ -146,7 +146,7 @@ public class ReportEventEdit extends LinearLayout{
             String who = ((EditText)findViewById(R.id.who)).getText().toString();
             if(event.has("who") || who.length() > 0) event.put("who", Integer.parseInt(who));
         }catch(Exception e){
-            Log.e("ReportEventEdit", "toJson: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to save match", Toast.LENGTH_SHORT).show();
         }
         return event;
