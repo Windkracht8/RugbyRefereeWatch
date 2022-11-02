@@ -13,7 +13,7 @@
             android:layout_width="40dp"
             android:layout_height="48dp"
             android:text="@string/x"
-            android:textColor="#F00"
+            android:textColor="@color/error"
             android:textSize="18sp"
             android:textStyle="bold" />
         <TextView
@@ -29,7 +29,6 @@
             android:minHeight="32dp"
             android:textSize="18sp"
             android:theme="@style/rrwReportEditSpinner"/>
-
         <Spinner
             android:id="@+id/team"
             android:layout_width="wrap_content"

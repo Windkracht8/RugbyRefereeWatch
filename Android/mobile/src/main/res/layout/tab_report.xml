@@ -242,7 +242,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground"
+        android:background="@color/background"
         android:orientation="horizontal">
         <Button
             android:id="@+id/bView"
