@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -103,7 +104,10 @@ public class HistoryMatch extends LinearLayout{
         if(is_selected){
             unselect();
         }else{
-            tvName.setBackgroundColor(R.attr.backgroundTint);
+            final TypedValue value = new TypedValue();
+            getContext().getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+            tvName.setBackgroundColor(value.data);
+            tvName.setTextColor(getContext().getColor(R.color.background));
             is_selected = true;
         }
         hParent.selectionChanged();
@@ -112,6 +116,7 @@ public class HistoryMatch extends LinearLayout{
     public boolean unselect(){
         boolean ret = is_selected;
         tvName.setBackgroundColor(0);
+        tvName.setTextColor(getContext().getColor(R.color.text));
         is_selected = false;
         return ret;
     }
