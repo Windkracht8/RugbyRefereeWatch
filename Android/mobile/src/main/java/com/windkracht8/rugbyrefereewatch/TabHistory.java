@@ -223,13 +223,19 @@ public class TabHistory extends LinearLayout{
                 HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     try{
-                        deleted_matches.add(matches.get(i).getLong("matchid"));
+                        long matchid = tmp.match.getLong("matchid");
+                        deleted_matches.add(matchid);
+                        for(int j=matches.size()-1; j>=0; j--){
+                            if(matches.get(j).getLong("matchid") == matchid) {
+                                matches.remove(j);
+                                break;
+                            }
+                        }
+                        llMatches.removeViewAt(i);
                     }catch(Exception e){
                         Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
                         Toast.makeText(getContext(), "Failed to delete match", Toast.LENGTH_SHORT).show();
                     }
-                    matches.remove(i);
-                    llMatches.removeViewAt(i);
                 }
             }
         }
