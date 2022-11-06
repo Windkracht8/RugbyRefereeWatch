@@ -20,9 +20,9 @@ public class CommsTizen extends SAAgentV2{
         try{
             mAccessory.initialize(context);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.construct Exception: " + e);
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.construct Exception: " + e.getMessage());
             updateStatus("FATAL");
-            gotError(e.getMessage());
+            gotError(context.getString(R.string.fail_tizen_init));
             releaseAgent();
         }
     }
@@ -124,23 +124,23 @@ public class CommsTizen extends SAAgentV2{
 
     public void sendRequest(final String requestType, final JSONObject requestData){
         if(mConnectionHandler == null){
-            gotError("Not connected");
+            gotError(getApplicationContext().getString(R.string.not_connected));
         }
         JSONObject requestMessage = new JSONObject();
         try{
             requestMessage.put("requestType", requestType);
             requestMessage.put("requestData", requestData);
         }catch(Exception e){
-            gotError("Issue with json: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest json: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_send_message), Toast.LENGTH_SHORT).show();
             return;
         }
         Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest: " + requestMessage);
         try{
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
         }catch(IOException e){
-            gotError("Issue with sending request: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Failed to send message to watch", Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest send: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_send_message), Toast.LENGTH_SHORT).show();
         }
     }
 

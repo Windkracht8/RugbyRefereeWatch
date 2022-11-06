@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">RugbyRefereeWatch</string>
+    <string name="app_name" translatable="false">RugbyRefereeWatch</string>
 
     <string name="ivIcon_desc">icon</string>
     <string name="sOS_desc">Watch OS selection</string>
     <string name="svMatches_desc">History of matches</string>
-    <string name="etAwayName_desc">Away name</string>
     <string name="etHomeName_desc">Home name</string>
+    <string name="etAwayName_desc">Away name</string>
     <string name="sHomeColor_desc">Home color selection</string>
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_desc">Match type selection</string>
@@ -14,9 +14,9 @@
     <string name="team_desc">team</string>
     <string name="reason_hint">reason</string>
 
-    <string name="tvTime_placeholder">00:00:00</string>
-    <string name="tvTimer_placeholder">00\'</string>
-    <string name="tvScore_placeholder">00:00</string>
+    <string name="tvTime_placeholder" translatable="false">00:00:00</string>
+    <string name="tvTimer_placeholder" translatable="false">00\'</string>
+    <string name="tvScore_placeholder" translatable="false">00:00</string>
 
     <string name="bView_text">view</string>
     <string name="bEdit_text">edit</string>
@@ -49,6 +49,20 @@
     <string name="etAwayName_text">Away name</string>
     <string name="tvNoEdit_text">match has not finished, cannot edit now</string>
 
+    <string name="count_down">count down</string>
+    <string name="count_up">count up</string>
+
+    <string name="black">black</string>
+    <string name="blue">blue</string>
+    <string name="brown">brown</string>
+    <string name="gold">gold</string>
+    <string name="green">green</string>
+    <string name="orange">orange</string>
+    <string name="pink">pink</string>
+    <string name="purple">purple</string>
+    <string name="red">red</string>
+    <string name="white">white</string>
+
     <string name="history">History</string>
     <string name="report">Report</string>
     <string name="prepare">Prepare</string>
@@ -60,6 +74,24 @@
     <string name="pen_goals">Penalty goals</string>
     <string name="drop_goals">Drop goals</string>
     <string name="penalties">Penalties</string>
+    <string name="total">Total</string>
+
+    <string name="TRY">TRY</string>
+    <string name="CONVERSION">CONVERSION</string>
+    <string name="PENALTY_TRY">PENALTY TRY</string>
+    <string name="GOAL">GOAL</string>
+    <string name="PENALTY_GOAL">PENALTY GOAL</string>
+    <string name="DROP_GOAL">DROP GOAL</string>
+    <string name="YELLOW_CARD">YELLOW CARD</string>
+    <string name="RED_CARD">RED CARD</string>
+    <string name="PENALTY">PENALTY</string>
+
+    <string name="type_15s">15s</string>
+    <string name="type_10s">10s</string>
+    <string name="type_7s">7s</string>
+    <string name="beach_7s">beach 7s</string>
+    <string name="beach_5s">beach 5s</string>
+    <string name="custom">custom</string>
 
     <string name="status_STARTING">Starting</string>
     <string name="status_DISCONNECTED">Disconnected</string>
@@ -73,29 +105,72 @@
     <string name="status_CONNECTING">Connecting</string>
     <string name="status_SEARCHING">Searching</string>
 
-    <string name="matches_filename">matches.json</string>
-    <string name="deleted_matches_filename">deleted_matches.json</string>
-    <string name="match_types_filename">match_types.json</string>
+    <string name="matches_filename" translatable="false">matches.json</string>
+    <string name="deleted_matches_filename" translatable="false">deleted_matches.json</string>
+    <string name="match_types_filename" translatable="false">match_types.json</string>
 
-    <string name="os_wear">WearOS</string>
-    <string name="os_tizen">Tizen</string>
+    <string name="os_wear" translatable="false">WearOS</string>
+    <string name="os_tizen" translatable="false">Tizen</string>
     <string name="watch_settings">Watch settings</string>
     <string name="no_watch_settings">No watch settings</string>
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
-    <string name="noTizenLib">Click here to install the Samsung Accessory Service</string>
-    <string name="noWearLib">Click here to install the Wear OS Service</string>
+    <string name="noTizenLib">Click to install Samsung Accessory Service</string>
+    <string name="noWearLib">Click to install Wear OS Service</string>
     <string name="home">home</string>
     <string name="away">away</string>
+    <string name="HOME">HOME</string>
+    <string name="AWAY">AWAY</string>
 
-    <string name="_0">0</string>
-    <string name="_00">00</string>
-    <string name="_2">2</string>
-    <string name="_3">3</string>
-    <string name="_5">5</string>
-    <string name="_10">10</string>
-    <string name="_40">40</string>
-    <string name="x">X</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="_00" translatable="false">00</string>
+    <string name="_2" translatable="false">2</string>
+    <string name="_3" translatable="false">3</string>
+    <string name="_5" translatable="false">5</string>
+    <string name="_10" translatable="false">10</string>
+    <string name="_40" translatable="false">40</string>
+    <string name="x" translatable="false">X</string>
+
+    <string name="problem_matches_received">Problem with matches received from watch</string>
+    <string name="explainDoubleBack">Press back twice to close</string>
+    <string name="watch_not_found">Watch not found</string>
+    <string name="fail_get_matches">Failed to request matches from watch</string>
+    <string name="fail_get_match">Failed to request match from watch</string>
+    <string name="fail_prepare">Problem with sending settings</string>
+    <string name="fail_show_match">Failed to show match</string>
+    <string name="not_connected">Not connected</string>
+    <string name="fail_send_message">Failed to send message to watch</string>
+    <string name="fail_tizen_init">Failed to start Tizen connector</string>
+    <string name="fail_response">Problem with response from watch</string>
+    <string name="fail_export">Failed to export matches</string>
+    <string name="fail_to_show">Failed to show</string>
+    <string name="fail_delete">Failed to delete</string>
+    <string name="fail_save">Failed to save</string>
+    <string name="fail_share">Failed to share</string>
+    <string name="fail_show_match_history">Failed to show a match in the history</string>
+    <string name="share_report">Share match report</string>
+    <string name="match_report">Match report</string>
+    <string name="fail_receive_settings">Problem with settings from watch</string>
+    <string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
+    <string name="fail_load_custom_match_type">Failed to load custom match type</string>
+    <string name="fail_del_match_type">Failed to delete match type</string>
+    <string name="fail_save_match_type">Failed to save match type</string>
+    <string name="fail_receive_matches">Failed to receive matches from watch</string>
+    <string name="custom_match_hint">Custom match name</string>
+    <string name="save_match_type">Save custom match type</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="home_name_empty">Home name can\'t be empty</string>
+    <string name="away_name_empty">Away name can\'t be empty</string>
+    <string name="time_period_empty">Time/period can\'t be empty</string>
+    <string name="period_count_empty">Period count can\'t be empty</string>
+    <string name="points_try_empty">Points for Try can\'t be empty</string>
+    <string name="fail_read_matches">Failed to read matches from storage</string>
+    <string name="fail_show_history">Failed to show history</string>
+    <string name="fail_store_matches">Failed to store matches</string>
+    <string name="fail_del_match">Failed to delete match</string>
+    <string name="fail_del_event">Failed to delete event</string>
+    <string name="fail_save_match">Failed to save match</string>
 
 </resources>

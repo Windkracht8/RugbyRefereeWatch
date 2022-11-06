@@ -32,7 +32,7 @@ public class HistoryMatch extends LinearLayout{
         this.hParent = hParent;
         this.match = match;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show history", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_to_show)+" "+context.getString(R.string.history), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.history_match, this, true);
 
         tvName = findViewById(R.id.tvName);
@@ -45,12 +45,12 @@ public class HistoryMatch extends LinearLayout{
             String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
-            String name_s = match_date_s + " " + MainActivity.getTeamName(home) + " v " + MainActivity.getTeamName(away);
+            String name_s = match_date_s + " " + MainActivity.getTeamName(context, home) + " v " + MainActivity.getTeamName(context, away);
 
             tvName.setText(name_s);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
-            Toast.makeText(context, "Failed to show match in history", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.fail_show_match_history), Toast.LENGTH_SHORT).show();
         }
     }
     private float x, y;

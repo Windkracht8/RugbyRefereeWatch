@@ -22,17 +22,26 @@ public class ReportEventEdit extends LinearLayout{
         this.event = event;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
-        String[] a = new String[] {"TRY","CONVERSION","PENALTY TRY","GOAL","PENALTY GOAL","DROP GOAL","YELLOW CARD","RED CARD","PENALTY"};
-        ArrayAdapter<String> aa = new ArrayAdapter<>(what.getContext(), android.R.layout.simple_spinner_item, a);
+        String[] a = new String[] {context.getString(R.string.TRY),
+                                context.getString(R.string.CONVERSION),
+                                context.getString(R.string.PENALTY_TRY),
+                                context.getString(R.string.GOAL),
+                                context.getString(R.string.PENALTY_GOAL),
+                                context.getString(R.string.DROP_GOAL),
+                                context.getString(R.string.YELLOW_CARD),
+                                context.getString(R.string.RED_CARD),
+                                context.getString(R.string.PENALTY)
+        };
+        ArrayAdapter<String> aa = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, a);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         what.setAdapter(aa);
 
         Spinner team = findViewById(R.id.team);
-        a = new String[] {"HOME","AWAY"};
+        a = new String[] {context.getString(R.string.HOME),context.getString(R.string.AWAY)};
         aa = new ArrayAdapter<>(team.getContext(), android.R.layout.simple_spinner_item, a);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         team.setAdapter(aa);
@@ -86,7 +95,7 @@ public class ReportEventEdit extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
         }
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
     }
@@ -99,7 +108,7 @@ public class ReportEventEdit extends LinearLayout{
             getContext().sendBroadcast(intent);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to delete event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_del_event), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -147,7 +156,7 @@ public class ReportEventEdit extends LinearLayout{
             if(event.has("who") || who.length() > 0) event.put("who", Integer.parseInt(who));
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to save match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match), Toast.LENGTH_SHORT).show();
         }
         return event;
     }

@@ -33,7 +33,7 @@ public class TabHistory extends LinearLayout{
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show history", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_to_show)+" "+context.getString(R.string.history), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.tab_history, this, true);
 
         llMatches = findViewById(R.id.llMatches);
@@ -54,7 +54,7 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to load history", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_receive_matches), Toast.LENGTH_SHORT).show();
         }
         showMatches();
         storeMatches();
@@ -79,7 +79,7 @@ public class TabHistory extends LinearLayout{
             matches.add(match_new);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to add match to history", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_receive_matches), Toast.LENGTH_SHORT).show();
         }
     }
     public void cleanDeletedMatches(final JSONArray matches_new){
@@ -133,7 +133,7 @@ public class TabHistory extends LinearLayout{
             Log.i(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to read matches from storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_read_matches), Toast.LENGTH_SHORT).show();
         }
         showMatches();
 
@@ -175,7 +175,7 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to show history", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_show_history), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -188,7 +188,7 @@ public class TabHistory extends LinearLayout{
             osr.close();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.storeMatches matches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to store match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_store_matches), Toast.LENGTH_SHORT).show();
         }
         try{
             JSONArray jaDeletedMatches = new JSONArray();
@@ -226,7 +226,7 @@ public class TabHistory extends LinearLayout{
                         deleted_matches.add(matches.get(i).getLong("matchid"));
                     }catch(Exception e){
                         Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
-                        Toast.makeText(getContext(), "Failed to delete match", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getContext().getString(R.string.fail_del_match), Toast.LENGTH_SHORT).show();
                     }
                     matches.remove(i);
                     llMatches.removeViewAt(i);

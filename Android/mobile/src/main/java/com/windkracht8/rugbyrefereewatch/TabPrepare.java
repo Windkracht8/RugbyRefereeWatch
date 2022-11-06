@@ -51,15 +51,15 @@ public class TabPrepare extends LinearLayout{
     private boolean watch_settings = false;
     private boolean has_changed = false;
     private JSONArray customMatchTypes;
-    private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
+    private static String[] aMatchTypes;
     private int sMatchTypePosition = 0;
-    private final int sHomeColorPosition = 4;
-    private final int sAwayColorPosition = 8;
+    public static int sHomeColorPosition = 0;
+    public static int sAwayColorPosition = 0;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show prepare", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_to_show)+" "+context.getString(R.string.prepare), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.tab_prepare, this, true);
 
         customMatchTypes = new JSONArray();
@@ -81,6 +81,13 @@ public class TabPrepare extends LinearLayout{
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
         cbRecordPens = findViewById(R.id.cbRecordPens);
 
+        aMatchTypes = new String[] {context.getString(R.string.type_15s),
+                                    context.getString(R.string.type_10s),
+                                    context.getString(R.string.type_7s),
+                                    context.getString(R.string.beach_7s),
+                                    context.getString(R.string.beach_5s),
+                                    context.getString(R.string.custom)
+        };
         ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
         aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sMatchType.setAdapter(aaMatchTypes);
@@ -165,9 +172,6 @@ public class TabPrepare extends LinearLayout{
             public void onNothingSelected(AdapterView<?> parentView){}
         });
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         etHomeName.addTextChangedListener(new TextWatcher(){
             public void afterTextChanged(Editable s){}
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -179,35 +183,43 @@ public class TabPrepare extends LinearLayout{
             public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
         });
 
-        sHomeColor.setAdapter(adapter);
-        for(int i=0;i<sHomeColor.getCount();i++){
-            if(sHomeColor.getItemAtPosition(i).equals("green")){
-                sHomeColor.setSelection(i);
-                break;
-            }
-        }
+        String[] aTeamColors = {context.getString(R.string.black),
+                context.getString(R.string.blue),
+                context.getString(R.string.brown),
+                context.getString(R.string.gold),
+                context.getString(R.string.green),
+                context.getString(R.string.orange),
+                context.getString(R.string.pink),
+                context.getString(R.string.purple),
+                context.getString(R.string.red),
+                context.getString(R.string.white)
+        };
+        Arrays.sort(aTeamColors);
+        ArrayAdapter<CharSequence> aaTeamColors = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTeamColors);
+        aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        sHomeColor.setAdapter(aaTeamColors);
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != sHomeColorPosition) has_changed = true;
+                MainActivity.sharedPreferences_editor.putInt("sHomeColorPosition", position);
+                MainActivity.sharedPreferences_editor.apply();
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
-        sAwayColor.setAdapter(adapter);
-        for(int i=0;i<sAwayColor.getCount();i++){
-            if(sAwayColor.getItemAtPosition(i).equals("red")){
-                sAwayColor.setSelection(i);
-                break;
-            }
-        }
+        sAwayColor.setAdapter(aaTeamColors);
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != sAwayColorPosition) has_changed = true;
+                MainActivity.sharedPreferences_editor.putInt("sAwayColorPosition", position);
+                MainActivity.sharedPreferences_editor.apply();
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
-        String[] aCountType = new String[] {"count up", "count down"};
+        String[] aCountType = new String[] {context.getString(R.string.count_up),
+                                            context.getString(R.string.count_down)};
         ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
         aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sTimerType.setAdapter(aaCountType);
@@ -242,9 +254,9 @@ public class TabPrepare extends LinearLayout{
         try{
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
-            settings.put("home_color", sHomeColor.getSelectedItem().toString());
-            settings.put("away_color", sAwayColor.getSelectedItem().toString());
-            settings.put("match_type", sMatchType.getSelectedItem().toString());
+            settings.put("home_color", translator.getTeamColorSystem(sHomeColor.getSelectedItem().toString()));
+            settings.put("away_color", translator.getTeamColorSystem(sAwayColor.getSelectedItem().toString()));
+            settings.put("match_type", translator.getMatchTypeSystem(sMatchType.getSelectedItemPosition()));
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
             settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
             settings.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
@@ -259,7 +271,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to send settings to watch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_prepare), Toast.LENGTH_SHORT).show();
             return null;
         }
         return settings;
@@ -268,11 +280,11 @@ public class TabPrepare extends LinearLayout{
         if(has_changed){return;}
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
-            if(settings.has("home_color")) selectItem(sHomeColor, settings.getString("home_color"));
+            if(settings.has("home_color")) translator.setTeamColor(getContext(), sHomeColor, settings.getString("home_color"));
             if(settings.has("away_name")) etAwayName.setText(settings.getString("away_name"));
-            if(settings.has("away_color")) selectItem(sAwayColor, settings.getString("away_color"));
+            if(settings.has("away_color")) translator.setTeamColor(getContext(), sAwayColor, settings.getString("away_color"));
 
-            if(settings.has("match_type")) selectItem(sMatchType, settings.getString("match_type"));
+            if(settings.has("match_type")) translator.setMatchType(sMatchType, settings.getString("match_type"));
             if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
             if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
             if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
@@ -286,15 +298,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Problem with settings from watch", Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void selectItem(Spinner spin, String str){
-        for(int i=0;i<spin.getCount();i++){
-            if(spin.getItemAtPosition(i).equals(str)){
-                spin.setSelection(i);
-                return;
-            }
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_receive_settings), Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchTypes(){
@@ -320,7 +324,7 @@ public class TabPrepare extends LinearLayout{
             Log.i(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_read_custom_match_types), Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchTypesSpinner(){
@@ -334,7 +338,7 @@ public class TabPrepare extends LinearLayout{
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_read_custom_match_types), Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchType(String name){
@@ -352,7 +356,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_load_custom_match_type), Toast.LENGTH_SHORT).show();
         }
     }
     private void bDelCustomClick(){
@@ -369,22 +373,22 @@ public class TabPrepare extends LinearLayout{
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to delete match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_del_match_type), Toast.LENGTH_SHORT).show();
         }
     }
     private void bSaveCustomClick(){
         if(checkSettings()) return;
         final EditText etName = new EditText(getContext());
-        etName.setHint("Custom match name");
+        etName.setHint(R.string.custom_match_hint);
         etName.setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                                     48,
                                     etName.getResources().getDisplayMetrics())
         );
         AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("Save custom match type")
+                .setTitle(R.string.save_match_type)
                 .setView(etName)
-                .setPositiveButton("Save", (dialog1, which) -> saveCustomMatch(etName.getText().toString()))
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.save, (dialog1, which) -> saveCustomMatch(etName.getText().toString()))
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.show();
     }
@@ -414,7 +418,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
         }
     }
     private void customMatch(JSONObject cm){
@@ -427,7 +431,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
         }
     }
     private void storeCustomMatchTypes(){
@@ -438,29 +442,29 @@ public class TabPrepare extends LinearLayout{
             osr.close();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to store match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
         }
     }
     private boolean checkSettings(){
         if(checkSettingsEditText(etHomeName, false)){
-            Toast.makeText(getContext(), "Home name can't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.home_name_empty), Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etAwayName, false)){
-            Toast.makeText(getContext(), "Away name can't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.away_name_empty), Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etTimePeriod, false)){
-            Toast.makeText(getContext(), "Time/period can't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.time_period_empty), Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etPeriodCount, false)){
-            Toast.makeText(getContext(), "Period count can't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.period_count_empty), Toast.LENGTH_SHORT).show();
             return true;
         }
         checkSettingsEditText(etSinbin, true);
         if(checkSettingsEditText(etPointsTry, false)){
-            Toast.makeText(getContext(), "Points for Try can't be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.points_try_empty), Toast.LENGTH_SHORT).show();
             return true;
         }
         checkSettingsEditText(etPointsCon, true);

@@ -34,7 +34,7 @@ public class TabReport extends LinearLayout{
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.tab_report, this, true);
 
         TextView tvTime = findViewById(R.id.tvTime);
@@ -90,10 +90,10 @@ public class TabReport extends LinearLayout{
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
-            ((TextView)findViewById(R.id.tvHomeName)).setText(MainActivity.getTeamName(home));
-            ((EditText)findViewById(R.id.etHomeName)).setText(MainActivity.getTeamName(home));
-            ((TextView)findViewById(R.id.tvAwayName)).setText(MainActivity.getTeamName(away));
-            ((EditText)findViewById(R.id.etAwayName)).setText(MainActivity.getTeamName(away));
+            ((TextView)findViewById(R.id.tvHomeName)).setText(MainActivity.getTeamName(getContext(), home));
+            ((EditText)findViewById(R.id.etHomeName)).setText(MainActivity.getTeamName(getContext(), home));
+            ((TextView)findViewById(R.id.tvAwayName)).setText(MainActivity.getTeamName(getContext(), away));
+            ((EditText)findViewById(R.id.etAwayName)).setText(MainActivity.getTeamName(getContext(), away));
             ((TextView)findViewById(R.id.tvHomeTries)).setText(home.getString("tries"));
             ((TextView)findViewById(R.id.tvAwayTries)).setText(away.getString("tries"));
 
@@ -161,7 +161,7 @@ public class TabReport extends LinearLayout{
             showEvents();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.gotMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
         }
 
         findViewById(R.id.bView).setVisibility(VISIBLE);
@@ -192,7 +192,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
         }
     }
     private void addScores(){
@@ -235,7 +235,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
         }
     }
     public void bCloseClick(View view){
@@ -278,7 +278,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to delete", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_delete), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -419,46 +419,45 @@ public class TabReport extends LinearLayout{
             loadMatch(match);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to save", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_save), Toast.LENGTH_SHORT).show();
         }
     }
     public void bShareClick(){
-        Context context = getContext();
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getShareSubject());
         intent.putExtra(Intent.EXTRA_TEXT, getShareBody());
         try{
-            context.startActivity(Intent.createChooser(intent, "Share match report"));
+            getContext().startActivity(Intent.createChooser(intent, getContext().getString(R.string.share_report)));
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
-            Toast.makeText(context, "Failed to share", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_share), Toast.LENGTH_SHORT).show();
         }
     }
     private String getShareSubject(){
-        String shareSubject = "Match report";
+        String shareSubject = getContext().getString(R.string.match_report);
         try{
             Date match_date_d = new Date(match_id);
             String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             shareSubject += " " + match_date_s;
 
             JSONObject home = match.getJSONObject("home");
-            shareSubject += " " + MainActivity.getTeamName(home);
+            shareSubject += " " + MainActivity.getTeamName(getContext(), home);
             shareSubject += " " + home.getString("tot");
 
             shareSubject += " v";
 
             JSONObject away = match.getJSONObject("away");
-            shareSubject += " " + MainActivity.getTeamName(away);
+            shareSubject += " " + MainActivity.getTeamName(getContext(), away);
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to share", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_share), Toast.LENGTH_SHORT).show();
         }
         return shareSubject;
     }
-    private String getShareBody(){
+    private String getShareBody(){//TODO: also allow to export in english
         StringBuilder shareBody = new StringBuilder();
         try{
             shareBody.append(getShareSubject()).append("\n\n");
@@ -472,50 +471,50 @@ public class TabReport extends LinearLayout{
             boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") > 0 || away.getInt("pen_goals") > 0);
             boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") > 0 || away.getInt("drop_goals") > 0);
             boolean show_pens = home.has("pens") && away.has("pens") && (home.getInt("pens") > 0 || away.getInt("pens") > 0);
-            shareBody.append(MainActivity.getTeamName(home)).append("\n");
-            shareBody.append("  Tries: ").append(home.getString("tries")).append("\n");
+            shareBody.append(MainActivity.getTeamName(getContext(), home)).append("\n");
+            shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(home.getString("tries")).append("\n");
             if(show_cons){
-                shareBody.append("  Conversions: ").append(home.getString("cons")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(home.getString("cons")).append("\n");
             }
             if(show_pen_tries){
-                shareBody.append("  Penalty tries: ").append(home.getString("pen_tries")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.pen_tries)).append(": ").append(home.getString("pen_tries")).append("\n");
             }
             if(show_goals){
-                shareBody.append("  Goals: ").append(home.getString("goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.goals)).append(": ").append(home.getString("goals")).append("\n");
             }
             if(show_pen_goals){
-                shareBody.append("  Penalty goals: ").append(home.getString("pen_goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.pen_goals)).append(": ").append(home.getString("pen_goals")).append("\n");
             }
             if(show_drop_goals){
-                shareBody.append("  Drop goals: ").append(home.getString("drop_goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.drop_goals)).append(": ").append(home.getString("drop_goals")).append("\n");
             }
             if(show_pens){
-                shareBody.append("  Penalties: ").append(home.getString("pens")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.penalties)).append(": ").append(home.getString("pens")).append("\n");
             }
-            shareBody.append("  Total: ").append(home.getString("tot")).append("\n");
+            shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(home.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            shareBody.append(MainActivity.getTeamName(away)).append("\n");
-            shareBody.append("  Tries: ").append(away.getString("tries")).append("\n");
+            shareBody.append(MainActivity.getTeamName(getContext(), away)).append("\n");
+            shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(away.getString("tries")).append("\n");
             if(show_cons){
-                shareBody.append("  Conversions: ").append(away.getString("cons")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(away.getString("cons")).append("\n");
             }
             if(show_pen_tries){
-                shareBody.append("  Penalty tries: ").append(away.getString("pen_tries")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.pen_tries)).append(": ").append(away.getString("pen_tries")).append("\n");
             }
             if(show_goals){
-                shareBody.append("  Goals: ").append(away.getString("goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.goals)).append(": ").append(away.getString("goals")).append("\n");
             }
             if(show_pen_goals){
-                shareBody.append("  Penalty goals: ").append(away.getString("pen_goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.pen_goals)).append(": ").append(away.getString("pen_goals")).append("\n");
             }
             if(show_drop_goals){
-                shareBody.append("  Drop goals: ").append(away.getString("drop_goals")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.drop_goals)).append(": ").append(away.getString("drop_goals")).append("\n");
             }
             if(show_pens){
-                shareBody.append("  Penalties: ").append(away.getString("pens")).append("\n");
+                shareBody.append("  ").append(getContext().getString(R.string.penalties)).append(": ").append(away.getString("pens")).append("\n");
             }
-            shareBody.append("  Total: ").append(away.getString("tot")).append("\n");
+            shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 
             JSONArray events = match.getJSONArray("events");
@@ -526,12 +525,12 @@ public class TabReport extends LinearLayout{
                 if(event.has("score")){
                     shareBody.append("    ").append(event.getString("score"));
                 }
-                shareBody.append("    ").append(event.getString("what"));
+                shareBody.append("    ").append(translator.getEventTypeLocal(getContext(), event.getString("what")));
                 if(event.has("team")){
                     if(event.getString("team").equals("home")){
-                        shareBody.append(" ").append(MainActivity.getTeamName(home));
+                        shareBody.append(" ").append(MainActivity.getTeamName(getContext(), home));
                     }else{
-                        shareBody.append(" ").append(MainActivity.getTeamName(away));
+                        shareBody.append(" ").append(MainActivity.getTeamName(getContext(), away));
                     }
                 }
                 if(event.has("who")){
@@ -545,7 +544,7 @@ public class TabReport extends LinearLayout{
 
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to share", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getContext().getString(R.string.fail_share), Toast.LENGTH_SHORT).show();
         }
         return shareBody.toString();
     }

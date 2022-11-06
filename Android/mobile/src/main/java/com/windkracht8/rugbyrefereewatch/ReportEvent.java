@@ -18,7 +18,7 @@ public class ReportEvent extends LinearLayout {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show match", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event, this, true);
 
         TextView tvLeft = findViewById(R.id.tvLeft);

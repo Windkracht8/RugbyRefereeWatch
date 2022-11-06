@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity{
     private GestureDetector gestureDetector;
     private CommsTizen comms_tizen = null;
     private CommsWear comms_wear = null;
-    private SharedPreferences.Editor sharedPreferences_editor;
+    public static SharedPreferences.Editor sharedPreferences_editor;
 
     private long back_press_time;
     private BroadcastReceiver rrwReceiver;
@@ -64,10 +64,11 @@ public class MainActivity extends AppCompatActivity{
     private TabReport tabReport;
     private TabPrepare tabPrepare;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId") //bGetMatches, bGetMatch, bPrepare are in separate layouts
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        translator.init(getBaseContext());
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
         tabHistory = findViewById(R.id.tabHistory);
@@ -93,6 +94,10 @@ public class MainActivity extends AppCompatActivity{
         }else{
             tizen_not_wear = sharedPreferences.getBoolean("tizen_not_wear", true);
         }
+        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
+        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
+        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
+        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
 
         Spinner sOS = findViewById(R.id.sOS);
         osAdapter osa = new osAdapter(getApplicationContext());
@@ -259,8 +264,8 @@ public class MainActivity extends AppCompatActivity{
             JSONArray matches_new_ja = new JSONArray(matches_new_s);
             tabHistory.gotMatches(matches_new_ja);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.handleIntent Read file Exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Problem with matches received from watch", Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.handleIntent Exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), R.string.problem_matches_received, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -311,7 +316,7 @@ public class MainActivity extends AppCompatActivity{
         back_press_time = date.getTime();
     }
     private void explainDoubleBack(){
-        Toast.makeText(getApplicationContext(),"Press back twice to close", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.explainDoubleBack), Toast.LENGTH_SHORT).show();
     }
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -327,6 +332,7 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
             try{
+                if(e1 == null || e2 == null){return false;}
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
                 if(Math.abs(diffX) > Math.abs(diffY)){
@@ -373,7 +379,7 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onError(int errorCode, String errorMessage){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.SAAgentCallback.onError: " + errorCode + ". ErrorMsg: " + errorMessage);
-            gotError(errorMessage);
+            gotError(errorMessage);//TODO: not translated
         }
     };
 
@@ -381,7 +387,7 @@ public class MainActivity extends AppCompatActivity{
         gotError("");
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         if(comms_tizen == null){
-            gotError("Watch not found");
+            gotError(getString(R.string.watch_not_found));
             return;
         }
         comms_tizen.findPeers();
@@ -407,7 +413,7 @@ public class MainActivity extends AppCompatActivity{
             sendRequest("getMatches", requestData);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.bGetMatchesClick Exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Failed to request matches from watch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_get_matches), Toast.LENGTH_SHORT).show();
         }
     }
     public void bGetMatchClick(){
@@ -422,7 +428,7 @@ public class MainActivity extends AppCompatActivity{
         gotError("");
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
-            gotError("Error with settings");
+            gotError(getString(R.string.fail_prepare));
             return;
         }
         sendRequest("prepare", requestData);
@@ -454,8 +460,8 @@ public class MainActivity extends AppCompatActivity{
             tabReport.loadMatch(match_json);
             tabReportLabelClick();
         }catch(Exception e){
-            gotError("Issue with match: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Failed to show match", Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.historyMatchClick Exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -560,8 +566,8 @@ public class MainActivity extends AppCompatActivity{
                 case "getMatches":
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatches");
                     findViewById(R.id.bGetMatches).setEnabled(true);
-                    if(responseType == 0){gotError(responseData);break;}
-                    if(responseType != 2){gotError("invalid response");break;}
+                    if(responseType == 0){gotError(responseData);break;}//TODO: how to translate message from watch
+                    if(responseType != 2){gotError(getApplicationContext().getString(R.string.fail_get_matches));break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
                     tabHistory.gotMatches(getMatchesResponse);
                     break;
@@ -569,7 +575,7 @@ public class MainActivity extends AppCompatActivity{
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatch");
                     findViewById(R.id.bGetMatch).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
-                    if(responseType != 1){gotError("invalid response");break;}
+                    if(responseType != 1){gotError(getApplicationContext().getString(R.string.fail_get_match));break;}
                     JSONObject getMatchResponse = new JSONObject(responseData);
                     tabReport.gotMatch(getMatchResponse);
                     break;
@@ -577,16 +583,16 @@ public class MainActivity extends AppCompatActivity{
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse prepare");
                     findViewById(R.id.bPrepare).setEnabled(true);
                     if(!responseData.equals("okilly dokilly")){
-                        gotError(responseData);
+                        gotError(responseData);//TODO: how to translate message from watch
                     }
                     break;
             }
         }catch(Exception e){
             gotError("gotResponse exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "Problem with message from watch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_response), Toast.LENGTH_SHORT).show();
         }
     }
-    public void gotError(String error){
+    public void gotError(String error){//TODO:make sure this is translated
         Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotError: " + error);
         if(error.equals(getString(R.string.did_not_understand_message))){
             error = getString(R.string.update_watch_app);
@@ -626,14 +632,14 @@ public class MainActivity extends AppCompatActivity{
         inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getRootView().getApplicationWindowToken(),0);
     }
 
-    public static String getTeamName(JSONObject team){
+    public static String getTeamName(Context context, JSONObject team){
         String name = "";
         try{
             name = team.getString("team");
             if(team.has("id") && !team.getString("id").equals(name)){
                 return name;
             }
-            return name + " (" + team.getString("color") + ")";
+            return name + " (" + translator.getTeamColorLocal(context, team.getString("color")) + ")";
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getTeamName Exception: " + e.getMessage());
         }
@@ -664,7 +670,7 @@ public class MainActivity extends AppCompatActivity{
                 bw.close();
             }catch(Exception e){
                 Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.onActivityResult Exception: " + e.getMessage());
-                Toast.makeText(getApplicationContext(), "Failed to export matches", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_export), Toast.LENGTH_SHORT).show();
             }
         }
     );
