@@ -206,6 +206,7 @@ public class TabHistory extends LinearLayout{
 
     public boolean unselect(){
         boolean ret = false;
+        selecting = false;
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
         for(int i=0; i < llMatches.getChildCount(); i++){
