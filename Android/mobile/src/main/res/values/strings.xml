@@ -1,57 +1,125 @@
 <resources>
     <string name="app_name" translatable="false">RugbyRefereeWatch</string>
+    <string name="os_wear" translatable="false">WearOS</string>
+    <string name="os_tizen" translatable="false">Tizen</string>
 
-    <string name="ivIcon_desc">icon</string>
-    <string name="sOS_desc">Watch OS selection</string>
-    <string name="svMatches_desc">History of matches</string>
-    <string name="etHomeName_desc">Home name</string>
-    <string name="etAwayName_desc">Away name</string>
-    <string name="sHomeColor_desc">Home color selection</string>
-    <string name="sAwayColor_desc">Away color selection</string>
-    <string name="sMatchType_desc">Match type selection</string>
-    <string name="svEvents_desc">Events in match</string>
-    <string name="what_desc">what</string>
-    <string name="team_desc">team</string>
-    <string name="reason_hint">reason</string>
+    <!-- filenames -->
+    <string name="matches_filename" translatable="false">matches.json</string>
+    <string name="deleted_matches_filename" translatable="false">deleted_matches.json</string>
+    <string name="match_types_filename" translatable="false">match_types.json</string>
 
+    <!-- numbers -->
     <string name="tvTime_placeholder" translatable="false">00:00:00</string>
     <string name="tvTimer_placeholder" translatable="false">00\'</string>
     <string name="tvScore_placeholder" translatable="false">00:00</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="_00" translatable="false">00</string>
+    <string name="_2" translatable="false">2</string>
+    <string name="_3" translatable="false">3</string>
+    <string name="_5" translatable="false">5</string>
+    <string name="_10" translatable="false">10</string>
+    <string name="_40" translatable="false">40</string>
+    <string name="x" translatable="false">X</string>
 
-    <string name="bView_text">view</string>
-    <string name="bEdit_text">edit</string>
-    <string name="bSave_text">save</string>
-    <string name="bClose_text">close</string>
-    <string name="bShare_text">share</string>
-    <string name="bDelete_text">Delete selected</string>
-    <string name="bPrepare_text">Send to watch</string>
+    <!-- main ui -->
+    <string name="ivIcon_desc">icon</string>
+    <string name="sOS_desc">Watch OS selection</string>
     <string name="bConnect_text">Connect</string>
     <string name="bSearch_text">Search</string>
-    <string name="bGetMatch_text">Get match from watch</string>
+    <string name="history">History</string>
+    <string name="report">Report</string>
+    <string name="prepare">Prepare</string>
+    <string name="svMatches_desc">History of matches</string>
+
+    <string name="explainDoubleBack">Press back twice to close</string>
+    <string name="home">home</string>
+    <string name="away">away</string>
+
+    <!-- history -->
     <string name="bGetMatches_text">Get matches from watch</string>
-    <string name="cbScreenOn_text">Keep screen on</string>
     <string name="bExport_text">Export selected</string>
+    <string name="bDelete_text">Delete selected</string>
+
+    <!-- report -->
+    <string name="bGetMatch_text">Get match from watch</string>
+    <string name="tries">Tries</string>
+    <string name="conversions">Conversions</string>
+    <string name="pen_tries">Penalty tries</string>
+    <string name="goals">Goals</string>
+    <string name="pen_goals">Penalty goals</string>
+    <string name="drop_goals">Drop goals</string>
+    <string name="penalties">Penalties</string>
+    <string name="total">Total</string>
+    <string name="svEvents_desc">Events in match</string>
+    <string name="bView_text">view</string>
+    <string name="bEdit_text">edit</string>
+    <string name="bClose_text">close</string>
+    <string name="bSave_text">save</string>
+    <string name="bShare_text">share</string>
+    <string name="tvNoEdit_text">match has not finished, cannot edit now</string>
+
+    <!-- report.event -->
+    <string name="what_desc">what</string>
+    <string name="team_desc">team</string>
+    <string name="reason_hint">reason</string>
+    <string name="HOME">HOME</string>
+    <string name="AWAY">AWAY</string>
+
+    <!-- report.share -->
+    <string name="share_report">Share match report</string>
+    <string name="match_report">Match report</string>
+
+    <!-- prepare -->
+    <string name="bPrepare_text">Send to watch</string>
+    <string name="etHomeName_text">Home name</string>
+    <string name="etHomeName_desc">Home name</string>
+    <string name="sHomeColor_text">Home color</string>
+    <string name="sHomeColor_desc">Home color selection</string>
+    <string name="etAwayName_text">Away name</string>
+    <string name="etAwayName_desc">Away name</string>
+    <string name="sAwayColor_text">Away color</string>
+    <string name="sAwayColor_desc">Away color selection</string>
+    <string name="sMatchType_text">Match type</string>
+    <string name="sMatchType_desc">Match type selection</string>
     <string name="bSaveCustom_text">Save match type</string>
     <string name="bDelCustom_text">Delete match type</string>
-    <string name="etPointsTry_text">Points for Try</string>
-    <string name="etPointsCon_text">Points for Conversion</string>
-    <string name="etPointsGoal_text">Points for Goal</string>
-    <string name="sHomeColor_text">Home color</string>
-    <string name="sAwayColor_text">Away color</string>
     <string name="etTimePeriod_text">Time/period</string>
     <string name="etPeriodCount_text">Period count</string>
     <string name="etSinbin_text">Sinbin</string>
-    <string name="sMatchType_text">Match type</string>
+    <string name="etPointsTry_text">Points for Try</string>
+    <string name="etPointsCon_text">Points for Conversion</string>
+    <string name="etPointsGoal_text">Points for Goal</string>
+    <string name="watch_settings">Watch settings</string>
+    <string name="no_watch_settings">No watch settings</string>
+    <string name="cbScreenOn_text">Keep screen on</string>
+    <string name="sTimerType_text">Timer type</string>
     <string name="cbRecordPlayer_text">Record player #</string>
     <string name="cbRecordPens_text">Record penalties</string>
-    <string name="sTimerType_text">Timer type</string>
-    <string name="etHomeName_text">Home name</string>
-    <string name="etAwayName_text">Away name</string>
-    <string name="tvNoEdit_text">match has not finished, cannot edit now</string>
 
-    <string name="count_down">count down</string>
-    <string name="count_up">count up</string>
+    <string name="home_name_empty">Home name can\'t be empty</string>
+    <string name="away_name_empty">Away name can\'t be empty</string>
+    <string name="time_period_empty">Time/period can\'t be empty</string>
+    <string name="period_count_empty">Period count can\'t be empty</string>
+    <string name="points_try_empty">Points for Try can\'t be empty</string>
 
+    <!-- prepare.custom match type -->
+    <string name="custom_match_hint">Match type name</string>
+    <string name="save_match_type">Save match type</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- match events -->
+    <string name="TRY">TRY</string>
+    <string name="CONVERSION">CONVERSION</string>
+    <string name="PENALTY_TRY">PENALTY TRY</string>
+    <string name="GOAL">GOAL</string>
+    <string name="PENALTY_GOAL">PENALTY GOAL</string>
+    <string name="DROP_GOAL">DROP GOAL</string>
+    <string name="YELLOW_CARD">YELLOW CARD</string>
+    <string name="RED_CARD">RED CARD</string>
+    <string name="PENALTY">PENALTY</string>
+
+    <!-- team colors -->
     <string name="black">black</string>
     <string name="blue">blue</string>
     <string name="brown">brown</string>
@@ -63,29 +131,7 @@
     <string name="red">red</string>
     <string name="white">white</string>
 
-    <string name="history">History</string>
-    <string name="report">Report</string>
-    <string name="prepare">Prepare</string>
-
-    <string name="tries">Tries</string>
-    <string name="conversions">Conversions</string>
-    <string name="pen_tries">Penalty tries</string>
-    <string name="goals">Goals</string>
-    <string name="pen_goals">Penalty goals</string>
-    <string name="drop_goals">Drop goals</string>
-    <string name="penalties">Penalties</string>
-    <string name="total">Total</string>
-
-    <string name="TRY">TRY</string>
-    <string name="CONVERSION">CONVERSION</string>
-    <string name="PENALTY_TRY">PENALTY TRY</string>
-    <string name="GOAL">GOAL</string>
-    <string name="PENALTY_GOAL">PENALTY GOAL</string>
-    <string name="DROP_GOAL">DROP GOAL</string>
-    <string name="YELLOW_CARD">YELLOW CARD</string>
-    <string name="RED_CARD">RED CARD</string>
-    <string name="PENALTY">PENALTY</string>
-
+    <!-- match types -->
     <string name="type_15s">15s</string>
     <string name="type_10s">10s</string>
     <string name="type_7s">7s</string>
@@ -93,6 +139,11 @@
     <string name="beach_5s">beach 5s</string>
     <string name="custom">custom</string>
 
+    <!-- counter types -->
+    <string name="count_down">count down</string>
+    <string name="count_up">count up</string>
+
+    <!-- status -->
     <string name="status_STARTING">Starting</string>
     <string name="status_DISCONNECTED">Disconnected</string>
     <string name="status_CONNECTION_LOST">Connection lost</string>
@@ -105,36 +156,7 @@
     <string name="status_CONNECTING">Connecting</string>
     <string name="status_SEARCHING">Searching</string>
 
-    <string name="matches_filename" translatable="false">matches.json</string>
-    <string name="deleted_matches_filename" translatable="false">deleted_matches.json</string>
-    <string name="match_types_filename" translatable="false">match_types.json</string>
-
-    <string name="os_wear" translatable="false">WearOS</string>
-    <string name="os_tizen" translatable="false">Tizen</string>
-    <string name="watch_settings">Watch settings</string>
-    <string name="no_watch_settings">No watch settings</string>
-    <string name="update_watch_app">Update app on watch to support this</string>
-    <string name="did_not_understand_message">Did not understand message</string>
-    <string name="first_connect">First connect with watch</string>
-    <string name="noTizenLib">Click to install Samsung Accessory Service</string>
-    <string name="noWearLib">Click to install Wear OS Service</string>
-    <string name="home">home</string>
-    <string name="away">away</string>
-    <string name="HOME">HOME</string>
-    <string name="AWAY">AWAY</string>
-
-    <string name="_0" translatable="false">0</string>
-    <string name="_00" translatable="false">00</string>
-    <string name="_2" translatable="false">2</string>
-    <string name="_3" translatable="false">3</string>
-    <string name="_5" translatable="false">5</string>
-    <string name="_10" translatable="false">10</string>
-    <string name="_40" translatable="false">40</string>
-    <string name="x" translatable="false">X</string>
-
-    <string name="problem_matches_received">Problem with matches received from watch</string>
-    <string name="explainDoubleBack">Press back twice to close</string>
-    <string name="watch_not_found">Watch not found</string>
+    <!-- fail -->
     <string name="fail_get_matches">Failed to request matches from watch</string>
     <string name="fail_get_match">Failed to request match from watch</string>
     <string name="fail_prepare">Problem with sending settings</string>
@@ -142,7 +164,6 @@
     <string name="fail_show_history">Failed to show History</string>
     <string name="fail_show_report">Failed to show Report</string>
     <string name="fail_show_prepare">Failed to show Prepare</string>
-    <string name="not_connected">Not connected</string>
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_tizen_init">Failed to start Tizen connector</string>
     <string name="fail_response">Problem with response from watch</string>
@@ -151,30 +172,27 @@
     <string name="fail_save">Failed to save</string>
     <string name="fail_share">Failed to share</string>
     <string name="fail_show_match_history">Failed to show a match in the history</string>
-    <string name="share_report">Share match report</string>
-    <string name="match_report">Match report</string>
     <string name="fail_receive_settings">Problem with settings from watch</string>
     <string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
     <string name="fail_load_custom_match_type">Failed to load custom match type</string>
     <string name="fail_del_match_type">Failed to delete match type</string>
     <string name="fail_save_match_type">Failed to save match type</string>
     <string name="fail_receive_matches">Failed to receive matches from watch</string>
-    <string name="custom_match_hint">Custom match name</string>
-    <string name="save_match_type">Save custom match type</string>
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
-    <string name="home_name_empty">Home name can\'t be empty</string>
-    <string name="away_name_empty">Away name can\'t be empty</string>
-    <string name="time_period_empty">Time/period can\'t be empty</string>
-    <string name="period_count_empty">Period count can\'t be empty</string>
-    <string name="points_try_empty">Points for Try can\'t be empty</string>
     <string name="fail_read_matches">Failed to read matches from storage</string>
     <string name="fail_store_matches">Failed to store matches</string>
     <string name="fail_del_match">Failed to delete match</string>
     <string name="fail_del_event">Failed to delete event</string>
     <string name="fail_save_match">Failed to save match</string>
-    <string name="app_not_found_on_watch">App not found on watch</string>
+    <string name="not_connected">Not connected</string>
+    <string name="watch_not_found">Watch not found</string>
+    <string name="app_not_found_on_watch">RugbyRefereeWatch not found on watch</string>
     <string name="no_watch_found">No watch found</string>
     <string name="connection_failed">Connection failed:</string>
+    <string name="problem_matches_received">Problem with matches received from watch</string>
+    <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="did_not_understand_message">Did not understand message</string>
+    <string name="first_connect">First connect with watch</string>
+    <string name="noTizenLib">Click to install Samsung Accessory Service</string>
+    <string name="noWearLib">Click to install Wear OS Service</string>
 
 </resources>

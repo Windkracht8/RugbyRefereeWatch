@@ -1,51 +1,103 @@
 <resources>
+    <!-- main ui -->
     <string name="ivIcon_desc">icoon</string>
     <string name="sOS_desc">Horloge OS selectie</string>
+    <string name="bConnect_text">Verbinden</string>
+    <string name="bSearch_text">Zoeken</string>
+    <string name="history">Geschiedenis</string>
+    <string name="report">Rapport</string>
+    <string name="prepare">Voorbereiden</string>
     <string name="svMatches_desc">Geschiedenis van wedstrijden</string>
-    <string name="etHomeName_desc">Thuis naam</string>
-    <string name="etAwayName_desc">Gasten naam</string>
-    <string name="sHomeColor_desc">Thuis kleur selectie</string>
-    <string name="sAwayColor_desc">Gasten kleur selectie</string>
-    <string name="sMatchType_desc">Wedstrijd type selectie</string>
+
+    <string name="explainDoubleBack">Druk twee keer op terug om te sluiten</string>
+    <string name="home">thuis</string>
+    <string name="HOME">THUIS</string>
+    <string name="away">gasten</string>
+    <string name="AWAY">GASTEN</string>
+
+    <!-- history -->
+    <string name="bGetMatches_text">Haal wedstrijden van horloge op</string>
+    <string name="bExport_text">Exporteer selectie</string>
+    <string name="bDelete_text">Verwijder selectie</string>
+
+    <!-- report -->
+    <string name="bGetMatch_text">Haal wedstrijd van horloge op</string>
+    <string name="tries">Try\'s</string>
+    <string name="conversions">Conversies</string>
+    <string name="pen_tries">Penalty try\'s</string>
+    <string name="goals">Goals</string>
+    <string name="pen_goals">Penalty goals</string>
+    <string name="drop_goals">Drop goals</string>
+    <string name="penalties">Penalty\'s</string>
+    <string name="total">Totaal</string>
     <string name="svEvents_desc">Gebeurtenissen in de wedstrijd</string>
+    <string name="bView_text">weergave</string>
+    <string name="bEdit_text">bewerk</string>
+    <string name="bClose_text">sluit</string>
+    <string name="bSave_text">opslaan</string>
+    <string name="bShare_text">delen</string>
+    <string name="tvNoEdit_text">wedstrijd is not bezig, kan nu niet bewerken</string>
+
+    <!-- report.event -->
     <string name="what_desc">wat</string>
     <string name="team_desc">team</string>
     <string name="reason_hint">reden</string>
 
-    <string name="bView_text">weergave</string>
-    <string name="bEdit_text">bewerk</string>
-    <string name="bSave_text">opslaan</string>
-    <string name="bClose_text">sluit</string>
-    <string name="bShare_text">delen</string>
-    <string name="bDelete_text">Selectie verwijderen</string>
+    <!-- report.share -->
+    <string name="share_report">Deel wedstrijdrapport</string>
+    <string name="match_report">Wedstrijdrapport</string>
+
+    <!-- prepare -->
     <string name="bPrepare_text">Stuur naar horloge</string>
-    <string name="bConnect_text">Verbinden</string>
-    <string name="bSearch_text">Zoeken</string>
-    <string name="bGetMatch_text">Haal wedstrijd van horloge</string>
-    <string name="bGetMatches_text">Haal wedstrijden van horloge</string>
-    <string name="cbScreenOn_text">Hou scherm aan</string>
-    <string name="bExport_text">Selectie exporteren</string>
-    <string name="bSaveCustom_text">Sla type op</string>
-    <string name="bDelCustom_text">Verwijder type</string>
-    <string name="etPointsTry_text">Punten voor Try</string>
-    <string name="etPointsCon_text">Punten voor Conversie</string>
-    <string name="etPointsGoal_text">Punten voor Goal</string>
+    <string name="etHomeName_text">Thuis naam</string>
+    <string name="etHomeName_desc">Thuis naam</string>
     <string name="sHomeColor_text">Thuis kleur</string>
+    <string name="sHomeColor_desc">Thuis kleur selectie</string>
+    <string name="etAwayName_text">Gasten naam</string>
+    <string name="etAwayName_desc">Gasten naam</string>
     <string name="sAwayColor_text">Gasten kleur</string>
+    <string name="sAwayColor_desc">Gasten kleur selectie</string>
+    <string name="sMatchType_text">Wedstrijdtype</string>
+    <string name="sMatchType_desc">Wedstrijdtype selectie</string>
+    <string name="bSaveCustom_text">Sla wedstrijdtype op</string>
+    <string name="bDelCustom_text">Verwijder wedstrijdtype</string>
     <string name="etTimePeriod_text">Tijd/periode</string>
     <string name="etPeriodCount_text">Aantal periodes</string>
     <string name="etSinbin_text">Sinbin</string>
-    <string name="sMatchType_text">Wedstrijd type</string>
+    <string name="etPointsTry_text">Punten voor Try</string>
+    <string name="etPointsCon_text">Punten voor Conversie</string>
+    <string name="etPointsGoal_text">Punten voor Goal</string>
+    <string name="watch_settings">Horloge instellingen</string>
+    <string name="no_watch_settings">Geen horloge instellingen</string>
+    <string name="cbScreenOn_text">Houd scherm aan</string>
+    <string name="sTimerType_text">Timertype</string>
     <string name="cbRecordPlayer_text">Registreer speler #</string>
-    <string name="cbRecordPens_text">Registreer penalties</string>
-    <string name="sTimerType_text">Timer type</string>
-    <string name="etHomeName_text">Thuis naam</string>
-    <string name="etAwayName_text">Gasten naam</string>
-    <string name="tvNoEdit_text">wedstrijd is not bezig, kan nu niet bewerken</string>
+    <string name="cbRecordPens_text">Registreer penalty\'s</string>
 
-    <string name="count_down">af tellen</string>
-    <string name="count_up">op tellen</string>
+    <string name="home_name_empty">Thuis naam mag niet leeg zijn</string>
+    <string name="away_name_empty">Gasten naam mag niet leeg zijn</string>
+    <string name="time_period_empty">Tijd/periode mag niet leeg zijn</string>
+    <string name="period_count_empty">Aantal periodes  mag niet leeg zijn</string>
+    <string name="points_try_empty">Punten voor Try mag niet leeg zijn</string>
 
+    <!-- prepare.custom match type -->
+    <string name="custom_match_hint">Wedstrijdtype naam</string>
+    <string name="save_match_type">Sla wedstrijdtype op</string>
+    <string name="save">Opslaan</string>
+    <string name="cancel">Annuleren</string>
+
+    <!-- match events -->
+    <string name="TRY">TRY</string>
+    <string name="CONVERSION">CONVERSIE</string>
+    <string name="PENALTY_TRY">PENALTY TRY</string>
+    <string name="GOAL">GOAL</string>
+    <string name="PENALTY_GOAL">PENALTY GOAL</string>
+    <string name="DROP_GOAL">DROP GOAL</string>
+    <string name="YELLOW_CARD">GELE KAART</string>
+    <string name="RED_CARD">RODE KAART</string>
+    <string name="PENALTY">PENALTY</string>
+
+    <!-- team colors -->
     <string name="black">zwart</string>
     <string name="blue">blauw</string>
     <string name="brown">bruin</string>
@@ -57,36 +109,19 @@
     <string name="red">rood</string>
     <string name="white">wit</string>
 
-    <string name="history">Geschiedenis</string>
-    <string name="report">Rapport</string>
-    <string name="prepare">Voorbereiden</string>
-
-    <string name="tries">Tries</string>
-    <string name="conversions">Conversies</string>
-    <string name="pen_tries">Penalty tries</string>
-    <string name="goals">Goals</string>
-    <string name="pen_goals">Penalty goals</string>
-    <string name="drop_goals">Drop goals</string>
-    <string name="penalties">Penalties</string>
-    <string name="total">Totaal</string>
-
-    <string name="TRY">TRY</string>
-    <string name="CONVERSION">CONVERSION</string>
-    <string name="PENALTY_TRY">PENALTY TRY</string>
-    <string name="GOAL">GOAL</string>
-    <string name="PENALTY_GOAL">PENALTY GOAL</string>
-    <string name="DROP_GOAL">DROP GOAL</string>
-    <string name="YELLOW_CARD">GELE KAART</string>
-    <string name="RED_CARD">RODE KAART</string>
-    <string name="PENALTY">PENALTY</string>
-
+    <!-- match types -->
     <string name="type_15s">15s</string>
     <string name="type_10s">10s</string>
     <string name="type_7s">7s</string>
     <string name="beach_7s">beach 7s</string>
     <string name="beach_5s">beach 5s</string>
-    <string name="custom">custom</string>
+    <string name="custom">aangepast</string>
 
+    <!-- counter types -->
+    <string name="count_down">aftellen</string>
+    <string name="count_up">optellen</string>
+
+    <!-- status -->
     <string name="status_STARTING">Starten</string>
     <string name="status_DISCONNECTED">Niet verbonden</string>
     <string name="status_CONNECTION_LOST">Verbinding verloren</string>
@@ -97,63 +132,45 @@
     <string name="status_PREPARE">Instellingen verzenden</string>
     <string name="status_ERROR">error</string>
     <string name="status_CONNECTING">Verbinden</string>
-    <string name="status_SEARCHING">Zoekende</string>
+    <string name="status_SEARCHING">Zoeken</string>
 
-    <string name="watch_settings">Horloge instellingen</string>
-    <string name="no_watch_settings">Geen horloge instellingen</string>
+    <!-- fail -->
+    <string name="fail_get_matches">Probleem met het ophalen van wedstrijden van het horloge</string>
+    <string name="fail_get_match">Probleem met het ophalen van wedstrijd van het horloge</string>
+    <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
+    <string name="fail_show_match">Fout bij weergeven wedstrijd</string>
+    <string name="fail_show_history">Fout bij weergeven Geschiedenis</string>
+    <string name="fail_show_report">Fout bij weergeven Rapport</string>
+    <string name="fail_show_prepare">Fout bij weergeven Voorbereiden</string>
+    <string name="fail_send_message">Fout bij verzenden bericht aan horloge</string>
+    <string name="fail_tizen_init">Fout bij het starten van de Tizen connector</string>
+    <string name="fail_response">Probleem met het antwoord van horloge</string>
+    <string name="fail_export">Fout bij exporteren wedstrijden</string>
+    <string name="fail_delete">Fout bij verwijderen</string>
+    <string name="fail_save">Fout bij opslaan</string>
+    <string name="fail_share">Fout bij delen</string>
+    <string name="fail_show_match_history">Fout bij het weergeven van een wedstrijd in de geschiedenis</string>
+    <string name="fail_receive_settings">Probleem met instellingen van horloge</string>
+    <string name="fail_read_custom_match_types">Fout bij lezen van aangepaste wedstrijdtype uit opslag</string>
+    <string name="fail_load_custom_match_type">Fout bij laden van aangepast wedstrijdtype</string>
+    <string name="fail_del_match_type">Fout bij verwijderen wedstrijdtype</string>
+    <string name="fail_save_match_type">Fout bij opslaan wedstrijdtype</string>
+    <string name="fail_receive_matches">Fout bij ontvangen van wedstrijden van horloge</string>
+    <string name="fail_read_matches">Fout bij lezen van wedstrijden uit opslag</string>
+    <string name="fail_store_matches">Fout bij opslaan van wedstrijden</string>
+    <string name="fail_del_match">Fout bij verwijderen wedstrijd</string>
+    <string name="fail_del_event">Fout bij verwijderen gebeurtenis</string>
+    <string name="fail_save_match">Fout bij opslaan van wedstrijd</string>
+    <string name="not_connected">Niet verbonden</string>
+    <string name="watch_not_found">Horloge niet gevonden</string>
+    <string name="app_not_found_on_watch">RugbyRefereeWatch niet gevonden op horloge</string>
+    <string name="no_watch_found">Geen horloge gevonden</string>
+    <string name="connection_failed">Verbinding mislukt:</string>
+    <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
     <string name="update_watch_app">Werkt niet, update de app op het horloge</string>
     <string name="did_not_understand_message">Bericht niet begrepen</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
     <string name="noTizenLib">Klik om Samsung Accessory Service te installeren</string>
     <string name="noWearLib">Klik om Wear OS Service te installeren</string>
-    <string name="home">thuis</string>
-    <string name="away">gasten</string>
-    <string name="HOME">THUIS</string>
-    <string name="AWAY">GASTEN</string>
-
-    <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
-    <string name="explainDoubleBack">Druk twee keer op terug om te sluiten</string>
-    <string name="watch_not_found">Horloge niet gevonden</string>
-    <string name="fail_get_matches">Probleem met het ophalen van wedstrijden van het horloge</string>
-    <string name="fail_get_match">Probleem met het ophalen van wedstrijd van het horloge</string>
-    <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
-    <string name="fail_show_match">Failed to show match</string>
-    <string name="fail_show_report">Failed to show Report</string>
-    <string name="fail_show_prepare">Failed to show Prepare</string>
-    <string name="not_connected">Not connected</string>
-    <string name="fail_send_message">Failed to send message to watch</string>
-    <string name="fail_tizen_init">Failed to start Tizen connector</string>
-    <string name="fail_response">Problem with response from watch</string>
-    <string name="fail_export">Failed to export matches</string>
-    <string name="fail_delete">Failed to delete</string>
-    <string name="fail_save">Failed to save</string>
-    <string name="fail_share">Failed to share</string>
-    <string name="share_report">Share match report</string>
-    <string name="match_report">Match report</string>
-    <string name="fail_show_match_history">Failed to show match in history</string>
-    <string name="fail_receive_settings">Problem with settings from watch</string>
-    <string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
-    <string name="fail_load_custom_match_type">Failed to load custom match type</string>
-    <string name="fail_del_match_type">Failed to delete match type</string>
-    <string name="custom_match_hint">Custom match name</string>
-    <string name="save_match_type">Save custom match type</string>
-    <string name="save">Opslaan</string>
-    <string name="cancel">Annuleren</string>
-    <string name="fail_save_match_type">Failed to save match type</string>
-    <string name="home_name_empty">Home name can\'t be empty</string>
-    <string name="away_name_empty">Away name can\'t be empty</string>
-    <string name="time_period_empty">Time/period can\'t be empty</string>
-    <string name="period_count_empty">Period count can\'t be empty</string>
-    <string name="points_try_empty">Points for Try can\'t be empty</string>
-    <string name="fail_receive_matches">Failed to receive matches from watch</string>
-    <string name="fail_read_matches">Failed to read matches from storage</string>
-    <string name="fail_show_history">Failed to show history</string>
-    <string name="fail_store_matches">Failed to store matches</string>
-    <string name="fail_del_match">Failed to delete match</string>
-    <string name="fail_del_event">Failed to delete event</string>
-    <string name="fail_save_match">Failed to save match</string>
-    <string name="app_not_found_on_watch">App not found on watch</string>
-    <string name="no_watch_found">No watch found</string>
-    <string name="connection_failed">Connection failed:</string>
 
 </resources>
