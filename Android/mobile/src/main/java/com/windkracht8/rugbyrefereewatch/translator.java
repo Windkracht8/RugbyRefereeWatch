@@ -96,8 +96,15 @@ public class translator {
                     return context.getString(R.string.result_first_half)+eventTypeSystem.substring(17);
                 }else if(eventTypeSystem.startsWith("Result second half")){
                     return context.getString(R.string.result_second_half)+eventTypeSystem.substring(18);
+                }else if(eventTypeSystem.startsWith("Start period")){
+                    return context.getString(R.string.start_period)+eventTypeSystem.substring(12);
+                }else if(eventTypeSystem.startsWith("Result period")){
+                    return context.getString(R.string.result_period)+eventTypeSystem.substring(13);
+                }else if(eventTypeSystem.startsWith("Start extra time")){
+                    return context.getString(R.string.start_extra)+eventTypeSystem.substring(16);
+                }else if(eventTypeSystem.startsWith("Result extra time")){
+                    return context.getString(R.string.result_extra)+eventTypeSystem.substring(17);
                 }
-                //TODO: start/result extra time / period 1/2/3
         }
         Log.e(MainActivity.RRW_LOG_TAG, "getEventTypeLocal unknown value: " + eventTypeSystem);
         return "";

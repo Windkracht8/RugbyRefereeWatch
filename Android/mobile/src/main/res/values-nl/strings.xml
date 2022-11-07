@@ -48,6 +48,10 @@
     <string name="start_second_half">Start tweede helft</string>
     <string name="result_first_half">Result eerste helft</string>
     <string name="result_second_half">Result tweede helft</string>
+    <string name="start_extra">Start extra tijd</string>
+    <string name="result_extra">Resultaat extra tijd</string>
+    <string name="start_period">Start periode</string>
+    <string name="result_period">Resultaat periode</string>
 
     <!-- report.share -->
     <string name="share_report">Deel wedstrijdrapport</string>
