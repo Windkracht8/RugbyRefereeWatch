@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity{
         back_press_time = date.getTime();
     }
     private void explainDoubleBack(){
-        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.explainDoubleBack), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.explainDoubleBack, Toast.LENGTH_SHORT).show();
     }
     @Override
     public boolean onTouchEvent(MotionEvent event){
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onError(int errorCode, String errorMessage){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.SAAgentCallback.onError: " + errorCode + ". ErrorMsg: " + errorMessage);
-            gotError(errorMessage);//TODO: not translated
+            gotError(errorMessage);
         }
     };
 
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity{
             sendRequest("getMatches", requestData);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.bGetMatchesClick Exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_get_matches), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.fail_get_matches, Toast.LENGTH_SHORT).show();
         }
     }
     public void bGetMatchClick(){
@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity{
             tabReportLabelClick();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.historyMatchClick Exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -567,7 +567,7 @@ public class MainActivity extends AppCompatActivity{
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatches");
                     findViewById(R.id.bGetMatches).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}//TODO: how to translate message from watch
-                    if(responseType != 2){gotError(getApplicationContext().getString(R.string.fail_get_matches));break;}
+                    if(responseType != 2){gotError(getString(R.string.fail_get_matches));break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
                     tabHistory.gotMatches(getMatchesResponse);
                     break;
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity{
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatch");
                     findViewById(R.id.bGetMatch).setEnabled(true);
                     if(responseType == 0){gotError(responseData);break;}
-                    if(responseType != 1){gotError(getApplicationContext().getString(R.string.fail_get_match));break;}
+                    if(responseType != 1){gotError(getString(R.string.fail_get_match));break;}
                     JSONObject getMatchResponse = new JSONObject(responseData);
                     tabReport.gotMatch(getMatchResponse);
                     break;
@@ -588,11 +588,11 @@ public class MainActivity extends AppCompatActivity{
                     break;
             }
         }catch(Exception e){
-            gotError("gotResponse exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_response), Toast.LENGTH_SHORT).show();
+            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), R.string.fail_response, Toast.LENGTH_SHORT).show();
         }
     }
-    public void gotError(String error){//TODO:make sure this is translated
+    public void gotError(String error){
         Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotError: " + error);
         if(error.equals(getString(R.string.did_not_understand_message))){
             error = getString(R.string.update_watch_app);
@@ -670,7 +670,7 @@ public class MainActivity extends AppCompatActivity{
                 bw.close();
             }catch(Exception e){
                 Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.onActivityResult Exception: " + e.getMessage());
-                Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_export), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.fail_export, Toast.LENGTH_SHORT).show();
             }
         }
     );

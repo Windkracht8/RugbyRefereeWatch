@@ -59,7 +59,7 @@ public class TabPrepare extends LinearLayout{
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_to_show)+" "+context.getString(R.string.prepare), Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_prepare, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.tab_prepare, this, true);
 
         customMatchTypes = new JSONArray();
@@ -271,7 +271,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_prepare), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_prepare, Toast.LENGTH_SHORT).show();
             return null;
         }
         return settings;
@@ -298,7 +298,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_receive_settings), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_receive_settings, Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchTypes(){
@@ -324,7 +324,7 @@ public class TabPrepare extends LinearLayout{
             Log.i(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_read_custom_match_types), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchTypesSpinner(){
@@ -338,7 +338,7 @@ public class TabPrepare extends LinearLayout{
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_read_custom_match_types), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchType(String name){
@@ -356,7 +356,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_load_custom_match_type), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_load_custom_match_type, Toast.LENGTH_SHORT).show();
         }
     }
     private void bDelCustomClick(){
@@ -373,7 +373,7 @@ public class TabPrepare extends LinearLayout{
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_del_match_type), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_del_match_type, Toast.LENGTH_SHORT).show();
         }
     }
     private void bSaveCustomClick(){
@@ -418,7 +418,7 @@ public class TabPrepare extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
     private void customMatch(JSONObject cm){
@@ -431,7 +431,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
     private void storeCustomMatchTypes(){
@@ -442,29 +442,29 @@ public class TabPrepare extends LinearLayout{
             osr.close();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match_type), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
     private boolean checkSettings(){
         if(checkSettingsEditText(etHomeName, false)){
-            Toast.makeText(getContext(), getContext().getString(R.string.home_name_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.home_name_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etAwayName, false)){
-            Toast.makeText(getContext(), getContext().getString(R.string.away_name_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.away_name_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etTimePeriod, false)){
-            Toast.makeText(getContext(), getContext().getString(R.string.time_period_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.time_period_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
         if(checkSettingsEditText(etPeriodCount, false)){
-            Toast.makeText(getContext(), getContext().getString(R.string.period_count_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.period_count_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
         checkSettingsEditText(etSinbin, true);
         if(checkSettingsEditText(etPointsTry, false)){
-            Toast.makeText(getContext(), getContext().getString(R.string.points_try_empty), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.points_try_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
         checkSettingsEditText(etPointsCon, true);

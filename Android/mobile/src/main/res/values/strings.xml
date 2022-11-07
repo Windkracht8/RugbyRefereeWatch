@@ -139,12 +139,14 @@
     <string name="fail_get_match">Failed to request match from watch</string>
     <string name="fail_prepare">Problem with sending settings</string>
     <string name="fail_show_match">Failed to show match</string>
+    <string name="fail_show_history">Failed to show History</string>
+    <string name="fail_show_report">Failed to show Report</string>
+    <string name="fail_show_prepare">Failed to show Prepare</string>
     <string name="not_connected">Not connected</string>
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_tizen_init">Failed to start Tizen connector</string>
     <string name="fail_response">Problem with response from watch</string>
     <string name="fail_export">Failed to export matches</string>
-    <string name="fail_to_show">Failed to show</string>
     <string name="fail_delete">Failed to delete</string>
     <string name="fail_save">Failed to save</string>
     <string name="fail_share">Failed to share</string>
@@ -167,10 +169,12 @@
     <string name="period_count_empty">Period count can\'t be empty</string>
     <string name="points_try_empty">Points for Try can\'t be empty</string>
     <string name="fail_read_matches">Failed to read matches from storage</string>
-    <string name="fail_show_history">Failed to show history</string>
     <string name="fail_store_matches">Failed to store matches</string>
     <string name="fail_del_match">Failed to delete match</string>
     <string name="fail_del_event">Failed to delete event</string>
     <string name="fail_save_match">Failed to save match</string>
+    <string name="app_not_found_on_watch">App not found on watch</string>
+    <string name="no_watch_found">No watch found</string>
+    <string name="connection_failed">Connection failed:</string>
 
 </resources>

@@ -12,7 +12,7 @@
     <string name="team_desc">team</string>
     <string name="reason_hint">reden</string>
 
-    <string name="bView_text">open</string>
+    <string name="bView_text">weergave</string>
     <string name="bEdit_text">bewerk</string>
     <string name="bSave_text">opslaan</string>
     <string name="bClose_text">sluit</string>
@@ -118,12 +118,13 @@
     <string name="fail_get_match">Probleem met het ophalen van wedstrijd van het horloge</string>
     <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
     <string name="fail_show_match">Failed to show match</string>
+    <string name="fail_show_report">Failed to show Report</string>
+    <string name="fail_show_prepare">Failed to show Prepare</string>
     <string name="not_connected">Not connected</string>
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_tizen_init">Failed to start Tizen connector</string>
     <string name="fail_response">Problem with response from watch</string>
     <string name="fail_export">Failed to export matches</string>
-    <string name="fail_to_show">Failed to show</string>
     <string name="fail_delete">Failed to delete</string>
     <string name="fail_save">Failed to save</string>
     <string name="fail_share">Failed to share</string>
@@ -136,8 +137,8 @@
     <string name="fail_del_match_type">Failed to delete match type</string>
     <string name="custom_match_hint">Custom match name</string>
     <string name="save_match_type">Save custom match type</string>
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
+    <string name="save">Opslaan</string>
+    <string name="cancel">Annuleren</string>
     <string name="fail_save_match_type">Failed to save match type</string>
     <string name="home_name_empty">Home name can\'t be empty</string>
     <string name="away_name_empty">Away name can\'t be empty</string>
@@ -151,5 +152,8 @@
     <string name="fail_del_match">Failed to delete match</string>
     <string name="fail_del_event">Failed to delete event</string>
     <string name="fail_save_match">Failed to save match</string>
+    <string name="app_not_found_on_watch">App not found on watch</string>
+    <string name="no_watch_found">No watch found</string>
+    <string name="connection_failed">Connection failed:</string>
 
 </resources>

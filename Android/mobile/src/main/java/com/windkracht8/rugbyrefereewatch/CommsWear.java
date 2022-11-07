@@ -34,7 +34,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
         if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
-        status = "Searching";
+        status = "SEARCHING";
         checkIfConnected(context, 10000);
 
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
@@ -123,15 +123,15 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         putDataReq.setUrgent();
         Task<DataItem> putDataTask = Wearable.getDataClient(context).putDataItem(putDataReq);
-        putDataTask.addOnFailureListener(exception -> gotError(context, exception.getMessage()));
+        putDataTask.addOnFailureListener(exception -> gotError(context, exception.getMessage(), R.string.fail_send_message));
     }
 
-    private static void gotError(Context context, final String error){
-        Log.e(MainActivity.RRW_LOG_TAG, "CommsWear.gotError: " + error);
+    private static void gotError(Context context, final String exception, final int UIMessage){
+        Log.e(MainActivity.RRW_LOG_TAG, "CommsWear.gotError: " + exception);
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "wear");
-        intent.putExtra("error", error);
+        intent.putExtra("error", context.getString(UIMessage));
         context.sendBroadcast(intent);
     }
     private void gotResponse(final String requestType, final String responseData){

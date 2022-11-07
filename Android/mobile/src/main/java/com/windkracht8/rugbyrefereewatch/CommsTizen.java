@@ -35,15 +35,15 @@ public class CommsTizen extends SAAgentV2{
         if((result == SAAgent.PEER_AGENT_FOUND) && (peerAgents != null)){
             for(SAPeerAgent peerAgent:peerAgents)
                 requestServiceConnection(peerAgent);
-        } else if(result == SAAgent.FINDPEER_DEVICE_NOT_CONNECTED){
+        }else if(result == SAAgent.FINDPEER_DEVICE_NOT_CONNECTED){
             updateStatus("ERROR");
-            gotError("Watch not found");
-        } else if(result == SAAgent.FINDPEER_SERVICE_NOT_FOUND){
+            gotError(getApplicationContext().getString(R.string.watch_not_found));
+        }else if(result == SAAgent.FINDPEER_SERVICE_NOT_FOUND){
             updateStatus("ERROR");
-            gotError("App not found on the watch");
+            gotError(getApplicationContext().getString(R.string.app_not_found_on_watch));
         }else{
             updateStatus("ERROR");
-            gotError("No peers found");
+            gotError(getApplicationContext().getString(R.string.no_watch_found));
         }
     }
 
@@ -66,7 +66,7 @@ public class CommsTizen extends SAAgentV2{
                 break;
             default:
                 updateStatus("ERROR");
-                gotError("Connection failed: " + result);
+                gotError(getApplicationContext().getString(R.string.connection_failed)+" "+result);
         }
     }
 
@@ -99,7 +99,8 @@ public class CommsTizen extends SAAgentV2{
                 JSONObject responseMessage = new JSONObject(sData);
                 gotResponse(responseMessage);
             }catch(Exception e){
-                gotError("Response json error: " + e.getMessage());
+                Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.onReceive: " + e.getMessage());
+                gotError(getApplicationContext().getString(R.string.fail_response));
             }
         }
 
@@ -132,7 +133,7 @@ public class CommsTizen extends SAAgentV2{
             requestMessage.put("requestData", requestData);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest json: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_send_message), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.fail_send_message, Toast.LENGTH_SHORT).show();
             return;
         }
         Log.i(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest: " + requestMessage);
@@ -140,7 +141,7 @@ public class CommsTizen extends SAAgentV2{
             mConnectionHandler.send(getServiceChannelId(0), requestMessage.toString().getBytes());
         }catch(IOException e){
             Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.sendRequest send: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.fail_send_message), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.fail_send_message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -178,7 +179,7 @@ public class CommsTizen extends SAAgentV2{
             getApplicationContext().sendBroadcast(intent);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "CommsTizen.gotResponse Exception: " + e.getMessage());
-            gotError("Invalid response");
+            gotError(getApplicationContext().getString(R.string.fail_response));
         }
     }
 }

@@ -22,7 +22,7 @@ public class ReportEventEdit extends LinearLayout{
         this.event = event;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
@@ -95,7 +95,7 @@ public class ReportEventEdit extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
-            Toast.makeText(getContext(), context.getString(R.string.fail_show_match), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
     }
@@ -108,7 +108,7 @@ public class ReportEventEdit extends LinearLayout{
             getContext().sendBroadcast(intent);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_del_event), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_del_event, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -156,7 +156,7 @@ public class ReportEventEdit extends LinearLayout{
             if(event.has("who") || who.length() > 0) event.put("who", Integer.parseInt(who));
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
-            Toast.makeText(getContext(), getContext().getString(R.string.fail_save_match), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_save_match, Toast.LENGTH_SHORT).show();
         }
         return event;
     }

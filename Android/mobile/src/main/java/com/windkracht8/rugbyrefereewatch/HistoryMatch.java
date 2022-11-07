@@ -32,7 +32,7 @@ public class HistoryMatch extends LinearLayout{
         this.hParent = hParent;
         this.match = match;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, context.getString(R.string.fail_to_show)+" "+context.getString(R.string.history), Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_history, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.history_match, this, true);
 
         tvName = findViewById(R.id.tvName);
@@ -50,7 +50,7 @@ public class HistoryMatch extends LinearLayout{
             tvName.setText(name_s);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
-            Toast.makeText(context, context.getString(R.string.fail_show_match_history), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
         }
     }
     private float x, y;
