@@ -42,6 +42,12 @@
     <string name="what_desc">wat</string>
     <string name="team_desc">team</string>
     <string name="reason_hint">reden</string>
+    <string name="Time_off">Tijd uit</string>
+    <string name="Resume_time">Tijd aan</string>
+    <string name="start_first_half">Start eerste helft</string>
+    <string name="start_second_half">Start tweede helft</string>
+    <string name="result_first_half">Result eerste helft</string>
+    <string name="result_second_half">Result tweede helft</string>
 
     <!-- report.share -->
     <string name="share_report">Deel wedstrijdrapport</string>
@@ -170,7 +176,7 @@
     <string name="update_watch_app">Werkt niet, update de app op het horloge</string>
     <string name="did_not_understand_message">Bericht niet begrepen</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
-    <string name="noTizenLib">Klik om Samsung Accessory Service te installeren</string>
+    <string name="noTizenLib">Klik om Tizen Service te installeren</string>
     <string name="noWearLib">Klik om Wear OS Service te installeren</string>
 
 </resources>

@@ -83,11 +83,21 @@ public class translator {
                 return context.getString(R.string.RED_CARD);
             case "PENALTY":
                 return context.getString(R.string.PENALTY);
+            case "Time off":
+                return context.getString(R.string.Time_off);
+            case "Resume time":
+                return context.getString(R.string.Resume_time);
+            case "Start first half":
+                return context.getString(R.string.start_first_half);
+            case "Start second half":
+                return context.getString(R.string.start_second_half);
             default:
-                //if(eventTypeSystem.startsWith("Start")){
-                //}elseif(eventTypeSystem.startsWith("Result")){
-
-                    //TODO: Start, Result
+                if(eventTypeSystem.startsWith("Result first half")){
+                    return context.getString(R.string.result_first_half)+eventTypeSystem.substring(17);
+                }else if(eventTypeSystem.startsWith("Result second half")){
+                    return context.getString(R.string.result_second_half)+eventTypeSystem.substring(18);
+                }
+                //TODO: start/result extra time / period 1/2/3
         }
         Log.e(MainActivity.RRW_LOG_TAG, "getEventTypeLocal unknown value: " + eventTypeSystem);
         return "";

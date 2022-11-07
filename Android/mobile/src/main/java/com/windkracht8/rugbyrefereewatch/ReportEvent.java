@@ -38,7 +38,7 @@ public class ReportEvent extends LinearLayout {
                     tvLeft.setText(scores[0]);
                     tvRight.setText(scores[1]);
                 }
-                tvMiddle.setText(text);
+                tvMiddle.setText(translator.getEventTypeLocal(context, text));
                 int width = (this.getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
@@ -59,6 +59,7 @@ public class ReportEvent extends LinearLayout {
                         }
                     case "YELLOW CARD":
                     case "RED CARD":
+                        text = translator.getEventTypeLocal(context, text);
                         String timer = event.getString("timer");
                         timer = timer.substring(0, timer.length()-3) + "'";
                         if(event.has("who")){

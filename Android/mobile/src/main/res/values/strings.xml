@@ -34,6 +34,8 @@
     <string name="explainDoubleBack">Press back twice to close</string>
     <string name="home">home</string>
     <string name="away">away</string>
+    <string name="HOME">HOME</string>
+    <string name="AWAY">AWAY</string>
 
     <!-- history -->
     <string name="bGetMatches_text">Get matches from watch</string>
@@ -62,8 +64,12 @@
     <string name="what_desc">what</string>
     <string name="team_desc">team</string>
     <string name="reason_hint">reason</string>
-    <string name="HOME">HOME</string>
-    <string name="AWAY">AWAY</string>
+    <string name="Time_off">Time off</string>
+    <string name="Resume_time">Resume time</string>
+    <string name="start_first_half">Start first half</string>
+    <string name="start_second_half">Start second half</string>
+    <string name="result_first_half">Result first half</string>
+    <string name="result_second_half">Result second half</string>
 
     <!-- report.share -->
     <string name="share_report">Share match report</string>
@@ -192,7 +198,7 @@
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
-    <string name="noTizenLib">Click to install Samsung Accessory Service</string>
+    <string name="noTizenLib">Click to install Tizen Service</string>
     <string name="noWearLib">Click to install Wear OS Service</string>
 
 </resources>
