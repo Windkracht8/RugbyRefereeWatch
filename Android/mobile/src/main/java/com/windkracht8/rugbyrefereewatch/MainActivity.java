@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -31,7 +30,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,15 +72,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-            widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
-        }else{
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            widthPixels = displayMetrics.widthPixels;
-        }
-
+        getWidthPixels();
         tabHistory = findViewById(R.id.tabHistory);
         tabReport = findViewById(R.id.tabReport);
         tabPrepare = findViewById(R.id.tabPrepare);
@@ -301,6 +291,8 @@ public class MainActivity extends AppCompatActivity{
             ivIcon.getLayoutParams().width = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
             ivIcon.getLayoutParams().height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, r.getDisplayMetrics()));
         }
+        getWidthPixels();
+        TabReport.what_width = 0;
     }
     @Override
     public void onBackPressed(){
@@ -681,4 +673,13 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     );
+    private void getWidthPixels(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
+        }else{
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            widthPixels = displayMetrics.widthPixels;
+        }
+    }
 }
