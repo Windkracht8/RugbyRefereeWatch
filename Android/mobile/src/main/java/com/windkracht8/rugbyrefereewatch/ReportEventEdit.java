@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -12,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-
 
 public class ReportEventEdit extends LinearLayout{
     private JSONObject event;
@@ -84,6 +84,9 @@ public class ReportEventEdit extends LinearLayout{
             if(event.has("reason")){
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
             }
+            timer.setLayoutParams(new LinearLayout.LayoutParams(TabReport.timer_edit_width, LinearLayout.LayoutParams.WRAP_CONTENT));
+            what.setLayoutParams(new LinearLayout.LayoutParams(TabReport.what_width, LinearLayout.LayoutParams.WRAP_CONTENT));
+            team.setLayoutParams(new LinearLayout.LayoutParams(TabReport.team_width, LinearLayout.LayoutParams.WRAP_CONTENT));
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), "Failed to show match", Toast.LENGTH_SHORT).show();

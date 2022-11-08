@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,8 +60,9 @@ public class MainActivity extends AppCompatActivity{
 
     private long back_press_time;
     private BroadcastReceiver rrwReceiver;
-    private boolean tizen_not_wear = true;
     private Handler handler_main;
+    private boolean tizen_not_wear = true;
+    public static int widthPixels = 0;
 
     private TabHistory tabHistory;
     private TabReport tabReport;
@@ -70,6 +74,15 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
+        }else{
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            widthPixels = displayMetrics.widthPixels;
+        }
+
         tabHistory = findViewById(R.id.tabHistory);
         tabReport = findViewById(R.id.tabReport);
         tabPrepare = findViewById(R.id.tabPrepare);

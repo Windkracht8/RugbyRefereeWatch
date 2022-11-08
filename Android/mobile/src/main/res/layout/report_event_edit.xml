@@ -20,6 +20,7 @@
             android:id="@+id/timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="end"
             android:textSize="18sp"/>
         <Spinner
             android:id="@+id/what"
@@ -46,6 +47,7 @@
             android:inputType="number"
             android:minWidth="48dp"
             android:minHeight="48dp"
+            android:textColorHint="#78909C"
             android:textSize="18sp" />
     </LinearLayout>
     <EditText
