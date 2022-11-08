@@ -11,9 +11,7 @@
 
     <string name="explainDoubleBack">Druk twee keer op terug om te sluiten</string>
     <string name="home">thuis</string>
-    <string name="HOME">THUIS</string>
     <string name="away">gasten</string>
-    <string name="AWAY">GASTEN</string>
 
     <!-- history -->
     <string name="bGetMatches_text">Haal wedstrijden van horloge op</string>
@@ -42,16 +40,6 @@
     <string name="what_desc">wat</string>
     <string name="team_desc">team</string>
     <string name="reason_hint">reden</string>
-    <string name="Time_off">Tijd uit</string>
-    <string name="Resume_time">Tijd aan</string>
-    <string name="start_first_half">Start eerste helft</string>
-    <string name="start_second_half">Start tweede helft</string>
-    <string name="result_first_half">Result eerste helft</string>
-    <string name="result_second_half">Result tweede helft</string>
-    <string name="start_extra">Start extra tijd</string>
-    <string name="result_extra">Resultaat extra tijd</string>
-    <string name="start_period">Start periode</string>
-    <string name="result_period">Resultaat periode</string>
 
     <!-- report.share -->
     <string name="share_report">Deel wedstrijdrapport</string>
@@ -96,40 +84,54 @@
     <string name="save">Opslaan</string>
     <string name="cancel">Annuleren</string>
 
-    <!-- match events -->
-    <string name="TRY">TRY</string>
-    <string name="CONVERSION">CONVERSIE</string>
-    <string name="PENALTY_TRY">PENALTY TRY</string>
-    <string name="GOAL">GOAL</string>
-    <string name="PENALTY_GOAL">PENALTY GOAL</string>
-    <string name="DROP_GOAL">DROP GOAL</string>
-    <string name="YELLOW_CARD">GELE KAART</string>
-    <string name="RED_CARD">RODE KAART</string>
-    <string name="PENALTY">PENALTY</string>
+    <string-array name="eventTypes">
+        <item>TRY</item>
+        <item>CONVERSIE</item>
+        <item>PENALTY TRY</item>
+        <item>GOAL</item>
+        <item>PENALTY GOAL</item>
+        <item>DROP GOAL</item>
+        <item>GELE KAART</item>
+        <item>RODE KAART</item>
+        <item>PENALTY</item>
+    </string-array>
+    <string name="Time_off">Tijd uit</string>
+    <string name="Resume_time">Tijd aan</string>
+    <string name="start_first_half">Start eerste helft</string>
+    <string name="start_second_half">Start tweede helft</string>
+    <string name="result_first_half">Result eerste helft</string>
+    <string name="result_second_half">Result tweede helft</string>
+    <string name="start_extra">Start extra tijd</string>
+    <string name="result_extra">Resultaat extra tijd</string>
+    <string name="start_period">Start periode</string>
+    <string name="result_period">Resultaat periode</string>
 
-    <!-- team colors -->
-    <string name="black">zwart</string>
-    <string name="blue">blauw</string>
-    <string name="brown">bruin</string>
-    <string name="gold">geel</string>
-    <string name="green">groen</string>
-    <string name="orange">oranje</string>
-    <string name="pink">roze</string>
-    <string name="purple">paars</string>
-    <string name="red">rood</string>
-    <string name="white">wit</string>
+    <string-array name="teamColors">
+        <item>zwart</item>
+        <item>blauw</item>
+        <item>bruin</item>
+        <item>geel</item>
+        <item>groen</item>
+        <item>oranje</item>
+        <item>roze</item>
+        <item>paars</item>
+        <item>rood</item>
+        <item>wit</item>
+    </string-array>
 
-    <!-- match types -->
-    <string name="type_15s">15s</string>
-    <string name="type_10s">10s</string>
-    <string name="type_7s">7s</string>
-    <string name="beach_7s">beach 7s</string>
-    <string name="beach_5s">beach 5s</string>
-    <string name="custom">aangepast</string>
+    <string-array name="matchTypes">
+        <item>15s</item>
+        <item>10s</item>
+        <item>7s</item>
+        <item>beach 7s</item>
+        <item>beach 5s</item>
+        <item>aangepast</item>
+    </string-array>
 
-    <!-- counter types -->
-    <string name="count_down">aftellen</string>
-    <string name="count_up">optellen</string>
+    <string-array name="timerTypes">
+        <item>aftellen</item>
+        <item>optellen</item>
+    </string-array>
 
     <!-- status -->
     <string name="status_STARTING">Starten</string>

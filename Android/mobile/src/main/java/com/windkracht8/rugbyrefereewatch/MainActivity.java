@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        translator.init(getBaseContext());
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.activity_main);
         tabHistory = findViewById(R.id.tabHistory);
@@ -117,6 +116,10 @@ public class MainActivity extends AppCompatActivity{
             sOS.setSelection(1);
             initWear();
         }
+        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
+        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
+        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
+        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
 
         rrwReceiver = new BroadcastReceiver(){
             @Override

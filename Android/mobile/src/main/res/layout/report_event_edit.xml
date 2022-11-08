@@ -28,6 +28,7 @@
             android:contentDescription="@string/what_desc"
             android:minHeight="32dp"
             android:textSize="18sp"
+            android:entries="@array/eventTypes"
             android:theme="@style/rrwReportEditSpinner"/>
         <Spinner
             android:id="@+id/team"
@@ -36,6 +37,7 @@
             android:contentDescription="@string/team_desc"
             android:minHeight="32dp"
             android:textSize="18sp"
+            android:entries="@array/teams"
             android:theme="@style/rrwReportEditSpinner" />
         <EditText
             android:id="@+id/who"

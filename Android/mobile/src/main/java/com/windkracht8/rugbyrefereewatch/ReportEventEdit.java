@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -26,25 +25,7 @@ public class ReportEventEdit extends LinearLayout{
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
-        String[] a = new String[] {context.getString(R.string.TRY),
-                                context.getString(R.string.CONVERSION),
-                                context.getString(R.string.PENALTY_TRY),
-                                context.getString(R.string.GOAL),
-                                context.getString(R.string.PENALTY_GOAL),
-                                context.getString(R.string.DROP_GOAL),
-                                context.getString(R.string.YELLOW_CARD),
-                                context.getString(R.string.RED_CARD),
-                                context.getString(R.string.PENALTY)
-        };
-        ArrayAdapter<String> aa = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, a);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        what.setAdapter(aa);
-
         Spinner team = findViewById(R.id.team);
-        a = new String[] {context.getString(R.string.HOME),context.getString(R.string.AWAY)};
-        aa = new ArrayAdapter<>(team.getContext(), android.R.layout.simple_spinner_item, a);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        team.setAdapter(aa);
 
         try{
             TextView timer = findViewById(R.id.timer);

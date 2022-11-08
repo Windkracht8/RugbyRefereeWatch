@@ -51,7 +51,6 @@ public class TabPrepare extends LinearLayout{
     private boolean watch_settings = false;
     private boolean has_changed = false;
     private JSONArray customMatchTypes;
-    private static String[] aMatchTypes;
     private int sMatchTypePosition = 0;
     public static int sHomeColorPosition = 0;
     public static int sAwayColorPosition = 0;
@@ -81,16 +80,6 @@ public class TabPrepare extends LinearLayout{
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
         cbRecordPens = findViewById(R.id.cbRecordPens);
 
-        aMatchTypes = new String[] {context.getString(R.string.type_15s),
-                                    context.getString(R.string.type_10s),
-                                    context.getString(R.string.type_7s),
-                                    context.getString(R.string.beach_7s),
-                                    context.getString(R.string.beach_5s),
-                                    context.getString(R.string.custom)
-        };
-        ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aMatchTypes);
-        aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sMatchType.setAdapter(aaMatchTypes);
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
@@ -183,17 +172,7 @@ public class TabPrepare extends LinearLayout{
             public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
         });
 
-        String[] aTeamColors = {context.getString(R.string.black),
-                context.getString(R.string.blue),
-                context.getString(R.string.brown),
-                context.getString(R.string.gold),
-                context.getString(R.string.green),
-                context.getString(R.string.orange),
-                context.getString(R.string.pink),
-                context.getString(R.string.purple),
-                context.getString(R.string.red),
-                context.getString(R.string.white)
-        };
+        String[] aTeamColors = getResources().getStringArray(R.array.teamColors);
         Arrays.sort(aTeamColors);
         ArrayAdapter<CharSequence> aaTeamColors = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTeamColors);
         aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -217,13 +196,6 @@ public class TabPrepare extends LinearLayout{
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
-
-        String[] aCountType = new String[] {context.getString(R.string.count_up),
-                                            context.getString(R.string.count_down)};
-        ArrayAdapter<String> aaCountType = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aCountType);
-        aaCountType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sTimerType.setAdapter(aaCountType);
-        sTimerType.setSelection(1);
 
         bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
         findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
@@ -254,9 +226,9 @@ public class TabPrepare extends LinearLayout{
         try{
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
-            settings.put("home_color", translator.getTeamColorSystem(sHomeColor.getSelectedItem().toString()));
-            settings.put("away_color", translator.getTeamColorSystem(sAwayColor.getSelectedItem().toString()));
-            settings.put("match_type", translator.getMatchTypeSystem(sMatchType.getSelectedItemPosition()));
+            settings.put("home_color", translator.getTeamColorSystem(getContext(), sHomeColor.getSelectedItem().toString()));
+            settings.put("away_color", translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
+            settings.put("match_type", translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
             settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
             settings.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
@@ -280,11 +252,11 @@ public class TabPrepare extends LinearLayout{
         if(has_changed){return;}
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
-            if(settings.has("home_color")) translator.setTeamColor(getContext(), sHomeColor, settings.getString("home_color"));
+            if(settings.has("home_color")) translator.setTeamColorSpin(getContext(), sHomeColor, settings.getString("home_color"));
             if(settings.has("away_name")) etAwayName.setText(settings.getString("away_name"));
-            if(settings.has("away_color")) translator.setTeamColor(getContext(), sAwayColor, settings.getString("away_color"));
+            if(settings.has("away_color")) translator.setTeamColorSpin(getContext(), sAwayColor, settings.getString("away_color"));
 
-            if(settings.has("match_type")) translator.setMatchType(sMatchType, settings.getString("match_type"));
+            if(settings.has("match_type")) translator.setMatchTypeSpin(getContext(), sMatchType, settings.getString("match_type"));
             if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
             if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
             if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
@@ -329,7 +301,7 @@ public class TabPrepare extends LinearLayout{
     }
     private void loadCustomMatchTypesSpinner(){
         try{
-            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(aMatchTypes));
+            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.matchTypes)));
             for(int i = 0; i < customMatchTypes.length(); i++){
                 alMatchTypes.add(customMatchTypes.getJSONObject(i).getString("name"));
             }

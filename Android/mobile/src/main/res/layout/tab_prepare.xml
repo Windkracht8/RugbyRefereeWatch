@@ -48,6 +48,7 @@
                 <Spinner
                     android:id="@+id/sHomeColor"
                     android:layout_height="48dp"
+                    android:entries="@array/teamColors"
                     android:contentDescription="@string/sHomeColor_desc" />
             </TableRow>
             <TableRow>
@@ -74,6 +75,7 @@
                 <Spinner
                     android:id="@+id/sAwayColor"
                     android:layout_height="48dp"
+                    android:entries="@array/teamColors"
                     android:contentDescription="@string/sAwayColor_desc"/>
             </TableRow>
             <TableRow>
@@ -85,6 +87,7 @@
                 <Spinner
                     android:id="@+id/sMatchType"
                     android:layout_height="48dp"
+                    android:entries="@array/matchTypes"
                     android:contentDescription="@string/sMatchType_desc"/>
             </TableRow>
             <TableRow
@@ -252,7 +255,8 @@
                     android:textSize="18sp" />
                 <Spinner
                     android:id="@+id/sTimerType"
-                    android:layout_height="48dp" />
+                    android:layout_height="48dp"
+                    android:entries="@array/timerTypes"/>
             </TableRow>
             <TableRow
                 android:id="@+id/trRecordPlayer"
