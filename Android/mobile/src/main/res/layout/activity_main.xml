@@ -30,7 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toBottomOf="@+id/sOS" />
-
     <TextView
         android:id="@+id/tvError"
         android:layout_width="0dp"

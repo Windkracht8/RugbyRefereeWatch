@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-
 public class ReportEventEdit extends LinearLayout{
     private JSONObject event;
     public ReportEventEdit(Context context){super(context);}
@@ -73,6 +72,11 @@ public class ReportEventEdit extends LinearLayout{
             }
             if(event.has("reason")){
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
+            }
+            timer.setLayoutParams(new LinearLayout.LayoutParams(TabReport.timer_edit_width, LinearLayout.LayoutParams.WRAP_CONTENT));
+            if(TabReport.what_width>10){
+                what.setLayoutParams(new LinearLayout.LayoutParams(TabReport.what_width, LinearLayout.LayoutParams.WRAP_CONTENT));
+                team.setLayoutParams(new LinearLayout.LayoutParams(TabReport.team_width, LinearLayout.LayoutParams.WRAP_CONTENT));
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());

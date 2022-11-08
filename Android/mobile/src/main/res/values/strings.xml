@@ -9,9 +9,9 @@
     <string name="match_types_filename" translatable="false">match_types.json</string>
 
     <!-- numbers -->
-    <string name="tvTime_placeholder" translatable="false">00:00:00</string>
-    <string name="tvTimer_placeholder" translatable="false">00\'</string>
-    <string name="tvScore_placeholder" translatable="false">00:00</string>
+    <string name="time_width_placeholder" translatable="false">00:00:00</string>
+    <string name="timer_width_placeholder" translatable="false">00\'</string>
+    <string name="score_width_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
     <string name="_00" translatable="false">00</string>
     <string name="_2" translatable="false">2</string>

@@ -11,7 +11,11 @@
 
     <string name="explainDoubleBack">Druk twee keer op terug om te sluiten</string>
     <string name="home">thuis</string>
-    <string name="away">gasten</string>
+    <string name="away">uit</string>
+    <string-array name="teams">
+        <item>THUIS</item>
+        <item>UIT</item>
+    </string-array>
 
     <!-- history -->
     <string name="bGetMatches_text">Haal wedstrijden van horloge op</string>

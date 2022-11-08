@@ -28,6 +28,11 @@ public class TabReport extends LinearLayout{
     public static int time_width;
     public static int timer_width;
     public static int score_width;
+    public static int del_width;
+    public static int timer_edit_width;
+    public static int who_width;
+    public static int what_width = 0;
+    public static int team_width;
 
     private int view = 0;
 
@@ -37,16 +42,22 @@ public class TabReport extends LinearLayout{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_report, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.tab_report, this, true);
 
-        TextView tvTime = findViewById(R.id.tvTime);
-        tvTime.measure(0, 0);
-        time_width = tvTime.getMeasuredWidth();
-        TextView tvTimer = findViewById(R.id.tvTimer);
-        tvTimer.measure(0, 0);
-        timer_width = tvTimer.getMeasuredWidth();
-        TextView tvScore = findViewById(R.id.tvScore);
-        tvScore.measure(0, 0);
-        score_width = tvScore.getMeasuredWidth();
-        findViewById(R.id.text_measure).setVisibility(View.GONE);
+        findViewById(R.id.time_width_measure).measure(0, 0);
+        time_width = findViewById(R.id.time_width_measure).getMeasuredWidth();
+        findViewById(R.id.timer_width_measure).measure(0, 0);
+        timer_width = findViewById(R.id.timer_width_measure).getMeasuredWidth();
+        findViewById(R.id.score_width_measure).measure(0, 0);
+        score_width = findViewById(R.id.score_width_measure).getMeasuredWidth();
+        findViewById(R.id.del_width_measure).measure(0, 0);
+        del_width = findViewById(R.id.del_width_measure).getMeasuredWidth();
+        del_width /= 2;//button measured roughly twice as large as the space it will take
+        findViewById(R.id.timer_edit_width_measure).measure(0, 0);
+        timer_edit_width = findViewById(R.id.timer_edit_width_measure).getMeasuredWidth();
+        findViewById(R.id.who_width_measure).measure(0, 0);
+        who_width = findViewById(R.id.who_width_measure).getMeasuredWidth();
+        findViewById(R.id.team_width_measure).measure(0, 0);
+        team_width = findViewById(R.id.team_width_measure).getMeasuredWidth();
+        findViewById(R.id.width_measure).setVisibility(View.GONE);
         llEvents = findViewById(R.id.llEvents);
 
         findViewById(R.id.bView).setOnClickListener(view -> bViewClick());
@@ -195,6 +206,7 @@ public class TabReport extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
+
     private void addScores(){
         try{
             int score_home = 0;
@@ -255,6 +267,10 @@ public class TabReport extends LinearLayout{
         showEvents();
     }
     public void bEditClick(){
+        if(what_width == 0){
+            what_width = MainActivity.widthPixels - del_width - timer_edit_width - team_width - who_width;
+        }
+
         view = 2;
         findViewById(R.id.bView).setVisibility(GONE);
         findViewById(R.id.bEdit).setVisibility(GONE);
