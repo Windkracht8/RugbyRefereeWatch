@@ -77,6 +77,28 @@
     <string name="help">help</string>
     <string name="bHelp">show help</string>
 
+    <string-array name="matchTypes">
+        <item>15s</item>
+        <item>10s</item>
+        <item>7s</item>
+        <item>beach 7s</item>
+        <item>beach 5s</item>
+        <item>custom</item>
+    </string-array>
+
+    <string-array name="teamColors">
+        <item>black</item>
+        <item>blue</item>
+        <item>brown</item>
+        <item>gold</item>
+        <item>green</item>
+        <item>orange</item>
+        <item>pink</item>
+        <item>purple</item>
+        <item>red</item>
+        <item>white</item>
+    </string-array>
+
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
@@ -92,4 +114,12 @@
     <string name="help_storage">Matches will be stored on the watch for 14 days, use the companion app on your phone to download them.</string>
     <string name="help_help_title">Get help</string>
     <string name="help_help">From the settings you can open this screen. Find the support contacts in the App Store for more help.</string>
+
+    <!-- fail -->
+    <string name="fail_show_conf">Failed to show conf screen</string>
+    <string name="fail_store_match_type">Failed to store match type</string>
+    <string name="fail_sync_match_types">Failed to sync match types</string>
+    <string name="fail_read_match_types">Failed to read match types from storage</string>
+    <string name="fail_load_match_type">Failed to load match type</string>
+
 </resources>

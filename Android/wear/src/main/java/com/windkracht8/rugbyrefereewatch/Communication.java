@@ -49,8 +49,8 @@ public class Communication extends WearableListenerService{
                     onReceivePrepare(requestType, dataMap);
                     break;
                 default:
-                    Log.e(MainActivity.RRW_LOG_TAG, "Communication.onDataChanged Did not understand message");
-                    sendRequest(requestType, "responseData", "Did not understand message");
+                    Log.e(MainActivity.RRW_LOG_TAG, "Communication.onDataChanged Unknown requestType: " + requestType);
+                    sendRequest(requestType, "responseData", "unknown requestType");
             }
         }
     }

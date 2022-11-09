@@ -36,12 +36,11 @@ public class Conf extends ScrollView{
     private SwitchCompat record_player;
     private SwitchCompat record_pens;
     public static JSONArray customMatchTypes;
-    private static final String[] aMatchTypes = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
 
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show conf screen", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf, this, true);
 
         customMatchTypes = new JSONArray();
@@ -60,10 +59,6 @@ public class Conf extends ScrollView{
         record_player = findViewById(R.id.record_player);
         record_pens = findViewById(R.id.record_pens);
 
-        String[] aTemp = new String[] {"15s", "10s", "7s", "beach 7s", "beach 5s", "custom"};
-        ArrayAdapter<String> aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
-        aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        match_type.setAdapter(aaTemp);
         match_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
@@ -121,8 +116,8 @@ public class Conf extends ScrollView{
             @Override
             public void onNothingSelected(AdapterView<?> parentView){}
         });
-        aTemp = new String[] {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
-        aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
+        String[] aTemp = new String[] {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
+        ArrayAdapter<String> aaTemp = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTemp);
         aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         period_time.setAdapter(aaTemp);
         aTemp = new String[] {"1","2","3","4","5"};
@@ -140,11 +135,13 @@ public class Conf extends ScrollView{
         points_con.setAdapter(aaTemp);
         points_goal.setAdapter(aaTemp);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.team_colors, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        String[] aTeamColors = getResources().getStringArray(R.array.teamColors);
+        Arrays.sort(aTeamColors);
+        ArrayAdapter<CharSequence> aaTeamColors = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTeamColors);
+        aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        color_home.setAdapter(adapter);
-        color_away.setAdapter(adapter);
+        color_home.setAdapter(aaTeamColors);
+        color_away.setAdapter(aaTeamColors);
 
         timer_type.setOnClickListener(v -> toggleTimerType());
     }
@@ -160,12 +157,9 @@ public class Conf extends ScrollView{
     }
     public void show(){
         loadCustomMatchTypesSpinner();
-        selectItem(color_home, MainActivity.match.home.color);
-        selectItem(color_away, MainActivity.match.away.color);
-        if(!selectItem(match_type, MainActivity.match.match_type)){
-            addCustomMatchType(MainActivity.match);
-            selectItem(match_type, MainActivity.match.match_type);
-        }
+        selectItem(color_home, translator.getTeamColorLocal(getContext(), MainActivity.match.home.color));
+        selectItem(color_away, translator.getTeamColorLocal(getContext(), MainActivity.match.away.color));
+        selectMatchTypeSpinner();
 
         period_time.setSelection(MainActivity.match.period_time-1);
         period_count.setSelection(MainActivity.match.period_count-1);
@@ -181,8 +175,26 @@ public class Conf extends ScrollView{
         findViewById(R.id.conf).scrollTo(0,0);
         this.setVisibility(View.VISIBLE);
     }
-    private boolean selectItem(Spinner spin, String str){
-        for(int i=0;i<spin.getCount();i++){
+    private void selectMatchTypeSpinner(){
+        //First look in the 5 default match types
+        String[] matchTypesSystem = getResources().getStringArray(R.array.matchTypes_system);
+        for(int i=0; i<matchTypesSystem.length; i++){
+            if(matchTypesSystem[i].equals(MainActivity.match.match_type)){
+                match_type.setSelection(i);
+                return;
+            }
+        }
+        //Now see if it's already a known custom match type
+        if(selectItem(match_type, MainActivity.match.match_type, 5)) return;
+        //We don't know it, so let's add it
+        addCustomMatchType(MainActivity.match);
+        match_type.setSelection(match_type.getCount()-1);
+    }
+    private void selectItem(Spinner spin, String str){
+        selectItem(spin, str, 0);
+    }
+    private boolean selectItem(Spinner spin, String str, int start){
+        for(int i=start;i<spin.getCount();i++){
             if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
                 return true;
@@ -191,9 +203,9 @@ public class Conf extends ScrollView{
         return false;
     }
     public void onBackPressed(){
-        MainActivity.match.home.color = color_home.getSelectedItem().toString();
-        MainActivity.match.away.color = color_away.getSelectedItem().toString();
-        MainActivity.match.match_type = match_type.getSelectedItem().toString();
+        MainActivity.match.home.color = translator.getTeamColorSystem(getContext(), color_home.getSelectedItem().toString());
+        MainActivity.match.away.color = translator.getTeamColorSystem(getContext(), color_away.getSelectedItem().toString());
+        MainActivity.match.match_type = translator.getMatchTypeSystem(getContext(), match_type.getSelectedItemPosition(), match_type.getSelectedItem().toString());
 
         MainActivity.match.period_time = period_time.getSelectedItemPosition() + 1;
         MainActivity.timer_period_time = MainActivity.match.period_time;
@@ -226,7 +238,7 @@ public class Conf extends ScrollView{
             getContext().sendBroadcast(intent);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "Conf.addCustomMatchType Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to store custom match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_store_match_type, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -270,14 +282,14 @@ public class Conf extends ScrollView{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
-            MainActivity.makeToast(context, "Failed to sync match types");
+            MainActivity.makeToast(context, context.getString(R.string.fail_sync_match_types));
         }
     }
 
     private void loadCustomMatchTypesSpinner(){
         if(customMatchTypes.length() == 0) return;
         try{
-            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(aMatchTypes));
+            ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.matchTypes)));
             for(int i = 0; i < customMatchTypes.length(); i++){
                 alMatchTypes.add(customMatchTypes.getJSONObject(i).getString("name"));
             }
@@ -286,7 +298,7 @@ public class Conf extends ScrollView{
             match_type.setAdapter(aaMatchTypes);
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "Conf.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to read custom match types from storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_read_match_types, Toast.LENGTH_SHORT).show();
         }
     }
     private void loadCustomMatchType(String name){
@@ -305,7 +317,7 @@ public class Conf extends ScrollView{
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "Conf.loadCustomMatchType Exception: " + e.getMessage());
-            Toast.makeText(getContext(), "Failed to load custom match type", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
         }
     }
 

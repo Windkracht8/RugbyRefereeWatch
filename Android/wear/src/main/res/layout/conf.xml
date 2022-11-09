@@ -32,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:entries="@array/teamColors"
             android:contentDescription="@string/color_home_desc"/>
         <TextView
             android:id="@+id/color_away_text"
@@ -45,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
+            android:entries="@array/teamColors"
             android:contentDescription="@string/color_away_desc"/>
         <TextView
             android:id="@+id/match_type_text"
@@ -59,6 +61,7 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:textColor="@color/w8blue"
+            android:entries="@array/matchTypes_system"
             android:contentDescription="@string/match_type_desc" />
         <LinearLayout
             android:id="@+id/custom_match"
