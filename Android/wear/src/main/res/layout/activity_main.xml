@@ -332,7 +332,7 @@
         android:id="@+id/splash"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/splash_image"
+        android:contentDescription="@string/splash_image_desc"
         android:scaleType="centerCrop"
         android:src="@drawable/splash"
         app:layout_constraintBottom_toBottomOf="parent"
