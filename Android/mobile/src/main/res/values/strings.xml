@@ -155,8 +155,8 @@
     </string-array>
 
     <string-array name="timerTypes">
-        <item>count down</item>
         <item>count up</item>
+        <item>count down</item>
     </string-array>
 
     <!-- status -->

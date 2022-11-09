@@ -133,8 +133,8 @@
     </string-array>
 
     <string-array name="timerTypes">
-        <item>aftellen</item>
         <item>optellen</item>
+        <item>aftellen</item>
     </string-array>
 
     <!-- status -->

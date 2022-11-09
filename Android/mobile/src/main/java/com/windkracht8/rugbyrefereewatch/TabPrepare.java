@@ -201,6 +201,7 @@ public class TabPrepare extends LinearLayout{
         findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
         findViewById(R.id.bDelCustom).setOnClickListener(view -> bDelCustomClick());
 
+        sTimerType.setSelection(1);
         loadCustomMatchTypes();
     }
 
