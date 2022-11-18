@@ -41,7 +41,7 @@ var communicationListener = {
 					}
 					break;
 				default:
-					responseData = '"Did not understand message"';
+					responseData = '"unknown requestType"';
 					break;
 			}
 			var responseMessage = '{"requestType":"' + requestMessage_js.requestType +
