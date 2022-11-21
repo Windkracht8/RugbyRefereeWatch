@@ -574,7 +574,7 @@ public class MainActivity extends AppCompatActivity{
                 case "getMatches":
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse getMatches");
                     findViewById(R.id.bGetMatches).setEnabled(true);
-                    if(responseType == 0){gotError(responseData);break;}//TODO: how to translate message from watch
+                    if(responseType == 0){gotError(responseData);break;}
                     if(responseType != 2){gotError(getString(R.string.fail_get_matches));break;}
                     JSONArray getMatchesResponse = new JSONArray(responseData);
                     tabHistory.gotMatches(getMatchesResponse);
@@ -591,7 +591,7 @@ public class MainActivity extends AppCompatActivity{
                     Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotResponse prepare");
                     findViewById(R.id.bPrepare).setEnabled(true);
                     if(!responseData.equals("okilly dokilly")){
-                        gotError(responseData);//TODO: how to translate message from watch
+                        gotError(responseData);
                     }
                     break;
             }
@@ -602,8 +602,17 @@ public class MainActivity extends AppCompatActivity{
     }
     public void gotError(String error){
         Log.i(MainActivity.RRW_LOG_TAG, "MainActivity.gotError: " + error);
-        if(error.equals(getString(R.string.did_not_understand_message))){
-            error = getString(R.string.update_watch_app);
+        switch(error){
+            case "Did not understand message"://DEPRECATED
+            case "unknown requestType":
+                error = getString(R.string.update_watch_app);
+                break;
+            case "match ongoing":
+                error = getString(R.string.match_ongoing);
+                break;
+            case "unexpected error":
+                error = getString(R.string.fail_unexpected);
+                break;
         }
         ((TextView)findViewById(R.id.tvError)).setText(error);
     }

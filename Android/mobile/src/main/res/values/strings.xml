@@ -199,6 +199,7 @@
     <string name="fail_del_match">Failed to delete match</string>
     <string name="fail_del_event">Failed to delete event</string>
     <string name="fail_save_match">Failed to save match</string>
+    <string name="fail_unexpected">Unexpected technical error</string>
     <string name="not_connected">Not connected</string>
     <string name="watch_not_found">Watch not found</string>
     <string name="app_not_found_on_watch">RugbyRefereeWatch not found on watch</string>
@@ -206,8 +207,8 @@
     <string name="connection_failed">Connection failed:</string>
     <string name="problem_matches_received">Problem with matches received from watch</string>
     <string name="update_watch_app">Update app on watch to support this</string>
-    <string name="did_not_understand_message">Did not understand message</string>
     <string name="first_connect">First connect with watch</string>
+    <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="noTizenLib">Click to install Tizen Service</string>
     <string name="noWearLib">Click to install Wear OS Service</string>
 
