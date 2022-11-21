@@ -5,18 +5,18 @@ import android.util.TypedValue;
 import android.view.Gravity;
 
 public class Event extends androidx.appcompat.widget.AppCompatTextView{
-    public MatchData.event event_data;
+    public MatchData.event event;
     public Event(Context context){
         super(context);
     }
-    public Event(Context context, MatchData.event event_data){
+    public Event(Context context, MatchData.event event){
         super(context);
-        this.event_data = event_data;
-        String item = event_data.timer + " " + translator.getEventTypeLocal(context, event_data.what);
-        if(event_data.team != null){
-            item += " " + translator.getTeamLocal(context, event_data.team);
-            if(event_data.who > 0){
-                item = item + " " + event_data.who;
+        this.event = event;
+        String item = MainActivity.prettyTimer(event.timer) + " " + translator.getEventTypeLocal(context, event.what);
+        if(event.team != null){
+            item += " " + translator.getTeamLocal(context, event.team);
+            if(event.who > 0){
+                item = item + " " + event.who;
             }
         }
         this.setText(item);

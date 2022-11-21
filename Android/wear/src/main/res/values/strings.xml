@@ -19,10 +19,24 @@
     <string name="bBottom_text">conf</string>
     <string name="bConf_desc">configuration</string>
     <string name="start">start</string>
+    <string name="end">end</string>
     <string name="resume">resume</string>
     <string name="finish">finish</string>
     <string name="report">report</string>
     <string name="clear">clear</string>
+    <string name="first_half">first half</string>
+    <string name="half_time">half time</string>
+    <string name="second_half">second half</string>
+    <string name="_2nd_half">2nd half</string>
+    <string name="full_time">full time</string>
+    <string name="extra_time">extra time</string>
+    <string name="rest">rest</string>
+    <string name="extra">extra</string>
+    <string name="period">period</string>
+    <string name="_1st">1st</string>
+    <string name="_2nd">2nd</string>
+    <string name="_3rd">3rd</string>
+    <string name="_4th">4th</string>
     <string name="extraTime_desc">Extra time selection</string>
     <string name="pen_label_text">pen</string>
     <string name="bPenHome_desc">home penalty count</string>
@@ -42,6 +56,8 @@
 
     <!-- report screen -->
     <string name="report_title">Report</string>
+    <string name="Start">Start</string>
+    <string name="Result">Result</string>
 
     <!-- correct screen -->
     <string name="correct_title">Tap to remove</string>

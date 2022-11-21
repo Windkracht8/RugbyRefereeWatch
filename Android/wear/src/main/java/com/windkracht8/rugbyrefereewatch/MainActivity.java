@@ -303,7 +303,7 @@ public class MainActivity extends FragmentActivity{
             singleBeep(getBaseContext());
             timer_status = "time_off";
             timer_start_time_off = getCurrentTimestamp();
-            match.logEvent("Time off", null, null, 0);
+            match.logEvent("TIME OFF", null, 0, 0, null);
             updateButtons();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
@@ -324,7 +324,7 @@ public class MainActivity extends FragmentActivity{
                 timer_start = getCurrentTimestamp();
                 String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
                 timer_period++;
-                match.logEvent("Start " + getPeriodName(), kickoffTeam, null, 0);
+                match.logEvent("START", kickoffTeam, 0, 0, null);
                 updateScore();
                 break;
             case "time_off":
@@ -332,7 +332,7 @@ public class MainActivity extends FragmentActivity{
                 singleBeep(getBaseContext());
                 timer_status = "running";
                 timer_start += (getCurrentTimestamp() - timer_start_time_off);
-                match.logEvent("Resume time", null, null, 0);
+                match.logEvent("RESUME", null, 0, 0, null);
                 break;
             case "rest":
                 //get ready for next period
@@ -351,10 +351,10 @@ public class MainActivity extends FragmentActivity{
         switch(timer_status){
             case "time_off":
                 //How did someone get here with no events in the match?
-                if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("Time off")){
+                if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
                     match.events.remove(match.events.size()-1);
                 }
-                match.logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null, 0);
+                match.logEvent("END", null, 0, 0, match.home.tot + ":" + match.away.tot);
 
                 timer_status = "rest";
                 timer_start = getCurrentTimestamp();
@@ -420,30 +420,18 @@ public class MainActivity extends FragmentActivity{
                 break;
             case "ready":
                 bConfWatch.setVisibility(View.GONE);
-                bOverTimerText = "start ";
-                if(timer_period >= match.period_count){
+                bOverTimerText = getBaseContext().getString(R.string.start) + " ";
+                if(match.period_count == 2 && timer_period == 1) {
+                    bOverTimerText += getString(R.string._2nd_half);
+                }else if(timer_period >= match.period_count){
                     extraTime.setVisibility(View.VISIBLE);
                     extraTimeChange();
-                    if(timer_period == match.period_count){
-                        bOverTimerText += "extra time";
-                    }else{
-                        bOverTimerText += "extra time " + (timer_period-match.period_count+1);
-                    }
+                    bOverTimerText += getPeriodName(timer_period+1);
                 }else{
                     extraTime.setVisibility(View.GONE);
-                    switch(timer_period){
-                        case 1:
-                            bOverTimerText += "2nd";
-                            break;
-                        case 2:
-                            bOverTimerText += "3rd";
-                            break;
-                        default:
-                            bOverTimerText += timer_period + "th";
-                            break;
-                    }
+                    bOverTimerText += getPeriodName(timer_period+1);
                 }
-                bOverTimer.setText(bOverTimerText);//TODO: translate this
+                bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
@@ -454,32 +442,19 @@ public class MainActivity extends FragmentActivity{
                 bOverTimer.setText(R.string.resume);
                 bOverTimer.setVisibility(View.VISIBLE);
 
-                bBottomText = "end ";
+                bBottomText = getBaseContext().getString(R.string.end) + " ";
                 if(match.period_count == 2 && timer_period == 1){
-                    bBottomText = "half time";
+                    bBottomText = getString(R.string.half_time);
                 }else if(match.period_count == 2 && timer_period == 2){
-                    bBottomText = "full time";
+                    bBottomText = getString(R.string.full_time);
                 }else if(timer_period > match.period_count){
                     if(timer_period == match.period_count+1){
-                        bBottomText += "extra";
+                        bBottomText += getString(R.string.extra);
                     }else{
-                        bBottomText += "extra " + (timer_period-match.period_count);
+                        bBottomText += getString(R.string.extra) + " " + (timer_period-match.period_count);
                     }
                 }else{
-                    switch(timer_period){
-                        case 1:
-                            bBottomText += "1st";
-                            break;
-                        case 2:
-                            bBottomText += "2nd";
-                            break;
-                        case 3:
-                            bBottomText += "3rd";
-                            break;
-                        default:
-                            bBottomText += timer_period + "th";
-                            break;
-                    }
+                    bBottomText = getString(R.string.rest);
                 }
                 bBottom.setText(bBottomText);
                 bBottom.setVisibility(View.VISIBLE);
@@ -490,19 +465,11 @@ public class MainActivity extends FragmentActivity{
             case "rest":
                 bConfWatch.setVisibility(View.VISIBLE);
                 if(match.period_count == 2 && timer_period == 1){
-                    bOverTimerText ="2nd half";
+                    bOverTimerText = getString(R.string._2nd_half);
                 }else if(timer_period >= match.period_count){
-                    if(timer_period == match.period_count){
-                        bOverTimerText ="extra time";
-                    }else{
-                        bOverTimerText ="extra time " + (timer_period-match.period_count+1);
-                    }
+                    bOverTimerText = getPeriodName(timer_period+1);
                 }else{
-                    if(timer_period == 2){
-                        bOverTimerText = "3rd period";
-                    }else{
-                        bOverTimerText = timer_period + "th period";
-                    }
+                    bOverTimerText = getString(R.string.period) + " " + (timer_period+1);
                 }
                 bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
@@ -682,13 +649,13 @@ public class MainActivity extends FragmentActivity{
         if(timer_status.equals("conf")){return;}
         match.home.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.home.id, null, 0);
+        match.logEvent("PENALTY", match.home.id, 0, 0, null);
     }
     public void bPenAwayClick(){
         if(timer_status.equals("conf")){return;}
         match.away.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.away.id, null, 0);
+        match.logEvent("PENALTY", match.away.id, 0, 0, null);
     }
     public void score_homeClick(){
         if(timer_status.equals("conf")){
@@ -727,21 +694,21 @@ public class MainActivity extends FragmentActivity{
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("TRY", score.team.id, score.player_no, 0);
+        match.logEvent("TRY", score.team.id, score.player_no, 0, null);
     }
     public void conversionClick(){
         score.team.cons++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
+        match.logEvent("CONVERSION", score.team.id, score.player_no, 0, null);
     }
     public void goalClick(){
         score.team.goals++;
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("GOAL", score.team.id, score.player_no, 0);
+        match.logEvent("GOAL", score.team.id, score.player_no, 0, null);
     }
     public void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -765,7 +732,7 @@ public class MainActivity extends FragmentActivity{
     }
     public void card_yellowClick(){
         long time = getCurrentTimestamp();
-        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
+        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time, null);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
         score.team.addSinbin(time, end);
@@ -778,10 +745,10 @@ public class MainActivity extends FragmentActivity{
         updateScore();
         foulPlay.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
+        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0, null);
     }
     public void card_redClick(){
-        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
+        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0, null);
         foulPlay.setVisibility(View.GONE);
         score.clear();
     }
@@ -799,18 +766,37 @@ public class MainActivity extends FragmentActivity{
         Date d = new Date();
         return d.getTime();
     }
-    public String getPeriodName(){
-        if(match.period_count == 2){
-            switch(timer_period){
-                case 1:
-                    return "first half";
-                case 2:
-                    return "second half";
-                default:
-                    return "extra time";
+    public String getPeriodName(int period){
+        return getPeriodName(getBaseContext(), period, match.period_count);
+    }
+    public static String getPeriodName(Context context, int period, int period_count){
+        if(period > period_count){
+            if(period == period_count+1){
+                return context.getString(R.string.extra_time);
+            }else{
+                return context.getString(R.string.extra_time) + " " + (period - period_count);
             }
+        }else if(period_count == 2){
+            switch(period){
+                case 1:
+                    return context.getString(R.string.first_half);
+                case 2:
+                    return context.getString(R.string.second_half);
+            }
+        }else{
+            switch(period){
+                case 1:
+                    return context.getString(R.string._1st);
+                case 2:
+                    return context.getString(R.string._2nd);
+                case 3:
+                    return context.getString(R.string._3rd);
+                case 4:
+                    return context.getString(R.string._4th);
+            }
+            return String.valueOf(period);
         }
-        return "period " + timer_period;
+        return "";
     }
     public String getKickoffTeam(){
         if(match.home.kickoff){

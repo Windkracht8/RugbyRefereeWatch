@@ -26,13 +26,27 @@ public class Report extends ScrollView{
             list.removeViewAt(i-1);
         }
         for(MatchData.event event : match.events){
-            if(event.what.equals("Resume time") || event.what.equals("Time off")){
+            if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){
                 continue;
             }
             TextView tv = new TextView(getContext());
-            String item = event.timer + ' ' + event.what;
+            String item = MainActivity.prettyTimer(event.timer) + " ";
+            switch(event.what){
+                case "START":
+                    item += getContext().getString(R.string.Start) + " " + MainActivity.getPeriodName(getContext(), event.period, match.period_count);
+                    break;
+                case "END":
+                    item += getContext().getString(R.string.Result) + " " + MainActivity.getPeriodName(getContext(), event.period, match.period_count);
+                    if(event.score != null){
+                        item += " " + event.score;
+                    }
+                    break;
+                default:
+                    item += translator.getEventTypeLocal(getContext(), event.what);
+                    break;
+            }
             if(event.team != null){
-                item += ' ' + event.team;
+                item += " " + translator.getTeamLocal(getContext(), event.team);
                 if(event.who > 0){
                     item += ' ' + Integer.toString(event.who);
                 }

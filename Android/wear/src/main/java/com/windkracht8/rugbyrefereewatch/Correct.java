@@ -41,7 +41,7 @@ public class Correct extends ScrollView{
     }
     public void eventClicked(View v){
         Event event_ui = (Event) v;
-        match.removeEvent(event_ui.event_data);
+        match.removeEvent(event_ui.event);
         this.setVisibility(View.GONE);
         this.performClick();
     }

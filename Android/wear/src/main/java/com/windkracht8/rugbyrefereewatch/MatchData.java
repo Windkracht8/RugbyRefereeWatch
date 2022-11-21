@@ -104,14 +104,8 @@ public class MatchData{
                 break;
         }
     }
-    public void logEvent(String what, String team, Integer who, long id){
-        event evt = new event(what, id);
-        if(team != null){
-            evt.team = team;
-            if(who != null && who > 0){
-                evt.who = who;
-            }
-        }
+    public void logEvent(String what, String team, Integer who, long id, String score){
+        event evt = new event(what, id, team, who, score);
         events.add(evt);
         Log.i(MainActivity.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
     }
@@ -167,16 +161,21 @@ public class MatchData{
     public static class event{
         public final long id;
         public final String time;
-        public final String timer;
+        public final long timer;
         public final String what;
-        public String team = null;
-        public int who = 0;
-        public event(String what, long id){
+        public final int period;
+        public String team;
+        public int who;
+        public String score;
+        public event(String what, long id, String team, int who, String score){
             this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
             this.time = MainActivity.prettyTime(id);
-            long current_timer = (MainActivity.timer_timer + ((long)(MainActivity.timer_period-1)*MainActivity.match.period_time*60000));
-            this.timer = MainActivity.prettyTimer(current_timer);
+            this.timer = (MainActivity.timer_timer + ((long)(MainActivity.timer_period-1)*MainActivity.match.period_time*60000));
+            this.period = MainActivity.timer_period;
             this.what = what;
+            this.team = team;
+            this.who = who;
+            this.score = score;
         }
         public JSONObject toJson(Context context){
             JSONObject evt = new JSONObject();
@@ -184,12 +183,16 @@ public class MatchData{
                 evt.put("id", id);
                 evt.put("time", time);
                 evt.put("timer", timer);
+                evt.put("period", period);
                 evt.put("what", what);
                 if(team != null){
                     evt.put("team", team);
                     if(who != 0){
                         evt.put("who", who);
                     }
+                }
+                if(score != null) {
+                    evt.put("score", score);
                 }
             }catch(JSONException e){
                 Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
