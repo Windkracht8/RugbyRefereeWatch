@@ -269,6 +269,7 @@ public class TabReport extends LinearLayout{
     public void bEditClick(){
         if(what_width == 0){
             what_width = MainActivity.widthPixels - del_width - timer_edit_width - team_width - who_width;
+            if(what_width > 500) what_width=1;
         }
 
         view = 2;
