@@ -50,7 +50,7 @@ public class MatchData{
             ret.put("events", events_json);
         }catch(JSONException e){
             Log.e(MainActivity.RRW_LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
-            Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
         }
         return ret;
     }
@@ -159,7 +159,7 @@ public class MatchData{
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
                 Log.e(MainActivity.RRW_LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
-                Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
             return ret;
         }
@@ -193,7 +193,7 @@ public class MatchData{
                 }
             }catch(JSONException e){
                 Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
-                Toast.makeText(context, "Failed to read match", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
             return evt;
         }

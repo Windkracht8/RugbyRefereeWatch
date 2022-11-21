@@ -14,6 +14,7 @@
     <!-- main screen -->
     <string name="bConfWatch_desc">Watch configuration</string>
     <string name="_0_kick">0 KICK</string>
+    <string name="kick">KICK</string>
     <string name="bOverTimer_text">start</string>
     <string name="bBottom_text">conf</string>
     <string name="bConf_desc">configuration</string>
@@ -99,6 +100,25 @@
         <item>white</item>
     </string-array>
 
+    <string-array name="eventTypes">
+        <item>TRY</item>
+        <item>CONVERSION</item>
+        <item>PENALTY TRY</item>
+        <item>GOAL</item>
+        <item>PENALTY GOAL</item>
+        <item>DROP GOAL</item>
+        <item>YELLOW CARD</item>
+        <item>RED CARD</item>
+        <item>PENALTY</item>
+    </string-array>
+
+    <string-array name="extraTimeTimerType">
+        <item>count up</item>
+        <item>2 min</item>
+        <item>5 min</item>
+        <item>10 min</item>
+    </string-array>
+
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
@@ -121,5 +141,21 @@
     <string name="fail_sync_match_types">Failed to sync match types</string>
     <string name="fail_read_match_types">Failed to read match types from storage</string>
     <string name="fail_load_match_type">Failed to load match type</string>
+    <string name="fail_show_correct">Failed to show correction screen</string>
+    <string name="fail_save_matches">Failed to save matches</string>
+    <string name="fail_read_matches">Failed to read matches</string>
+    <string name="fail_clean_matches">Failed to cleanup matches</string>
+    <string name="fail_del_matches">Failed to delete matches</string>
+    <string name="fail_store_settings">Failed to store settings</string>
+    <string name="fail_read_settings">Failed to read settings</string>
+    <string name="fail_store_match_types">Failed to store match types</string>
+    <string name="fail_read_file">Failed to read file</string>
+    <string name="fail_store_file">Failed to store file</string>
+    <string name="fail_show_foul_play">Failed to show foul play screen</string>
+    <string name="fail_show_help">Failed to show help</string>
+    <string name="fail_read_match">Failed to read match</string>
+    <string name="fail_show_report">Failed to show report</string>
+    <string name="fail_show_score">Failed to show score screen</string>
+    <string name="fail_show_sinbin">Failed to show sinbins</string>
 
 </resources>

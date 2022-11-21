@@ -16,7 +16,7 @@ public class Sinbin extends LinearLayout{
     public Sinbin(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, "Failed to show sinbins", Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.sinbin, this, true);
 
         timer = findViewById(R.id.timer);

@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -145,10 +144,6 @@ public class MainActivity extends FragmentActivity{
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v -> confWatch.show());
         extraTime = findViewById(R.id.extraTime);
-        String[] aTemp = new String[] {"count up", "2 min", "5 min", "10 min"};
-        ArrayAdapter<String> aaTemp = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_spinner_item, aTemp);
-        aaTemp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        extraTime.setAdapter(aaTemp);
         extraTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
@@ -377,10 +372,10 @@ public class MainActivity extends FragmentActivity{
                 String kickoffTeam = getKickoffTeam();
                 if(kickoffTeam != null){
                     if(kickoffTeam.equals("home")){
-                        kickoffTeam = match.home.tot + " KICK";
+                        kickoffTeam = match.home.tot + " " + getString(R.string.kick);
                         score_home.setText(kickoffTeam);
                     }else{
-                        kickoffTeam = match.away.tot + " KICK";
+                        kickoffTeam = match.away.tot + " " + getString(R.string.kick);
                         score_away.setText(kickoffTeam);
                     }
                 }
@@ -448,7 +443,7 @@ public class MainActivity extends FragmentActivity{
                             break;
                     }
                 }
-                bOverTimer.setText(bOverTimerText);
+                bOverTimer.setText(bOverTimerText);//TODO: translate this
                 bOverTimer.setVisibility(View.VISIBLE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
