@@ -94,7 +94,7 @@ public class TabReport extends LinearLayout{
     private void showMatch(final JSONObject match){
         this.match = match;
         view = 0;
-        addScores();
+        fixReport();
         try{
             this.match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
@@ -187,14 +187,16 @@ public class TabReport extends LinearLayout{
         try{
             JSONArray events = match.getJSONArray("events");
             Context context = getContext();
+            int period_count = match.getJSONObject("settings").getInt("period_count");
+            int period_time = match.getJSONObject("settings").getInt("period_time");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
                 switch(view){
                     case 0:
-                        llEvents.addView(new ReportEvent(context, event));
+                        llEvents.addView(new ReportEvent(context, event, period_count, period_time));
                         break;
                     case 1:
-                        llEvents.addView(new ReportEventFull(context, event, match));
+                        llEvents.addView(new ReportEventFull(context, event, match, period_count));
                         break;
                     case 2:
                         llEvents.addView(new ReportEventEdit(context, event));
@@ -207,21 +209,55 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    private void addScores(){
+    private void fixReport(){
         try{
+            boolean changed = false;
             int score_home = 0;
             int score_away = 0;
             JSONObject settings = match.getJSONObject("settings");
             int points_try = settings.getInt("points_try");
             int points_con = settings.getInt("points_con");
             int points_goal = settings.getInt("points_goal");
+            int period = 0;
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                if(event.has("score"))return;
+                String what = event.getString("what");
+
+                //check if timer is in old format
+                String temp = event.getString("timer");
+                if(temp.contains(":")){
+                    String[] array = temp.split(":", 2);
+                    long timer = ((Long.parseLong(array[0])*60) + Long.parseLong(array[1]))*1000;
+                    event.put("timer", timer);
+                    changed = true;
+                }
+
+                //add period if not there
+                if(what.toUpperCase().startsWith("START")) period++;
+                if(!event.has("period")){
+                    event.put("period", period);
+                }
+
+                //rename event type to new format
+                if(what.startsWith("Start")){
+                    event.put("what", "START");
+                    changed = true;
+                }else if(what.startsWith("Result")){
+                    event.put("what", "END");
+                    changed = true;
+                }else if(what.equals("Time off")){
+                    event.put("what", "TIME OFF");
+                    changed = true;
+                }else if(what.equals("Resume time")){
+                    event.put("what", "RESUME");
+                    changed = true;
+                }
+
+                //count score
                 if(event.has("team")){
                     int points = 0;
-                    switch (event.getString("what")){
+                    switch (what){
                         case "TRY":
                             points = points_try;
                             break;
@@ -243,7 +279,19 @@ public class TabReport extends LinearLayout{
                         score_away += points;
                     }
                 }
-                event.put("score",  score_home + ":" + score_away);
+
+                //add score
+                if(event.has("score")) continue;
+                event.put("score", score_home + ":" + score_away);
+                changed = true;
+            }
+
+            if(changed){
+                Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+                intent.putExtra("intent_type", "updateMatch");
+                intent.putExtra("match", match.toString());
+                Log.i(MainActivity.RRW_LOG_TAG, "fixed report: "+match.toString());
+                getContext().sendBroadcast(intent);
             }
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
@@ -298,7 +346,6 @@ public class TabReport extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_delete, Toast.LENGTH_SHORT).show();
         }
     }
-
     public void bSaveClick(View view){
         InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
@@ -398,7 +445,6 @@ public class TabReport extends LinearLayout{
                             event.put("what", what);
                         }
                 }
-                event.remove("score");
                 events.put(event);
             }
             match.put("events", events);
@@ -534,6 +580,7 @@ public class TabReport extends LinearLayout{
             shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 
+            int period_count = match.getInt("period_count");
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
@@ -542,7 +589,7 @@ public class TabReport extends LinearLayout{
                 if(event.has("score")){
                     shareBody.append("    ").append(event.getString("score"));
                 }
-                shareBody.append("    ").append(translator.getEventTypeLocal(getContext(), event.getString("what")));
+                shareBody.append("    ").append(translator.getEventTypeLocal(getContext(), event.getString("what"), event.getInt("period"), period_count));
                 if(event.has("team")){
                     if(event.getString("team").equals("home")){
                         shareBody.append(" ").append(MainActivity.getTeamName(getContext(), home));

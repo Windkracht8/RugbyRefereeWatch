@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 public class ReportEvent extends LinearLayout {
     public ReportEvent(Context context){super(context);}
-    public ReportEvent(Context context, JSONObject event){
+    public ReportEvent(Context context, JSONObject event, int period_count, int period_time){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -29,16 +29,13 @@ public class ReportEvent extends LinearLayout {
 
         try{
             String text = event.getString("what");
-            if(text.startsWith("Start") || text.startsWith("Result")){
-                if(text.contains(":")){
-                    text = text.substring(0, text.lastIndexOf(" "));
-                }
-                if(text.startsWith("Result") && event.has("score")){
-                    String[] scores = event.getString("score").split(":");
-                    tvLeft.setText(scores[0]);
-                    tvRight.setText(scores[1]);
-                }
-                tvMiddle.setText(translator.getEventTypeLocal(context, text));
+            int period = event.getInt("period");
+            String what_local = translator.getEventTypeLocal(context, text, period, period_count);
+            if(text.equals("START") || text.equals("END")){
+                String[] scores = event.getString("score").split(":");
+                tvLeft.setText(scores[0]);
+                tvRight.setText(scores[1]);
+                tvMiddle.setText(translator.getEventTypeLocal(context, text, period, period_count));
                 int width = (this.getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
@@ -59,27 +56,33 @@ public class ReportEvent extends LinearLayout {
                         }
                     case "YELLOW CARD":
                     case "RED CARD":
-                        text = translator.getEventTypeLocal(context, text);
-                        String timer = event.getString("timer");
-                        timer = timer.substring(0, timer.length()-3) + "'";
-                        if(event.has("who")){
-                            text += " " + event.getString("who");
-                        }
+                        if(event.has("who")) what_local += " " + event.getString("who");
 
-                        String team = event.getString("team");
-                        if(team.equals("home")){
-                            tvLeft.setText(text);
+                        long minutes = event.getLong("timer") / 60000;
+                        String timer = Long.toString(minutes);
+                        if(minutes > (long) period_time * period_count){
+                            timer = String.valueOf((period_time * period_count));
+                            long over = minutes - ((long) period_time * period_count);
+                            timer += "+" + over;
+                            if(over > 9){
+                                tvLeftTime.setWidth((int) (TabReport.timer_width * 2.5));
+                                tvRightTime.setWidth((int) (TabReport.timer_width * 2.5));
+                            }else{
+                                tvLeftTime.setWidth(TabReport.timer_width * 2);
+                                tvRightTime.setWidth(TabReport.timer_width * 2);
+                            }
+                        }else{
+                            tvLeftTime.setWidth(TabReport.timer_width);
+                            tvRightTime.setWidth(TabReport.timer_width);
+                        }
+                        timer += "'";
+                        if(event.getString("team").equals("home")){
+                            tvLeft.setText(what_local);
                             tvLeftTime.setText(timer);
                         }else{
                             tvRightTime.setText(timer);
-                            tvRight.setText(text);
+                            tvRight.setText(what_local);
                         }
-
-                        int width = (this.getWidth()-TabReport.score_width)/2-TabReport.timer_width;
-                        tvLeft.setWidth(width);
-                        tvLeftTime.setWidth(TabReport.timer_width);
-                        tvRightTime.setWidth(TabReport.timer_width);
-                        tvRight.setWidth(width);
                         if(event.has("reason")){
                             ((TextView)findViewById(R.id.tvReason)).setText(event.getString("reason"));
                             findViewById(R.id.tvReason).setVisibility(View.VISIBLE);

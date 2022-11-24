@@ -24,7 +24,7 @@ public class translator {
         //Not found, loop the spinner to look for custom match type
         setSpinner(spin, matchType_system, 5);
     }
-    public static String getEventTypeLocal(Context context, String eventType_system){
+    public static String getEventTypeLocal(Context context, String eventType_system, int period, int period_count){
         String[] eventTypesLocal = context.getResources().getStringArray(R.array.eventTypes);
         String[] eventTypes_system = context.getResources().getStringArray(R.array.eventTypes_system);
         for(int i=0; i<eventTypes_system.length; i++){
@@ -33,30 +33,46 @@ public class translator {
             }
         }
 
-        if(eventType_system.startsWith("Time off")) {
-            return context.getString(R.string.Time_off);
-        }else if(eventType_system.startsWith("Resume time")) {
-            return context.getString(R.string.Resume_time);
-        }else if(eventType_system.startsWith("Start first half")) {
-            return context.getString(R.string.start_first_half);
-        }else if(eventType_system.startsWith("Start second half")) {
-            return context.getString(R.string.start_second_half);
-        }else if(eventType_system.startsWith("Result first half")){
-            return context.getString(R.string.result_first_half)+eventType_system.substring(17);
-        }else if(eventType_system.startsWith("Result second half")){
-            return context.getString(R.string.result_second_half)+eventType_system.substring(18);
-        }else if(eventType_system.startsWith("Start period")){
-            return context.getString(R.string.start_period)+eventType_system.substring(12);
-        }else if(eventType_system.startsWith("Result period")){
-            return context.getString(R.string.result_period)+eventType_system.substring(13);
-        }else if(eventType_system.startsWith("Start extra time")){
-            return context.getString(R.string.start_extra)+eventType_system.substring(16);
-        }else if(eventType_system.startsWith("Result extra time")){
-            return context.getString(R.string.result_extra)+eventType_system.substring(17);
+        switch(eventType_system){
+            case "TIME OFF":
+                return context.getString(R.string.Time_off);
+            case "RESUME":
+                return context.getString(R.string.Resume_time);
+            case "START":
+                return context.getString(R.string.Start) + " " + getPeriodName(context, period, period_count);
+            case "END":
+                return context.getString(R.string.Result) + " " + getPeriodName(context, period, period_count);
         }
-
         Log.e(MainActivity.RRW_LOG_TAG, "translator.getEventTypeLocal unknown value: " + eventType_system);
         return "";
+    }
+    private static String getPeriodName(Context context, int period, int period_count){
+        if(period > period_count){
+            if(period == period_count+1){
+                return context.getString(R.string.extra_time);
+            }else{
+                return context.getString(R.string.extra_time) + " " + (period - period_count);
+            }
+        }else if(period_count == 2){
+            switch(period){
+                case 1:
+                    return context.getString(R.string.first_half);
+                case 2:
+                    return context.getString(R.string.second_half);
+            }
+        }else{
+            switch(period){
+                case 1:
+                    return context.getString(R.string._1st);
+                case 2:
+                    return context.getString(R.string._2nd);
+                case 3:
+                    return context.getString(R.string._3rd);
+                case 4:
+                    return context.getString(R.string._4th);
+            }
+        }
+        return context.getString(R.string.period) + " " + period;
     }
     public static String getTeamColorSystem(Context context, String teamColor){
         String[] teamColors = context.getResources().getStringArray(R.array.teamColors);

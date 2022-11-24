@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class ReportEventFull extends LinearLayout{
     public ReportEventFull(Context context){super(context);}
-    public ReportEventFull(Context context, JSONObject event, JSONObject match){
+    public ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -42,7 +42,8 @@ public class ReportEventFull extends LinearLayout{
             }
 
             TextView tvWhat = findViewById(R.id.tvWhat);
-            tvWhat.setText(translator.getEventTypeLocal(context, event.getString("what")));
+            int period = event.getInt("period");
+            tvWhat.setText(translator.getEventTypeLocal(context, event.getString("what"), period, period_count));
 
             if(event.has("team")){
                 TextView tvTeam = findViewById(R.id.tvTeam);

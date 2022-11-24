@@ -123,14 +123,16 @@
     </string-array>
     <string name="Time_off">Time off</string>
     <string name="Resume_time">Resume time</string>
-    <string name="start_first_half">Start first half</string>
-    <string name="start_second_half">Start second half</string>
-    <string name="result_first_half">Result first half</string>
-    <string name="result_second_half">Result second half</string>
-    <string name="start_extra">Start extra time</string>
-    <string name="result_extra">Result extra time</string>
-    <string name="start_period">Start period</string>
-    <string name="result_period">Result period</string>
+    <string name="Start">Start</string>
+    <string name="Result">Result</string>
+    <string name="first_half">first half</string>
+    <string name="second_half">second half</string>
+    <string name="extra_time">extra time</string>
+    <string name="period">period</string>
+    <string name="_1st">1st</string>
+    <string name="_2nd">2nd</string>
+    <string name="_3rd">3rd</string>
+    <string name="_4th">4th</string>
 
     <string-array name="teamColors">
         <item>black</item>
