@@ -28,7 +28,13 @@ public class ReportEventEdit extends LinearLayout{
 
         try{
             TextView timer = findViewById(R.id.timer);
-            timer.setText(event.getString("timer"));
+            int temp = (int) (event.getLong("timer") / 1000);
+            int seconds = (temp % 60);
+            int minutes = (temp - seconds) / 60;
+            String sTimer = minutes + ":";
+            if(seconds < 10) sTimer += "0";
+            sTimer += seconds;
+            timer.setText(sTimer);
 
             switch(event.getString("what")){
                 case "TRY":

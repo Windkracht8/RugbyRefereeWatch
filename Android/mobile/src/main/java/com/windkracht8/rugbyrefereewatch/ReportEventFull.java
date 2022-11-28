@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class ReportEventFull extends LinearLayout{
     public ReportEventFull(Context context){super(context);}
-    public ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count){
+    public ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -27,7 +27,24 @@ public class ReportEventFull extends LinearLayout{
 
             TextView tvTimer = findViewById(R.id.tvTimer);
             tvTimer.setWidth(TabReport.score_width);
-            String timer = event.getString("timer").replace(":", "'");
+
+            int temp = (int) (event.getLong("timer") / 1000);
+            int seconds = (temp % 60);
+            int minutes = (temp - seconds) / 60;
+            String timer = Long.toString(minutes);
+            if(minutes > (long) period_time * period_count){
+                timer = String.valueOf((period_time * period_count));
+                long over = minutes - ((long) period_time * period_count);
+                timer += "+" + over;
+                if(over > 9){
+                    tvTimer.setWidth((int) (TabReport.score_width * 1.7));
+                }else{
+                    tvTimer.setWidth((int) (TabReport.score_width * 1.5));
+                }
+            }
+            timer += "'";
+            if(seconds < 10) timer += "0";
+            timer += seconds;
             tvTimer.setText(timer);
 
             if(event.has("score")){

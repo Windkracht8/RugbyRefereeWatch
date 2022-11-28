@@ -196,7 +196,7 @@ public class TabReport extends LinearLayout{
                         llEvents.addView(new ReportEvent(context, event, period_count, period_time));
                         break;
                     case 1:
-                        llEvents.addView(new ReportEventFull(context, event, match, period_count));
+                        llEvents.addView(new ReportEventFull(context, event, match, period_count, period_time));
                         break;
                     case 2:
                         llEvents.addView(new ReportEventEdit(context, event));
