@@ -290,7 +290,6 @@ public class TabReport extends LinearLayout{
                 Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
                 intent.putExtra("intent_type", "updateMatch");
                 intent.putExtra("match", match.toString());
-                Log.i(MainActivity.RRW_LOG_TAG, "fixed report: "+match.toString());
                 getContext().sendBroadcast(intent);
             }
         }catch(Exception e){
