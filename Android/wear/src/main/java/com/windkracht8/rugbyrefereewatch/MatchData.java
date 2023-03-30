@@ -169,7 +169,7 @@ public class MatchData{
         public String score;
         public event(String what, long id, String team, int who, String score){
             this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
-            this.time = MainActivity.prettyTime(id);
+            this.time = MainActivity.prettyTime(this.id);
             this.timer = (MainActivity.timer_timer + ((long)(MainActivity.timer_period-1)*MainActivity.match.period_time*60000));
             this.period = MainActivity.timer_period;
             this.what = what;
