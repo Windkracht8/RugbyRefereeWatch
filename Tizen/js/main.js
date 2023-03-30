@@ -605,7 +605,7 @@ function showCorrect(){
 		}
 
 		item = '<div onclick="removeEvent(\'' + index + '\')">';
-		item += value.timer;
+		item += prettyTimer(value.timer);
 		item += ' ' + value.what;
 		if(value.team){
 			item += ' ' + getTeamName(value.team);
@@ -892,7 +892,7 @@ function logEvent(what, team, who){
 	var currenttimer = timer.timer + ((timer.period-1)*timer.period_time*60000);
 	var temp = '{"id":' + id +
 				',"time":"' + $('#time').html() + '"' +
-				',"timer":"' + prettyTimer(currenttimer) + '"' +
+				',"timer":"' + currenttimer + '"' +
 				',"what":"' + what + '"';
 	if(team !== null){
 		temp +=	',"team":"' + team.id + '"';
@@ -915,7 +915,7 @@ function showReport(){
 		){
 			return;
 		}
-		html += value.timer;
+		html += prettyTimer(value.timer);
 		html += " " + value.what;
 		if(value.team){
 			html += " " + getTeamName(value.team);
