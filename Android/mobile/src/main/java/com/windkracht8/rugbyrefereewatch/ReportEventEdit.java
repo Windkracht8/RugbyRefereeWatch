@@ -28,13 +28,7 @@ public class ReportEventEdit extends LinearLayout{
 
         try{
             TextView timer = findViewById(R.id.timer);
-            int temp = (int) (event.getLong("timer") / 1000);
-            int seconds = (temp % 60);
-            int minutes = (temp - seconds) / 60;
-            String sTimer = minutes + ":";
-            if(seconds < 10) sTimer += "0";
-            sTimer += seconds;
-            timer.setText(sTimer);
+            timer.setText(timerStampToString(event.getLong("timer")));
 
             switch(event.getString("what")){
                 case "TRY":
@@ -150,5 +144,14 @@ public class ReportEventEdit extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_save_match, Toast.LENGTH_SHORT).show();
         }
         return event;
+    }
+    public static String timerStampToString(long timer){
+        int temp = (int) (timer / 1000);
+        int seconds = (temp % 60);
+        int minutes = (temp - seconds) / 60;
+        String sTimer = minutes + ":";
+        if(seconds < 10) sTimer += "0";
+        sTimer += seconds;
+        return sTimer;
     }
 }

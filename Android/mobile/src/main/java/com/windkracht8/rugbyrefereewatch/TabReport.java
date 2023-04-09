@@ -579,12 +579,23 @@ public class TabReport extends LinearLayout{
             shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            int period_count = match.getInt("period_count");
+            int period_count;
+            if(match.has("period_count")){//Deprecated
+                period_count = match.getInt("period_count");
+            }else{
+                JSONObject settings = match.getJSONObject("settings");
+                period_count = settings.getInt("period_count");
+            }
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
                 shareBody.append(event.getString("time"));
-                shareBody.append("    ").append(event.getString("timer"));
+                Object aObj = event.get("timer");
+                if(aObj instanceof String){
+                    shareBody.append("    ").append(event.getString("timer"));//Deprecated
+                }else{
+                    shareBody.append("    ").append(ReportEventEdit.timerStampToString(event.getLong("timer")));
+                }
                 if(event.has("score")){
                     shareBody.append("    ").append(event.getString("score"));
                 }

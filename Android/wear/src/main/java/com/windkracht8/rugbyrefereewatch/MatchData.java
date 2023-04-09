@@ -164,9 +164,9 @@ public class MatchData{
         public final long timer;
         public final String what;
         public final int period;
-        public String team;
-        public int who;
-        public String score;
+        public final String team;
+        public final int who;
+        public final String score;
         public event(String what, long id, String team, int who, String score){
             this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
             this.time = MainActivity.prettyTime(this.id);
