@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK"/>
     <uses-permission android:name="com.samsung.WATCH_APP_TYPE.Companion"/>
     <queries>
-        <package android:name="com.samsung.accessory" />
-        <package android:name="com.google.android.wearable.app" />
+        <package android:name="com.samsung.accessory"/>
+        <package android:name="com.google.android.wearable.app"/>
     </queries>
     <application
         android:allowBackup="true"
@@ -19,21 +19,22 @@
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="file" android:mimeType="application/json" android:host="*" />
-                <data android:scheme="content" android:mimeType="application/json" />
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="application/json"/>
             </intent-filter>
         </activity>
-        <service android:name="com.samsung.android.sdk.accessory.SAService" />
-        <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" />
-        <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver" />
-        <meta-data android:name="AccessoryServicesLocation" android:value="/res/xml/accessoryservices.xml" />
-        <meta-data android:name="GearAppType" android:value="wgt" />
+        <service android:name="com.samsung.android.sdk.accessory.SAService"/>
+        <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver"/>
+        <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver"/>
+        <meta-data android:name="AccessoryServicesLocation" android:value="/res/xml/accessoryservices.xml"/>
+        <meta-data android:name="GearAppType" android:value="wgt"/>
     </application>
 </manifest>

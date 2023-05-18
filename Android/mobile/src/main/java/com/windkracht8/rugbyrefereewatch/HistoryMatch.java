@@ -105,7 +105,7 @@ public class HistoryMatch extends LinearLayout{
             unselect();
         }else{
             final TypedValue value = new TypedValue();
-            getContext().getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+            getContext().getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
             tvName.setBackgroundColor(value.data);
             tvName.setTextColor(getContext().getColor(R.color.background));
             is_selected = true;
