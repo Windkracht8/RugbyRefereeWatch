@@ -66,6 +66,7 @@ public class MainActivity extends FragmentActivity{
     public static int heightPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
+    public static int vh25 = 0;
 
     private static String timer_status = "conf";
     public static long timer_timer = 0;
@@ -107,21 +108,19 @@ public class MainActivity extends FragmentActivity{
         executorService = Executors.newFixedThreadPool(4);
         setContentView(R.layout.activity_main);
 
-        int[] ids = new int[]{R.id.main,R.id.tTimer,R.id.bOverTimer,R.id.conf,
-                R.id.conf_label,R.id.color_home_text,R.id.color_home,R.id.color_away_text,
-                R.id.color_away,R.id.match_type_text,R.id.period_time_text,R.id.period_time,
-                R.id.period_count_text,R.id.period_count,R.id.sinbin_text,R.id.sinbin,
-                R.id.points_try_text,R.id.points_try,R.id.points_con_text,R.id.points_con,
-                R.id.points_goal_text,R.id.points_goal,R.id.screen_on_text,R.id.screen_on,
-                R.id.timer_type_text,R.id.timer_type,R.id.record_player_text,R.id.record_player,
-                R.id.record_pens_text,R.id.record_pens,R.id.bHelp_text,R.id.bHelp,R.id.confWatch,
-                R.id.conf_watch_label,R.id.timer_type_cw_text,R.id.timer_type_cw,
-                R.id.record_player_cw_text,R.id.record_player_cw,R.id.record_pens_cw_text,
-                R.id.record_pens_cw,R.id.screen_on_cw_text,R.id.screen_on_cw,R.id.correct,
-                R.id.llCorrect,R.id.score_player,R.id.score_try,R.id.score_con,R.id.score_goal,
-                R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,
-                R.id.card_red};
+        // We need to listen for touch on all objects that have a click listener
+        int[] ids = new int[]{R.id.main,R.id.bConfWatch,R.id.score_home,R.id.score_away,
+                R.id.tTimer,R.id.bPenHome,R.id.bPenAway,
+                R.id.bOverTimer,R.id.bBottom,R.id.bConf,R.id.button_background,R.id.extraTime,
+                R.id.svConf,R.id.llConfWatch,
+                R.id.score, R.id.score_player,R.id.score_try,R.id.score_con,R.id.score_goal,
+                R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,R.id.card_red,
+                R.id.report,
+                R.id.correct,R.id.svCorrect,
+                R.id.svHelp
+                };
         for(int id : ids){findViewById(id).setOnTouchListener(this::onTouch);}
+        findViewById(R.id.main).setOnClickListener(v -> onMainClick());
 
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
@@ -139,10 +138,10 @@ public class MainActivity extends FragmentActivity{
         bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
         bConf = findViewById(R.id.bConf);
-        bConf.setOnClickListener(v -> conf.show());
+        bConf.setOnClickListener(v -> conf.show(this));
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
-        bConfWatch.setOnClickListener(v -> confWatch.show());
+        bConfWatch.setOnClickListener(v -> confWatch.show(this));
         extraTime = findViewById(R.id.extraTime);
         extraTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -166,7 +165,6 @@ public class MainActivity extends FragmentActivity{
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
         help = findViewById(R.id.help);
-        findViewById(R.id.bHelp).setOnClickListener(v -> showHelp());
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
@@ -175,7 +173,7 @@ public class MainActivity extends FragmentActivity{
         //Resize elements for the heightPixels
         int vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
-        int vh25 = (int) (heightPixels * .25);
+        vh25 = (int) (heightPixels * .25);
         int vh30 = (int) (heightPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
@@ -213,7 +211,8 @@ public class MainActivity extends FragmentActivity{
                             case 0:
                                 help.showWelcome();
                             default:
-                                help.setVisibility(View.VISIBLE);
+                                help.show();
+                                conf.setVisibility(View.GONE);
                                 executorService.submit(() -> FileStore.file_storeSettings(context));
                         }
                         break;
@@ -248,11 +247,11 @@ public class MainActivity extends FragmentActivity{
         if(back_time > getCurrentTimestamp() - 500){return;}
         back_time = getCurrentTimestamp();
         if(conf.getVisibility() == View.VISIBLE){
-            conf.onBackPressed();
+            conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(confWatch.getVisibility() == View.VISIBLE){
-            confWatch.onBackPressed();
+            confWatch.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
         }else if(score.getVisibility() == View.VISIBLE){
@@ -269,33 +268,47 @@ public class MainActivity extends FragmentActivity{
             if(timer_status.equals("conf") || timer_status.equals("finished")){
                 System.exit(0);
             }else{
-                correctShow();
+                correct.show(this, match);
             }
         }
     }
-
-    private boolean onTouch(View v, MotionEvent event){
+    public void addOnTouch(View v){
+        v.setOnTouchListener(this::onTouch);
+    }
+    public void onMainClick(){
+        //We need to do this to make sure that we can listen for onTouch on main
+        Log.i(RRW_LOG_TAG, "onMainClick");
+    }
+    private boolean onTouch(View ignoredV, MotionEvent event){
         switch(event.getAction()){
+            case MotionEvent.ACTION_MOVE:
+                if(startY == 0) {
+                    startY = event.getY();
+                    startX = event.getX();
+                }
+                break;
             case MotionEvent.ACTION_DOWN:
                 startY = event.getY();
                 startX = event.getX();
                 break;
             case MotionEvent.ACTION_CANCEL:
+                startY = 0;
+                break;
             case MotionEvent.ACTION_UP:
                 float diffY = (event.getY() - startY) * event.getYPrecision();
                 float diffX = (event.getX() - startX) * event.getXPrecision();
+                startY = 0;
                 if(Math.abs(diffX) > Math.abs(diffY)){
                     float velocity = (Math.abs(diffX) / (event.getEventTime() - event.getDownTime())) * 1000;
                     if(Math.abs(diffX) > SWIPE_THRESHOLD && velocity > SWIPE_VELOCITY_THRESHOLD){
                         if(diffX > 0){
                             onBackPressed();
+                            return true;
                         }
-                        return true;
                     }
                 }
-                return v.performClick();
         }
-        return true;
+        return false;
     }
 
     public void timerClick(){
@@ -340,7 +353,7 @@ public class MainActivity extends FragmentActivity{
                 timer_type = match.timer_type;
                 break;
             case "finished":
-                showReport();
+                report.show(match);
                 break;
             default://ignore
                 return;
@@ -623,8 +636,7 @@ public class MainActivity extends FragmentActivity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(getBaseContext(), null);
-                sb.load(sinbin_data, getColor(team.color));
+                Sinbin sb = new Sinbin(getBaseContext(), null, this, sinbin_data, getColor(team.color));
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }
@@ -753,10 +765,6 @@ public class MainActivity extends FragmentActivity{
         score.clear();
     }
 
-    public void correctShow(){
-        correct.load(match);
-        correct.setVisibility(View.VISIBLE);
-    }
     public void correctClicked(){
         updateScore();
         updateSinbins();
@@ -814,14 +822,6 @@ public class MainActivity extends FragmentActivity{
             }
         }
         return null;
-    }
-    public void showReport(){
-        report.load(match);
-        report.setVisibility(View.VISIBLE);
-    }
-    public void showHelp(){
-        help.setVisibility(View.VISIBLE);
-        conf.setVisibility(View.GONE);
     }
     public static boolean incomingSettings(Context context, JSONObject settings_new){
         if(!timer_status.equals("conf")) return false;

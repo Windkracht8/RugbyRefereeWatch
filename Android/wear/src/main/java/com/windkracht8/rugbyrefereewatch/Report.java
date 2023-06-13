@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -20,10 +21,10 @@ public class Report extends ScrollView{
         findViewById(R.id.llReport).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
-    public void load(MatchData match){
-        LinearLayout list = findViewById(R.id.list);
-        for(int i = list.getChildCount(); i > 0; i--){
-            list.removeViewAt(i-1);
+    public void show(MatchData match){
+        LinearLayout reportList = findViewById(R.id.reportList);
+        for(int i = reportList.getChildCount(); i > 0; i--){
+            reportList.removeViewAt(i-1);
         }
         for(MatchData.event event : match.events){
             if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){
@@ -54,7 +55,9 @@ public class Report extends ScrollView{
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh7);
-            list.addView(tv);
+            reportList.addView(tv);
         }
+        this.setVisibility(View.VISIBLE);
+        findViewById(R.id.svReport).requestFocus();
     }
 }

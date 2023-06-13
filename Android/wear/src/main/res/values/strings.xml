@@ -9,7 +9,7 @@
     <string name="tTimer_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
 
-    <string name="splash_image_desc">splash image</string>
+    <string name="splash_image_desc" translatable="false">splash image</string>
 
     <!-- main screen -->
     <string name="bConfWatch_desc">Watch configuration</string>
@@ -65,36 +65,28 @@
     <!-- conf screen -->
     <string name="conf_title">Config</string>
     <string name="home">home</string>
-    <string name="color_home_desc">Color home select</string>
+    <string name="color_home">Color home</string>
     <string name="away">away</string>
-    <string name="color_away_desc">Color away select</string>
-    <string name="match_type_text">match type</string>
-    <string name="match_type_desc">Match type selection</string>
-    <string name="period_time_text">time/period</string>
-    <string name="period_time_desc">Timer per period selection</string>
-    <string name="period_count_text">period count</string>
-    <string name="period_count_desc">Period count selection</string>
-    <string name="sinbin_text">sinbin</string>
-    <string name="sinbin_desc">Sinbin time selection</string>
-    <string name="points_try_text">points try</string>
-    <string name="points_try_desc">Points try selection</string>
-    <string name="points_con_text">points conversion</string>
-    <string name="points_con_desc">Points conversion selection</string>
-    <string name="points_goal_text">points goal</string>
-    <string name="points_goal_desc">Points goal selection</string>
-    <string name="screen_on_text">Screen on</string>
-    <string name="screen_on_desc">Screen on selection</string>
-    <string name="timer_type_text">Timer type</string>
+    <string name="color_away">Color away</string>
+    <string name="match_type">Match type</string>
+    <string name="period_time">Time/period</string>
+    <string name="period_count">Period count</string>
+    <string name="sinbin">Sinbin</string>
+    <string name="points_try">Points try</string>
+    <string name="points_con">Points conversion</string>
+    <string name="points_goal">Points goal</string>
+    <string name="screen_on">Screen on</string>
+    <string name="timer_type">Timer type</string>
     <string name="timer_type_down">Count down</string>
     <string name="timer_type_up">Count up</string>
-    <string name="record_player_text">Record player</string>
-    <string name="record_player_desc">Record player selection</string>
-    <string name="record_pens_text">Record penalties</string>
-    <string name="record_pens_desc">Record penalties selection</string>
+    <string name="record_player">Record player</string>
+    <string name="record_pens">Record penalties</string>
     <string name="help">help</string>
-    <string name="bHelp">show help</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
 
     <string-array name="matchTypes">
+        <item> </item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
@@ -104,6 +96,7 @@
     </string-array>
 
     <string-array name="teamColors">
+        <item> </item>
         <item>black</item>
         <item>blue</item>
         <item>brown</item>
@@ -153,7 +146,6 @@
 
     <!-- fail -->
     <string name="fail_show_conf">Failed to show conf screen</string>
-    <string name="fail_store_match_type">Failed to store match type</string>
     <string name="fail_sync_match_types">Failed to sync match types</string>
     <string name="fail_read_match_types">Failed to read match types from storage</string>
     <string name="fail_load_match_type">Failed to load match type</string>

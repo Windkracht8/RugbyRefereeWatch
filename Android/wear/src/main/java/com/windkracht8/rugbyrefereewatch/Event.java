@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 public class Event extends androidx.appcompat.widget.AppCompatTextView{
     public MatchData.event event;
     public Event(Context context){
@@ -22,5 +24,6 @@ public class Event extends androidx.appcompat.widget.AppCompatTextView{
         this.setText(item);
         this.setGravity(Gravity.CENTER);
         this.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
+        this.setBackground(AppCompatResources.getDrawable(context, R.drawable.menu_item_bg));
     }
 }

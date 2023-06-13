@@ -1,5 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
+@SuppressLint("VisibleForTests") //Needed because the android wearable library has incorrect VisibleForTesting
 public class Communication extends WearableListenerService{
     public static long lastSyncRequest = 0;
     public Communication(){}

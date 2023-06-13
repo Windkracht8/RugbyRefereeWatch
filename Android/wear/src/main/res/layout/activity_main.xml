@@ -18,39 +18,31 @@
         android:contentDescription="@string/bConfWatch_desc"
         android:scaleType="centerInside"
         android:src="@drawable/gear2" />
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_top"
+    <TextView
+        android:id="@+id/battery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/battery_placeholder"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-        <TextView
-            android:id="@+id/battery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:text="@string/battery_placeholder"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/battery"
-            android:layout_marginTop="-6dp"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:text="@string/time_placeholder"
-            android:textStyle="bold"
-            android:textSize="27sp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintTop_toBottomOf="@+id/battery"
+        android:layout_marginTop="-6dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/time_placeholder"
+        android:textStyle="bold"
+        android:textSize="27sp" />
     <LinearLayout
         android:id="@+id/home_away"
         android:layout_width="match_parent"
@@ -59,7 +51,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_top"
+        app:layout_constraintTop_toBottomOf="@+id/time"
         android:baselineAligned="false" >
         <RelativeLayout
             android:layout_width="wrap_content"

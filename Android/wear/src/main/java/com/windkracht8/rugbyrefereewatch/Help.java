@@ -3,6 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -16,5 +17,9 @@ public class Help extends ScrollView{
     }
     public void showWelcome(){
         findViewById(R.id.welcome).setVisibility(VISIBLE);
+    }
+    public void show(){
+        this.setVisibility(View.VISIBLE);
+        findViewById(R.id.svHelp).requestFocus();
     }
 }

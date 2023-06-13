@@ -10,23 +10,24 @@ import android.widget.Toast;
 
 public class Sinbin extends LinearLayout{
     public MatchData.sinbin sinbin;
-
     private TextView timer;
-
-    public Sinbin(Context context, AttributeSet attrs){
+    public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
+    public Sinbin(Context context, AttributeSet attrs, MainActivity ma, MatchData.sinbin sinbin, int col){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.sinbin, this, true);
+        this.sinbin = sinbin;
 
         timer = findViewById(R.id.timer);
         timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, MainActivity.vh10);
-    }
-    public void load(MatchData.sinbin sinbin, int col){
-        this.sinbin = sinbin;
+        ma.addOnTouch(this);
+        ma.addOnTouch(timer);
+
         this.setBackgroundColor(col);
         update();
     }
+
     public void update(){
         long remaining = sinbin.end - MainActivity.timer_timer;
         if(remaining < -((long)MainActivity.match.sinbin / 2 * 60000)){
