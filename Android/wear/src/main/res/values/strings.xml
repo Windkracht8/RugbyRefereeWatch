@@ -17,6 +17,8 @@
     <string name="kick">KICK</string>
     <string name="bOverTimer_text">start</string>
     <string name="bBottom_text">conf</string>
+    <string name="score_home_desc">home score</string>
+    <string name="score_away_desc">away score</string>
     <string name="bConf_desc">configuration</string>
     <string name="start">start</string>
     <string name="end">end</string>
@@ -64,6 +66,7 @@
 
     <!-- conf screen -->
     <string name="conf_title">Config</string>
+    <string name="menuItemValue_desc">menu item value</string>
     <string name="home">home</string>
     <string name="color_home">Color home</string>
     <string name="away">away</string>

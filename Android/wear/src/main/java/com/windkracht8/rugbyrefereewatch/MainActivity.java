@@ -64,6 +64,7 @@ public class MainActivity extends FragmentActivity{
 
     public static MatchData match;
     public static int heightPixels = 0;
+    public static int widthPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
     public static int vh25 = 0;
@@ -86,10 +87,13 @@ public class MainActivity extends FragmentActivity{
     private static BroadcastReceiver rrwReceiver;
 
     private static long back_time = 0;
-    private static float startY = 0;
+    private static float startY = -1;
     private static float startX = 0;
+    public static long draggingEnded;
+    private boolean topViewHasMoved = false;
     private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 1000;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 200;
+    private View topView;
 
     @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
     @Override
@@ -97,10 +101,12 @@ public class MainActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
+            widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
         }else{
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
+            widthPixels = displayMetrics.widthPixels;
         }
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
@@ -282,33 +288,81 @@ public class MainActivity extends FragmentActivity{
     private boolean onTouch(View ignoredV, MotionEvent event){
         switch(event.getAction()){
             case MotionEvent.ACTION_MOVE:
-                if(startY == 0) {
-                    startY = event.getY();
-                    startX = event.getX();
+                if(startY == -1){
+                    startY = event.getRawY();
+                    startX = event.getRawX();
+                    setTopView();
+                    topViewHasMoved = false;
+                }
+                int diffX1 = getBackSwipeDiffX(event);
+                if(getBackSwipeVelocity(event, diffX1) < SWIPE_VELOCITY_THRESHOLD){
+                    if(topView != null) topView.animate()
+                            .x(0)
+                            .scaleX(1f).scaleY(1f)
+                            .setDuration(300).start();
+                }else if(diffX1 > 0){
+                    Log.i(RRW_LOG_TAG, "ACTION_MOVE: " + (event.getRawX() - startX));
+                    if(topView != null) {
+                        topViewHasMoved = true;
+                        float move = event.getRawX() - startX;
+                        float scale = 1 - move/widthPixels;
+                        topView.animate().x(move)
+                                .scaleX(scale).scaleY(scale)
+                                .setDuration(0).start();
+                        draggingEnded = getCurrentTimestamp();
+                    }
                 }
                 break;
             case MotionEvent.ACTION_DOWN:
-                startY = event.getY();
-                startX = event.getX();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                startY = 0;
+                startY = event.getRawY();
+                startX = event.getRawX();
+                setTopView();
+                topViewHasMoved = false;
                 break;
             case MotionEvent.ACTION_UP:
-                float diffY = (event.getY() - startY) * event.getYPrecision();
-                float diffX = (event.getX() - startX) * event.getXPrecision();
-                startY = 0;
-                if(Math.abs(diffX) > Math.abs(diffY)){
-                    float velocity = (Math.abs(diffX) / (event.getEventTime() - event.getDownTime())) * 1000;
-                    if(Math.abs(diffX) > SWIPE_THRESHOLD && velocity > SWIPE_VELOCITY_THRESHOLD){
-                        if(diffX > 0){
-                            onBackPressed();
-                            return true;
-                        }
-                    }
+                int diffX2 = getBackSwipeDiffX(event);
+                if(diffX2 > SWIPE_THRESHOLD && getBackSwipeVelocity(event, diffX2) > SWIPE_VELOCITY_THRESHOLD){
+                    onBackPressed();
+                    draggingEnded = getCurrentTimestamp();
+                    return true;
                 }
+            case MotionEvent.ACTION_CANCEL:
+                if(topViewHasMoved && topView != null) topView.animate()
+                        .x(0)
+                        .scaleX(1f).scaleY(1f)
+                        .setDuration(150).start();
+                startY = -1;
+                topViewHasMoved = false;
         }
         return false;
+    }
+    private int getBackSwipeDiffX(MotionEvent event){
+        float diffY = event.getRawY() - startY;
+        float diffX = event.getRawX() - startX;
+        if(diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) return Math.round(diffX);
+        return -1;
+    }
+    private float getBackSwipeVelocity(MotionEvent event, float diffX){
+        return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
+    }
+    private void setTopView(){
+        if(conf.getVisibility() == View.VISIBLE){
+            topView = conf;
+        }else if(confWatch.getVisibility() == View.VISIBLE){
+            topView = confWatch;
+        }else if(score.getVisibility() == View.VISIBLE){
+            topView = score;
+        }else if(foulPlay.getVisibility() == View.VISIBLE){
+            topView = foulPlay;
+        }else if(correct.getVisibility() == View.VISIBLE){
+            topView = correct;
+        }else if(report.getVisibility() == View.VISIBLE){
+            topView = report;
+        }else if(help.getVisibility() == View.VISIBLE){
+            topView = help;
+        }else{
+            topView = null;
+        }
     }
 
     public void timerClick(){
@@ -682,6 +736,7 @@ public class MainActivity extends FragmentActivity{
             score_away.setText("0");
         }else{
             score.load(match.home);
+            score.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -698,10 +753,12 @@ public class MainActivity extends FragmentActivity{
             score_home.setText("0");
         }else{
             score.load(match.away);
+            score.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
             score.setVisibility(View.VISIBLE);
         }
     }
     public void tryClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.tries++;
         updateScore();
         score.setVisibility(View.GONE);
@@ -709,6 +766,7 @@ public class MainActivity extends FragmentActivity{
         match.logEvent("TRY", score.team.id, score.player_no, 0, null);
     }
     public void conversionClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.cons++;
         updateScore();
         score.setVisibility(View.GONE);
@@ -716,6 +774,7 @@ public class MainActivity extends FragmentActivity{
         match.logEvent("CONVERSION", score.team.id, score.player_no, 0, null);
     }
     public void goalClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.goals++;
         updateScore();
         score.setVisibility(View.GONE);
@@ -738,11 +797,13 @@ public class MainActivity extends FragmentActivity{
         bPenAway.setText(String.valueOf(match.away.pens));
     }
     public void foulPlayClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         foulPlay.setPlayer(score.player_no);
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
     public void card_yellowClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         long time = getCurrentTimestamp();
         match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time, null);
         long end = timer_timer + ((long)match.sinbin*60000);
@@ -753,6 +814,7 @@ public class MainActivity extends FragmentActivity{
         score.clear();
     }
     public void penalty_tryClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.pen_tries++;
         updateScore();
         foulPlay.setVisibility(View.GONE);
@@ -760,6 +822,7 @@ public class MainActivity extends FragmentActivity{
         match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0, null);
     }
     public void card_redClick(){
+        if(draggingEnded+100 > getCurrentTimestamp()) return;
         match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0, null);
         foulPlay.setVisibility(View.GONE);
         score.clear();

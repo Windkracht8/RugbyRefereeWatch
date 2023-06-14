@@ -114,8 +114,7 @@ public class MenuItem extends ConstraintLayout{
         }
         menuItemName.setText(name);
         this.setOnClickListener(v -> click());
-        menuItemName.setOnClickListener(v -> click());
-        menuItemValue.setOnClickListener(v -> click());
+        menuItemValue.setContentDescription(context.getString(R.string.menuItemValue_desc) + type);
     }
     private ArrayAdapter<String> getAA(String[] a){
         ArrayAdapter<String> aa = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, a);
@@ -268,7 +267,6 @@ public class MenuItem extends ConstraintLayout{
                 MainActivity.match.match_type = translator.getMatchTypeSystem(getContext(), position, value);
                 switch(position){
                     case 0://15s
-                        Log.i(MainActivity.RRW_LOG_TAG, "15s");
                         MainActivity.match.period_time = 40;
                         MainActivity.match.period_count = 2;
                         MainActivity.match.sinbin = 10;
@@ -277,7 +275,6 @@ public class MenuItem extends ConstraintLayout{
                         MainActivity.match.points_goal = 3;
                         break;
                     case 1://10s
-                        Log.i(MainActivity.RRW_LOG_TAG, "10s");
                         MainActivity.match.period_time = 10;
                         MainActivity.match.period_count = 2;
                         MainActivity.match.sinbin = 2;

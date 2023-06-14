@@ -65,7 +65,8 @@
                 android:gravity="center"
                 android:text="@string/_0"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:description="@string/score_home_desc" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -79,7 +80,8 @@
                 android:gravity="center"
                 android:text="@string/_0"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:description="@string/score_away_desc" />
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout

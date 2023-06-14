@@ -41,8 +41,10 @@ public class Correct extends ScrollView{
         }
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);
+        this.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
     }
     public void eventClicked(View v){
+        if(MainActivity.draggingEnded+100 > MainActivity.getCurrentTimestamp()) return;
         Event event_ui = (Event) v;
         match.removeEvent(event_ui.event);
         this.setVisibility(View.GONE);
