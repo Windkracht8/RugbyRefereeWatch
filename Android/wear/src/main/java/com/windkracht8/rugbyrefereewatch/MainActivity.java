@@ -91,8 +91,8 @@ public class MainActivity extends FragmentActivity{
     private static float startX = 0;
     public static long draggingEnded;
     private boolean topViewHasMoved = false;
-    private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+    private static int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 50;
     private View topView;
 
     @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
@@ -107,6 +107,7 @@ public class MainActivity extends FragmentActivity{
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
             widthPixels = displayMetrics.widthPixels;
+            SWIPE_THRESHOLD = (int) (widthPixels *.3);
         }
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
@@ -242,6 +243,15 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
         updateAfterConfig();
         handler_main.postDelayed(this::hideSplash, 1000);
+        if(!getBaseContext().getResources().getConfiguration().isScreenRound()){
+            conf.setBackgroundColor(getColor(R.color.black));
+            confWatch.setBackgroundColor(getColor(R.color.black));
+            score.setBackgroundColor(getColor(R.color.black));
+            foulPlay.setBackgroundColor(getColor(R.color.black));
+            report.setBackgroundColor(getColor(R.color.black));
+            correct.setBackgroundColor(getColor(R.color.black));
+            help.setBackgroundColor(getColor(R.color.black));
+        }
     }
     @Override
     protected void onDestroy(){
@@ -301,7 +311,6 @@ public class MainActivity extends FragmentActivity{
                             .scaleX(1f).scaleY(1f)
                             .setDuration(300).start();
                 }else if(diffX1 > 0){
-                    Log.i(RRW_LOG_TAG, "ACTION_MOVE: " + (event.getRawX() - startX));
                     if(topView != null) {
                         topViewHasMoved = true;
                         float move = event.getRawX() - startX;
@@ -320,19 +329,22 @@ public class MainActivity extends FragmentActivity{
                 topViewHasMoved = false;
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
                 int diffX2 = getBackSwipeDiffX(event);
-                if(diffX2 > SWIPE_THRESHOLD && getBackSwipeVelocity(event, diffX2) > SWIPE_VELOCITY_THRESHOLD){
-                    onBackPressed();
+                float velocity = getBackSwipeVelocity(event, diffX2);
+                if(topViewHasMoved && topView != null){
+                    topView.animate()
+                            .x(0)
+                            .scaleX(1f).scaleY(1f)
+                            .setDuration(150).start();
+                    startY = -1;
+                    topViewHasMoved = false;
+                }
+                if(diffX2 > SWIPE_THRESHOLD && velocity > SWIPE_VELOCITY_THRESHOLD){
                     draggingEnded = getCurrentTimestamp();
+                    onBackPressed();
                     return true;
                 }
-            case MotionEvent.ACTION_CANCEL:
-                if(topViewHasMoved && topView != null) topView.animate()
-                        .x(0)
-                        .scaleX(1f).scaleY(1f)
-                        .setDuration(150).start();
-                startY = -1;
-                topViewHasMoved = false;
         }
         return false;
     }
