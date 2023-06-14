@@ -92,7 +92,7 @@ public class MainActivity extends FragmentActivity{
     public static long draggingEnded;
     private boolean topViewHasMoved = false;
     private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 200;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
     private View topView;
 
     @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
@@ -123,7 +123,7 @@ public class MainActivity extends FragmentActivity{
                 R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,R.id.card_red,
                 R.id.report,
                 R.id.correct,R.id.svCorrect,
-                R.id.svHelp
+                R.id.svHelp, R.id.llHelp
                 };
         for(int id : ids){findViewById(id).setOnTouchListener(this::onTouch);}
         findViewById(R.id.main).setOnClickListener(v -> onMainClick());
