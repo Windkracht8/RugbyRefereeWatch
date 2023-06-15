@@ -176,6 +176,16 @@ public class MainActivity extends FragmentActivity{
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
+        if(getBaseContext().getResources().getConfiguration().isScreenRound()){
+            conf.setBackgroundResource(R.drawable.round_bg);
+            confWatch.setBackgroundResource(R.drawable.round_bg);
+            score.setBackgroundResource(R.drawable.round_bg);
+            foulPlay.setBackgroundResource(R.drawable.round_bg);
+            report.setBackgroundResource(R.drawable.round_bg);
+            correct.setBackgroundResource(R.drawable.round_bg);
+            help.setBackgroundResource(R.drawable.round_bg);
+        }
+
         //Resize elements for the heightPixels
         int vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
@@ -242,15 +252,6 @@ public class MainActivity extends FragmentActivity{
         updateButtons();
         updateAfterConfig();
         handler_main.postDelayed(this::hideSplash, 1000);
-        if(!getBaseContext().getResources().getConfiguration().isScreenRound()){
-            conf.setBackgroundColor(getColor(R.color.black));
-            confWatch.setBackgroundColor(getColor(R.color.black));
-            score.setBackgroundColor(getColor(R.color.black));
-            foulPlay.setBackgroundColor(getColor(R.color.black));
-            report.setBackgroundColor(getColor(R.color.black));
-            correct.setBackgroundColor(getColor(R.color.black));
-            help.setBackgroundColor(getColor(R.color.black));
-        }
     }
     @Override
     protected void onDestroy(){
