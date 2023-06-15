@@ -87,8 +87,8 @@ public class MainActivity extends FragmentActivity{
     private static BroadcastReceiver rrwReceiver;
 
     private static long back_time = 0;
-    private static float startY = -1;
-    private static float startX = 0;
+    private static float onTouchStartY = -1;
+    private static float onTouchStartX = 0;
     public static long draggingEnded;
     private View touchView;
     private static int SWIPE_THRESHOLD = 100;
@@ -300,7 +300,7 @@ public class MainActivity extends FragmentActivity{
                 onTouchInit(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(startY == -1) onTouchInit(event);
+                if(onTouchStartY == -1) onTouchInit(event);
                 if(touchView == null) return false;
 
                 int diffX1 = getBackSwipeDiffX(event);
@@ -310,7 +310,7 @@ public class MainActivity extends FragmentActivity{
                             .scaleX(1f).scaleY(1f)
                             .setDuration(300).start();
                 }else if(diffX1 > 0){
-                    float move = event.getRawX() - startX;
+                    float move = event.getRawX() - onTouchStartX;
                     float scale = 1 - move/widthPixels;
                     touchView.animate().x(move)
                             .scaleX(scale).scaleY(scale)
@@ -319,15 +319,15 @@ public class MainActivity extends FragmentActivity{
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                int diffX2 = getBackSwipeDiffX(event);
-                float velocity2 = getBackSwipeVelocity(event, diffX2);
                 if(touchView != null){
                     touchView.animate()
                             .x(0)
                             .scaleX(1f).scaleY(1f)
                             .setDuration(150).start();
-                    startY = -1;
                 }
+                int diffX2 = getBackSwipeDiffX(event);
+                float velocity2 = getBackSwipeVelocity(event, diffX2);
+                onTouchStartY = -1;
                 if(diffX2 > SWIPE_THRESHOLD && velocity2 > SWIPE_VELOCITY_THRESHOLD){
                     draggingEnded = getCurrentTimestamp();
                     onBackPressed();
@@ -337,13 +337,13 @@ public class MainActivity extends FragmentActivity{
         return false;
     }
     private void onTouchInit(MotionEvent event){
-        startY = event.getRawY();
-        startX = event.getRawX();
+        onTouchStartY = event.getRawY();
+        onTouchStartX = event.getRawX();
         setTouchView();
     }
     private int getBackSwipeDiffX(MotionEvent event){
-        float diffY = event.getRawY() - startY;
-        float diffX = event.getRawX() - startX;
+        float diffY = event.getRawY() - onTouchStartY;
+        float diffX = event.getRawX() - onTouchStartX;
         if(diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) return Math.round(diffX);
         return -1;
     }
