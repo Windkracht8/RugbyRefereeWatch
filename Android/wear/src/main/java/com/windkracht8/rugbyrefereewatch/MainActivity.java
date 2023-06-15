@@ -90,10 +90,9 @@ public class MainActivity extends FragmentActivity{
     private static float startY = -1;
     private static float startX = 0;
     public static long draggingEnded;
-    private boolean topViewHasMoved = false;
+    private View touchView;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
-    private View topView;
 
     @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
     @Override
@@ -297,56 +296,50 @@ public class MainActivity extends FragmentActivity{
     }
     private boolean onTouch(View ignoredV, MotionEvent event){
         switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                onTouchInit(event);
+                break;
             case MotionEvent.ACTION_MOVE:
-                if(startY == -1){
-                    startY = event.getRawY();
-                    startX = event.getRawX();
-                    setTopView();
-                    topViewHasMoved = false;
-                }
+                if(startY == -1) onTouchInit(event);
+                if(touchView == null) return false;
+
                 int diffX1 = getBackSwipeDiffX(event);
                 if(getBackSwipeVelocity(event, diffX1) < SWIPE_VELOCITY_THRESHOLD){
-                    if(topView != null) topView.animate()
+                    touchView.animate()
                             .x(0)
                             .scaleX(1f).scaleY(1f)
                             .setDuration(300).start();
                 }else if(diffX1 > 0){
-                    if(topView != null) {
-                        topViewHasMoved = true;
-                        float move = event.getRawX() - startX;
-                        float scale = 1 - move/widthPixels;
-                        topView.animate().x(move)
-                                .scaleX(scale).scaleY(scale)
-                                .setDuration(0).start();
-                        draggingEnded = getCurrentTimestamp();
-                    }
+                    float move = event.getRawX() - startX;
+                    float scale = 1 - move/widthPixels;
+                    touchView.animate().x(move)
+                            .scaleX(scale).scaleY(scale)
+                            .setDuration(0).start();
                 }
-                break;
-            case MotionEvent.ACTION_DOWN:
-                startY = event.getRawY();
-                startX = event.getRawX();
-                setTopView();
-                topViewHasMoved = false;
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 int diffX2 = getBackSwipeDiffX(event);
-                float velocity = getBackSwipeVelocity(event, diffX2);
-                if(topViewHasMoved && topView != null){
-                    topView.animate()
+                float velocity2 = getBackSwipeVelocity(event, diffX2);
+                if(touchView != null){
+                    touchView.animate()
                             .x(0)
                             .scaleX(1f).scaleY(1f)
                             .setDuration(150).start();
                     startY = -1;
-                    topViewHasMoved = false;
                 }
-                if(diffX2 > SWIPE_THRESHOLD && velocity > SWIPE_VELOCITY_THRESHOLD){
+                if(diffX2 > SWIPE_THRESHOLD && velocity2 > SWIPE_VELOCITY_THRESHOLD){
                     draggingEnded = getCurrentTimestamp();
                     onBackPressed();
                     return true;
                 }
         }
         return false;
+    }
+    private void onTouchInit(MotionEvent event){
+        startY = event.getRawY();
+        startX = event.getRawX();
+        setTouchView();
     }
     private int getBackSwipeDiffX(MotionEvent event){
         float diffY = event.getRawY() - startY;
@@ -357,23 +350,23 @@ public class MainActivity extends FragmentActivity{
     private float getBackSwipeVelocity(MotionEvent event, float diffX){
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
-    private void setTopView(){
+    private void setTouchView(){
         if(conf.getVisibility() == View.VISIBLE){
-            topView = conf;
+            touchView = conf;
         }else if(confWatch.getVisibility() == View.VISIBLE){
-            topView = confWatch;
+            touchView = confWatch;
         }else if(score.getVisibility() == View.VISIBLE){
-            topView = score;
+            touchView = score;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
-            topView = foulPlay;
+            touchView = foulPlay;
         }else if(correct.getVisibility() == View.VISIBLE){
-            topView = correct;
+            touchView = correct;
         }else if(report.getVisibility() == View.VISIBLE){
-            topView = report;
+            touchView = report;
         }else if(help.getVisibility() == View.VISIBLE){
-            topView = help;
+            touchView = help;
         }else{
-            topView = null;
+            touchView = null;
         }
     }
 
