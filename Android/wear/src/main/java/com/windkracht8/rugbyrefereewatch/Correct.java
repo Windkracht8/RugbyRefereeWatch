@@ -10,6 +10,13 @@ import android.widget.Toast;
 
 public class Correct extends ScrollView{
     private MatchData match;
+    private LinearLayout correctList;
+
+    private boolean itemHeightInit = false;
+    private int itemHeight = 200;
+    private int topBottomMargin = 0;
+    private float scalePerPixel = 0;
+
     public Correct(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -18,7 +25,7 @@ public class Correct extends ScrollView{
     }
     public void show(MainActivity ma, MatchData match){
         this.match = match;
-        LinearLayout correctList = findViewById(R.id.correctList);
+        correctList = findViewById(R.id.correctList);
         for(int i = correctList.getChildCount(); i > 0; i--){
             correctList.removeViewAt(i-1);
         }
@@ -42,6 +49,43 @@ public class Correct extends ScrollView{
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);
         this.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
+        findViewById(R.id.svCorrect).requestFocus();
+        this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if(!MainActivity.isScreenRound || itemHeightInit) return;
+            if(correctList.getChildCount() == 0) return;
+            itemHeightInit = true;
+            itemHeight = correctList.getChildAt(0).getHeight();
+            topBottomMargin = (MainActivity.heightPixels - itemHeight) / 3;
+            scalePerPixel = .5f / (topBottomMargin + itemHeight);
+            onScroll(0);
+            this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
+        });
+    }
+    private void onScroll(int scrollY){
+        float top;
+        float bottom;
+        float scale;
+        for(int i=0; i<correctList.getChildCount(); i++){
+            View item = correctList.getChildAt(i);
+            top = correctList.getY() + item.getY() - scrollY;
+            bottom = top + itemHeight;
+            scale = 1f;
+            if(bottom < 0){
+                //the item is above the screen
+                scale = .5f;
+            }else if(top < topBottomMargin){
+                //the item is in the top quarter
+                scale = .5f + (scalePerPixel * bottom);
+            }else if(top > MainActivity.heightPixels){
+                //the item is below the screen
+                scale = .5f;
+            }else if(bottom > MainActivity.heightPixels - topBottomMargin){
+                //the item is in the bottom quarter
+                scale = .5f + (scalePerPixel * (MainActivity.heightPixels - top));
+            }
+            item.setScaleX(scale);
+            item.setScaleY(scale);
+        }
     }
     public void eventClicked(View v){
         if(MainActivity.draggingEnded+100 > MainActivity.getCurrentTimestamp()) return;
