@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends FragmentActivity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
+    public static boolean isScreenRound;
     private TextView battery;
     private TextView time;
     private TextView score_home;
@@ -48,6 +49,8 @@ public class MainActivity extends FragmentActivity{
     private LinearLayout sinbins_away;
     private TextView tTimer;
     private Button bOverTimer;
+    private Button bStart;
+    private ImageButton bMatchLog;
     private Button bPenHome;
     private Button bPenAway;
     private Button bBottom;
@@ -60,6 +63,7 @@ public class MainActivity extends FragmentActivity{
     private FoulPlay foulPlay;
     private Correct correct;
     private Report report;
+    private MatchLog matchLog;
     private Help help;
 
     public static MatchData match;
@@ -80,7 +84,7 @@ public class MainActivity extends FragmentActivity{
     public static int timer_type = 1;//0:up, 1:down
     public static boolean record_player = false;
     public static boolean record_pens = false;
-    public final static int help_version = 2;
+    public final static int help_version = 3;
 
     private Handler handler_main;
     private ExecutorService executorService;
@@ -117,10 +121,12 @@ public class MainActivity extends FragmentActivity{
         // We need to listen for touch on all objects that have a click listener
         int[] ids = new int[]{R.id.main,R.id.bConfWatch,R.id.score_home,R.id.score_away,
                 R.id.tTimer,R.id.bPenHome,R.id.bPenAway,
-                R.id.bOverTimer,R.id.bBottom,R.id.bConf,R.id.button_background,R.id.extraTime,
+                R.id.bOverTimer,R.id.bStart,R.id.bMatchLog,R.id.bBottom,R.id.bConf,
+                R.id.button_background,R.id.extraTime,
                 R.id.svConf,R.id.llConfWatch,
                 R.id.score, R.id.score_player,R.id.score_try,R.id.score_con,R.id.score_goal,
                 R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,R.id.card_red,
+                R.id.matchLog, R.id.svMatchLog,
                 R.id.report,
                 R.id.correct,R.id.svCorrect,
                 R.id.svHelp, R.id.llHelp
@@ -140,6 +146,8 @@ public class MainActivity extends FragmentActivity{
         tTimer.setOnClickListener(v -> timerClick());
         bOverTimer = findViewById(R.id.bOverTimer);
         bOverTimer.setOnClickListener(v -> bOverTimerClick());
+        bStart = findViewById(R.id.bStart);
+        bStart.setOnClickListener(v -> bOverTimerClick());
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
@@ -170,23 +178,29 @@ public class MainActivity extends FragmentActivity{
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
+        matchLog = findViewById(R.id.matchLog);
+        bMatchLog = findViewById(R.id.bMatchLog);
+        bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
-        if(getBaseContext().getResources().getConfiguration().isScreenRound()){
+        isScreenRound = getBaseContext().getResources().getConfiguration().isScreenRound();
+        if(isScreenRound){
             conf.setBackgroundResource(R.drawable.round_bg);
             confWatch.setBackgroundResource(R.drawable.round_bg);
             score.setBackgroundResource(R.drawable.round_bg);
             foulPlay.setBackgroundResource(R.drawable.round_bg);
             report.setBackgroundResource(R.drawable.round_bg);
             correct.setBackgroundResource(R.drawable.round_bg);
+            matchLog.setBackgroundResource(R.drawable.round_bg);
             help.setBackgroundResource(R.drawable.round_bg);
         }
 
         //Resize elements for the heightPixels
+        int vh5 = (int) (heightPixels * .05);
         int vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
@@ -203,6 +217,14 @@ public class MainActivity extends FragmentActivity{
         bBottom.setMinimumHeight(vh25);
         bConf.getLayoutParams().height = vh20;
         bConfWatch.getLayoutParams().height = vh20;
+        bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        bStart.getLayoutParams().height = tTimer.getLayoutParams().height;
+        bStart.getLayoutParams().width = heightPixels-vh30;
+        bMatchLog.setPadding(0, vh5, vh5, vh5);
+        bMatchLog.getLayoutParams().height = vh20;
+        bMatchLog.getLayoutParams().width = vh30;
+
+        findViewById(R.id.iHelpNew).getLayoutParams().height = vh15;
 
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
@@ -276,6 +298,8 @@ public class MainActivity extends FragmentActivity{
             foulPlay.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            matchLog.setVisibility(View.GONE);
         }else if(report.getVisibility() == View.VISIBLE){
             report.setVisibility(View.GONE);
         }else if(help.getVisibility() == View.VISIBLE){
@@ -484,8 +508,9 @@ public class MainActivity extends FragmentActivity{
         switch(timer_status){
             case "conf":
                 bConfWatch.setVisibility(View.GONE);
-                bOverTimer.setText(R.string.start);
-                bOverTimer.setVisibility(View.VISIBLE);
+                bOverTimer.setVisibility(View.GONE);
+                bStart.setVisibility(View.VISIBLE);
+                bMatchLog.setVisibility(View.VISIBLE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
@@ -506,6 +531,8 @@ public class MainActivity extends FragmentActivity{
                 }
                 bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
+                bStart.setVisibility(View.GONE);
+                bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
                 findViewById(R.id.button_background).setVisibility(View.VISIBLE);
@@ -514,6 +541,8 @@ public class MainActivity extends FragmentActivity{
                 bConfWatch.setVisibility(View.VISIBLE);
                 bOverTimer.setText(R.string.resume);
                 bOverTimer.setVisibility(View.VISIBLE);
+                bStart.setVisibility(View.GONE);
+                bMatchLog.setVisibility(View.GONE);
 
                 bBottomText = getBaseContext().getString(R.string.end) + " ";
                 if(match.period_count == 2 && timer_period == 1){
@@ -546,6 +575,8 @@ public class MainActivity extends FragmentActivity{
                 }
                 bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
+                bStart.setVisibility(View.GONE);
+                bMatchLog.setVisibility(View.GONE);
                 bBottom.setText(R.string.finish);
                 bBottom.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
@@ -555,6 +586,8 @@ public class MainActivity extends FragmentActivity{
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setText(R.string.report);
                 bOverTimer.setVisibility(View.VISIBLE);
+                bStart.setVisibility(View.GONE);
+                bMatchLog.setVisibility(View.GONE);
                 bBottom.setText(R.string.clear);
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
@@ -564,6 +597,8 @@ public class MainActivity extends FragmentActivity{
             default:
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setVisibility(View.GONE);
+                bStart.setVisibility(View.GONE);
+                bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);

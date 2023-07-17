@@ -20,6 +20,7 @@ public class Conf extends ScrollView{
     private boolean isInitialized = false;
     private int menuItemHeight = 112;
     private boolean menuItemHeightInit = false;
+    private float scalePerPixel = 0f;
 
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -28,7 +29,6 @@ public class Conf extends ScrollView{
         inflater.inflate(R.layout.conf, this, true);
 
         customMatchTypes = new JSONArray();
-        this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleMenuItems(scrollY));
     }
     public void show(MainActivity ma){
         if(isInitialized){
@@ -48,9 +48,18 @@ public class Conf extends ScrollView{
         findViewById(R.id.conf_label).getLayoutParams().height = MainActivity.vh25;
         ((LayoutParams)llConf.getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + MainActivity.vh25;
 
+        this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if(!MainActivity.isScreenRound || menuItemHeightInit) return;
+            menuItemHeightInit = true;
+            menuItemHeight = menuItems.get(0).getHeight();
+            scalePerPixel = .5f / (MainActivity.vh25 + menuItemHeight);
+            menuItems.get(MenuItem.MenuItemType.values().length-1).setHeight(menuItemHeight/4);
+            scaleMenuItems(0);
+            this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleMenuItems(scrollY));
+        });
+
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);
-        scaleMenuItems(0);
     }
     public static void updateValues(){
         for(MenuItem menuItem : menuItems){
@@ -58,24 +67,14 @@ public class Conf extends ScrollView{
         }
     }
     private void scaleMenuItems(int scrollY){
-        if(!menuItemHeightInit && menuItems.get(0).getHeight() > 0){
-            menuItemHeightInit = true;
-            menuItemHeight = menuItems.get(0).getHeight();
-            menuItems.get(MenuItem.MenuItemType.values().length-1).setHeight(menuItemHeight/4);
-        }
-        float scalePerPixel = 0.5f / (MainActivity.vh25 + menuItemHeight);
         float top;
         float bottom;
         float scale;
         for(int i=0; i<menuItems.size(); i++){
             MenuItem menuItem = menuItems.get(i);
-            scale = 1f;
-            if(menuItemHeightInit){
-                top = menuItem.getY() - scrollY;
-            }else{
-                top = (i+1) * menuItemHeight - scrollY;
-            }
+            top = menuItem.getY() - scrollY;
             bottom = top + menuItemHeight;
+            scale = 1f;
             if(bottom < 0){
                 //the item is above the screen
                 scale = .5f;

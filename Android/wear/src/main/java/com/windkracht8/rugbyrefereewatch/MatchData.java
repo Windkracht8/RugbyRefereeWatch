@@ -13,8 +13,8 @@ import java.util.ArrayList;
 public class MatchData{
     public long match_id;
     public final ArrayList<event> events = new ArrayList<>();
-    public final team home;
-    public final team away;
+    public team home;
+    public team away;
     public String match_type = "15s";
     public int period_time = 40;
     public int period_count = 2;
@@ -27,6 +27,21 @@ public class MatchData{
     public MatchData(){
         home = new team("home", "home", "green");
         away = new team("away", "away", "red");
+    }
+    public MatchData(Context context, JSONObject match_json){
+        try{
+            match_id = match_json.getLong("matchid");
+            home = new team(context, match_json.getJSONObject("home"));
+            away = new team(context, match_json.getJSONObject("away"));
+            JSONArray events_json = match_json.getJSONArray("events");
+            for(int i = 0; i < events_json.length(); i++){
+                events.add(new event(context, events_json.getJSONObject(i)));
+            }
+        }catch(JSONException e){
+            Log.e(MainActivity.RRW_LOG_TAG, "MatchData.MatchData Exception: " + e.getMessage());
+            Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+            match_id = 0;
+        }
     }
     public JSONObject toJson(Context context){
         JSONObject ret = new JSONObject();
@@ -110,7 +125,7 @@ public class MatchData{
         Log.i(MainActivity.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
     }
     public static class team{
-        public final String id;
+        public String id;
         public String team;
         public String color;
         public int tot = 0;
@@ -125,6 +140,23 @@ public class MatchData{
             this.id = id;
             this.team = team;
             this.color = color;
+        }
+        public team(Context context, JSONObject team_js){
+            try{
+                id = team_js.getString("id");
+                team = team_js.getString("team");
+                color = team_js.getString("color");
+                tot = team_js.getInt("tot");
+                tries = team_js.getInt("tries");
+                cons = team_js.getInt("cons");
+                pen_tries = team_js.getInt("pen_tries");
+                goals = team_js.getInt("goals");
+                pens = team_js.getInt("pens");
+                kickoff = team_js.getBoolean("kickoff");
+            }catch(JSONException e){
+                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.team Exception: " + e.getMessage());
+                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+            }
         }
         public void addSinbin(long id, long end){
             sinbin sb = new sinbin(id, end);
@@ -159,14 +191,14 @@ public class MatchData{
         }
     }
     public static class event{
-        public final long id;
-        public final String time;
-        public final long timer;
-        public final String what;
-        public final int period;
-        public final String team;
-        public final int who;
-        public final String score;
+        public long id;
+        public String time;
+        public long timer;
+        public String what;
+        public int period;
+        public String team;
+        public int who;
+        public String score;
         public event(String what, long id, String team, int who, String score){
             this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
             this.time = MainActivity.prettyTime(this.id);
@@ -176,6 +208,21 @@ public class MatchData{
             this.team = team;
             this.who = who;
             this.score = score;
+        }
+        public event(Context context, JSONObject event_json){
+            try{
+                id = event_json.getLong("id");
+                time = event_json.getString("time");
+                timer = event_json.getLong("timer");
+                what = event_json.getString("what");
+                period = event_json.getInt("period");
+                if(event_json.has("team")) team = event_json.getString("team");
+                if(event_json.has("who")) who = event_json.getInt("who");
+                if(event_json.has("score")) score = event_json.getString("score");
+            }catch(JSONException e){
+                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event Exception: " + e.getMessage());
+                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+            }
         }
         public JSONObject toJson(Context context){
             JSONObject evt = new JSONObject();

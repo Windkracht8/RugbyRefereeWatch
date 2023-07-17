@@ -210,12 +210,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight=".5"
+        android:visibility="gone"
         android:gravity="top|center"
         android:text="@string/bOverTimer_text"
         android:textAllCaps="false"
         android:textColor="@color/w8blue"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+    <Button
+        android:id="@+id/bStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-7dp"
+        android:layout_weight=".5"
+        android:gravity="top|center"
+        android:text="@string/bOverTimer_text"
+        android:textAllCaps="false"
+        android:textColor="@color/w8blue"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bMatchLog"
+        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+    <ImageButton
+        android:id="@+id/bMatchLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight=".5"
+        android:src="@drawable/list"
+        android:scaleType="centerInside"
+        android:gravity="bottom"
+        android:background="#0000"
+        android:contentDescription="@string/bMatchLog_desc"
+        app:layout_constraintStart_toEndOf="@+id/bStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
     <Button
@@ -285,6 +313,16 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.FoulPlay
         android:id="@+id/foulPlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <com.windkracht8.rugbyrefereewatch.MatchLog
+        android:id="@+id/matchLog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

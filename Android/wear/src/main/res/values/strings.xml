@@ -16,6 +16,7 @@
     <string name="_0_kick">0 KICK</string>
     <string name="kick">KICK</string>
     <string name="bOverTimer_text">start</string>
+    <string name="bMatchLog_desc">match log</string>
     <string name="bBottom_text">conf</string>
     <string name="score_home_desc">home score</string>
     <string name="score_away_desc">away score</string>
@@ -60,6 +61,9 @@
     <string name="report_title">Report</string>
     <string name="Start">Start</string>
     <string name="Result">Result</string>
+
+    <!-- match log screen -->
+    <string name="match_log_title">Log</string>
 
     <!-- correct screen -->
     <string name="correct_title">Tap to remove</string>
@@ -135,7 +139,9 @@
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
     <string name="help_news_title">New stuff</string>
-    <string name="help_news">Do you want to record penalties? You can enable that in the settings. Looking for penalty kick? Check under foul play.</string>
+    <string name="help_news">Noticed this icon? It opens a list of all of your completed matches.</string>
+    <string name="help_pk_title">Penalty kick</string>
+    <string name="help_pk">Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
     <string name="help_corrections">During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.</string>
     <string name="help_kickoff_title">Kick off</string>
@@ -166,6 +172,7 @@
     <string name="fail_show_help">Failed to show help</string>
     <string name="fail_read_match">Failed to read match</string>
     <string name="fail_show_report">Failed to show report</string>
+    <string name="fail_show_log">Failed to show log</string>
     <string name="fail_show_score">Failed to show score screen</string>
     <string name="fail_show_sinbin">Failed to show sinbins</string>
 
