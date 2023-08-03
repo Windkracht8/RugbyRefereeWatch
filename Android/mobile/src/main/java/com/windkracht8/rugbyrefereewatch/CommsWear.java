@@ -36,14 +36,8 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         dataClient = Wearable.getDataClient(context);
         dataClient.addListener(this);
         if(handler_main == null) handler_main = new Handler(Looper.getMainLooper());
-        status = "SEARCHING";
+        updateStatus("SEARCHING");
         checkIfConnected(context, 10000);
-
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "updateStatus");
-        intent.putExtra("source", "wear");
-        intent.putExtra("status_new", status);
-        context.sendBroadcast(intent);
     }
     public void search(Context context){
         handler_main.removeCallbacksAndMessages(null);
@@ -52,12 +46,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
     }
     private void searchTimeout(Context context){
         handler_main.removeCallbacksAndMessages(null);
-        status = "OFFLINE";
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "updateStatus");
-        intent.putExtra("source", "wear");
-        intent.putExtra("status_new", status);
-        context.sendBroadcast(intent);
+        updateStatus("OFFLINE");
         handler_main.postDelayed(() -> checkIfConnected(context, 10000), 10000);
     }
     public void checkIfConnected(Context context, int timeout){
@@ -69,13 +58,8 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
             if(task.isSuccessful()){
                 for(Node node : task.getResult()){
                     if(node.isNearby()){
-                        if(!status.equals("CONNECTED")) {
-                            status = "CONNECTED";
-                            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                            intent.putExtra("intent_type", "updateStatus");
-                            intent.putExtra("source", "wear");
-                            intent.putExtra("status_new", status);
-                            context.sendBroadcast(intent);
+                        if(!status.equals("CONNECTED")){
+                            updateStatus("CONNECTED");
                         }
                         handler_main.postDelayed(() -> checkIfConnected(context, 10000), 10000);
                         return;
@@ -83,12 +67,7 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
                 }
             }
             if(!status.equals("OFFLINE")) {
-                status = "OFFLINE";
-                Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                intent.putExtra("intent_type", "updateStatus");
-                intent.putExtra("source", "wear");
-                intent.putExtra("status_new", status);
-                context.sendBroadcast(intent);
+                updateStatus("OFFLINE");
             }
             handler_main.postDelayed(() -> checkIfConnected(context, timeout), timeout);
         });
@@ -144,5 +123,13 @@ public class CommsWear extends WearableListenerService implements DataClient.OnD
         intent.putExtra("requestType", requestType);
         intent.putExtra("responseData", responseData);
         dataClient.getApplicationContext().sendBroadcast(intent);
+    }
+    private void updateStatus(final String status_new){
+        this.status = status_new;
+        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
+        intent.putExtra("intent_type", "updateStatus");
+        intent.putExtra("source", "tizen");
+        intent.putExtra("status_new", status_new);
+        getApplicationContext().sendBroadcast(intent);
     }
 }

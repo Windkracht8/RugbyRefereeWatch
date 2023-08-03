@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class osAdapter extends BaseAdapter{
+public class commsTypeAdapter extends BaseAdapter{
     final private Context context;
-    final private int[] icons = {R.drawable.os_tizen, R.drawable.os_wear};
-    final private int[] names = {R.string.os_tizen, R.string.os_wear};
+    final private int[] icons = {R.drawable.comms_type_tizen, R.drawable.comms_type_tizen, R.drawable.comms_type_wear};
+    final private int[] names = {R.string.comms_type_bt, R.string.comms_type_tizen, R.string.comms_type_wear};
     private static int dp48 = 48;
 
-    public osAdapter(Context context){
+    public commsTypeAdapter(Context context){
         this.context = context;
         this.context.setTheme(R.style.rrw);
         Resources r = context.getResources();

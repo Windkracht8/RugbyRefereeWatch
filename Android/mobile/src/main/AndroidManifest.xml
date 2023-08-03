@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="com.samsung.accessory.permission.ACCESSORY_FRAMEWORK"/>
     <uses-permission android:name="com.samsung.WATCH_APP_TYPE.Companion"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <queries>
         <package android:name="com.samsung.accessory"/>
         <package android:name="com.google.android.wearable.app"/>

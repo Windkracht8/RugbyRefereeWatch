@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">RugbyRefereeWatch</string>
-    <string name="os_wear" translatable="false">WearOS</string>
-    <string name="os_tizen" translatable="false">Tizen</string>
+    <string name="comms_type_bt" translatable="false">Bluetooth</string>
+    <string name="comms_type_tizen" translatable="false">Tizen</string>
+    <string name="comms_type_wear" translatable="false">WearOS</string>
 
     <!-- filenames -->
     <string name="matches_filename" translatable="false">matches.json</string>
@@ -23,7 +24,7 @@
 
     <!-- main ui -->
     <string name="ivIcon_desc">icon</string>
-    <string name="sOS_desc">Watch OS selection</string>
+    <string name="sCommsType_desc">Watch OS selection</string>
     <string name="bConnect_text">Connect</string>
     <string name="bSearch_text">Search</string>
     <string name="history">History</string>

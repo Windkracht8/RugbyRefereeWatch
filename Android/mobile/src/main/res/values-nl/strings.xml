@@ -1,7 +1,7 @@
 <resources>
     <!-- main ui -->
     <string name="ivIcon_desc">icoon</string>
-    <string name="sOS_desc">Horloge OS selectie</string>
+    <string name="sCommsType_desc">Horloge OS selectie</string>
     <string name="bConnect_text">Verbinden</string>
     <string name="bSearch_text">Zoeken</string>
     <string name="history">Geschiedenis</string>

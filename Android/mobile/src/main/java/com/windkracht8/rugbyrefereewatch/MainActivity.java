@@ -4,7 +4,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String TIZEN_PACKAGE_NAME = "com.samsung.accessory";
     private static final String WEAR_PACKAGE_NAME = "com.google.android.wearable.app";
     private GestureDetector gestureDetector;
+    private CommsBT comms_bt = null;
     private CommsTizen comms_tizen = null;
     private CommsWear comms_wear = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
@@ -59,7 +62,10 @@ public class MainActivity extends AppCompatActivity{
     private long back_press_time;
     private BroadcastReceiver rrwReceiver;
     private Handler handler_main;
-    private boolean tizen_not_wear = true;
+    public static final int COMMS_TYPE_BT = 0;
+    public static final int COMMS_TYPE_TIZEN = 1;
+    public static final int COMMS_TYPE_WEAR = 2;
+    private int comms_type = COMMS_TYPE_BT;
     public static int widthPixels = 0;
 
     private TabHistory tabHistory;
@@ -89,36 +95,38 @@ public class MainActivity extends AppCompatActivity{
 
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
-        if(!sharedPreferences.contains("tizen_not_wear")){
-            tizen_not_wear = hasPackage(TIZEN_PACKAGE_NAME);
-            sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
+        if(!sharedPreferences.contains("comms_type")){
+            if(hasPackage(TIZEN_PACKAGE_NAME)){
+                comms_type = COMMS_TYPE_TIZEN;
+            }else if(hasPackage(WEAR_PACKAGE_NAME)){
+                comms_type = COMMS_TYPE_WEAR;
+            }
+            sharedPreferences_editor.putInt("comms_type", comms_type);
             sharedPreferences_editor.apply();
         }else{
-            tizen_not_wear = sharedPreferences.getBoolean("tizen_not_wear", true);
+            comms_type = sharedPreferences.getInt("comms_type", COMMS_TYPE_BT);
         }
         TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
         ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
         TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
         ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
 
-        Spinner sOS = findViewById(R.id.sOS);
-        osAdapter osa = new osAdapter(getApplicationContext());
+        Spinner sOS = findViewById(R.id.sCommsType);
+        commsTypeAdapter osa = new commsTypeAdapter(getApplicationContext());
         sOS.setAdapter(osa);
         sOS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-                switchOS(pos == 0);
+                switchCommsType(pos);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent){}
         });
-        if(tizen_not_wear){
-            sOS.setSelection(0);
-            initTizen();
-        }else{
-            sOS.setSelection(1);
-            initWear();
-        }
+        sOS.setSelection(comms_type);
+        if(comms_type == COMMS_TYPE_BT) initBT();
+        if(comms_type == COMMS_TYPE_TIZEN) initTizen();
+        if(comms_type == COMMS_TYPE_WEAR) initWear();
+
         TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
         ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
         TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
@@ -128,8 +136,8 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onReceive(Context context, Intent intent){
                 if(!intent.hasExtra("intent_type")){return;}
-                if(tizen_not_wear && intent.hasExtra("source") && intent.getStringExtra("source").equals("wear")){return;}
-                if(!tizen_not_wear && intent.hasExtra("source") && intent.getStringExtra("source").equals("tizen")){return;}
+                if(comms_type != COMMS_TYPE_TIZEN && intent.hasExtra("source") && intent.getStringExtra("source").equals("tizen")){return;}
+                if(comms_type != COMMS_TYPE_WEAR && intent.hasExtra("source") && intent.getStringExtra("source").equals("wear")){return;}
                 switch(intent.getStringExtra("intent_type")){
                     case "gotError":
                         if(!intent.hasExtra("error")){return;}
@@ -182,9 +190,8 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
     }
-    private void switchOS(boolean tizenNotWear){
-        if(this.tizen_not_wear == tizenNotWear) return;
-        this.tizen_not_wear = tizenNotWear;
+    private void switchCommsType(int comms_type_new){
+        if(this.comms_type == comms_type_new) return;
         findViewById(R.id.bConnect).setVisibility(View.GONE);
         findViewById(R.id.bGetMatches).setVisibility(View.GONE);
         findViewById(R.id.bGetMatch).setVisibility(View.GONE);
@@ -192,15 +199,42 @@ public class MainActivity extends AppCompatActivity{
         updateStatus("DISCONNECTED");
         findViewById(R.id.tvStatus).setVisibility(View.VISIBLE);
 
-        sharedPreferences_editor.putBoolean("tizen_not_wear", tizen_not_wear);
+        sharedPreferences_editor.putInt("comms_type", comms_type);
         sharedPreferences_editor.apply();
 
-        if(tizenNotWear){
-            destroyWear();
-            initTizen();
+        if(this.comms_type == COMMS_TYPE_BT) destroyBT();
+        if(this.comms_type == COMMS_TYPE_TIZEN) destroyTizen();
+        if(this.comms_type == COMMS_TYPE_WEAR) destroyWear();
+        if(comms_type_new == COMMS_TYPE_BT) initBT();
+        if(comms_type_new == COMMS_TYPE_TIZEN) initTizen();
+        if(comms_type_new == COMMS_TYPE_WEAR) initWear();
+
+        this.comms_type = comms_type_new;
+    }
+    private void initBT(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+        }
+        if(comms_bt == null){
+            comms_bt = new CommsBT(this);
+        }
+        comms_bt.startListening(getBaseContext());
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            initBT();
         }else{
-            destroyTizen();
-            initWear();
+            updateStatus("DENIED");
+            gotError("Permission denied");
+        }
+    }
+    private void destroyBT(){
+        if(comms_bt != null){
+            comms_bt.stopListening();
+            comms_bt = null;
         }
     }
     private void initTizen(){
@@ -379,7 +413,7 @@ public class MainActivity extends AppCompatActivity{
     private final SAAgentV2.RequestAgentCallback SAAgentCallback = new SAAgentV2.RequestAgentCallback(){
         @Override
         public void onAgentAvailable(SAAgentV2 agent){
-            if(!tizen_not_wear)return;
+            if(comms_type != COMMS_TYPE_TIZEN) return;
             comms_tizen = (CommsTizen) agent;
             findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
         }
@@ -442,18 +476,20 @@ public class MainActivity extends AppCompatActivity{
         sendRequest("prepare", requestData);
     }
     private void sendRequest(String requestType, JSONObject requestData){
-        if(tizen_not_wear){
-            comms_tizen.sendRequest(requestType, requestData);
-        }else{
-            CommsWear.sendRequest(this, requestType, requestData);
-        }
+        if(comms_type == COMMS_TYPE_BT) comms_bt.sendRequest(requestType, requestData);
+        if(comms_type == COMMS_TYPE_TIZEN) comms_tizen.sendRequest(requestType, requestData);
+        if(comms_type == COMMS_TYPE_WEAR) CommsWear.sendRequest(this, requestType, requestData);
     }
     private boolean cantSendRequest(){
-        if(tizen_not_wear && comms_tizen != null &&
+        if(comms_type == COMMS_TYPE_BT && comms_bt != null &&
+                comms_bt.status.equals("AVAILABLE")){
+            return false;
+        }
+        if(comms_type == COMMS_TYPE_TIZEN && comms_tizen != null &&
                 comms_tizen.status.equals("CONNECTED")){
             return false;
         }
-        if(!tizen_not_wear && comms_wear != null && (
+        if(comms_type == COMMS_TYPE_WEAR && comms_wear != null && (
                 comms_wear.status.equals("CONNECTED") ||
                 comms_wear.status.equals("OFFLINE")
         )){
@@ -490,6 +526,9 @@ public class MainActivity extends AppCompatActivity{
             case "DISCONNECTED":
                 status = getString(R.string.status_DISCONNECTED);
                 findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
+                break;
+            case "DENIED":
+                status = "Denied";
                 break;
             case "FINDING_PEERS":
                 status = getString(R.string.status_CONNECTING);
