@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity{
     }
     private boolean cantSendRequest(){
         if(comms_type == COMMS_TYPE_BT && comms_bt != null &&
-                comms_bt.status.equals("AVAILABLE")){
+                comms_bt.status.equals("CONNECTED")){
             return false;
         }
         if(comms_type == COMMS_TYPE_TIZEN && comms_tizen != null &&
