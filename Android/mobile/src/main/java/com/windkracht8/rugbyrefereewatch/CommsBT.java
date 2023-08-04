@@ -108,14 +108,13 @@ public class CommsBT {
 
     private class CommsBTConnect extends Thread{
         public CommsBTConnect(Context context){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect");
+            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect " + RRW_UUID);
             try{
                 if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
                     Log.i(MainActivity.RRW_LOG_TAG, "checkSelfPermission = no");
                     updateStatus(context, "DENIED");
                     return;
                 }
-                Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect 2");
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
                 Log.e(MainActivity.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
@@ -155,20 +154,22 @@ public class CommsBT {
        }
 
        public void run(){
-           Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.run");
-
-           while(listen){
-               try{
-                   send(getNextRequest());
-                   read();
-               }catch(Exception e){
-                   Log.i(MainActivity.RRW_LOG_TAG, "Input stream was disconnected", e);
-                   break;
-               }
-           }
+            listen = true;
+            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.run");
+            while(listen){
+                try{
+                    CommsBTConnectedSend("hello");
+                    //CommsBTConnectedSend(getNextRequest());
+                    CommsBTConnectedRead();
+                }catch(Exception e){
+                    Log.i(MainActivity.RRW_LOG_TAG, "Input stream was disconnected", e);
+                    break;
+                }
+            }
        }
 
-       private void read(){
+       private void CommsBTConnectedRead(){
+           Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnectedRead");
            byte[] buffer = new byte[1024];
            int numBytes = 1;
            while(listen && numBytes > 0){
@@ -181,7 +182,7 @@ public class CommsBT {
                }
            }
        }
-       private void send(String message_out){
+       private void CommsBTConnectedSend(String message_out){
            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.send: " + message_out);
            try{
                outputStream.write(message_out.getBytes());
