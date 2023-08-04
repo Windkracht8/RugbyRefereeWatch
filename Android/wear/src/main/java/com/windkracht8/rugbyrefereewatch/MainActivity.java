@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -98,7 +99,9 @@ public class MainActivity extends FragmentActivity{
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
-    @SuppressLint("MissingInflatedId")//nested layout XMLs are not found
+    @SuppressLint({"MissingInflatedId", "UnspecifiedRegisterReceiverFlag"})
+    //MissingInflatedId = nested layout XMLs are not found
+    //UnspecifiedRegisterReceiverFlag = registerReceiver has SDK_INT check, but still we get the warning
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -232,8 +235,8 @@ public class MainActivity extends FragmentActivity{
         rrwReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent){
-                if(!intent.hasExtra("intent_type")) return;
-                switch(intent.getStringExtra("intent_type")) {
+                String intent_type = Objects.requireNonNull(intent.getStringExtra("intent_type"));
+                switch(intent_type) {
                     case "hideSplash":
                         runOnUiThread(() -> hideSplash());
                         break;
@@ -263,7 +266,11 @@ public class MainActivity extends FragmentActivity{
                 }
             }
         };
-        registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"), RECEIVER_NOT_EXPORTED);
+        }else{
+            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
+        }
 
         executorService.submit(() -> FileStore.file_readSettings(getBaseContext()));
         executorService.submit(() -> FileStore.file_readCustomMatchTypes(getBaseContext()));

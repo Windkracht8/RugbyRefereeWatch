@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONObject;
@@ -131,7 +132,7 @@ public class MenuItem extends ConstraintLayout{
         ma.addOnTouch(menuItemValue);
     }
     @Override
-    protected void onVisibilityChanged(View changedView, int visibility){
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility){
         super.onVisibilityChanged(changedView, visibility);
         if(visibility == VISIBLE){
             updateValue();

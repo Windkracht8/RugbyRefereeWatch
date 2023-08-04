@@ -48,6 +48,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
@@ -72,7 +73,9 @@ public class MainActivity extends AppCompatActivity{
     private TabReport tabReport;
     private TabPrepare tabPrepare;
 
-    @SuppressLint("MissingInflatedId") //bGetMatches, bGetMatch, bPrepare are in separate layouts
+    @SuppressLint({"MissingInflatedId", "UnspecifiedRegisterReceiverFlag"})
+    //MissingInflatedId = bGetMatches, bGetMatch, bPrepare are in separate layouts
+    //UnspecifiedRegisterReceiverFlag = registerReceiver has SDK_INT check, but still we get the warning
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -135,31 +138,30 @@ public class MainActivity extends AppCompatActivity{
         rrwReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent){
-                if(!intent.hasExtra("intent_type")){return;}
-                if(comms_type != COMMS_TYPE_TIZEN && intent.hasExtra("source") && intent.getStringExtra("source").equals("tizen")){return;}
-                if(comms_type != COMMS_TYPE_WEAR && intent.hasExtra("source") && intent.getStringExtra("source").equals("wear")){return;}
-                switch(intent.getStringExtra("intent_type")){
+                String intent_type = Objects.requireNonNull(intent.getStringExtra("intent_type"));
+                switch(intent_type){
                     case "gotError":
-                        if(!intent.hasExtra("error")){return;}
-                        gotError(intent.getStringExtra("error"));
+                        String error = Objects.requireNonNull(intent.getStringExtra("error"));
+                        gotError(error);
                         break;
                     case "gotResponse":
-                        if(!intent.hasExtra("responseData") || !intent.hasExtra("requestType")){return;}
-                        gotResponse(intent.getStringExtra("requestType"), intent.getStringExtra("responseData"));
+                        String requestType = Objects.requireNonNull(intent.getStringExtra("requestType"));
+                        String responseData = Objects.requireNonNull(intent.getStringExtra("responseData"));
+                        gotResponse(requestType, responseData);
                     case "updateStatus":
-                        if(!intent.hasExtra("status_new")){return;}
-                        updateStatus(intent.getStringExtra("status_new"));
+                        String status_new = Objects.requireNonNull(intent.getStringExtra("status_new"));
+                        updateStatus(status_new);
                         break;
                     case "historyMatchClick":
-                        if(!intent.hasExtra("match")){return;}
+                        if(!intent.hasExtra("match")) return;
                         historyMatchClick(intent.getStringExtra("match"));
                         break;
                     case "bDelClick":
-                        if(!intent.hasExtra("event_id")){return;}
+                        if(!intent.hasExtra("event_id")) return;
                         tabReport.bDelClick(intent.getIntExtra("event_id", 0));
                         break;
                     case "updateMatch":
-                        if(!intent.hasExtra("match")){return;}
+                        if(!intent.hasExtra("match")) return;
                         tabHistory.updateMatch(intent.getStringExtra("match"));
                         break;
                     case "exportMatches":
@@ -168,7 +170,11 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         };
-        registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"), RECEIVER_NOT_EXPORTED);
+        }else{
+            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
+        }
 
         handleIntent();
         handler_main = new Handler(Looper.getMainLooper());
@@ -216,9 +222,7 @@ public class MainActivity extends AppCompatActivity{
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
         }
-        if(comms_bt == null){
-            comms_bt = new CommsBT(this);
-        }
+        if(comms_bt == null) comms_bt = new CommsBT(this);
         comms_bt.startListening(getBaseContext());
     }
     @Override
@@ -281,16 +285,17 @@ public class MainActivity extends AppCompatActivity{
     private void handleIntent(){
         Intent intent = getIntent();
         String action = intent.getAction();
-        if(action.compareTo(Intent.ACTION_VIEW) != 0) return;
+        if(action == null || action.compareTo(Intent.ACTION_VIEW) != 0) return;
 
         String scheme = intent.getScheme();
-        if(scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0){
+        if(scheme == null || scheme.compareTo(ContentResolver.SCHEME_CONTENT) != 0){
             Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.handleIntent Non supported scheme: " + scheme);
             return;
         }
         try{
             ContentResolver cr = getContentResolver();
-            InputStream is = cr.openInputStream(intent.getData());
+
+            InputStream is = cr.openInputStream(Objects.requireNonNull(intent.getData()));
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
 
@@ -372,9 +377,8 @@ public class MainActivity extends AppCompatActivity{
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
+        public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY){
             try{
-                if(e1 == null || e2 == null){return false;}
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
                 if(Math.abs(diffX) > Math.abs(diffY)){
@@ -530,6 +534,7 @@ public class MainActivity extends AppCompatActivity{
             case "DENIED":
                 status = "Denied";
                 break;
+            case "LISTENING":
             case "FINDING_PEERS":
                 status = getString(R.string.status_CONNECTING);
                 break;
@@ -719,6 +724,7 @@ public class MainActivity extends AppCompatActivity{
             Uri uri = data.getData();
             OutputStream outputStream;
             try{
+                assert uri != null;
                 outputStream = getContentResolver().openOutputStream(uri);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
                 bw.write(tabHistory.export_matches.toString());

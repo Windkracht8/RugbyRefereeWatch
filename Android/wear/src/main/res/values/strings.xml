@@ -175,5 +175,6 @@
     <string name="fail_show_log">Failed to show log</string>
     <string name="fail_show_score">Failed to show score screen</string>
     <string name="fail_show_sinbin">Failed to show sinbins</string>
+    <string name="iHelpNew_desc">Help new icon</string>
 
 </resources>
