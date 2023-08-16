@@ -60,15 +60,15 @@ public class CommsBT{
     }
 
     public void sendRequest(String requestType, JSONObject requestData){
-        Log.i(MainActivity.RRW_LOG_TAG, "CommsInet.sendRequest: " + requestType);
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsBT.sendRequest: " + requestType);
         try{
             JSONObject request = new JSONObject();
             request.put("requestType", requestType);
             request.put("requestData", requestData);
             requestQueue.put(request);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "CommsInet.sendRequest Exception: " + e);
-            Log.e(MainActivity.RRW_LOG_TAG, "CommsInet.sendRequest Exception: " + e.getMessage());
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsBT.sendRequest Exception: " + e);
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsBT.sendRequest Exception: " + e.getMessage());
         }
     }
 
@@ -80,6 +80,7 @@ public class CommsBT{
         context.sendBroadcast(intent);
     }
     private void updateStatus(Context context, final String status_new){
+        Log.i(MainActivity.RRW_LOG_TAG, "CommsBT.updateStatus: " + status_new);
         this.status = status_new;
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "updateStatus");
@@ -91,11 +92,9 @@ public class CommsBT{
     private class CommsBTConnect extends Thread{
         private final Context context;
         public CommsBTConnect(Context context){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect " + RRW_UUID);
             this.context = context;
             try{
                 if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-                    Log.i(MainActivity.RRW_LOG_TAG, "checkSelfPermission = no");
                     updateStatus(context, "DENIED");
                     return;
                 }
@@ -107,10 +106,8 @@ public class CommsBT{
             }
         }
         public void run(){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect.run");
             try{
                 bluetoothSocket = bluetoothServerSocket.accept();
-                Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnect.run accepted " + bluetoothSocket);
                 CommsBTConnected commsBTConnected = new CommsBTConnected(context);
                 commsBTConnected.start();
             }catch(Exception e){
@@ -125,7 +122,6 @@ public class CommsBT{
         private final Context context;
 
         public CommsBTConnected(Context context){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected");
             this.context = context;
             try{
                 inputStream = bluetoothSocket.getInputStream();
@@ -141,13 +137,10 @@ public class CommsBT{
 
         public void run(){
             listen = true;
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.run");
             updateStatus(context, "CONNECTED");
-
             process();
         }
         private void process(){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.process");
             if(requestQueue.length() > 0){
                 sendNextRequest();
                 for(int i=0; i<10; i++){
@@ -186,10 +179,8 @@ public class CommsBT{
             }
         }
         private boolean read(){
-            Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.read");
             try{
                 int available = inputStream.available();
-                Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.read: available: " + available);
                 if(available == 0) return false;
                 byte[] buffer = new byte[available];
                 int numBytes = inputStream.read(buffer);
@@ -198,7 +189,6 @@ public class CommsBT{
                     gotError(context, context.getString(R.string.fail_response));
                 }else{
                     String response = new String(buffer);
-                    Log.i(MainActivity.RRW_LOG_TAG, "CommsBTConnected.read: response " + response);
                     JSONObject responseMessage = new JSONObject(response);
                     gotResponse(responseMessage);
                 }
