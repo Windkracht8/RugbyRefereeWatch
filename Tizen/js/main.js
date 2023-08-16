@@ -83,7 +83,7 @@ window.onload = function(){
 	record_playerChanged();
 	record_pensChanged();
 
-	function onScreenStateChanged(previousState, newState) {
+	function onScreenStateChanged(previousState, newState){
 	    if(newState === 'SCREEN_NORMAL'){
 	    	requestScreen_on();
 	    }
