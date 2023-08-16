@@ -122,9 +122,6 @@ public class MainActivity extends AppCompatActivity{
             public void onNothingSelected(AdapterView<?> parent){}
         });
         sOS.setSelection(comms_type);
-        if(comms_type == COMMS_TYPE_BT) initBT();
-        if(comms_type == COMMS_TYPE_TIZEN) initTizen();
-        if(comms_type == COMMS_TYPE_WEAR) initWear();
 
         TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
         ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
@@ -144,6 +141,7 @@ public class MainActivity extends AppCompatActivity{
                         String requestType = Objects.requireNonNull(intent.getStringExtra("requestType"));
                         String responseData = Objects.requireNonNull(intent.getStringExtra("responseData"));
                         gotResponse(requestType, responseData);
+                        break;
                     case "updateStatus":
                         String status_new = Objects.requireNonNull(intent.getStringExtra("status_new"));
                         updateStatus(status_new);
@@ -179,6 +177,10 @@ public class MainActivity extends AppCompatActivity{
         findViewById(R.id.llMatches).setOnTouchListener(this::onTouchEventScrollViews);
         findViewById(R.id.scrollReport).setOnTouchListener(this::onTouchEventScrollViews);
         findViewById(R.id.scrollPrepare).setOnTouchListener(this::onTouchEventScrollViews);
+
+        if(comms_type == COMMS_TYPE_BT) initBT();
+        if(comms_type == COMMS_TYPE_TIZEN) initTizen();
+        if(comms_type == COMMS_TYPE_WEAR) initWear();
     }
     private boolean hasNotPackage(String packageName){
         try{
@@ -214,12 +216,16 @@ public class MainActivity extends AppCompatActivity{
         this.comms_type = comms_type_new;
     }
     private void initBT(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+            }
+            updateStatus("FATAL");
+            gotError(getString(R.string.fail_BT_denied));
+            return;
         }
         if(comms_bt == null) comms_bt = new CommsBT(this);
-        comms_bt.startListening(getBaseContext());
+        comms_bt.startListening(this);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -227,13 +233,13 @@ public class MainActivity extends AppCompatActivity{
         if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             initBT();
         }else{
-            updateStatus("DENIED");
-            gotError("Permission denied");
+            updateStatus("FATAL");
+            gotError(getString(R.string.fail_BT_denied));
         }
     }
     private void destroyBT(){
         if(comms_bt != null){
-            comms_bt.stopListening();
+            comms_bt.stopListening(this);
             comms_bt = null;
         }
     }
@@ -527,10 +533,9 @@ public class MainActivity extends AppCompatActivity{
                 status = getString(R.string.status_DISCONNECTED);
                 findViewById(R.id.bConnect).setVisibility(View.VISIBLE);
                 break;
-            case "DENIED":
-                status = "Denied";
-                break;
             case "LISTENING":
+                status = getString(R.string.status_LISTENING);
+                break;
             case "FINDING_PEERS":
                 status = getString(R.string.status_CONNECTING);
                 break;

@@ -174,6 +174,7 @@
     <string name="status_ERROR">error</string>
     <string name="status_CONNECTING">Connecting</string>
     <string name="status_SEARCHING">Searching</string>
+    <string name="status_LISTENING">Listening</string>
 
     <!-- fail -->
     <string name="fail_get_matches">Failed to request matches from watch</string>
@@ -214,5 +215,7 @@
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="noTizenLib">Click to install Tizen Service</string>
     <string name="noWearLib">Click to install Wear OS Service</string>
+    <string name="fail_BT_denied">Permission denied</string>
+    <string name="fail_BT_disabled">Bluetooth turned off</string>
 
 </resources>

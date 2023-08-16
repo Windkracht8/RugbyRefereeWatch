@@ -1,16 +1,15 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,14 +29,26 @@ public class CommsBT{
 
     public CommsBT(Context context){
         requestQueue = new JSONArray();
-        updateStatus(context, "DISCONNECTED");
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        context.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
+    BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
+        public void onReceive(Context context, Intent intent){
+            if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
+                int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                if(btState == BluetoothAdapter.STATE_TURNING_OFF){
+                    stopListening(context);
+                    gotError(context, context.getString(R.string.fail_BT_disabled));
+                }else if(btState == BluetoothAdapter.STATE_ON){
+                    startListening(context);
+                }
+            }
+        }
+    };
 
     public void startListening(Context context){
-        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-            updateStatus(context, "DENIED");
-            gotError(context, "Permission denied");
+        if(!bluetoothAdapter.isEnabled()){
+            gotError(context, context.getString(R.string.fail_BT_disabled));
             return;
         }
         CommsBTConnect commsBTConnect = new CommsBTConnect(context);
@@ -45,15 +56,20 @@ public class CommsBT{
         updateStatus(context, "LISTENING");
     }
 
-    public void stopListening(){
+    public void stopListening(Context context){
         listen = false;
         try{
-            bluetoothSocket.close();
+            context.unregisterReceiver(btStateReceiver);
+        }catch(Exception e){
+            Log.e(MainActivity.RRW_LOG_TAG, "CommsBT.stopListening unregisterReceiver: " + e.getMessage());
+        }
+        try{
+            if(bluetoothSocket != null) bluetoothSocket.close();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "CommsBT.stopListening bluetoothSocket: " + e.getMessage());
         }
         try{
-            bluetoothServerSocket.close();
+            if(bluetoothServerSocket != null) bluetoothServerSocket.close();
         }catch(Exception e){
             Log.e(MainActivity.RRW_LOG_TAG, "CommsBT.stopListening bluetoothServerSocket: " + e.getMessage());
         }
@@ -73,6 +89,7 @@ public class CommsBT{
     }
 
     private void gotError(Context context, final String error){
+		updateStatus(context, "FATAL");
         Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
         intent.putExtra("intent_type", "gotError");
         intent.putExtra("source", "BT");
@@ -91,17 +108,13 @@ public class CommsBT{
 
     private class CommsBTConnect extends Thread{
         private final Context context;
+        @SuppressLint("MissingPermission")//already checked in startListening
         public CommsBTConnect(Context context){
             this.context = context;
             try{
-                if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-                    updateStatus(context, "DENIED");
-                    return;
-                }
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
                 Log.e(MainActivity.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
-                updateStatus(context, "ERROR");
                 gotError(context, e.getMessage());
             }
         }
