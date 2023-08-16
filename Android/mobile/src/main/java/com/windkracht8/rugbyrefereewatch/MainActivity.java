@@ -99,11 +99,7 @@ public class MainActivity extends AppCompatActivity{
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
         if(!sharedPreferences.contains("comms_type")){
-            if(hasPackage(TIZEN_PACKAGE_NAME)){
-                comms_type = COMMS_TYPE_TIZEN;
-            }else if(hasPackage(WEAR_PACKAGE_NAME)){
-                comms_type = COMMS_TYPE_WEAR;
-            }
+            comms_type = COMMS_TYPE_BT;
             sharedPreferences_editor.putInt("comms_type", comms_type);
             sharedPreferences_editor.apply();
         }else{
@@ -115,7 +111,7 @@ public class MainActivity extends AppCompatActivity{
         ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
 
         Spinner sOS = findViewById(R.id.sCommsType);
-        commsTypeAdapter osa = new commsTypeAdapter(getApplicationContext());
+        CommsTypeAdapter osa = new CommsTypeAdapter(getApplicationContext());
         sOS.setAdapter(osa);
         sOS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
@@ -184,16 +180,16 @@ public class MainActivity extends AppCompatActivity{
         findViewById(R.id.scrollReport).setOnTouchListener(this::onTouchEventScrollViews);
         findViewById(R.id.scrollPrepare).setOnTouchListener(this::onTouchEventScrollViews);
     }
-    private boolean hasPackage(String packageName){
+    private boolean hasNotPackage(String packageName){
         try{
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                 getPackageManager().getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0));
             }else{
                 getPackageManager().getPackageInfo(packageName, 0);
             }
-            return true;
-        }catch(PackageManager.NameNotFoundException e){
             return false;
+        }catch(PackageManager.NameNotFoundException e){
+            return true;
         }
     }
     private void switchCommsType(int comms_type_new){
@@ -242,7 +238,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     private void initTizen(){
-        if(!hasPackage(TIZEN_PACKAGE_NAME)){
+        if(hasNotPackage(TIZEN_PACKAGE_NAME)){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noTizenLib);
@@ -261,7 +257,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
     private void initWear(){
-        if(!hasPackage(WEAR_PACKAGE_NAME)){
+        if(hasNotPackage(WEAR_PACKAGE_NAME)){
             findViewById(R.id.tvStatus).setVisibility(View.GONE);
             findViewById(R.id.bConnect).setVisibility(View.GONE);
             ((TextView)findViewById(R.id.tvError)).setText(R.string.noWearLib);
