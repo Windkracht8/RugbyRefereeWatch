@@ -1,7 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
@@ -13,10 +13,12 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 public class ReportEventEdit extends LinearLayout{
+    final Handler handler_message;
     private JSONObject event;
-    public ReportEventEdit(Context context){super(context);}
-    public ReportEventEdit(Context context, JSONObject event){
+    public ReportEventEdit(Context context){super(context);handler_message=null;}
+    public ReportEventEdit(Context context, Handler handler_message, JSONObject event){
         super(context);
+        this.handler_message = handler_message;
         this.event = event;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -87,10 +89,7 @@ public class ReportEventEdit extends LinearLayout{
 
     public void bDelClick(){
         try{
-            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-            intent.putExtra("intent_type", "bDelClick");
-            intent.putExtra("event_id", event.getInt("id"));
-            getContext().sendBroadcast(intent);
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_DEL_CLICK, event.getInt("id"), 0));
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_event, Toast.LENGTH_SHORT).show();

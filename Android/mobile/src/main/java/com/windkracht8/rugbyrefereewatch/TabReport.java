@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TabReport extends LinearLayout{
+    Handler handler_message;
     private LinearLayout llEvents;
 
     private JSONObject match;
@@ -67,12 +69,14 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
     }
 
-    public void loadMatch(final JSONObject match){
+    public void loadMatch(Handler handler_message, final JSONObject match){
+        this.handler_message = handler_message;
         showMatch(match);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
         findViewById(R.id.tvNoEdit).setVisibility(GONE);
     }
-    public void gotMatch(final JSONObject match){
+    public void gotMatch(Handler handler_message, final JSONObject match){
+        this.handler_message = handler_message;
         showMatch(match);
         try{
             if(!match.has("timer")) return;
@@ -199,7 +203,7 @@ public class TabReport extends LinearLayout{
                         llEvents.addView(new ReportEventFull(context, event, match, period_count, period_time));
                         break;
                     case 2:
-                        llEvents.addView(new ReportEventEdit(context, event));
+                        llEvents.addView(new ReportEventEdit(context, handler_message, event));
                         break;
                 }
             }
@@ -287,10 +291,7 @@ public class TabReport extends LinearLayout{
             }
 
             if(changed){
-                Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                intent.putExtra("intent_type", "updateMatch");
-                intent.putExtra("match", match.toString());
-                getContext().sendBroadcast(intent);
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_MATCH, match));
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
@@ -474,11 +475,8 @@ public class TabReport extends LinearLayout{
             away.put("pens", away_pens);
             match.put("away", away);
 
-            Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-            intent.putExtra("intent_type", "updateMatch");
-            intent.putExtra("match", match.toString());
-            getContext().sendBroadcast(intent);
-            loadMatch(match);
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_MATCH, match));
+            loadMatch(handler_message, match);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save, Toast.LENGTH_SHORT).show();

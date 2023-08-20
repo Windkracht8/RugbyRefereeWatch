@@ -12,7 +12,7 @@ public class Sinbin extends LinearLayout{
     public MatchData.sinbin sinbin;
     private TextView timer;
     public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
-    public Sinbin(Context context, AttributeSet attrs, Main ma, MatchData.sinbin sinbin, int col){
+    public Sinbin(Context context, AttributeSet attrs, Main main, MatchData.sinbin sinbin, int col){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
@@ -21,8 +21,8 @@ public class Sinbin extends LinearLayout{
 
         timer = findViewById(R.id.timer);
         timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, Main.vh10);
-        ma.addOnTouch(this);
-        ma.addOnTouch(timer);
+        main.addOnTouch(this);
+        main.addOnTouch(timer);
 
         this.setBackgroundColor(col);
         update();

@@ -16,37 +16,37 @@ import java.io.OutputStreamWriter;
 
 public class FileStore{
     //Append a new match
-    public static void storeMatch(Context context, Handler hMessage, MatchData match){
-        JSONArray matches = readMatches(context, hMessage);
+    public static void storeMatch(Context context, Handler handler_message, MatchData match){
+        JSONArray matches = readMatches(context, handler_message);
         matches.put(match.toJson(context));
-        storeMatches(context, hMessage, matches);
+        storeMatches(context, handler_message, matches);
     }
 
     //Store all matches
-    public static void storeMatches(Context context, Handler hMessage, JSONArray matches){
+    public static void storeMatches(Context context, Handler handler_message, JSONArray matches){
         try{
-            storeFile(context, hMessage, R.string.matches_filename, matches.toString());
+            storeFile(context, handler_message, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeMatches Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_save_matches));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_save_matches));
         }
     }
     //Return an array of stored matches
-    public static JSONArray readMatches(Context context, Handler hMessage){
+    public static JSONArray readMatches(Context context, Handler handler_message){
         try{
-            String sMatches = getFileAsString(context, hMessage, R.string.matches_filename);
+            String sMatches = getFileAsString(context, handler_message, R.string.matches_filename);
             if(sMatches.length() < 3){return new JSONArray();}
             return new JSONArray(sMatches);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readMatches Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_matches));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_matches));
         }
         return new JSONArray();
     }
 
     //Go through stored matches and remove old ones
-    public static void cleanMatches(Context context, Handler hMessage){
-        JSONArray matches = readMatches(context, hMessage);
+    public static void cleanMatches(Context context, Handler handler_message){
+        JSONArray matches = readMatches(context, handler_message);
         try{
             for(int i = matches.length(); i > 0; i--){
                 JSONObject match = matches.getJSONObject(i-1);
@@ -54,19 +54,19 @@ public class FileStore{
                     matches.remove(i-1);
                 }
             }
-            storeMatches(context, hMessage, matches);
+            storeMatches(context, handler_message, matches);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_cleanMatches Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_clean_matches));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_clean_matches));
         }
     }
     //The phone sends a list of matches that can be deleted
-    public static JSONArray deletedMatches(Context context, Handler hMessage, String request_data){
+    public static JSONArray deletedMatches(Context context, Handler handler_message, String request_data){
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
             JSONArray deleted_matches = request_data_jo.getJSONArray("deleted_matches");
 
-            JSONArray matches = readMatches(context, hMessage);
+            JSONArray matches = readMatches(context, handler_message);
             for(int d = 0; d < deleted_matches.length(); d++){
                 for(int m = matches.length()-1; m >= 0; m--){
                     JSONObject match = matches.getJSONObject(m);
@@ -75,15 +75,15 @@ public class FileStore{
                     }
                 }
             }
-            storeMatches(context, hMessage, matches);
+            storeMatches(context, handler_message, matches);
             return matches;
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_deletedMatches Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_del_matches));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_del_matches));
         }
         return new JSONArray();
     }
-    public static void storeSettings(Context context, Handler hMessage){
+    public static void storeSettings(Context context, Handler handler_message){
         try{
             JSONObject jsonSettings = new JSONObject();
             jsonSettings.put("record_player", Main.record_player);
@@ -101,33 +101,33 @@ public class FileStore{
             jsonSettings.put("points_goal", Main.match.points_goal);
             jsonSettings.put("home_color", Main.match.home.color);
             jsonSettings.put("away_color", Main.match.away.color);
-            storeFile(context, hMessage, R.string.settings_filename, jsonSettings.toString());
+            storeFile(context, handler_message, R.string.settings_filename, jsonSettings.toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
         }
     }
-    public static void readSettings(Context context, Handler hMessage){
+    public static void readSettings(Context context, Handler handler_message){
         int help_version = 0;
         try{
-            String sSettings = getFileAsString(context, hMessage, R.string.settings_filename);
+            String sSettings = getFileAsString(context, handler_message, R.string.settings_filename);
             if(sSettings.length() < 3){
-                hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_SHOW_HELP, 0));
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, 0, 0));
                 return;
             }
             JSONObject jsonSettings = new JSONObject(sSettings);
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_READ_SETTINGS, jsonSettings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_READ_SETTINGS, jsonSettings));
             if(jsonSettings.has("help_version")){
                 help_version = jsonSettings.getInt("help_version");
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
         }
-        hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_SHOW_HELP, help_version));
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, help_version, 0));
     }
 
-    public static void storeCustomMatchTypes(Context context, Handler hMessage){
+    public static void storeCustomMatchTypes(Context context, Handler handler_message){
         try{
             FileOutputStream fos = context.openFileOutput(context.getString(R.string.match_types_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
@@ -135,10 +135,10 @@ public class FileStore{
             osr.close();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeCustomMatchTypes Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_match_types));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_match_types));
         }
     }
-    public static void readCustomMatchTypes(Context context, Handler hMessage){
+    public static void readCustomMatchTypes(Context context, Handler handler_message){
         try{
             FileInputStream fis = context.openFileInput(context.getString(R.string.match_types_filename));
             InputStreamReader isr = new InputStreamReader(fis);
@@ -158,10 +158,10 @@ public class FileStore{
             Log.i(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_match_types));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_match_types));
         }
     }
-    private static String getFileAsString(Context context, Handler hMessage, int file){
+    private static String getFileAsString(Context context, Handler handler_message, int file){
         try{
             FileInputStream fis = context.openFileInput(context.getString(file));
             InputStreamReader isr = new InputStreamReader(fis);
@@ -175,11 +175,11 @@ public class FileStore{
             Log.i(Main.RRW_LOG_TAG, "FileStore.getFileAsString File does not exist yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_file));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_file));
         }
         return "";
     }
-    private static void storeFile(Context context, Handler hMessage, int file, String content){
+    private static void storeFile(Context context, Handler handler_message, int file, String content){
         try{
             FileOutputStream fos = context.openFileOutput(context.getString(file), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
@@ -187,7 +187,7 @@ public class FileStore{
             osr.close();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_file));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_file));
         }
     }
 

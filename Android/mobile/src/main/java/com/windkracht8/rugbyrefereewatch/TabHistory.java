@@ -1,7 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +22,12 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class TabHistory extends LinearLayout{
+    Handler handler_message;
     private LinearLayout llMatches;
     private Button bExport;
     private Button bDelete;
     private ArrayList<JSONObject> matches;
     private ArrayList<Long> deleted_matches;
-    public JSONArray export_matches;
     public boolean selecting = false;
 
     public TabHistory(Context context, AttributeSet attrs){
@@ -38,14 +38,11 @@ public class TabHistory extends LinearLayout{
 
         llMatches = findViewById(R.id.llMatches);
         bExport = findViewById(R.id.bExport);
-        bExport.setOnClickListener(view -> exportSelected());
         bDelete = findViewById(R.id.bDelete);
         bDelete.setOnClickListener(view -> deleteSelected());
         matches = new ArrayList<>();
         deleted_matches = new ArrayList<>();
-        loadMatches();
     }
-
     public void gotMatches(final JSONArray matches_new){
         try{
             for(int i = 0; i < matches_new.length(); i++){
@@ -111,7 +108,8 @@ public class TabHistory extends LinearLayout{
         return null;
     }
 
-    private void loadMatches(){
+    public void loadMatches(Handler handler_message){
+        this.handler_message = handler_message;
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
             if(fis == null) return;//Probably because of viewing in IDE
@@ -171,7 +169,7 @@ public class TabHistory extends LinearLayout{
             });
             if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
             for(int i = matches.size()-1; i >= 0; i--){
-                llMatches.addView(new HistoryMatch(getContext(), matches.get(i), this, i == 0));
+                llMatches.addView(new HistoryMatch(getContext(), handler_message, matches.get(i), this, i == 0));
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
@@ -262,9 +260,8 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    public void updateMatch(String sMatch){
+    public void updateMatch(JSONObject match){
         try{
-            JSONObject match = new JSONObject(sMatch);
             long match_id = match.getLong("matchid");
             for(int i = 0; i < matches.size(); i++){
                 if(matches.get(i).getLong("matchid") == match_id){
@@ -283,20 +280,18 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    public void exportSelected(){
-        export_matches = new JSONArray();
+    public String getSelectedMatches(){
+        JSONArray selected = new JSONArray();
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("HistoryMatch")){
                 HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
-                    export_matches.put(tmp.match);
+                    selected.put(tmp.match);
                 }
             }
         }
         unselect();
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "exportMatches");
-        getContext().sendBroadcast(intent);
+        return selected.toString();
     }
 }

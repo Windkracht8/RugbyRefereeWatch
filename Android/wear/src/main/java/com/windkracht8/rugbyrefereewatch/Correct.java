@@ -23,7 +23,7 @@ public class Correct extends ScrollView{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_correct, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.correct, this, true);
     }
-    public void show(Main ma, MatchData match){
+    public void show(Main main, MatchData match){
         this.match = match;
         correctList = findViewById(R.id.correctList);
         for(int i = correctList.getChildCount(); i > 0; i--){
@@ -44,7 +44,7 @@ public class Correct extends ScrollView{
             Event event_ui = new Event(getContext(), event_data);
             correctList.addView(event_ui);
             event_ui.setOnClickListener(this::eventClicked);
-            ma.addOnTouch(event_ui);
+            main.addOnTouch(event_ui);
         }
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);

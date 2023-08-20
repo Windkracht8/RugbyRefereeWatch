@@ -150,7 +150,6 @@
 
     <!-- fail -->
     <string name="fail_get_matches">Probleem met het ophalen van wedstrijden van het horloge</string>
-    <string name="fail_get_match">Probleem met het ophalen van wedstrijd van het horloge</string>
     <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
     <string name="fail_show_match">Fout bij weergeven wedstrijd</string>
     <string name="fail_show_history">Fout bij weergeven Geschiedenis</string>

@@ -28,21 +28,21 @@ public class MatchLog extends ScrollView{
         findViewById(R.id.llMatchLog).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
-    public void show(Main ma, Report report) {
+    public void show(Main main, Report report) {
         for (int i = matchLogList.getChildCount(); i > 0; i--) {
             matchLogList.removeViewAt(i - 1);
         }
-        JSONArray matches = FileStore.readMatches(getContext(), ma.hMessage);
+        JSONArray matches = FileStore.readMatches(getContext(), main.handler_message);
         try {
             for (int i = matches.length() - 1; i >= 0; i--) {
                 MatchData match = new MatchData(getContext(), matches.getJSONObject(i));
                 MatchLogMatch matchLogMatch = new MatchLogMatch(getContext(), match, report);
                 matchLogList.addView(matchLogMatch);
-                ma.addOnTouch(matchLogMatch);
+                main.addOnTouch(matchLogMatch);
             }
         } catch (JSONException e) {
             android.util.Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
-            ma.hMessage.sendMessage(ma.hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
+            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
         }
         findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
         ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + Main.vh25;

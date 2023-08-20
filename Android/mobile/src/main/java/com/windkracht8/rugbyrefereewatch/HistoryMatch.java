@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -22,14 +21,16 @@ import java.util.TimerTask;
 
 public class HistoryMatch extends LinearLayout{
     TabHistory hParent;
+    final Handler handler_message;
     public JSONObject match;
     private TextView tvName;
     public boolean is_selected = false;
 
-    public HistoryMatch(Context context){super(context);}
-    public HistoryMatch(Context context, JSONObject match, TabHistory hParent, boolean last){
+    public HistoryMatch(Context context){super(context);handler_message=null;}
+    public HistoryMatch(Context context, Handler handler_message, JSONObject match, TabHistory hParent, boolean last){
         super(context);
         this.hParent = hParent;
+        this.handler_message = handler_message;
         this.match = match;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_history, Toast.LENGTH_SHORT).show(); return;}
@@ -82,10 +83,7 @@ public class HistoryMatch extends LinearLayout{
                     if(hParent.selecting){
                         toggleSelect();
                     }else{
-                        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                        intent.putExtra("intent_type", "historyMatchClick");
-                        intent.putExtra("match", match.toString());
-                        getContext().sendBroadcast(intent);
+                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_HISTORY_MATCH_CLICK, match.toString()));
                         performClick();
                     }
                 }

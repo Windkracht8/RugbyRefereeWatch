@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,9 +28,11 @@ public class Comms{
     BluetoothServerSocket bluetoothServerSocket;
     BluetoothSocket bluetoothSocket;
     final Context context;
+    final Handler handler_message;
 
-    public Comms(Context context){
+    public Comms(Context context, Handler handler_message){
         this.context = context;
+        this.handler_message = handler_message;
         requestQueue = new JSONArray();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         context.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
@@ -92,22 +95,13 @@ public class Comms{
     }
 
     private void gotError(final String error){
-        updateStatus("FATAL");
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "gotError");
-        intent.putExtra("source", "BT");
-        intent.putExtra("error", error);
-        context.sendBroadcast(intent);
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_ERROR, error));
     }
 
     private void updateStatus(final String status_new){
         Log.i(Main.RRW_LOG_TAG, "CommsBT.updateStatus: " + status_new);
         this.status = status_new;
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "updateStatus");
-        intent.putExtra("source", "BT");
-        intent.putExtra("status_new", status_new);
-        context.sendBroadcast(intent);
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status_new));
     }
 
     private class CommsBTConnect extends Thread{
@@ -224,12 +218,8 @@ public class Comms{
         private void gotResponse(final JSONObject responseMessage){
             Log.i(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage.toString());
             try{
-                Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-                intent.putExtra("intent_type", "gotResponse");
-                intent.putExtra("source", "BT");
-                intent.putExtra("requestType", responseMessage.getString("requestType"));
-                intent.putExtra("responseData", responseMessage.getString("responseData"));
-                context.sendBroadcast(intent);
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
+
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse Exception: " + e.getMessage());
                 gotError(context.getString(R.string.fail_response));

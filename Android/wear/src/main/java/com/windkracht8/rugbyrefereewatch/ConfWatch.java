@@ -18,7 +18,7 @@ public class ConfWatch extends LinearLayout {
         if(inflater == null){ Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf_watch, this, true);
     }
-    public void show(Main ma){
+    public void show(Main main){
         if(isInitialized){
             this.setVisibility(View.VISIBLE);
             return;
@@ -29,9 +29,9 @@ public class ConfWatch extends LinearLayout {
 
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
         for(MenuItem.MenuItemType menuItemType : new MenuItem.MenuItemType[]{SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS}){
-            MenuItem menuItem = new MenuItem(getContext(), ma.hMessage, null, menuItemType);
+            MenuItem menuItem = new MenuItem(getContext(), main.handler_message, null, menuItemType);
             llConfWatch.addView(menuItem);
-            menuItem.addOnTouch(ma);
+            menuItem.addOnTouch(main);
             menuItem.setHeight(height_per_item);
         }
         this.setVisibility(View.VISIBLE);

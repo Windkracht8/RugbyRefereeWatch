@@ -37,15 +37,15 @@ public class Comms{
     final JSONArray responseQueue;
     final Handler handler;
     final Context context;
-    final Handler hMessage;
+    final Handler handler_message;
 
     boolean connect = false;
     public final ArrayList<String> connect_failed_addresses = new ArrayList<>();
     public final ArrayList<String> queried_addresses = new ArrayList<>();
 
-    public Comms(Context context, Handler hMessage){
+    public Comms(Context context, Handler handler_message){
         this.context = context;
-        this.hMessage = hMessage;
+        this.handler_message = handler_message;
         responseQueue = new JSONArray();
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -68,17 +68,17 @@ public class Comms{
         }
     };
 
-    public void connect(Main ma){
+    public void connect(Main main){
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-            if(ma != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                ActivityCompat.requestPermissions(ma, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+            if(main != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
             Log.e(Main.RRW_LOG_TAG, "CommsBT.connect no BLUETOOTH_CONNECT permission");
             return;
         }
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-            if(ma != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                ActivityCompat.requestPermissions(ma, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
+            if(main != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
             }
             Log.e(Main.RRW_LOG_TAG, "CommsBT.connect no BLUETOOTH_SCAN permission");
             return;
@@ -268,10 +268,10 @@ public class Comms{
         }
         try{
             JSONObject responseData_json = new JSONObject();
-            responseData_json.put("matches", FileStore.deletedMatches(context, hMessage, requestData));
-            responseData_json.put("settings", Main.getSettings(hMessage));
+            responseData_json.put("matches", FileStore.deletedMatches(context, handler_message, requestData));
+            responseData_json.put("settings", Main.getSettings(handler_message));
             sendResponse("sync", responseData_json);
-            Conf.syncCustomMatchTypes(hMessage, requestData);
+            Conf.syncCustomMatchTypes(handler_message, requestData);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", "unexpected error");
@@ -283,8 +283,8 @@ public class Comms{
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveGetMatches No requestData for request getMatches");
             return;
         }
-        sendResponse("getMatches", FileStore.deletedMatches(context, hMessage, requestData));
-        Conf.syncCustomMatchTypes(hMessage, requestData);
+        sendResponse("getMatches", FileStore.deletedMatches(context, handler_message, requestData));
+        Conf.syncCustomMatchTypes(handler_message, requestData);
     }
 
     private void onReceiveGetMatch(){
@@ -306,13 +306,13 @@ public class Comms{
         }
         try{
             JSONObject requestData_json = new JSONObject(requestData);
-            if(Main.incomingSettings(hMessage, requestData_json)){
+            if(Main.incomingSettings(handler_message, requestData_json)){
                 sendResponse("prepare", "okilly dokilly");
-                FileStore.storeSettings(context, hMessage);
+                FileStore.storeSettings(context, handler_message);
             }else{
                 sendResponse("prepare", "match ongoing");
             }
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_PREPARE_RECEIVED));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_PREPARE_RECEIVED));
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare Exception: " + e.getMessage());
             sendResponse("prepare", "unexpected error");

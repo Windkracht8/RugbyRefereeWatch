@@ -105,9 +105,7 @@ public class Main extends Activity{
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
-    @SuppressLint({"MissingInflatedId", "UnspecifiedRegisterReceiverFlag"})
-    //MissingInflatedId = nested layout XMLs are not found
-    //UnspecifiedRegisterReceiverFlag = registerReceiver has SDK_INT check, but still we get the warning
+    @SuppressLint({"MissingInflatedId"}) //nested layout XMLs are not found
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -249,9 +247,9 @@ public class Main extends Activity{
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        executorService.submit(() -> FileStore.readSettings(getBaseContext(), hMessage));
-        executorService.submit(() -> FileStore.readCustomMatchTypes(getBaseContext(), hMessage));
-        executorService.submit(() -> FileStore.cleanMatches(getBaseContext(), hMessage));
+        executorService.submit(() -> FileStore.readSettings(getBaseContext(), handler_message));
+        executorService.submit(() -> FileStore.readCustomMatchTypes(getBaseContext(), handler_message));
+        executorService.submit(() -> FileStore.cleanMatches(getBaseContext(), handler_message));
 
         updateBattery();
         update();
@@ -266,16 +264,16 @@ public class Main extends Activity{
             initBT();
         }else{
             bluetooth = false;
-            FileStore.storeSettings(getBaseContext(), hMessage);
+            FileStore.storeSettings(getBaseContext(), handler_message);
         }
     }
     private void initBT(){
         if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(comms == null) comms = new Comms(this, hMessage);
+        if(comms == null) comms = new Comms(this, handler_message);
         comms.connect(this);
     }
 
-    public final Handler hMessage = new Handler(Looper.getMainLooper()){
+    public final Handler handler_message = new Handler(Looper.getMainLooper()){
         public void handleMessage(Message msg){
             switch(msg.what){
                 case MESSAGE_HIDE_SPLASH:
@@ -290,8 +288,7 @@ public class Main extends Activity{
                     }
                     break;
                 case MESSAGE_SHOW_HELP:
-                    if(!(msg.obj instanceof Integer)) return;
-                    switch((Integer) msg.obj){
+                    switch(msg.arg1){
                         case help_version:
                             break;
                         case 0:
@@ -299,7 +296,7 @@ public class Main extends Activity{
                         default:
                             help.show();
                             conf.setVisibility(View.GONE);
-                            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
+                            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
                     }
                     break;
                 case MESSAGE_READ_SETTINGS:
@@ -307,7 +304,7 @@ public class Main extends Activity{
                     readSettings((JSONObject) msg.obj);
                     break;
                 case MESSAGE_CUSTOM_MATCH_TYPE:
-                    executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), hMessage));
+                    executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), handler_message));
                     break;
                 case MESSAGE_PREPARE_RECEIVED:
                     updateAfterConfig();
@@ -323,7 +320,7 @@ public class Main extends Activity{
         if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
+            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
             if(bluetooth){
                 initBT();
             }else{
@@ -332,7 +329,7 @@ public class Main extends Activity{
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
+            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -525,7 +522,7 @@ public class Main extends Activity{
                 timer_type = match.timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.storeMatch(getBaseContext(), hMessage, match));
+                executorService.submit(() -> FileStore.storeMatch(getBaseContext(), handler_message, match));
                 initBT();
                 break;
             case "finished":
@@ -970,7 +967,7 @@ public class Main extends Activity{
         }
         return null;
     }
-    public static boolean incomingSettings(Handler hMessage, JSONObject settings_new){
+    public static boolean incomingSettings(Handler handler_message, JSONObject settings_new){
         if(!timer_status.equals("conf")) return false;
         try{
             match.home.team = settings_new.getString("home_name");
@@ -998,7 +995,7 @@ public class Main extends Activity{
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
             return false;
         }
         return true;
@@ -1028,11 +1025,11 @@ public class Main extends Activity{
             if(jsonSettings.has("away_color")) match.away.color = jsonSettings.getString("away_color");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
         }
     }
 
-    public static JSONObject getSettings(Handler hMessage){
+    public static JSONObject getSettings(Handler handler_message){
         JSONObject ret = new JSONObject();
         try{
             ret.put("home_name", match.home.team);
@@ -1053,7 +1050,7 @@ public class Main extends Activity{
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_settings));
         }
         return ret;
     }

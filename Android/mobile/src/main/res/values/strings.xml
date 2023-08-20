@@ -170,7 +170,6 @@
 
     <!-- fail -->
     <string name="fail_get_matches">Failed to request matches from watch</string>
-    <string name="fail_get_match">Failed to request match from watch</string>
     <string name="fail_prepare">Problem with sending settings</string>
     <string name="fail_show_match">Failed to show match</string>
     <string name="fail_show_history">Failed to show History</string>

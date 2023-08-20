@@ -35,7 +35,7 @@ public class Conf extends ScrollView{
         customMatchTypes = new JSONArray();
     }
 
-    public void show(Main ma){
+    public void show(Main main){
         if(isInitialized){
             setVisibility(View.VISIBLE);
             fullScroll(View.FOCUS_UP);
@@ -45,10 +45,10 @@ public class Conf extends ScrollView{
         LinearLayout llConf = findViewById(R.id.llConf);
         menuItems = new ArrayList<>();
         for(MenuItem.MenuItemType menuItemType : MenuItem.MenuItemType.values()){
-            MenuItem menuItem = new MenuItem(getContext(), ma.hMessage, null, menuItemType);
+            MenuItem menuItem = new MenuItem(getContext(), main.handler_message, null, menuItemType);
             menuItems.add(menuItem);
             llConf.addView(menuItem);
-            menuItem.addOnTouch(ma);
+            menuItem.addOnTouch(main);
         }
         findViewById(R.id.conf_label).getLayoutParams().height = Main.vh25;
         ((LayoutParams) llConf.getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + Main.vh25;
@@ -101,7 +101,7 @@ public class Conf extends ScrollView{
         }
     }
 
-    public static void syncCustomMatchTypes(Handler hMessage, String request_data){
+    public static void syncCustomMatchTypes(Handler handler_message, String request_data){
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
             if(!request_data_jo.has("custom_match_types")) return;
@@ -141,7 +141,7 @@ public class Conf extends ScrollView{
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
-            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_sync_match_types));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_sync_match_types));
         }
     }
 

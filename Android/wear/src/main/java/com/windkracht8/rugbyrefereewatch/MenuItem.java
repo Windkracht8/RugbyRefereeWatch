@@ -33,7 +33,7 @@ public class MenuItem extends ConstraintLayout{
     private Spinner menuItemMatchType;
     private Spinner menuItemNumbers;
     public MenuItem(Context context, AttributeSet attrs){super(context, attrs);}
-    public MenuItem(Context context, Handler hMessage, AttributeSet attrs, MenuItemType type){
+    public MenuItem(Context context, Handler handler_message, AttributeSet attrs, MenuItemType type){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();return;}
@@ -117,7 +117,7 @@ public class MenuItem extends ConstraintLayout{
                 break;
         }
         menuItemName.setText(name);
-        this.setOnClickListener(v -> click(hMessage));
+        this.setOnClickListener(v -> click(handler_message));
         menuItemValue.setContentDescription(context.getString(R.string.menuItemValue_desc) + type);
     }
     private ArrayAdapter<String> getAA(String[] a){
@@ -129,10 +129,10 @@ public class MenuItem extends ConstraintLayout{
         menuItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, height*2);
         menuItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, height);
     }
-    public void addOnTouch(Main ma){
-        ma.addOnTouch(this);
-        ma.addOnTouch(menuItemName);
-        ma.addOnTouch(menuItemValue);
+    public void addOnTouch(Main main){
+        main.addOnTouch(this);
+        main.addOnTouch(menuItemName);
+        main.addOnTouch(menuItemValue);
     }
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility){
@@ -207,7 +207,7 @@ public class MenuItem extends ConstraintLayout{
         }
         menuItemValue.setText(value);
     }
-    public void click(Handler hMessage){
+    public void click(Handler handler_message){
         switch(type){
             case COLOR_HOME:
             case COLOR_AWAY:
@@ -248,7 +248,7 @@ public class MenuItem extends ConstraintLayout{
                 updateValue();
                 break;
             case HELP:
-                hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_SHOW_HELP, -1));
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
                 break;
         }
     }

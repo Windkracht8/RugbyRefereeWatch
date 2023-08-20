@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -47,6 +48,13 @@ import java.util.Objects;
 
 public class Main extends AppCompatActivity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
+    public static final int MESSAGE_GOT_ERROR = 1;
+    public static final int MESSAGE_GOT_RESPONSE = 2;
+    public static final int MESSAGE_UPDATE_STATUS = 3;
+    public static final int MESSAGE_HISTORY_MATCH_CLICK = 4;
+    public static final int MESSAGE_DEL_CLICK = 5;
+    public static final int MESSAGE_UPDATE_MATCH = 6;
+    public static final int MESSAGE_EXPORT_MATCHES = 7;
     private GestureDetector gestureDetector;
     private Comms comms = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
@@ -59,9 +67,7 @@ public class Main extends AppCompatActivity{
     private TabReport tabReport;
     private TabPrepare tabPrepare;
 
-    @SuppressLint({"MissingInflatedId", "UnspecifiedRegisterReceiverFlag"})
-    //MissingInflatedId = bGetMatches, bGetMatch, bPrepare are in separate layouts
-    //UnspecifiedRegisterReceiverFlag = registerReceiver has SDK_INT check, but still we get the warning
+    @SuppressLint({"MissingInflatedId"}) //bGetMatches, bGetMatch, bPrepare are in separate layouts
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -69,6 +75,7 @@ public class Main extends AppCompatActivity{
         setContentView(R.layout.main);
         getWidthPixels();
         tabHistory = findViewById(R.id.tabHistory);
+        tabHistory.loadMatches(handler_message);
         tabReport = findViewById(R.id.tabReport);
         tabPrepare = findViewById(R.id.tabPrepare);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
@@ -76,8 +83,8 @@ public class Main extends AppCompatActivity{
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
         findViewById(R.id.bGetMatches).setOnClickListener(view -> bGetMatchesClick());
         findViewById(R.id.bGetMatch).setOnClickListener(view -> bGetMatchClick());
+        findViewById(R.id.bExport).setOnClickListener(view -> exportMatches());
         findViewById(R.id.bPrepare).setOnClickListener(view -> bPrepareClick());
-
         handleOrientation();
 
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
@@ -93,45 +100,6 @@ public class Main extends AppCompatActivity{
         TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
         ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
 
-        /*
-        rrwReceiver = new BroadcastReceiver(){//TODO: replace with handler
-            @Override
-            public void onReceive(Context context, Intent intent){
-                String intent_type = Objects.requireNonNull(intent.getStringExtra("intent_type"));
-                switch(intent_type){
-                    case "gotError":
-                        String error = Objects.requireNonNull(intent.getStringExtra("error"));
-                        gotError(error);
-                        break;
-                    case "gotResponse":
-                        String requestType = Objects.requireNonNull(intent.getStringExtra("requestType"));
-                        String responseData = Objects.requireNonNull(intent.getStringExtra("responseData"));
-                        gotResponse(requestType, responseData);
-                        break;
-                    case "updateStatus":
-                        String status_new = Objects.requireNonNull(intent.getStringExtra("status_new"));
-                        updateStatus(status_new);
-                        break;
-                    case "historyMatchClick":
-                        if(!intent.hasExtra("match")) return;
-                        historyMatchClick(intent.getStringExtra("match"));
-                        break;
-                    case "bDelClick":
-                        if(!intent.hasExtra("event_id")) return;
-                        tabReport.bDelClick(intent.getIntExtra("event_id", 0));
-                        break;
-                    case "updateMatch":
-                        if(!intent.hasExtra("match")) return;
-                        tabHistory.updateMatch(intent.getStringExtra("match"));
-                        break;
-                    case "exportMatches":
-                        exportMatches();
-                        break;
-                }
-            }
-        };
-         */
-
         handleIntent();
         handler_main = new Handler(Looper.getMainLooper());
 
@@ -142,6 +110,38 @@ public class Main extends AppCompatActivity{
 
         initBT();
     }
+    public final Handler handler_message = new Handler(Looper.getMainLooper()){
+        public void handleMessage(Message msg){
+            switch(msg.what){
+                case MESSAGE_GOT_ERROR: //"gotError":
+                    if(!(msg.obj instanceof String)) return;
+                    gotError((String) msg.obj);
+                    break;
+                case MESSAGE_GOT_RESPONSE:
+                    if(!(msg.obj instanceof JSONObject)) return;
+                    gotResponse((JSONObject) msg.obj);
+                    break;
+                case MESSAGE_UPDATE_STATUS: //"updateStatus":
+                    if(!(msg.obj instanceof String)) return;
+                    updateStatus((String) msg.obj);
+                    break;
+                case MESSAGE_HISTORY_MATCH_CLICK:
+                    if(!(msg.obj instanceof JSONObject)) return;
+                    historyMatchClick((JSONObject) msg.obj);
+                    break;
+                case MESSAGE_DEL_CLICK:
+                    tabReport.bDelClick(msg.arg1);
+                    break;
+                case MESSAGE_UPDATE_MATCH: //"updateMatch":
+                    if(!(msg.obj instanceof JSONObject)) return;
+                    tabHistory.updateMatch((JSONObject) msg.obj);
+                    break;
+                case MESSAGE_EXPORT_MATCHES: //"exportMatches":
+                    exportMatches();
+                    break;
+            }
+        }
+    };
     private void initBT(){
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
@@ -151,7 +151,7 @@ public class Main extends AppCompatActivity{
             gotError(getString(R.string.fail_BT_denied));
             return;
         }
-        if(comms == null) comms = new Comms(this);
+        if(comms == null) comms = new Comms(this, handler_message);
         comms.startListening();
     }
     @Override
@@ -330,10 +330,9 @@ public class Main extends AppCompatActivity{
         gotError(getString(R.string.first_connect));
         return true;
     }
-    private void historyMatchClick(String match){
+    private void historyMatchClick(JSONObject match){
         try{
-            JSONObject match_json = new JSONObject(match);
-            tabReport.loadMatch(match_json);
+            tabReport.loadMatch(handler_message, match);
             tabReportLabelClick();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.historyMatchClick Exception: " + e.getMessage());
@@ -415,43 +414,37 @@ public class Main extends AppCompatActivity{
         tvStatus.setText(status);
     }
 
-    public void gotResponse(final String requestType, final String responseData){
-        int responseType = 0;
-        if(responseData.startsWith("{")) responseType = 1;//JSONObject
-        if(responseData.startsWith("[")) responseType = 2;//JSONArray
+    public void gotResponse(final JSONObject response){
         try{
+            String requestType = response.getString("requestType");
             switch(requestType){
                 case "sync":
                     Log.i(Main.RRW_LOG_TAG, "Main.gotResponse sync");
-                    if(responseType != 1){break;}//Silently ignore for now
-                    JSONObject syncResponse = new JSONObject(responseData);
-                    if(!syncResponse.has("matches") || !syncResponse.has("settings")){
+                    JSONObject syncResponseData = response.getJSONObject("responseData");
+                    if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
                         Log.e(Main.RRW_LOG_TAG, "Main.gotResponse sync: Incomplete response");
                     }
-                    tabHistory.gotMatches(syncResponse.getJSONArray("matches"));
-                    tabPrepare.gotSettings(syncResponse.getJSONObject("settings"));
+                    tabHistory.gotMatches(syncResponseData.getJSONArray("matches"));
+                    tabPrepare.gotSettings(syncResponseData.getJSONObject("settings"));
                     break;
                 case "getMatches":
                     Log.i(Main.RRW_LOG_TAG, "Main.gotResponse getMatches");
                     findViewById(R.id.bGetMatches).setEnabled(true);
-                    if(responseType == 0){gotError(responseData);break;}
-                    if(responseType != 2){gotError(getString(R.string.fail_get_matches));break;}
-                    JSONArray getMatchesResponse = new JSONArray(responseData);
-                    tabHistory.gotMatches(getMatchesResponse);
+                    JSONArray matchesResponseData = response.getJSONArray("responseData");
+                    tabHistory.gotMatches(matchesResponseData);
                     break;
                 case "getMatch":
                     Log.i(Main.RRW_LOG_TAG, "Main.gotResponse getMatch");
                     findViewById(R.id.bGetMatch).setEnabled(true);
-                    if(responseType == 0){gotError(responseData);break;}
-                    if(responseType != 1){gotError(getString(R.string.fail_get_match));break;}
-                    JSONObject getMatchResponse = new JSONObject(responseData);
-                    tabReport.gotMatch(getMatchResponse);
+                    JSONObject matchResponseData = response.getJSONObject("responseData");
+                    tabReport.gotMatch(handler_message, matchResponseData);
                     break;
                 case "prepare":
                     Log.i(Main.RRW_LOG_TAG, "Main.gotResponse prepare");
                     findViewById(R.id.bPrepare).setEnabled(true);
-                    if(!responseData.equals("okilly dokilly")){
-                        gotError(responseData);
+                    String prepareResponseData = response.getString("responseData");
+                    if(!prepareResponseData.equals("okilly dokilly")){
+                        gotError(prepareResponseData);
                     }
                     break;
             }
@@ -543,7 +536,7 @@ public class Main extends AppCompatActivity{
                 assert uri != null;
                 outputStream = getContentResolver().openOutputStream(uri);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
-                bw.write(tabHistory.export_matches.toString());
+                bw.write(tabHistory.getSelectedMatches());
                 bw.flush();
                 bw.close();
             }catch(Exception e){
