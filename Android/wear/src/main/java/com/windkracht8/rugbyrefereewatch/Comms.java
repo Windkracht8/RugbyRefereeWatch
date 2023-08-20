@@ -69,19 +69,21 @@ public class Comms{
     };
 
     public void connect(Main main){
-        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED){
-            if(main != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
+                if(main != null){
+                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN}, 1);
+                }
+                return;
             }
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.connect no BLUETOOTH_CONNECT permission");
-            return;
-        }
-        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-            if(main != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
+        }else{
+            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
+                if(main != null){
+                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH}, 1);
+                }
+                return;
             }
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.connect no BLUETOOTH_SCAN permission");
-            return;
         }
         connect = true;
         search();
