@@ -12,7 +12,7 @@ public class Sinbin extends LinearLayout{
     public MatchData.sinbin sinbin;
     private TextView timer;
     public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
-    public Sinbin(Context context, AttributeSet attrs, MainActivity ma, MatchData.sinbin sinbin, int col){
+    public Sinbin(Context context, AttributeSet attrs, Main ma, MatchData.sinbin sinbin, int col){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
@@ -20,7 +20,7 @@ public class Sinbin extends LinearLayout{
         this.sinbin = sinbin;
 
         timer = findViewById(R.id.timer);
-        timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, MainActivity.vh10);
+        timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, Main.vh10);
         ma.addOnTouch(this);
         ma.addOnTouch(timer);
 
@@ -29,8 +29,8 @@ public class Sinbin extends LinearLayout{
     }
 
     public void update(){
-        long remaining = sinbin.end - MainActivity.timer_timer;
-        if(remaining < -((long)MainActivity.match.sinbin / 2 * 60000)){
+        long remaining = sinbin.end - Main.timer_timer;
+        if(remaining < -((long) Main.match.sinbin / 2 * 60000)){
             sinbin.hide = true;
         }
         if(sinbin.ended){
@@ -40,9 +40,9 @@ public class Sinbin extends LinearLayout{
             remaining = 0;
             sinbin.ended = true;
             timer.setTextColor(Color.RED);
-            MainActivity.beep(getContext());
+            Main.beep(getContext());
         }
-        String tmp = MainActivity.prettyTimer(remaining);
+        String tmp = Main.prettyTimer(remaining);
         timer.setText(tmp);
     }
 }

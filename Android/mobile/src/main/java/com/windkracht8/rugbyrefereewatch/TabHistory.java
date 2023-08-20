@@ -53,7 +53,7 @@ public class TabHistory extends LinearLayout{
                 insertMatch(match_new);
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
         showMatches();
@@ -78,7 +78,7 @@ public class TabHistory extends LinearLayout{
             }
             matches.add(match_new);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
     }
@@ -90,7 +90,7 @@ public class TabHistory extends LinearLayout{
                 new_matches.add(match_new.getLong("matchid"));
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.cleanDeletedMatches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.cleanDeletedMatches Exception: " + e.getMessage());
         }
         for(int i = deleted_matches.size()-1; i >= 0; i--){
             if(!new_matches.contains(deleted_matches.get(i))){
@@ -106,7 +106,7 @@ public class TabHistory extends LinearLayout{
             }
             return jaDeletedMatches;
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.getDeletedMatches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.getDeletedMatches Exception: " + e.getMessage());
         }
         return null;
     }
@@ -130,9 +130,9 @@ public class TabHistory extends LinearLayout{
                 matches.add(jsonMatches.getJSONObject(i));
             }
         }catch(FileNotFoundException e){
-            Log.i(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
+            Log.i(Main.RRW_LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_matches, Toast.LENGTH_SHORT).show();
         }
         showMatches();
@@ -154,9 +154,9 @@ public class TabHistory extends LinearLayout{
                 deleted_matches.add(jsonDeletedMatches.getLong(i));
             }
         }catch(FileNotFoundException e){
-            Log.i(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches Deleted matches file does not exists yet");
+            Log.i(Main.RRW_LOG_TAG, "TabHistory.loadMatches Deleted matches file does not exists yet");
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
         }
     }
     private void showMatches(){
@@ -165,7 +165,7 @@ public class TabHistory extends LinearLayout{
                 try{
                     return Long.compare(m1.getLong("matchid"), m2.getLong("matchid"));
                 }catch (Exception e){
-                    Log.i(MainActivity.RRW_LOG_TAG, "TabHistory.showMatches Failed to sort matches");
+                    Log.i(Main.RRW_LOG_TAG, "TabHistory.showMatches Failed to sort matches");
                 }
                 return 0;
             });
@@ -174,7 +174,7 @@ public class TabHistory extends LinearLayout{
                 llMatches.addView(new HistoryMatch(getContext(), matches.get(i), this, i == 0));
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
     }
@@ -187,7 +187,7 @@ public class TabHistory extends LinearLayout{
             osr.write(jaMatches.toString());
             osr.close();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.storeMatches matches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.storeMatches matches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_store_matches, Toast.LENGTH_SHORT).show();
         }
         try{
@@ -200,7 +200,7 @@ public class TabHistory extends LinearLayout{
             osr.write(jaDeletedMatches.toString());
             osr.close();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.storeMatches deleted_matches Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.storeMatches deleted_matches Exception: " + e.getMessage());
         }
     }
 
@@ -234,7 +234,7 @@ public class TabHistory extends LinearLayout{
                         }
                         llMatches.removeViewAt(i);
                     }catch(Exception e){
-                        Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
+                        Log.e(Main.RRW_LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
                         Toast.makeText(getContext(), R.string.fail_del_match, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -279,7 +279,7 @@ public class TabHistory extends LinearLayout{
             storeMatches();
             showMatches();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
         }
     }
 

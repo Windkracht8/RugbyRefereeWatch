@@ -18,18 +18,18 @@ public class ConfWatch extends LinearLayout {
         if(inflater == null){ Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf_watch, this, true);
     }
-    public void show(MainActivity ma){
+    public void show(Main ma){
         if(isInitialized){
             this.setVisibility(View.VISIBLE);
             return;
         }
         isInitialized = true;
         int padding = getResources().getDimensionPixelSize(R.dimen.menu_item_padding)*4;
-        int height_per_item = ((MainActivity.heightPixels/4) - padding) / 3;
+        int height_per_item = ((Main.heightPixels/4) - padding) / 3;
 
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
         for(MenuItem.MenuItemType menuItemType : new MenuItem.MenuItemType[]{SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS}){
-            MenuItem menuItem = new MenuItem(getContext(), null, menuItemType);
+            MenuItem menuItem = new MenuItem(getContext(), ma.hMessage, null, menuItemType);
             llConfWatch.addView(menuItem);
             menuItem.addOnTouch(ma);
             menuItem.setHeight(height_per_item);

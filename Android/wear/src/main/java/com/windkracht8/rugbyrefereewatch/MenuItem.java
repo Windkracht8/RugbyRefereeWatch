@@ -1,7 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 public class MenuItem extends ConstraintLayout{
     enum MenuItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP
+        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, BLUETOOTH, HELP
     }
     private MenuItemType type;
     private TextView menuItemName;
@@ -33,7 +33,7 @@ public class MenuItem extends ConstraintLayout{
     private Spinner menuItemMatchType;
     private Spinner menuItemNumbers;
     public MenuItem(Context context, AttributeSet attrs){super(context, attrs);}
-    public MenuItem(Context context, AttributeSet attrs, MenuItemType type){
+    public MenuItem(Context context, Handler hMessage, AttributeSet attrs, MenuItemType type){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();return;}
@@ -108,13 +108,16 @@ public class MenuItem extends ConstraintLayout{
             case RECORD_PENS:
                 name = context.getString(R.string.record_pens);
                 break;
+            case BLUETOOTH:
+                name = context.getString(R.string.bluetooth);
+                break;
             case HELP:
                 name = context.getString(R.string.help);
                 menuItemValue.setVisibility(View.GONE);
                 break;
         }
         menuItemName.setText(name);
-        this.setOnClickListener(v -> click());
+        this.setOnClickListener(v -> click(hMessage));
         menuItemValue.setContentDescription(context.getString(R.string.menuItemValue_desc) + type);
     }
     private ArrayAdapter<String> getAA(String[] a){
@@ -126,7 +129,7 @@ public class MenuItem extends ConstraintLayout{
         menuItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, height*2);
         menuItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, height);
     }
-    public void addOnTouch(MainActivity ma){
+    public void addOnTouch(Main ma){
         ma.addOnTouch(this);
         ma.addOnTouch(menuItemName);
         ma.addOnTouch(menuItemValue);
@@ -139,7 +142,7 @@ public class MenuItem extends ConstraintLayout{
         }
     }
     private boolean hideForMatchType(){
-        if(MainActivity.match.match_type.equals("custom")){
+        if(Main.match.match_type.equals("custom")){
             this.setVisibility(View.VISIBLE);
             return false;
         }else{
@@ -151,57 +154,60 @@ public class MenuItem extends ConstraintLayout{
         String value = "";
         switch(type){
             case COLOR_HOME:
-                value = translator.getTeamColorLocal(getContext(), MainActivity.match.home.color);
+                value = translator.getTeamColorLocal(getContext(), Main.match.home.color);
                 break;
             case COLOR_AWAY:
-                value = translator.getTeamColorLocal(getContext(), MainActivity.match.away.color);
+                value = translator.getTeamColorLocal(getContext(), Main.match.away.color);
                 break;
             case MATCH_TYPE:
-                value = MainActivity.match.match_type;
+                value = Main.match.match_type;
                 loadCustomMatchTypesSpinner();
                 break;
             case PERIOD_TIME:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.period_time;
+                value += Main.match.period_time;
                 break;
             case PERIOD_COUNT:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.period_count;
+                value += Main.match.period_count;
                 break;
             case SINBIN:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.sinbin;
+                value += Main.match.sinbin;
                 break;
             case POINTS_TRY:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.points_try;
+                value += Main.match.points_try;
                 break;
             case POINTS_CON:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.points_con;
+                value += Main.match.points_con;
                 break;
             case POINTS_GOAL:
                 if(hideForMatchType()) return;
-                value += MainActivity.match.points_goal;
+                value += Main.match.points_goal;
                 break;
             case SCREEN_ON:
-                value = getContext().getString(MainActivity.screen_on ? R.string.on : R.string.off);
+                value = getContext().getString(Main.screen_on ? R.string.on : R.string.off);
                 break;
             case TIMER_TYPE:
-                value = getContext().getString(MainActivity.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
+                value = getContext().getString(Main.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
                 break;
             case RECORD_PLAYER:
-                value = getContext().getString(MainActivity.record_player ? R.string.on : R.string.off);
+                value = getContext().getString(Main.record_player ? R.string.on : R.string.off);
                 break;
             case RECORD_PENS:
-                value = getContext().getString(MainActivity.record_pens ? R.string.on : R.string.off);
+                value = getContext().getString(Main.record_pens ? R.string.on : R.string.off);
+                break;
+            case BLUETOOTH:
+                value = getContext().getString(Main.bluetooth ? R.string.on : R.string.off);
                 break;
             case HELP:
                 return;
         }
         menuItemValue.setText(value);
     }
-    public void click(){
+    public void click(Handler hMessage){
         switch(type){
             case COLOR_HOME:
             case COLOR_AWAY:
@@ -222,26 +228,27 @@ public class MenuItem extends ConstraintLayout{
                 menuItemNumbers.setVisibility(View.VISIBLE);
                 break;
             case SCREEN_ON:
-                MainActivity.screen_on = !MainActivity.screen_on;
+                Main.screen_on = !Main.screen_on;
                 updateValue();
                 break;
             case TIMER_TYPE:
-                MainActivity.timer_type = MainActivity.timer_type == 1 ? 0 : 1;
+                Main.timer_type = Main.timer_type == 1 ? 0 : 1;
                 updateValue();
                 break;
             case RECORD_PLAYER:
-                MainActivity.record_player = !MainActivity.record_player;
+                Main.record_player = !Main.record_player;
                 updateValue();
                 break;
             case RECORD_PENS:
-                MainActivity.record_pens = !MainActivity.record_pens;
+                Main.record_pens = !Main.record_pens;
+                updateValue();
+                break;
+            case BLUETOOTH:
+                Main.bluetooth = !Main.bluetooth;
                 updateValue();
                 break;
             case HELP:
-                Intent intent_showHelp = new Intent("com.windkracht8.rugbyrefereewatch");
-                intent_showHelp.putExtra("intent_type", "showHelp");
-                intent_showHelp.putExtra("help_version", -1);
-                getContext().sendBroadcast(intent_showHelp);
+                hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_SHOW_HELP, -1));
                 break;
         }
     }
@@ -258,81 +265,81 @@ public class MenuItem extends ConstraintLayout{
     public void newValue(int position, String value){
         switch(type){
             case COLOR_HOME:
-                MainActivity.match.home.color = translator.getTeamColorSystem(getContext(), position);
+                Main.match.home.color = translator.getTeamColorSystem(getContext(), position);
                 break;
             case COLOR_AWAY:
-                MainActivity.match.away.color = translator.getTeamColorSystem(getContext(), position);
+                Main.match.away.color = translator.getTeamColorSystem(getContext(), position);
                 break;
             case MATCH_TYPE:
                 position--;
-                MainActivity.match.match_type = translator.getMatchTypeSystem(getContext(), position, value);
+                Main.match.match_type = translator.getMatchTypeSystem(getContext(), position, value);
                 switch(position){
                     case 0://15s
-                        MainActivity.match.period_time = 40;
-                        MainActivity.match.period_count = 2;
-                        MainActivity.match.sinbin = 10;
-                        MainActivity.match.points_try = 5;
-                        MainActivity.match.points_con = 2;
-                        MainActivity.match.points_goal = 3;
+                        Main.match.period_time = 40;
+                        Main.match.period_count = 2;
+                        Main.match.sinbin = 10;
+                        Main.match.points_try = 5;
+                        Main.match.points_con = 2;
+                        Main.match.points_goal = 3;
                         break;
                     case 1://10s
-                        MainActivity.match.period_time = 10;
-                        MainActivity.match.period_count = 2;
-                        MainActivity.match.sinbin = 2;
-                        MainActivity.match.points_try = 5;
-                        MainActivity.match.points_con = 2;
-                        MainActivity.match.points_goal = 3;
+                        Main.match.period_time = 10;
+                        Main.match.period_count = 2;
+                        Main.match.sinbin = 2;
+                        Main.match.points_try = 5;
+                        Main.match.points_con = 2;
+                        Main.match.points_goal = 3;
                         break;
                     case 2://7s
-                        MainActivity.match.period_time = 7;
-                        MainActivity.match.period_count = 2;
-                        MainActivity.match.sinbin = 2;
-                        MainActivity.match.points_try = 5;
-                        MainActivity.match.points_con = 2;
-                        MainActivity.match.points_goal = 3;
+                        Main.match.period_time = 7;
+                        Main.match.period_count = 2;
+                        Main.match.sinbin = 2;
+                        Main.match.points_try = 5;
+                        Main.match.points_con = 2;
+                        Main.match.points_goal = 3;
                         break;
                     case 3://beach 7s
-                        MainActivity.match.period_time = 7;
-                        MainActivity.match.period_count = 2;
-                        MainActivity.match.sinbin = 2;
-                        MainActivity.match.points_try = 1;
-                        MainActivity.match.points_con = 0;
-                        MainActivity.match.points_goal = 0;
+                        Main.match.period_time = 7;
+                        Main.match.period_count = 2;
+                        Main.match.sinbin = 2;
+                        Main.match.points_try = 1;
+                        Main.match.points_con = 0;
+                        Main.match.points_goal = 0;
                         break;
                     case 4://beach 5s
-                        MainActivity.match.period_time = 5;
-                        MainActivity.match.period_count = 2;
-                        MainActivity.match.sinbin = 2;
-                        MainActivity.match.points_try = 1;
-                        MainActivity.match.points_con = 0;
-                        MainActivity.match.points_goal = 0;
+                        Main.match.period_time = 5;
+                        Main.match.period_count = 2;
+                        Main.match.sinbin = 2;
+                        Main.match.points_try = 1;
+                        Main.match.points_con = 0;
+                        Main.match.points_goal = 0;
                         break;
                     case 5://custom
                         break;
                     default://stored custom match type
                         loadCustomMatchType(value);
                 }
-                MainActivity.timer_period_time = MainActivity.match.period_time;
+                Main.timer_period_time = Main.match.period_time;
                 Conf.updateValues();
                 break;
             case PERIOD_TIME:
-                MainActivity.match.period_time = position;
-                MainActivity.timer_period_time = MainActivity.match.period_time;
+                Main.match.period_time = position;
+                Main.timer_period_time = Main.match.period_time;
                 break;
             case PERIOD_COUNT:
-                MainActivity.match.period_count = position;
+                Main.match.period_count = position;
                 break;
             case SINBIN:
-                MainActivity.match.sinbin = position;
+                Main.match.sinbin = position;
                 break;
             case POINTS_TRY:
-                MainActivity.match.points_try = position-1;
+                Main.match.points_try = position-1;
                 break;
             case POINTS_CON:
-                MainActivity.match.points_con = position-1;
+                Main.match.points_con = position-1;
                 break;
             case POINTS_GOAL:
-                MainActivity.match.points_goal = position-1;
+                Main.match.points_goal = position-1;
                 break;
         }
         updateValue();
@@ -348,7 +355,7 @@ public class MenuItem extends ConstraintLayout{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             menuItemMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MenuItem.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "MenuItem.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_match_types, Toast.LENGTH_SHORT).show();
         }
     }
@@ -357,17 +364,17 @@ public class MenuItem extends ConstraintLayout{
             for(int i=0; i < Conf.customMatchTypes.length(); i++){
                 JSONObject matchType = Conf.customMatchTypes.getJSONObject(i);
                 if(matchType.getString("name").equals(name)){
-                    MainActivity.match.period_time = matchType.getInt("period_time");
-                    MainActivity.match.period_count = matchType.getInt("period_count");
-                    MainActivity.match.sinbin = matchType.getInt("sinbin");
-                    MainActivity.match.points_try = matchType.getInt("points_try");
-                    MainActivity.match.points_con = matchType.getInt("points_con");
-                    MainActivity.match.points_goal = matchType.getInt("points_goal");
+                    Main.match.period_time = matchType.getInt("period_time");
+                    Main.match.period_count = matchType.getInt("period_count");
+                    Main.match.sinbin = matchType.getInt("sinbin");
+                    Main.match.points_try = matchType.getInt("points_try");
+                    Main.match.points_con = matchType.getInt("points_con");
+                    Main.match.points_goal = matchType.getInt("points_goal");
                     return;
                 }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MenuItem.loadCustomMatchType Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "MenuItem.loadCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
         }
     }

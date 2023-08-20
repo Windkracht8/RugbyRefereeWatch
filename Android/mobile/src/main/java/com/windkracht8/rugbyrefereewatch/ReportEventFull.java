@@ -60,12 +60,12 @@ public class ReportEventFull extends LinearLayout{
 
             TextView tvWhat = findViewById(R.id.tvWhat);
             int period = event.getInt("period");
-            tvWhat.setText(translator.getEventTypeLocal(context, event.getString("what"), period, period_count));
+            tvWhat.setText(Translator.getEventTypeLocal(context, event.getString("what"), period, period_count));
 
             if(event.has("team")){
                 TextView tvTeam = findViewById(R.id.tvTeam);
                 String team = event.getString("team");
-                team = match.has(team) ? MainActivity.getTeamName(context, match.getJSONObject(team)) : team;
+                team = match.has(team) ? Main.getTeamName(context, match.getJSONObject(team)) : team;
                 tvTeam.setText(team);
             }
 
@@ -74,7 +74,7 @@ public class ReportEventFull extends LinearLayout{
                 tvWho.setText(event.getString("who"));
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "ReportEventFull.construct Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "ReportEventFull.construct Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }

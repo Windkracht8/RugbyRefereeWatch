@@ -6,7 +6,7 @@
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/rrw_black_background" >
+    style="@style/rrw_black_background">
     <ImageButton
         android:id="@+id/bConfWatch"
         android:layout_width="match_parent"
@@ -52,7 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time"
-        android:baselineAligned="false" >
+        android:baselineAligned="false">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_away"
-        android:baselineAligned="false" >
+        android:baselineAligned="false">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,6 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5">
+
             <LinearLayout
                 android:id="@+id/sinbins_away"
                 android:layout_width="match_parent"
@@ -131,7 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sinbins_space"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
     <TextView
         android:id="@+id/tTimer"
         android:layout_width="match_parent"
@@ -169,7 +170,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5" >
+            android:layout_weight=".5">
             <Button
                 android:id="@+id/bPenHome"
                 style="?android:attr/buttonBarButtonStyle"
@@ -184,7 +185,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:layout_marginEnd="20dp" >
+            android:layout_marginEnd="20dp">
             <Button
                 android:id="@+id/bPenAway"
                 style="?android:attr/buttonBarButtonStyle"
@@ -204,7 +205,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_away"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
     <Button
         android:id="@+id/bOverTimer"
         android:layout_width="match_parent"
@@ -258,7 +259,7 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
     <ImageButton
         android:id="@+id/bConf"
         android:layout_width="match_parent"

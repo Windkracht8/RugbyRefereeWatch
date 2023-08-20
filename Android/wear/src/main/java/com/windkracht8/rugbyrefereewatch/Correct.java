@@ -23,7 +23,7 @@ public class Correct extends ScrollView{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_correct, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.correct, this, true);
     }
-    public void show(MainActivity ma, MatchData match){
+    public void show(Main ma, MatchData match){
         this.match = match;
         correctList = findViewById(R.id.correctList);
         for(int i = correctList.getChildCount(); i > 0; i--){
@@ -51,11 +51,11 @@ public class Correct extends ScrollView{
         this.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
         findViewById(R.id.svCorrect).requestFocus();
         this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if(!MainActivity.isScreenRound || itemHeightInit) return;
+            if(!Main.isScreenRound || itemHeightInit) return;
             if(correctList.getChildCount() == 0) return;
             itemHeightInit = true;
             itemHeight = correctList.getChildAt(0).getHeight();
-            topBottomMargin = (MainActivity.heightPixels - itemHeight) / 3;
+            topBottomMargin = (Main.heightPixels - itemHeight) / 3;
             scalePerPixel = .5f / (topBottomMargin + itemHeight);
             onScroll(0);
             this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
@@ -76,19 +76,19 @@ public class Correct extends ScrollView{
             }else if(top < topBottomMargin){
                 //the item is in the top quarter
                 scale = .5f + (scalePerPixel * bottom);
-            }else if(top > MainActivity.heightPixels){
+            }else if(top > Main.heightPixels){
                 //the item is below the screen
                 scale = .5f;
-            }else if(bottom > MainActivity.heightPixels - topBottomMargin){
+            }else if(bottom > Main.heightPixels - topBottomMargin){
                 //the item is in the bottom quarter
-                scale = .5f + (scalePerPixel * (MainActivity.heightPixels - top));
+                scale = .5f + (scalePerPixel * (Main.heightPixels - top));
             }
             item.setScaleX(scale);
             item.setScaleY(scale);
         }
     }
     public void eventClicked(View v){
-        if(MainActivity.draggingEnded+100 > MainActivity.getCurrentTimestamp()) return;
+        if(Main.draggingEnded+100 > Main.getCurrentTimestamp()) return;
         Event event_ui = (Event) v;
         match.removeEvent(event_ui.event);
         this.setVisibility(View.GONE);

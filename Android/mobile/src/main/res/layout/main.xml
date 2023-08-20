@@ -12,13 +12,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/icon" />
-    <Spinner
-        android:id="@+id/sCommsType"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:contentDescription="@string/sCommsType_desc"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
@@ -29,7 +22,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
-        app:layout_constraintTop_toBottomOf="@+id/sCommsType" />
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tvError"
         android:layout_width="0dp"
@@ -41,26 +34,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
-    <Button
-        android:id="@+id/bConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/bConnect_text"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/llTabs"
-        app:layout_constraintEnd_toEndOf="parent" />
-    <Button
-        android:id="@+id/bSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/bSearch_text"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/llTabs"
-        app:layout_constraintEnd_toEndOf="parent" />
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"

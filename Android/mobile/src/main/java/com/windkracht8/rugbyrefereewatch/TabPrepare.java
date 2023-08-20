@@ -181,8 +181,8 @@ public class TabPrepare extends LinearLayout{
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != sHomeColorPosition) has_changed = true;
-                MainActivity.sharedPreferences_editor.putInt("sHomeColorPosition", position);
-                MainActivity.sharedPreferences_editor.apply();
+                Main.sharedPreferences_editor.putInt("sHomeColorPosition", position);
+                Main.sharedPreferences_editor.apply();
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
@@ -191,8 +191,8 @@ public class TabPrepare extends LinearLayout{
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position != sAwayColorPosition) has_changed = true;
-                MainActivity.sharedPreferences_editor.putInt("sAwayColorPosition", position);
-                MainActivity.sharedPreferences_editor.apply();
+                Main.sharedPreferences_editor.putInt("sAwayColorPosition", position);
+                Main.sharedPreferences_editor.apply();
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
@@ -227,9 +227,9 @@ public class TabPrepare extends LinearLayout{
         try{
             settings.put("home_name", etHomeName.getText());
             settings.put("away_name", etAwayName.getText());
-            settings.put("home_color", translator.getTeamColorSystem(getContext(), sHomeColor.getSelectedItem().toString()));
-            settings.put("away_color", translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
-            settings.put("match_type", translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
+            settings.put("home_color", Translator.getTeamColorSystem(getContext(), sHomeColor.getSelectedItem().toString()));
+            settings.put("away_color", Translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
+            settings.put("match_type", Translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
             settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
             settings.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
@@ -243,7 +243,7 @@ public class TabPrepare extends LinearLayout{
                 settings.put("record_pens", cbRecordPens.isChecked() ? 1 : 0);
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_prepare, Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -253,11 +253,11 @@ public class TabPrepare extends LinearLayout{
         if(has_changed){return;}
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
-            if(settings.has("home_color")) translator.setTeamColorSpin(getContext(), sHomeColor, settings.getString("home_color"));
+            if(settings.has("home_color")) Translator.setTeamColorSpin(getContext(), sHomeColor, settings.getString("home_color"));
             if(settings.has("away_name")) etAwayName.setText(settings.getString("away_name"));
-            if(settings.has("away_color")) translator.setTeamColorSpin(getContext(), sAwayColor, settings.getString("away_color"));
+            if(settings.has("away_color")) Translator.setTeamColorSpin(getContext(), sAwayColor, settings.getString("away_color"));
 
-            if(settings.has("match_type")) translator.setMatchTypeSpin(getContext(), sMatchType, settings.getString("match_type"));
+            if(settings.has("match_type")) Translator.setMatchTypeSpin(getContext(), sMatchType, settings.getString("match_type"));
             if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
             if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
             if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
@@ -270,7 +270,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_settings, Toast.LENGTH_SHORT).show();
         }
     }
@@ -294,9 +294,9 @@ public class TabPrepare extends LinearLayout{
             }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.i(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
+            Log.i(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
@@ -310,7 +310,7 @@ public class TabPrepare extends LinearLayout{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
@@ -328,7 +328,7 @@ public class TabPrepare extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_load_custom_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -345,7 +345,7 @@ public class TabPrepare extends LinearLayout{
             storeCustomMatchTypes();
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -390,7 +390,7 @@ public class TabPrepare extends LinearLayout{
              }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -403,7 +403,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_con", etPointsCon.getText().toString());
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -414,7 +414,7 @@ public class TabPrepare extends LinearLayout{
             osr.write(customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }

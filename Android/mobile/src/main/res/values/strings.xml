@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">RugbyRefereeWatch</string>
-    <string name="comms_type_bt" translatable="false">Bluetooth</string>
-    <string name="comms_type_tizen" translatable="false">Tizen</string>
-    <string name="comms_type_wear" translatable="false">WearOS</string>
 
     <!-- filenames -->
     <string name="matches_filename" translatable="false">matches.json</string>
@@ -24,9 +21,6 @@
 
     <!-- main ui -->
     <string name="ivIcon_desc">icon</string>
-    <string name="sCommsType_desc">Watch OS selection</string>
-    <string name="bConnect_text">Connect</string>
-    <string name="bSearch_text">Search</string>
     <string name="history">History</string>
     <string name="report">Report</string>
     <string name="prepare">Prepare</string>
@@ -172,8 +166,6 @@
     <string name="status_GETTING_MATCH">Getting match</string>
     <string name="status_PREPARE">Sending prepare</string>
     <string name="status_ERROR">error</string>
-    <string name="status_CONNECTING">Connecting</string>
-    <string name="status_SEARCHING">Searching</string>
     <string name="status_LISTENING">Listening</string>
 
     <!-- fail -->
@@ -185,7 +177,6 @@
     <string name="fail_show_report">Failed to show Report</string>
     <string name="fail_show_prepare">Failed to show Prepare</string>
     <string name="fail_send_message">Failed to send message to watch</string>
-    <string name="fail_tizen_init">Failed to start Tizen connector</string>
     <string name="fail_response">Problem with response from watch</string>
     <string name="fail_export">Failed to export matches</string>
     <string name="fail_delete">Failed to delete</string>
@@ -204,17 +195,10 @@
     <string name="fail_del_event">Failed to delete event</string>
     <string name="fail_save_match">Failed to save match</string>
     <string name="fail_unexpected">Unexpected technical error</string>
-    <string name="not_connected">Not connected</string>
-    <string name="watch_not_found">Watch not found</string>
-    <string name="app_not_found_on_watch">RugbyRefereeWatch not found on watch</string>
-    <string name="no_watch_found">No watch found</string>
-    <string name="connection_failed">Connection failed:</string>
     <string name="problem_matches_received">Problem with matches received from watch</string>
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="first_connect">First connect with watch</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
-    <string name="noTizenLib">Click to install Tizen Service</string>
-    <string name="noWearLib">Click to install Wear OS Service</string>
     <string name="fail_BT_denied">Permission denied</string>
     <string name="fail_BT_disabled">Bluetooth turned off</string>
 

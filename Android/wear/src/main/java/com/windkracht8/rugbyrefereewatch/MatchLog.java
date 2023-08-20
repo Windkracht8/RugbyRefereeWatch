@@ -28,11 +28,11 @@ public class MatchLog extends ScrollView{
         findViewById(R.id.llMatchLog).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
-    public void show(MainActivity ma, Report report) {
+    public void show(Main ma, Report report) {
         for (int i = matchLogList.getChildCount(); i > 0; i--) {
             matchLogList.removeViewAt(i - 1);
         }
-        JSONArray matches = FileStore.file_readMatches(getContext());
+        JSONArray matches = FileStore.readMatches(getContext(), ma.hMessage);
         try {
             for (int i = matches.length() - 1; i >= 0; i--) {
                 MatchData match = new MatchData(getContext(), matches.getJSONObject(i));
@@ -41,21 +41,21 @@ public class MatchLog extends ScrollView{
                 ma.addOnTouch(matchLogMatch);
             }
         } catch (JSONException e) {
-            android.util.Log.e(MainActivity.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
-            MainActivity.makeToast(getContext(), getContext().getString(R.string.fail_show_log));
+            android.util.Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
+            ma.hMessage.sendMessage(ma.hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
         }
-        findViewById(R.id.match_log_label).getLayoutParams().height = MainActivity.vh25;
-        ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + MainActivity.vh25;
+        findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
+        ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + Main.vh25;
 
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);
         findViewById(R.id.svMatchLog).requestFocus();
         this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if(!MainActivity.isScreenRound || itemHeightInit) return;
+            if(!Main.isScreenRound || itemHeightInit) return;
             if(matchLogList.getChildCount() == 0) return;
             itemHeightInit = true;
             itemHeight = matchLogList.getChildAt(0).getHeight();
-            topBottomMargin = (MainActivity.heightPixels - itemHeight) / 3;
+            topBottomMargin = (Main.heightPixels - itemHeight) / 3;
             scalePerPixel = .5f / (topBottomMargin + itemHeight);
             onScroll(0);
             this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
@@ -76,12 +76,12 @@ public class MatchLog extends ScrollView{
             }else if(top < topBottomMargin){
                 //the item is in the top quarter
                 scale = .5f + (scalePerPixel * bottom);
-            }else if(top > MainActivity.heightPixels){
+            }else if(top > Main.heightPixels){
                 //the item is below the screen
                 scale = .5f;
-            }else if(bottom > MainActivity.heightPixels - topBottomMargin){
+            }else if(bottom > Main.heightPixels - topBottomMargin){
                 //the item is in the bottom quarter
-                scale = .5f + (scalePerPixel * (MainActivity.heightPixels - top));
+                scale = .5f + (scalePerPixel * (Main.heightPixels - top));
             }
             item.setScaleX(scale);
             item.setScaleY(scale);

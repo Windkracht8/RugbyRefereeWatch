@@ -1,9 +1,6 @@
 <resources>
     <!-- main ui -->
     <string name="ivIcon_desc">icoon</string>
-    <string name="sCommsType_desc">Horloge OS selectie</string>
-    <string name="bConnect_text">Verbinden</string>
-    <string name="bSearch_text">Zoeken</string>
     <string name="history">Geschiedenis</string>
     <string name="report">Rapport</string>
     <string name="prepare">Voorbereiden</string>
@@ -149,8 +146,6 @@
     <string name="status_GETTING_MATCH">Wedstrijd ophalen</string>
     <string name="status_PREPARE">Instellingen verzenden</string>
     <string name="status_ERROR">error</string>
-    <string name="status_CONNECTING">Verbinden</string>
-    <string name="status_SEARCHING">Zoeken</string>
     <string name="status_LISTENING">Luistert</string>
 
     <!-- fail -->
@@ -162,7 +157,6 @@
     <string name="fail_show_report">Fout bij weergeven Rapport</string>
     <string name="fail_show_prepare">Fout bij weergeven Voorbereiden</string>
     <string name="fail_send_message">Fout bij verzenden bericht aan horloge</string>
-    <string name="fail_tizen_init">Fout bij het starten van de Tizen connector</string>
     <string name="fail_response">Probleem met het antwoord van horloge</string>
     <string name="fail_export">Fout bij exporteren wedstrijden</string>
     <string name="fail_delete">Fout bij verwijderen</string>
@@ -181,17 +175,10 @@
     <string name="fail_del_event">Fout bij verwijderen gebeurtenis</string>
     <string name="fail_save_match">Fout bij opslaan van wedstrijd</string>
     <string name="fail_unexpected">Onverwachte technische fout</string>
-    <string name="not_connected">Niet verbonden</string>
-    <string name="watch_not_found">Horloge niet gevonden</string>
-    <string name="app_not_found_on_watch">RugbyRefereeWatch niet gevonden op horloge</string>
-    <string name="no_watch_found">Geen horloge gevonden</string>
-    <string name="connection_failed">Verbinding mislukt:</string>
     <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
     <string name="update_watch_app">Update de app op het horloge</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
-    <string name="noTizenLib">Klik om Tizen Service te installeren</string>
-    <string name="noWearLib">Klik om Wear OS Service te installeren</string>
     <string name="fail_BT_denied">Niet toegestaan</string>
     <string name="fail_BT_disabled">Bluetooth staat uit</string>
 

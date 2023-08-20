@@ -38,7 +38,7 @@ public class MatchData{
                 events.add(new event(context, events_json.getJSONObject(i)));
             }
         }catch(JSONException e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MatchData.MatchData Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "MatchData.MatchData Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             match_id = 0;
         }
@@ -64,7 +64,7 @@ public class MatchData{
             }
             ret.put("events", events_json);
         }catch(JSONException e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
         }
         return ret;
@@ -122,7 +122,7 @@ public class MatchData{
     public void logEvent(String what, String team, Integer who, long id, String score){
         event evt = new event(what, id, team, who, score);
         events.add(evt);
-        Log.i(MainActivity.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
+        Log.i(Main.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
     }
     public static class team{
         public String id;
@@ -154,7 +154,7 @@ public class MatchData{
                 pens = team_js.getInt("pens");
                 kickoff = team_js.getBoolean("kickoff");
             }catch(JSONException e){
-                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.team Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "MatchData.team Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
         }
@@ -184,7 +184,7 @@ public class MatchData{
                 ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
-                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
             return ret;
@@ -200,10 +200,10 @@ public class MatchData{
         public int who;
         public String score;
         public event(String what, long id, String team, int who, String score){
-            this.id = id > 0 ? id : MainActivity.getCurrentTimestamp();
-            this.time = MainActivity.prettyTime(this.id);
-            this.timer = (MainActivity.timer_timer + ((long)(MainActivity.timer_period-1)*MainActivity.match.period_time*60000));
-            this.period = MainActivity.timer_period;
+            this.id = id > 0 ? id : Main.getCurrentTimestamp();
+            this.time = Main.prettyTime(this.id);
+            this.timer = (Main.timer_timer + ((long)(Main.timer_period-1)* Main.match.period_time*60000));
+            this.period = Main.timer_period;
             this.what = what;
             this.team = team;
             this.who = who;
@@ -220,7 +220,7 @@ public class MatchData{
                 if(event_json.has("who")) who = event_json.getInt("who");
                 if(event_json.has("score")) score = event_json.getString("score");
             }catch(JSONException e){
-                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "MatchData.event Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
         }
@@ -242,7 +242,7 @@ public class MatchData{
                     evt.put("score", score);
                 }
             }catch(JSONException e){
-                Log.e(MainActivity.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
             }
             return evt;

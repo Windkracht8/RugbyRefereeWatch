@@ -53,7 +53,7 @@ public class Score extends LinearLayout{
         score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);
-        score_player.setVisibility(MainActivity.record_player ? View.VISIBLE : View.GONE);
+        score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
     }
     public void clear(){score_player.setSelection(0);}
 }

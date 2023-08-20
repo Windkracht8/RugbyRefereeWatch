@@ -30,12 +30,12 @@ public class ReportEvent extends LinearLayout {
         try{
             String text = event.getString("what");
             int period = event.getInt("period");
-            String what_local = translator.getEventTypeLocal(context, text, period, period_count);
+            String what_local = Translator.getEventTypeLocal(context, text, period, period_count);
             if(text.equals("START") || text.equals("END")){
                 String[] scores = event.getString("score").split(":");
                 tvLeft.setText(scores[0]);
                 tvRight.setText(scores[1]);
-                tvMiddle.setText(translator.getEventTypeLocal(context, text, period, period_count));
+                tvMiddle.setText(Translator.getEventTypeLocal(context, text, period, period_count));
                 int width = (this.getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
@@ -93,7 +93,7 @@ public class ReportEvent extends LinearLayout {
                 }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }

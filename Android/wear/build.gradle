@@ -1,17 +1,14 @@
-plugins {
-    id 'com.android.application'
-}
-android {
-    compileSdk 33
+apply plugin: 'com.android.application'
 
+android {
     defaultConfig {
         applicationId "com.windkracht8.rugbyrefereewatch"
         minSdk 28
         targetSdk 33
+        compileSdk 33
         versionCode 176
         versionName "1.7.6"
     }
-
     buildTypes {
         release {
             shrinkResources true

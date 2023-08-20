@@ -84,7 +84,7 @@ public class TabReport extends LinearLayout{
                 return;
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.gotMatch timer.status Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.gotMatch timer.status Exception: " + e.getMessage());
             return;
         }
 
@@ -101,10 +101,10 @@ public class TabReport extends LinearLayout{
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
-            ((TextView)findViewById(R.id.tvHomeName)).setText(MainActivity.getTeamName(getContext(), home));
-            ((EditText)findViewById(R.id.etHomeName)).setText(MainActivity.getTeamName(getContext(), home));
-            ((TextView)findViewById(R.id.tvAwayName)).setText(MainActivity.getTeamName(getContext(), away));
-            ((EditText)findViewById(R.id.etAwayName)).setText(MainActivity.getTeamName(getContext(), away));
+            ((TextView)findViewById(R.id.tvHomeName)).setText(Main.getTeamName(getContext(), home));
+            ((EditText)findViewById(R.id.etHomeName)).setText(Main.getTeamName(getContext(), home));
+            ((TextView)findViewById(R.id.tvAwayName)).setText(Main.getTeamName(getContext(), away));
+            ((EditText)findViewById(R.id.etAwayName)).setText(Main.getTeamName(getContext(), away));
             ((TextView)findViewById(R.id.tvHomeTries)).setText(home.getString("tries"));
             ((TextView)findViewById(R.id.tvAwayTries)).setText(away.getString("tries"));
 
@@ -171,7 +171,7 @@ public class TabReport extends LinearLayout{
 
             showEvents();
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.gotMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.gotMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
 
@@ -204,7 +204,7 @@ public class TabReport extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
@@ -293,7 +293,7 @@ public class TabReport extends LinearLayout{
                 getContext().sendBroadcast(intent);
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
@@ -315,7 +315,7 @@ public class TabReport extends LinearLayout{
     }
     public void bEditClick(){
         if(what_width == 0){
-            what_width = MainActivity.widthPixels - del_width - timer_edit_width - team_width - who_width;
+            what_width = Main.widthPixels - del_width - timer_edit_width - team_width - who_width;
             if(what_width > 500) what_width=1;
         }
 
@@ -341,7 +341,7 @@ public class TabReport extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_delete, Toast.LENGTH_SHORT).show();
         }
     }
@@ -480,7 +480,7 @@ public class TabReport extends LinearLayout{
             getContext().sendBroadcast(intent);
             loadMatch(match);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save, Toast.LENGTH_SHORT).show();
         }
     }
@@ -493,7 +493,7 @@ public class TabReport extends LinearLayout{
         try{
             getContext().startActivity(Intent.createChooser(intent, getContext().getString(R.string.share_report)));
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
     }
@@ -505,16 +505,16 @@ public class TabReport extends LinearLayout{
             shareSubject += " " + match_date_s;
 
             JSONObject home = match.getJSONObject("home");
-            shareSubject += " " + MainActivity.getTeamName(getContext(), home);
+            shareSubject += " " + Main.getTeamName(getContext(), home);
             shareSubject += " " + home.getString("tot");
 
             shareSubject += " v";
 
             JSONObject away = match.getJSONObject("away");
-            shareSubject += " " + MainActivity.getTeamName(getContext(), away);
+            shareSubject += " " + Main.getTeamName(getContext(), away);
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
         return shareSubject;
@@ -533,7 +533,7 @@ public class TabReport extends LinearLayout{
             boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") > 0 || away.getInt("pen_goals") > 0);
             boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") > 0 || away.getInt("drop_goals") > 0);
             boolean show_pens = home.has("pens") && away.has("pens") && (home.getInt("pens") > 0 || away.getInt("pens") > 0);
-            shareBody.append(MainActivity.getTeamName(getContext(), home)).append("\n");
+            shareBody.append(Main.getTeamName(getContext(), home)).append("\n");
             shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(home.getString("tries")).append("\n");
             if(show_cons){
                 shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(home.getString("cons")).append("\n");
@@ -556,7 +556,7 @@ public class TabReport extends LinearLayout{
             shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(home.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            shareBody.append(MainActivity.getTeamName(getContext(), away)).append("\n");
+            shareBody.append(Main.getTeamName(getContext(), away)).append("\n");
             shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(away.getString("tries")).append("\n");
             if(show_cons){
                 shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(away.getString("cons")).append("\n");
@@ -599,12 +599,12 @@ public class TabReport extends LinearLayout{
                 if(event.has("score")){
                     shareBody.append("    ").append(event.getString("score"));
                 }
-                shareBody.append("    ").append(translator.getEventTypeLocal(getContext(), event.getString("what"), event.getInt("period"), period_count));
+                shareBody.append("    ").append(Translator.getEventTypeLocal(getContext(), event.getString("what"), event.getInt("period"), period_count));
                 if(event.has("team")){
                     if(event.getString("team").equals("home")){
-                        shareBody.append(" ").append(MainActivity.getTeamName(getContext(), home));
+                        shareBody.append(" ").append(Main.getTeamName(getContext(), home));
                     }else{
-                        shareBody.append(" ").append(MainActivity.getTeamName(getContext(), away));
+                        shareBody.append(" ").append(Main.getTeamName(getContext(), away));
                     }
                 }
                 if(event.has("who")){
@@ -617,7 +617,7 @@ public class TabReport extends LinearLayout{
             }
 
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
         return shareBody.toString();

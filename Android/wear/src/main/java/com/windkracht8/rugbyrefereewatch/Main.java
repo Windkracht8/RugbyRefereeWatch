@@ -1,15 +1,15 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
@@ -27,7 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
@@ -35,11 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends FragmentActivity{
+public class Main extends Activity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
     public static boolean isScreenRound;
     private TextView battery;
@@ -74,7 +73,7 @@ public class MainActivity extends FragmentActivity{
     public static int vh10 = 0;
     public static int vh25 = 0;
 
-    private static String timer_status = "conf";
+    public static String timer_status = "conf";
     public static long timer_timer = 0;
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
@@ -85,11 +84,18 @@ public class MainActivity extends FragmentActivity{
     public static int timer_type = 1;//0:up, 1:down
     public static boolean record_player = false;
     public static boolean record_pens = false;
-    public final static int help_version = 3;
+    public static boolean bluetooth = true;
+    public final static int help_version = 4;
 
     private Handler handler_main;
     private ExecutorService executorService;
-    private static BroadcastReceiver rrwReceiver;
+    private Comms comms;
+    public final static int MESSAGE_HIDE_SPLASH = 1;
+    public final static int MESSAGE_TOAST = 2;
+    public final static int MESSAGE_SHOW_HELP = 3;
+    public final static int MESSAGE_READ_SETTINGS = 4;
+    public final static int MESSAGE_CUSTOM_MATCH_TYPE = 5;
+    public final static int MESSAGE_PREPARE_RECEIVED = 6;
 
     private static long back_time = 0;
     private static float onTouchStartY = -1;
@@ -119,7 +125,7 @@ public class MainActivity extends FragmentActivity{
         vh10 = heightPixels / 10;
 
         executorService = Executors.newFixedThreadPool(4);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
         int[] ids = new int[]{R.id.main,R.id.bConfWatch,R.id.score_home,R.id.score_away,
@@ -133,7 +139,7 @@ public class MainActivity extends FragmentActivity{
                 R.id.report,
                 R.id.correct,R.id.svCorrect,
                 R.id.svHelp, R.id.llHelp
-                };
+        };
         for(int id : ids){findViewById(id).setOnTouchListener(this::onTouch);}
         findViewById(R.id.main).setOnClickListener(v -> onMainClick());
 
@@ -208,12 +214,23 @@ public class MainActivity extends FragmentActivity{
         int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
         int vh30 = (int) (heightPixels * .3);
+        int vw30 = (int) (widthPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
+        time.measure(0, 0);
+        if(time.getMeasuredHeight() > vh15){
+            time.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) Math.floor((float) time.getMeasuredHeight()/2));
+            time.setHeight(vh15);
+        }
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         ((TextView)findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
+        tTimer.measure(0, 0);
+        if(tTimer.getMeasuredHeight() > vh30){
+            tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) Math.floor((float) tTimer.getMeasuredHeight()/2));
+            tTimer.setHeight(vh30);
+        }
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bOverTimer.setMinimumHeight(vh30);
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
@@ -222,59 +239,19 @@ public class MainActivity extends FragmentActivity{
         bConfWatch.getLayoutParams().height = vh20;
         bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bStart.getLayoutParams().height = tTimer.getLayoutParams().height;
-        bStart.getLayoutParams().width = heightPixels-vh30;
+        bStart.getLayoutParams().width = widthPixels-vw30;
         bMatchLog.setPadding(0, vh5, vh5, vh5);
         bMatchLog.getLayoutParams().height = vh20;
-        bMatchLog.getLayoutParams().width = vh30;
+        bMatchLog.getLayoutParams().width = vw30;
 
         findViewById(R.id.iHelpNew).getLayoutParams().height = vh15;
 
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        rrwReceiver = new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context context, Intent intent){
-                String intent_type = Objects.requireNonNull(intent.getStringExtra("intent_type"));
-                switch(intent_type) {
-                    case "hideSplash":
-                        runOnUiThread(() -> hideSplash());
-                        break;
-                    case "toast":
-                        if(!intent.hasExtra("message")) return;
-                        runOnUiThread(() -> Toast.makeText(context, intent.getStringExtra("message"), Toast.LENGTH_SHORT).show());
-                        break;
-                    case "showHelp":
-                        if(!intent.hasExtra("help_version")) return;
-                        switch(intent.getIntExtra("help_version", 0)){
-                            case help_version:
-                                break;
-                            case 0:
-                                help.showWelcome();
-                            default:
-                                help.show();
-                                conf.setVisibility(View.GONE);
-                                executorService.submit(() -> FileStore.file_storeSettings(context));
-                        }
-                        break;
-                    case "storeCustomMatchTypes":
-                        executorService.submit(() -> FileStore.file_storeCustomMatchTypes(context));
-                        break;
-                    case "onReceivePrepare":
-                        updateAfterConfig();
-                        break;
-                }
-            }
-        };
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"), RECEIVER_NOT_EXPORTED);
-        }else{
-            registerReceiver(rrwReceiver, new IntentFilter("com.windkracht8.rugbyrefereewatch"));
-        }
-
-        executorService.submit(() -> FileStore.file_readSettings(getBaseContext()));
-        executorService.submit(() -> FileStore.file_readCustomMatchTypes(getBaseContext()));
-        executorService.submit(() -> FileStore.file_cleanMatches(getBaseContext()));
+        executorService.submit(() -> FileStore.readSettings(getBaseContext(), hMessage));
+        executorService.submit(() -> FileStore.readCustomMatchTypes(getBaseContext(), hMessage));
+        executorService.submit(() -> FileStore.cleanMatches(getBaseContext(), hMessage));
 
         updateBattery();
         update();
@@ -283,10 +260,62 @@ public class MainActivity extends FragmentActivity{
         handler_main.postDelayed(this::hideSplash, 1000);
     }
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        unregisterReceiver(rrwReceiver);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            initBT();
+        }else{
+            bluetooth = false;
+            FileStore.storeSettings(getBaseContext(), hMessage);
+        }
     }
+    private void initBT(){
+        if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
+        if(comms == null) comms = new Comms(this, hMessage);
+        comms.connect(this);
+    }
+
+    public final Handler hMessage = new Handler(Looper.getMainLooper()){
+        public void handleMessage(Message msg){
+            switch(msg.what){
+                case MESSAGE_HIDE_SPLASH:
+                    runOnUiThread(() -> hideSplash());
+                    break;
+                case MESSAGE_TOAST:
+                    if(msg.obj instanceof String){
+                        runOnUiThread(() -> Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show());
+                    }else if(msg.obj instanceof Integer){
+                        String msg_str = getBaseContext().getString((Integer) msg.obj);
+                        runOnUiThread(() -> Toast.makeText(getBaseContext(), msg_str, Toast.LENGTH_SHORT).show());
+                    }
+                    break;
+                case MESSAGE_SHOW_HELP:
+                    if(!(msg.obj instanceof Integer)) return;
+                    switch((Integer) msg.obj){
+                        case help_version:
+                            break;
+                        case 0:
+                            help.showWelcome();
+                        default:
+                            help.show();
+                            conf.setVisibility(View.GONE);
+                            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
+                    }
+                    break;
+                case MESSAGE_READ_SETTINGS:
+                    if(!(msg.obj instanceof JSONObject)) return;
+                    readSettings((JSONObject) msg.obj);
+                    break;
+                case MESSAGE_CUSTOM_MATCH_TYPE:
+                    executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), hMessage));
+                    break;
+                case MESSAGE_PREPARE_RECEIVED:
+                    updateAfterConfig();
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onBackPressed(){
         if(back_time > getCurrentTimestamp() - 500){return;}
@@ -294,11 +323,16 @@ public class MainActivity extends FragmentActivity{
         if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
+            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
+            if(bluetooth){
+                initBT();
+            }else{
+                if(comms != null) comms.stop();
+            }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.file_storeSettings(getBaseContext()));
+            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), hMessage));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -422,6 +456,7 @@ public class MainActivity extends FragmentActivity{
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
+                if(comms != null) comms.stop();
             case "ready":
                 singleBeep(getBaseContext());
                 timer_status = "running";
@@ -490,7 +525,8 @@ public class MainActivity extends FragmentActivity{
                 timer_type = match.timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.file_storeMatch(getBaseContext(), match));
+                executorService.submit(() -> FileStore.storeMatch(getBaseContext(), hMessage, match));
+                initBT();
                 break;
             case "finished":
                 timer_status = "conf";
@@ -638,8 +674,8 @@ public class MainActivity extends FragmentActivity{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        findViewById(R.id.pen).setVisibility(MainActivity.record_pens ? View.VISIBLE : View.GONE);
-        findViewById(R.id.pen_label).setVisibility(MainActivity.record_pens ? View.VISIBLE : View.GONE);
+        findViewById(R.id.pen).setVisibility(Main.record_pens ? View.VISIBLE : View.GONE);
+        findViewById(R.id.pen_label).setVisibility(Main.record_pens ? View.VISIBLE : View.GONE);
 
         score.update(match);
     }
@@ -934,7 +970,7 @@ public class MainActivity extends FragmentActivity{
         }
         return null;
     }
-    public static boolean incomingSettings(Context context, JSONObject settings_new){
+    public static boolean incomingSettings(Handler hMessage, JSONObject settings_new){
         if(!timer_status.equals("conf")) return false;
         try{
             match.home.team = settings_new.getString("home_name");
@@ -961,18 +997,22 @@ public class MainActivity extends FragmentActivity{
                 timer_type = match.timer_type;
             }
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
-            MainActivity.makeToast(context, "Problem with incoming settings");
+            Log.e(Main.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
+            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
             return false;
         }
         return true;
     }
 
-    public static void readSettings(Context context, JSONObject jsonSettings){
+    private void readSettings(JSONObject jsonSettings){
         if(!timer_status.equals("conf")) return;
         try{
             record_player = jsonSettings.getBoolean("record_player");
             if(jsonSettings.has("record_pens")) record_pens = jsonSettings.getBoolean("record_pens");
+            if(jsonSettings.has("bluetooth")){
+                bluetooth = jsonSettings.getBoolean("bluetooth");
+            }
+            if(bluetooth) initBT();
             screen_on = jsonSettings.getBoolean("screen_on");
             match.timer_type = jsonSettings.getInt("timer_type");
             timer_type = match.timer_type;
@@ -987,15 +1027,12 @@ public class MainActivity extends FragmentActivity{
             if(jsonSettings.has("home_color")) match.home.color = jsonSettings.getString("home_color");
             if(jsonSettings.has("away_color")) match.away.color = jsonSettings.getString("away_color");
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
-            MainActivity.makeToast(context, "Problem with reading settings");
+            Log.e(Main.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
+            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
         }
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "hideSplash");
-        context.sendBroadcast(intent);
     }
 
-    public static JSONObject getSettings(Context context){
+    public static JSONObject getSettings(Handler hMessage){
         JSONObject ret = new JSONObject();
         try{
             ret.put("home_name", match.home.team);
@@ -1015,8 +1052,8 @@ public class MainActivity extends FragmentActivity{
             ret.put("timer_type", match.timer_type);
             ret.put("help_version", help_version);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
-            MainActivity.makeToast(context, "Problem with sending settings");
+            Log.e(Main.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
+            hMessage.sendMessage(hMessage.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_settings));
         }
         return ret;
     }
@@ -1065,12 +1102,6 @@ public class MainActivity extends FragmentActivity{
         vibrator.cancel();
         vibrator.vibrate(ve);
     }
-    public static void makeToast(Context context, String message){
-        Intent intent = new Intent("com.windkracht8.rugbyrefereewatch");
-        intent.putExtra("intent_type", "toast");
-        intent.putExtra("message", message);
-        context.sendBroadcast(intent);
-    }
     public static JSONObject getTimer(){
         JSONObject ret = new JSONObject();
         try{
@@ -1083,7 +1114,7 @@ public class MainActivity extends FragmentActivity{
             ret.put("period_time", timer_period_time);
             ret.put("type", timer_type);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "MainActivity.getTimer Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "MainActivity.getTimer Exception: " + e.getMessage());
             return null;
         }
         return ret;

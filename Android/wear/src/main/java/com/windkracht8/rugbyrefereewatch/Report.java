@@ -31,13 +31,13 @@ public class Report extends ScrollView{
                 continue;
             }
             TextView tv = new TextView(getContext());
-            String item = MainActivity.prettyTimer(event.timer) + " ";
+            String item = Main.prettyTimer(event.timer) + " ";
             switch(event.what){
                 case "START":
-                    item += getContext().getString(R.string.Start) + " " + MainActivity.getPeriodName(getContext(), event.period, match.period_count);
+                    item += getContext().getString(R.string.Start) + " " + Main.getPeriodName(getContext(), event.period, match.period_count);
                     break;
                 case "END":
-                    item += getContext().getString(R.string.Result) + " " + MainActivity.getPeriodName(getContext(), event.period, match.period_count);
+                    item += getContext().getString(R.string.Result) + " " + Main.getPeriodName(getContext(), event.period, match.period_count);
                     if(event.score != null){
                         item += " " + event.score;
                     }
@@ -54,7 +54,7 @@ public class Report extends ScrollView{
             }
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, MainActivity.vh7);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, Main.vh7);
             reportList.addView(tv);
         }
         this.setVisibility(View.VISIBLE);

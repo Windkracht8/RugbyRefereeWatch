@@ -45,11 +45,11 @@ public class HistoryMatch extends LinearLayout{
             String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
-            String name_s = match_date_s + " " + MainActivity.getTeamName(context, home) + " v " + MainActivity.getTeamName(context, away);
+            String name_s = match_date_s + " " + Main.getTeamName(context, home) + " v " + Main.getTeamName(context, away);
 
             tvName.setText(name_s);
         }catch(Exception e){
-            Log.e(MainActivity.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
         }
     }
