@@ -239,6 +239,9 @@ function bbottomClick(){
 			$('#conf, #timer_type').css("font-size", "unset");
 
 			file_storeMatch(match);
+			if(settings.bluetooth){
+				comms_start();
+			}
 			break;
 		case "finished":
 			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0,period_time:match.settings.period_time,type:settings.timer_type};
