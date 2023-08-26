@@ -1,5 +1,5 @@
-/* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes */
-/* exported timerClick, bovertimerClick, bbottomClick, bconfwatchClick, extratimeChange, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showMessage */
+/* global $, file_init, file_storeMatch, file_storeSettings, file_storeCustomMatchTypes, comms_start, comms_stop */
+/* exported timerClick, bovertimerClick, bbottomClick, bconfwatchClick, extratimeChange, pen_homeClick, pen_awayClick, score_homeClick, score_awayClick, tryClick, conversionClick, goalClick, foulplayClick, card_yellowClick, penalty_tryClick, card_redClick, bconfClick, color_homeChange, color_awayChange, match_typeChange, incomingSettings, getSettings, settingsRead, addCustomMatchType, syncCustomMatchTypes, customMatchTypesRead, removeEvent, record_playerChange, screen_onChange, timer_typeClick, record_pensChange, showMessage, bluetoothChange */
 
 var timer = {
 	status: "conf",
@@ -18,7 +18,7 @@ var settings = {
 	record_pens: false,
 	bluetooth: true,
 	help_version: 4
-}
+};
 var match = {
 	settings: {
 		match_type: "15s",
@@ -68,10 +68,22 @@ window.onload = function(){
 		}
 	});
 	document.addEventListener("rotarydetent", function(e){
-		if(e.detail.direction === "CW"){
-			$('body').scrollTop($('body').scrollTop() + 50);
+		var scrollElement = null;
+		if($('#help').is(":visible")){
+			scrollElement = $('#help');
+		}else if($('#conf').is(":visible")){
+			scrollElement = $('#conf');
+		}else if($('#correct_overlay').is(":visible")){
+			scrollElement = $('#correct_overlay');
+		}else if($('#report_overlay').is(":visible")){
+			scrollElement = $('#report_overlay');
 		}else{
-			$('body').scrollTop($('body').scrollTop() - 50);
+			return;
+		}
+		if(e.detail.direction === "CW"){
+			scrollElement.scrollTop(scrollElement.scrollTop() + 50);
+		}else{
+			scrollElement.scrollTop(scrollElement.scrollTop() - 50);
 		}
 	});
 	try{
@@ -133,6 +145,7 @@ function getCurrentTimestamp(){
 	return d.getTime();
 }
 
+var timeOffBuzzTimeoutID;
 function timerClick(){
 	if(timer.status === "running"){
 		//time off
@@ -141,21 +154,23 @@ function timerClick(){
 		timer.start_timeoff = getCurrentTimestamp();
 		logEvent("Time off", null, null);
 		updateButtons();
-		setTimeout(timeOffBuzz, 15000);
+		timeOffBuzzTimeoutID = setTimeout(timeOffBuzz, 15000);
 	}
 }
 
 function timeOffBuzz(){
 	if(timer.status === "timeoff"){
 		beep();
-		setTimeout(timeOffBuzz, 15000);
+		timeOffBuzzTimeoutID = setTimeout(timeOffBuzz, 15000);
 	}
 }
 
 function bovertimerClick(){
+	if(timer.status === "conf"){
+		match.matchid = getCurrentTimestamp();
+	}
 	switch(timer.status){
 		case "conf":
-			match.matchid = getCurrentTimestamp();
 		case "ready":
 			//start next period
 			singleBeep();
@@ -165,9 +180,11 @@ function bovertimerClick(){
 			timer.period++;
 			logEvent("START", kickoffTeam, null);
 			updateScore();
+			comms_stop();
 			break;
 		case "timeoff":
 			//resume running
+			clearTimeout(timeOffBuzzTimeoutID);
 			singleBeep();
 			timer.status = "running";
 			timer.start += (getCurrentTimestamp() - timer.start_timeoff);
@@ -234,7 +251,7 @@ function bbottomClick(){
 			$('#sinbins_home').html("");
 			$('#sinbins_away').html("");
 			$('#matchSettings').show();
-			$('#helpSettings').show();
+			$('#otherSettings').show();
 			$('#bconf').show();
 			break;
 		default://ignore
@@ -354,12 +371,11 @@ function updateButtons(){
 
 function update(){
 	var millisecs = updateTime();
-	switch(timer.status){
-		case "running":
-			updateSinbins();
-		case "rest":
-			updateTimer();
-			break;
+	if(timer.status === "running"){
+		updateSinbins();
+		updateTimer();
+	}else if(timer.status === "rest"){
+		updateTimer();
 	}
 	setTimeout(update, 1000 - millisecs);
 }
@@ -663,7 +679,7 @@ function bconfwatchClick(){
 	if(timer.status === "conf" || timer.status === "running"){return;}
 	$('#conf, #timer_type').css("font-size", "8vh");
 	$('#matchSettings').hide();
-	$('#helpSettings').hide();
+	$('#otherSettings').hide();
 	showConf();
 }
 function showConf(){
@@ -681,10 +697,11 @@ function showConf(){
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
 
-	$('#record_player').prop('checked', settings.record_player);
-	$('#record_pens').prop('checked', settings.record_pens);
 	$('#screen_on').prop('checked', settings.screen_on);
 	$('#timer_type').val(settings.timer_type);
+	$('#record_player').prop('checked', settings.record_player);
+	$('#record_pens').prop('checked', settings.record_pens);
+	$('#bluetooth').prop('checked', settings.bluetooth);
 
 	$('#conf').show();
 	$('#conf').scrollTop(0);
@@ -830,7 +847,11 @@ function screen_onChanged(){
 }
 function bluetoothChange(){
 	settings.bluetooth = $('#bluetooth').is(":checked");
-	comms_ping();
+	if(settings.bluetooth){
+		comms_start();
+	}else{
+		comms_stop();
+	}
 }
 function timer_typeClick(){
 	settings.timer_type = settings.timer_type === 0 ? 1 : 0;
@@ -896,6 +917,7 @@ function logEvent(what, team, who){
 	var temp = '{"id":' + id +
 				',"time":"' + $('#time').html() + '"' +
 				',"timer":"' + currenttimer + '"' +
+				',"period":"' + timer.period + '"' +
 				',"what":"' + what + '"';
 	if(team !== null){
 		temp +=	',"team":"' + team.id + '"';
@@ -967,21 +989,21 @@ function incomingSettings(newsettings){
 
 function getSettings(){
 	var ret = {};
-	ret["home_name"] = match.home.team;
-	ret["home_color"] = match.home.color;
-	ret["away_name"] = match.away.team;
-	ret["away_color"] = match.away.color;
-	ret["match_type"] = match.settings.match_type;
-	ret["period_time"] = match.settings.period_time;
-	ret["period_count"] = match.settings.period_count;
-	ret["sinbin"] = match.settings.sinbin;
-	ret["points_try"] = match.settings.points_try;
-	ret["points_con"] = match.settings.points_con;
-	ret["points_goal"] = match.settings.points_goal;
-	ret["screen_on"] = settings.screen_on;
-	ret["timer_type"] = settings.timer_type;
-	ret["record_player"] = settings.record_player;
-	ret["record_pens"] = settings.record_pens;
+	ret.home_name = match.home.team;
+	ret.home_color = match.home.color;
+	ret.away_name = match.away.team;
+	ret.away_color = match.away.color;
+	ret.match_type = match.settings.match_type;
+	ret.period_time = match.settings.period_time;
+	ret.period_count = match.settings.period_count;
+	ret.sinbin = match.settings.sinbin;
+	ret.points_try = match.settings.points_try;
+	ret.points_con = match.settings.points_con;
+	ret.points_goal = match.settings.points_goal;
+	ret.screen_on = settings.screen_on;
+	ret.timer_type = settings.timer_type;
+	ret.record_player = settings.record_player;
+	ret.record_pens = settings.record_pens;
 	return ret;
 }
 
@@ -998,12 +1020,17 @@ function settingsRead(newsettings){
 		storeSettings();
 	}
 	hideSplash();
-	comms_ping();
+	if(settings.bluetooth){
+		comms_start();
+	}else{
+		comms_stop();
+	}
 }
 
 function noStoredSettings(){
 	$('#help_welcome').show();
 	showHelp();
+	comms_start();
 }
 
 function storeSettings(){
@@ -1088,6 +1115,7 @@ function showHelp(){
 	$('#help').show();
 	$('#help').scrollTop(0);
 	$('#conf').hide();
+	$('#help').trigger("focus");
 }
 
 function setNewSettings(newsettings){

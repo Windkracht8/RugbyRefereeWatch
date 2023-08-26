@@ -176,7 +176,8 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_LOAD_LATEST_MATCH, matches.get(0)));
+        if(!matches.isEmpty())
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_LOAD_LATEST_MATCH, matches.get(0)));
     }
 
     public void storeMatches(){
@@ -327,10 +328,6 @@ public class TabHistory extends LinearLayout{
                         if(event.get("timer") instanceof String){
                             event.put("timer", Long.parseLong(event.getString("timer"), 10));
                         }
-                    }
-                    //Ensure period_count is in match, not only in match.settings
-                    if(!match.has("period_count")){
-                        match.put("period_count", settings.getInt("period_count"));
                     }
                     //Add match format version (pre format 1)
                     match.put("format", 1);//September 2023

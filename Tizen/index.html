@@ -8,7 +8,6 @@
     <title>Rugby Referee Watch</title>
     <link id="stylesheet" rel="stylesheet" type="text/css" href="css/style.css"/>
     <script src="js/jquery-3.7.0.min.js"></script>
-    <script src="js/tau.min.js"></script>
     <script src="js/filestore.js"></script>
     <script src="js/comms.js"></script>
     <script src="js/main.js"></script>
@@ -192,11 +191,11 @@
 	</div>
 	<label for="record_pens">Record penalties</label><br>
 	<label class="switch w8blue"><input id="record_pens" onchange="record_pensChange()" type="checkbox"><span class="slider"></span></label>
-	<div class="conf_item">
-		<label for="bluetooth">Bluetooth</label><br>
-		<label class="switch w8blue"><input id="bluetooth" onchange="bluetoothChange()" type="checkbox"><span class="slider"></span></label>
-	</div>
-	<div id="helpSettings">
+	<div id="otherSettings">
+		<div class="conf_item">
+			<label for="bluetooth">Bluetooth</label><br>
+			<label class="switch w8blue"><input id="bluetooth" onchange="bluetoothChange()" type="checkbox"><span class="slider"></span></label>
+		</div>
 		Help<br>
 		<button class="w8blue" onclick="showHelp()">Show help</button>
 	</div>
