@@ -71,34 +71,8 @@ public class TabReport extends LinearLayout{
 
     public void loadMatch(Handler handler_message, final JSONObject match){
         this.handler_message = handler_message;
-        showMatch(match);
-        findViewById(R.id.bEdit).setVisibility(VISIBLE);
-        findViewById(R.id.tvNoEdit).setVisibility(GONE);
-    }
-    public void gotMatch(Handler handler_message, final JSONObject match){
-        this.handler_message = handler_message;
-        showMatch(match);
-        try{
-            if(!match.has("timer")) return;
-            JSONObject timer = match.getJSONObject("timer");
-            if(!timer.has("status")) return;
-            if(timer.getString("status").equals("finished")){
-                findViewById(R.id.bEdit).setVisibility(VISIBLE);
-                findViewById(R.id.tvNoEdit).setVisibility(GONE);
-                return;
-            }
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabReport.gotMatch timer.status Exception: " + e.getMessage());
-            return;
-        }
-
-        findViewById(R.id.bEdit).setVisibility(GONE);
-        findViewById(R.id.tvNoEdit).setVisibility(VISIBLE);
-    }
-    private void showMatch(final JSONObject match){
         this.match = match;
         view = 0;
-        fixReport();
         try{
             this.match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
@@ -175,7 +149,7 @@ public class TabReport extends LinearLayout{
 
             showEvents();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabReport.gotMatch Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "TabReport.loadMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
 
@@ -185,25 +159,33 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bShare).setVisibility(VISIBLE);
         findViewById(R.id.table).setVisibility(VISIBLE);
         findViewById(R.id.edit_team_names).setVisibility(GONE);
+        findViewById(R.id.bEdit).setVisibility(VISIBLE);
+        findViewById(R.id.tvNoEdit).setVisibility(GONE);
     }
     private void showEvents(){
         if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
         try{
             JSONArray events = match.getJSONArray("events");
-            Context context = getContext();
-            int period_count = match.getJSONObject("settings").getInt("period_count");
-            int period_time = match.getJSONObject("settings").getInt("period_time");
+            JSONObject settings = match.getJSONObject("settings");
+            int period_count = settings.getInt("period_count");
+            int period_time = settings.getInt("period_time");
+            int points_try = settings.getInt("points_try");
+            int points_con = settings.getInt("points_con");
+            int points_goal = settings.getInt("points_goal");
+            int[] score = {0, 0};
+
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
                 switch(view){
                     case 0:
-                        llEvents.addView(new ReportEvent(context, event, period_count, period_time));
+                        if(event.has("team")) calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
+                        llEvents.addView(new ReportEvent(getContext(), event, period_count, period_time, score));
                         break;
                     case 1:
-                        llEvents.addView(new ReportEventFull(context, event, match, period_count, period_time));
+                        llEvents.addView(new ReportEventFull(getContext(), event, match, period_count, period_time));
                         break;
                     case 2:
-                        llEvents.addView(new ReportEventEdit(context, handler_message, event));
+                        llEvents.addView(new ReportEventEdit(getContext(), handler_message, event));
                         break;
                 }
             }
@@ -213,91 +195,25 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    private void fixReport(){
-        try{
-            boolean changed = false;
-            int score_home = 0;
-            int score_away = 0;
-            JSONObject settings = match.getJSONObject("settings");
-            int points_try = settings.getInt("points_try");
-            int points_con = settings.getInt("points_con");
-            int points_goal = settings.getInt("points_goal");
-            int period = 0;
-            JSONArray events = match.getJSONArray("events");
-            for(int i = 0; i < events.length(); i++){
-                JSONObject event = events.getJSONObject(i);
-                String what = event.getString("what");
-
-                //check if timer is in old format
-                String temp = event.getString("timer");
-                if(temp.contains(":")){
-                    String[] array = temp.split(":", 2);
-                    long timer = ((Long.parseLong(array[0])*60) + Long.parseLong(array[1]))*1000;
-                    event.put("timer", timer);
-                    changed = true;
-                }
-
-                //add period if not there
-                if(what.toUpperCase().startsWith("START")) period++;
-                if(!event.has("period")){
-                    event.put("period", period);
-                }
-
-                //rename event type to new format
-                if(what.startsWith("Start")){
-                    event.put("what", "START");
-                    changed = true;
-                }else if(what.startsWith("Result")){
-                    event.put("what", "END");
-                    changed = true;
-                }else if(what.equals("Time off")){
-                    event.put("what", "TIME OFF");
-                    changed = true;
-                }else if(what.equals("Resume time")){
-                    event.put("what", "RESUME");
-                    changed = true;
-                }
-
-                //count score
-                if(event.has("team")){
-                    int points = 0;
-                    switch (what){
-                        case "TRY":
-                            points = points_try;
-                            break;
-                        case "CONVERSION":
-                            points = points_con;
-                            break;
-                        case "PENALTY TRY":
-                            points = points_try + points_con;
-                            break;
-                        case "GOAL":
-                        case "PENALTY GOAL":
-                        case "DROP GOAL":
-                            points = points_goal;
-                            break;
-                    }
-                    if(event.getString("team").equals("home")){
-                        score_home += points;
-                    }else{
-                        score_away += points;
-                    }
-                }
-
-                //add score
-                if(event.has("score")) continue;
-                event.put("score", score_home + ":" + score_away);
-                changed = true;
-            }
-
-            if(changed){
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_MATCH, match));
-            }
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabReport.getScore Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
+    public static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
+        switch(what){
+            case "TRY":
+                score[team.equals("home") ? 0 : 1] += points_try;
+                break;
+            case "CONVERSION":
+                score[team.equals("home") ? 0 : 1] += points_con;
+                break;
+            case "PENALTY TRY":
+                score[team.equals("home") ? 0 : 1] += points_try + points_con;
+                break;
+            case "GOAL":
+            case "PENALTY GOAL":
+            case "DROP GOAL":
+                score[team.equals("home") ? 0 : 1] += points_goal;
+                break;
         }
     }
+
     public void bCloseClick(View view){
         InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
@@ -439,11 +355,9 @@ public class TabReport extends LinearLayout{
                             away_pens++;
                         }
                         break;
-                    default:
-                        if(what.startsWith("Result")){
-                            what = what.substring(0, what.lastIndexOf(' ')) + " " + score;
-                            event.put("what", what);
-                        }
+                    case "END":
+                        event.put("score", score);
+                        break;
                 }
                 events.put(event);
             }
@@ -577,23 +491,12 @@ public class TabReport extends LinearLayout{
             shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            int period_count;
-            if(match.has("period_count")){//Deprecated
-                period_count = match.getInt("period_count");
-            }else{
-                JSONObject settings = match.getJSONObject("settings");
-                period_count = settings.getInt("period_count");
-            }
+            int period_count = match.getInt("period_count");
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
                 shareBody.append(event.getString("time"));
-                Object aObj = event.get("timer");
-                if(aObj instanceof String){
-                    shareBody.append("    ").append(event.getString("timer"));//Deprecated
-                }else{
-                    shareBody.append("    ").append(ReportEventEdit.timerStampToString(event.getLong("timer")));
-                }
+                shareBody.append("    ").append(ReportEventEdit.timerStampToString(event.getLong("timer")));
                 if(event.has("score")){
                     shareBody.append("    ").append(event.getString("score"));
                 }

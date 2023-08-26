@@ -154,10 +154,10 @@ public class MenuItem extends ConstraintLayout{
         String value = "";
         switch(type){
             case COLOR_HOME:
-                value = translator.getTeamColorLocal(getContext(), Main.match.home.color);
+                value = Translator.getTeamColorLocal(getContext(), Main.match.home.color);
                 break;
             case COLOR_AWAY:
-                value = translator.getTeamColorLocal(getContext(), Main.match.away.color);
+                value = Translator.getTeamColorLocal(getContext(), Main.match.away.color);
                 break;
             case MATCH_TYPE:
                 value = Main.match.match_type;
@@ -191,7 +191,7 @@ public class MenuItem extends ConstraintLayout{
                 value = getContext().getString(Main.screen_on ? R.string.on : R.string.off);
                 break;
             case TIMER_TYPE:
-                value = getContext().getString(Main.timer_type == 1 ? R.string.timer_type_down : R.string.timer_type_up);
+                value = getContext().getString(Main.timer_type_period == 1 ? R.string.timer_type_down : R.string.timer_type_up);
                 break;
             case RECORD_PLAYER:
                 value = getContext().getString(Main.record_player ? R.string.on : R.string.off);
@@ -232,7 +232,7 @@ public class MenuItem extends ConstraintLayout{
                 updateValue();
                 break;
             case TIMER_TYPE:
-                Main.timer_type = Main.timer_type == 1 ? 0 : 1;
+                Main.timer_type_period = Main.timer_type_period == 1 ? 0 : 1;
                 updateValue();
                 break;
             case RECORD_PLAYER:
@@ -265,14 +265,14 @@ public class MenuItem extends ConstraintLayout{
     public void newValue(int position, String value){
         switch(type){
             case COLOR_HOME:
-                Main.match.home.color = translator.getTeamColorSystem(getContext(), position);
+                Main.match.home.color = Translator.getTeamColorSystem(getContext(), position);
                 break;
             case COLOR_AWAY:
-                Main.match.away.color = translator.getTeamColorSystem(getContext(), position);
+                Main.match.away.color = Translator.getTeamColorSystem(getContext(), position);
                 break;
             case MATCH_TYPE:
                 position--;
-                Main.match.match_type = translator.getMatchTypeSystem(getContext(), position, value);
+                Main.match.match_type = Translator.getMatchTypeSystem(getContext(), position, value);
                 switch(position){
                     case 0://15s
                         Main.match.period_time = 40;

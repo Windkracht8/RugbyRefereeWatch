@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 public class ReportEvent extends LinearLayout {
     public ReportEvent(Context context){super(context);}
-    public ReportEvent(Context context, JSONObject event, int period_count, int period_time){
+    public ReportEvent(Context context, JSONObject event, int period_count, int period_time, int[] score){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -28,31 +28,35 @@ public class ReportEvent extends LinearLayout {
         TextView tvRight = findViewById(R.id.tvRight);
 
         try{
-            String text = event.getString("what");
+            String what = event.getString("what");
             int period = event.getInt("period");
-            String what_local = Translator.getEventTypeLocal(context, text, period, period_count);
-            if(text.equals("START") || text.equals("END")){
-                String[] scores = event.getString("score").split(":");
-                tvLeft.setText(scores[0]);
-                tvRight.setText(scores[1]);
-                tvMiddle.setText(Translator.getEventTypeLocal(context, text, period, period_count));
+            String what_local = Translator.getEventTypeLocal(context, what, period, period_count);
+            if(what.equals("END")){
+                tvLeft.setText(String.valueOf(score[0]));
+                tvRight.setText(String.valueOf(score[1]));
+                tvMiddle.setText(what_local);
+                int width = (this.getWidth() - tvMiddle.getWidth()) / 2;
+                tvLeft.setWidth(width);
+                tvRight.setWidth(width);
+            }else if(what.equals("START")){
+                tvMiddle.setText(what_local);
                 int width = (this.getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else{
                 tvMiddle.setWidth(TabReport.score_width);
-                switch(text){
+                switch(what){
                     case "TRY":
                     case "CONVERSION":
                     case "PENALTY TRY":
                     case "GOAL":
                     case "PENALTY GOAL":
                     case "DROP GOAL":
-                        String score = event.getString("score");
-                        tvMiddle.setText(score);
-                        if(score.length() == 4){
+                        String sScore = score[0] + ":" + score[1];
+                        tvMiddle.setText(sScore);
+                        if(sScore.length() == 4){
                             //even number of characters will mess up the alignment
-                            tvMiddle.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
+                            tvMiddle.setGravity(score[0] >= 10 ? Gravity.START : Gravity.END);
                         }
                     case "YELLOW CARD":
                     case "RED CARD":

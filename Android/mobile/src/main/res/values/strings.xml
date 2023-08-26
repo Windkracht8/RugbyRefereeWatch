@@ -35,12 +35,11 @@
     </string-array>
 
     <!-- history -->
-    <string name="bGetMatches_text">Get matches from watch</string>
+    <string name="bSync_text">Synchronise with watch</string>
     <string name="bExport_text">Export selected</string>
     <string name="bDelete_text">Delete selected</string>
 
     <!-- report -->
-    <string name="bGetMatch_text">Get match from watch</string>
     <string name="tries">Tries</string>
     <string name="conversions">Conversions</string>
     <string name="pen_tries">Penalty tries</string>
@@ -158,18 +157,12 @@
 
     <!-- status -->
     <string name="status_STARTING">Starting</string>
-    <string name="status_DISCONNECTED">Disconnected</string>
-    <string name="status_CONNECTION_LOST">Connection lost</string>
+    <string name="status_LISTENING">Looking for watch</string>
     <string name="status_CONNECTED">Connected</string>
-    <string name="status_OFFLINE">Offline</string>
-    <string name="status_GETTING_MATCHES">Getting matches</string>
-    <string name="status_GETTING_MATCH">Getting match</string>
-    <string name="status_PREPARE">Sending prepare</string>
     <string name="status_ERROR">error</string>
-    <string name="status_LISTENING">Listening</string>
 
     <!-- fail -->
-    <string name="fail_get_matches">Failed to request matches from watch</string>
+    <string name="fail_sync">Failed to synchronise with watch</string>
     <string name="fail_prepare">Problem with sending settings</string>
     <string name="fail_show_match">Failed to show match</string>
     <string name="fail_show_history">Failed to show History</string>
@@ -198,7 +191,7 @@
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="first_connect">First connect with watch</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
-    <string name="fail_BT_denied">Permission denied</string>
-    <string name="fail_BT_disabled">Bluetooth turned off</string>
+    <string name="fail_BT_denied">No Bluetooth permission</string>
+    <string name="fail_BT_off">Bluetooth turned off</string>
 
 </resources>

@@ -4,15 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <Button
-        android:id="@+id/bGetMatch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bGetMatch_text"
-        android:textSize="18sp"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:visibility="gone" />
     <TableLayout
         android:id="@+id/table"
         android:layout_width="match_parent"

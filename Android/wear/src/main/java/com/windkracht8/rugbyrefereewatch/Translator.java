@@ -3,7 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.Log;
 
-public class translator {
+public class Translator{
     public static String getMatchTypeSystem(Context context, int index, String fallback){
         if(index<=5){
             String[] matchTypes_system = context.getResources().getStringArray(R.array.matchTypes_system);

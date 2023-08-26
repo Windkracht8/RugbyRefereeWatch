@@ -85,23 +85,7 @@ public class FileStore{
     }
     public static void storeSettings(Context context, Handler handler_message){
         try{
-            JSONObject jsonSettings = new JSONObject();
-            jsonSettings.put("record_player", Main.record_player);
-            jsonSettings.put("record_pens", Main.record_pens);
-            jsonSettings.put("bluetooth", Main.bluetooth);
-            jsonSettings.put("screen_on", Main.screen_on);
-            jsonSettings.put("timer_type", Main.timer_type);
-            jsonSettings.put("help_version", Main.help_version);
-            jsonSettings.put("match_type", Main.match.match_type);
-            jsonSettings.put("period_time", Main.match.period_time);
-            jsonSettings.put("period_count", Main.match.period_count);
-            jsonSettings.put("sinbin", Main.match.sinbin);
-            jsonSettings.put("points_try", Main.match.points_try);
-            jsonSettings.put("points_con", Main.match.points_con);
-            jsonSettings.put("points_goal", Main.match.points_goal);
-            jsonSettings.put("home_color", Main.match.home.color);
-            jsonSettings.put("away_color", Main.match.away.color);
-            storeFile(context, handler_message, R.string.settings_filename, jsonSettings.toString());
+            storeFile(context, handler_message, R.string.settings_filename, Main.getSettings(handler_message).toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
@@ -112,7 +96,7 @@ public class FileStore{
         try{
             String sSettings = getFileAsString(context, handler_message, R.string.settings_filename);
             if(sSettings.length() < 3){
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, 0, 0));
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_NO_SETTINGS));
                 return;
             }
             JSONObject jsonSettings = new JSONObject(sSettings);
@@ -123,6 +107,8 @@ public class FileStore{
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_NO_SETTINGS));
+            return;
         }
         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, help_version, 0));
     }

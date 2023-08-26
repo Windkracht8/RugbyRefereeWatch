@@ -43,11 +43,11 @@ public class Report extends ScrollView{
                     }
                     break;
                 default:
-                    item += translator.getEventTypeLocal(getContext(), event.what);
+                    item += Translator.getEventTypeLocal(getContext(), event.what);
                     break;
             }
             if(event.team != null){
-                item += " " + translator.getTeamLocal(getContext(), event.team);
+                item += " " + Translator.getTeamLocal(getContext(), event.team);
                 if(event.who > 0){
                     item += ' ' + Integer.toString(event.who);
                 }

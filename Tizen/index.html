@@ -10,8 +10,7 @@
     <script src="js/jquery-3.7.0.min.js"></script>
     <script src="js/tau.min.js"></script>
     <script src="js/filestore.js"></script>
-    <script src="js/comms_tizen.js"></script>
-    <script src="js/comms_bt.js"></script>
+    <script src="js/comms.js"></script>
     <script src="js/main.js"></script>
 </head>
 
@@ -193,6 +192,10 @@
 	</div>
 	<label for="record_pens">Record penalties</label><br>
 	<label class="switch w8blue"><input id="record_pens" onchange="record_pensChange()" type="checkbox"><span class="slider"></span></label>
+	<div class="conf_item">
+		<label for="bluetooth">Bluetooth</label><br>
+		<label class="switch w8blue"><input id="bluetooth" onchange="bluetoothChange()" type="checkbox"><span class="slider"></span></label>
+	</div>
 	<div id="helpSettings">
 		Help<br>
 		<button class="w8blue" onclick="showHelp()">Show help</button>
@@ -205,6 +208,8 @@
 <div id="help" class="overlay" onclick="this.style.display='none'">
 	<div id="help_welcome"><div class="helptopic">Welcome</div>Here are a few tips to get you familiar with this app.<br><br></div>
 	<div class="helptopic">New stuff</div>
+	Connection to the RugbyRefereeWatch app on your phone now works via Bluetooth, this works with any Android phone. You do need to approve permission.
+	<br><br><div class="helptopic">Penalty kick</div>
 	Do you want to record penalties? You can enable that in the settings. Looking for penalty kick? Check under foul play.
 	<br><br><div class="helptopic">Corrections</div>
 	During a game press the back button to open the correction screen. On this screen you can tab the event you want to undo.

@@ -4,10 +4,10 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
     <Button
-        android:id="@+id/bGetMatches"
+        android:id="@+id/bSync"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/bGetMatches_text"
+        android:text="@string/bSync_text"
         android:textSize="18sp"
         android:textAlignment="center"
         android:textAllCaps="false"

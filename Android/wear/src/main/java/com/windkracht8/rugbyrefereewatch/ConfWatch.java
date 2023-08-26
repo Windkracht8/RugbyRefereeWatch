@@ -24,11 +24,10 @@ public class ConfWatch extends LinearLayout {
             return;
         }
         isInitialized = true;
-        int padding = getResources().getDimensionPixelSize(R.dimen.menu_item_padding)*4;
-        int height_per_item = ((Main.heightPixels/4) - padding) / 3;
-
+        int padding = getResources().getDimensionPixelSize(R.dimen.menu_item_padding)*2;
+        int height_per_item = ((Main.heightPixels/4) - padding) / 4;
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
-        for(MenuItem.MenuItemType menuItemType : new MenuItem.MenuItemType[]{SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS}){
+        for(MenuItem.MenuItemType menuItemType : new MenuItem.MenuItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
             MenuItem menuItem = new MenuItem(getContext(), main.handler_message, null, menuItemType);
             llConfWatch.addView(menuItem);
             menuItem.addOnTouch(main);

@@ -12,13 +12,13 @@ import java.util.ArrayList;
 
 public class MatchData{
     public long match_id;
+    public final int format = 1;//September 2023
     public final ArrayList<event> events = new ArrayList<>();
     public team home;
     public team away;
     public String match_type = "15s";
     public int period_time = 40;
     public int period_count = 2;
-    public int timer_type = 1;//Keep timer type for match, for overtime this might be different
     public int sinbin = 10;
     public int points_try = 5;
     public int points_con = 2;
@@ -47,6 +47,7 @@ public class MatchData{
         JSONObject ret = new JSONObject();
         try{
             ret.put("matchid", match_id);
+            ret.put("format", format);
             JSONObject settings = new JSONObject();
             settings.put("match_type", match_type);
             settings.put("period_time", period_time);
@@ -119,10 +120,9 @@ public class MatchData{
                 break;
         }
     }
-    public void logEvent(String what, String team, Integer who, long id, String score){
-        event evt = new event(what, id, team, who, score);
+    public void logEvent(String what, String team, Integer who, long id){
+        event evt = new event(what, id, team, who);
         events.add(evt);
-        Log.i(Main.RRW_LOG_TAG, "MatchData.logEvent: " + what + " " + team + " " + who);
     }
     public static class team{
         public String id;
@@ -199,7 +199,7 @@ public class MatchData{
         public String team;
         public int who;
         public String score;
-        public event(String what, long id, String team, int who, String score){
+        public event(String what, long id, String team, int who){
             this.id = id > 0 ? id : Main.getCurrentTimestamp();
             this.time = Main.prettyTime(this.id);
             this.timer = (Main.timer_timer + ((long)(Main.timer_period-1)* Main.match.period_time*60000));
@@ -207,7 +207,8 @@ public class MatchData{
             this.what = what;
             this.team = team;
             this.who = who;
-            this.score = score;
+            if(what.equals("END"))
+                this.score = Main.match.home.tot + ":" + Main.match.away.tot;
         }
         public event(Context context, JSONObject event_json){
             try{

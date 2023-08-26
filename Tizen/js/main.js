@@ -9,8 +9,16 @@ var timer = {
 	period_ended: false,
 	period: 0,
 	period_time: 40,
-	type: 1
+	type: 1//0:up, 1:down
 };
+var settings = {
+	screen_on: true,
+	timer_type: 1,//0:up, 1:down
+	record_player: false,
+	record_pens: false,
+	bluetooth: true,
+	help_version: 4
+}
 var match = {
 	settings: {
 		match_type: "15s",
@@ -19,12 +27,7 @@ var match = {
 		sinbin: 10,
 		points_try: 5,
 		points_con: 2,
-		points_goal: 3,
-		record_player: 0,
-		record_pens: 0,
-		screen_on: 1,
-		timer_type: 1,//0:up, 1:down
-		help_version: 3
+		points_goal: 3
 	},
 	home: {
 		id: "home",
@@ -53,7 +56,8 @@ var match = {
 		kickoff: 0
 	},
 	events: [],
-	matchid: 0
+	matchid: 0,
+	format: 1//September 2023
 };
 var custom_match_types = [];
 
@@ -84,9 +88,9 @@ window.onload = function(){
 	record_pensChanged();
 
 	function onScreenStateChanged(previousState, newState){
-	    if(newState === 'SCREEN_NORMAL'){
-	    	requestScreen_on();
-	    }
+		if(newState === 'SCREEN_NORMAL' && settings.screen_on){
+			tizen.power.request("SCREEN", "SCREEN_NORMAL");
+		}
 	}
 	try{
 		tizen.power.setScreenStateChangeListener(onScreenStateChanged);
@@ -159,7 +163,7 @@ function bovertimerClick(){
 			timer.start = getCurrentTimestamp();
 			var kickoffTeam = getKickoffTeam();//capture before increasing timer_period
 			timer.period++;
-			logEvent("Start " + getPeriodName(), kickoffTeam, null);
+			logEvent("START", kickoffTeam, null);
 			updateScore();
 			break;
 		case "timeoff":
@@ -172,7 +176,7 @@ function bovertimerClick(){
 		case "rest":
 			//get ready for next period
 			timer.status = "ready";
-			timer.type = match.settings.timer_type;
+			timer.type = settings.timer_type;
 			break;
 		case "finished":
 			showReport();
@@ -192,7 +196,7 @@ function bbottomClick(){
 			if(match.events[match.events.length-1].what === "Time off"){
 				match.events.splice(match.events.length-1, 1);
 			}
-			logEvent("Result " + getPeriodName() + " " + match.home.tot + ":" + match.away.tot, null, null);
+			logEvent("END", null, null);
 
 			timer.status = "rest";
 			timer.start = getCurrentTimestamp();
@@ -213,14 +217,14 @@ function bbottomClick(){
 			break;
 		case "rest":
 			timer.status = "finished";
-			timer.type = match.settings.timer_type;
+			timer.type = settings.timer_type;
 			updateScore();
 			$('#conf, #timer_type').css("font-size", "unset");
 
 			file_storeMatch(match);
 			break;
 		case "finished":
-			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0,period_time:match.settings.period_time,type:match.settings.timer_type};
+			timer = {status:"conf",timer:0,start:0,start_timeoff:0,period_ended:false,period:0,period_time:match.settings.period_time,type:settings.timer_type};
 			updateTimer();
 			match.home = {id:"home",team:"home",color:match.home.color,tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
 			match.away = {id:"away",team:"away",color:match.away.color,tot:0,tries:0,cons:0,pen_tries:0,goals:0,pens:0,sinbins:[],kickoff:0};
@@ -513,7 +517,7 @@ function showScore(){
 	}else{
 		$('#score_goal').css('display', 'block');
 	}
-	if(match.settings.record_player === 1){
+	if(settings.record_player){
 		$('#score_player_wrap').show();
 	}else{
 		$('#score_player_wrap').hide();
@@ -527,21 +531,21 @@ function tryClick(){
 	team_edit.tries++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player ? $('#score_player').val() : null;
 	logEvent("TRY", team_edit, player);
 }
 function conversionClick(){
 	team_edit.cons++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player ? $('#score_player').val() : null;
 	logEvent("CONVERSION", team_edit, player);
 }
 function goalClick(){
 	team_edit.goals++;
 	updateScore();
 	$('#score').hide();
-	var player = match.settings.record_player === 1 ? $('#score_player').val() : null;
+	var player = settings.record_player ? $('#score_player').val() : null;
 	logEvent("GOAL", team_edit, player);
 }
 function updateScore(){
@@ -580,7 +584,7 @@ function penalty_tryClick(){
 	team_edit.pen_tries++;
 	updateScore();
 	$('#foulplay').hide();
-	var player = match.settings.record_player === 1 ? $('#foulplay_player').val() : null;
+	var player = settings.record_player ? $('#foulplay_player').val() : null;
 	logEvent("PENALTY TRY", team_edit, player);
 }
 
@@ -677,10 +681,10 @@ function showConf(){
 	$('#points_con').val(match.settings.points_con);
 	$('#points_goal').val(match.settings.points_goal);
 
-	$('#record_player').prop('checked', match.settings.record_player === 1 ? true : false);
-	$('#record_pens').prop('checked', match.settings.record_pens === 1 ? true : false);
-	$('#screen_on').prop('checked', match.settings.screen_on === 1 ? true : false);
-	$('#timer_type').val(match.settings.timer_type);
+	$('#record_player').prop('checked', settings.record_player);
+	$('#record_pens').prop('checked', settings.record_pens);
+	$('#screen_on').prop('checked', settings.screen_on);
+	$('#timer_type').val(settings.timer_type);
 
 	$('#conf').show();
 	$('#conf').scrollTop(0);
@@ -794,11 +798,11 @@ function points_goalChange(){
 	match.settings.points_goal = parseInt($('#points_goal').val());
 }
 function record_playerChange(){
-	match.settings.record_player = $('#record_player').is(":checked") ? 1: 0;
+	settings.record_player = $('#record_player').is(":checked");
 	record_playerChanged();
 }
 function record_playerChanged(){
-	if(match.settings.record_player === 1){
+	if(settings.record_player){
 		$('#score').css('font-size', '15vh');
 		$('#score_player_wrap').show();
 	}else{
@@ -807,35 +811,34 @@ function record_playerChanged(){
 	}
 }
 function record_pensChange(){
-	match.settings.record_pens = $('#record_pens').is(":checked") ? 1: 0;
+	settings.record_pens = $('#record_pens').is(":checked");
 	record_pensChanged();
 }
 function record_pensChanged(){
-	$('#pen').css('display', match.settings.record_pens === 1 ? 'block' : 'none');
+	$('#pen').css('display', settings.record_pens ? 'block' : 'none');
 }
 function screen_onChange(){
-	match.settings.screen_on = $('#screen_on').is(":checked") ? 1: 0;
+	settings.screen_on = $('#screen_on').is(":checked");
 	screen_onChanged();
 }
 function screen_onChanged(){
-	if(match.settings.screen_on === 1){
-		requestScreen_on();
+	if(settings.screen_on){
+		tizen.power.request("SCREEN", "SCREEN_NORMAL");
 	}else{
 		tizen.power.release("SCREEN");
 	}
 }
-function requestScreen_on(){
-	if(match.settings.screen_on === 1){
-		tizen.power.request("SCREEN", "SCREEN_NORMAL");
-	}
+function bluetoothChange(){
+	settings.bluetooth = $('#bluetooth').is(":checked");
+	comms_ping();
 }
 function timer_typeClick(){
-	match.settings.timer_type = match.settings.timer_type === 0 ? 1 : 0;
-	timer.type = match.settings.timer_type;
+	settings.timer_type = settings.timer_type === 0 ? 1 : 0;
+	timer.type = settings.timer_type;
 	timer_typeChanged();
 }
 function timer_typeChanged(){
-	if(match.settings.timer_type === 0){
+	if(settings.timer_type === 0){
 		$('#timer_type_0').show();
 		$('#timer_type_1').hide();
 	}else{
@@ -845,24 +848,24 @@ function timer_typeChanged(){
 	updateTimer();
 }
 
-function getPeriodName(){
-	if(timer.period > match.settings.period_count){
-		if(timer.period === match.settings.period_count+1){
+function getPeriodName(period){
+	if(period > match.settings.period_count){
+		if(period === match.settings.period_count+1){
 			return "extra time";
 		}else{
-			return "extra time " + (timer.period-match.settings.period_count);
+			return "extra time " + (period-match.settings.period_count);
 		}
 	}
 	
 	if(match.settings.period_count === 2){
-		switch(timer.period){
+		switch(period){
 			case 1:
 				return "first half";
 			case 2:
 				return "second half";
 		}
 	}
-	return "period " + timer.period;
+	return "period " + period;
 }
 
 function getKickoffTeam(){
@@ -900,6 +903,9 @@ function logEvent(what, team, who){
 			temp +=	',"who":"' + who + '"';
 		}
 	}
+	if(what === "END"){
+		temp += ',"score":"' + match.home.tot + ':' + match.away.tot + '"';
+	}
 	temp += '}';
 
 	console.log(temp);
@@ -909,14 +915,23 @@ function logEvent(what, team, who){
 
 function showReport(){
 	var html = "";
+	var period = 0;
 	$.each(match.events, function(index, value){
 		if(value.what === "Resume time" ||
 			value.what === "Time off"
 		){
 			return;
 		}
+		var what = value.what;
+		if(what === "START"){
+			period++;
+			what = "Start " + getPeriodName(period);
+		}
+		if(what === "END"){
+			what = "Result " + getPeriodName(period) + " " + value.score;
+		}
 		html += prettyTimer(value.timer);
-		html += " " + value.what;
+		html += " " + what;
 		if(value.team){
 			html += " " + getTeamName(value.team);
 		}
@@ -963,10 +978,10 @@ function getSettings(){
 	ret["points_try"] = match.settings.points_try;
 	ret["points_con"] = match.settings.points_con;
 	ret["points_goal"] = match.settings.points_goal;
-	ret["screen_on"] = match.settings.screen_on;
-	ret["timer_type"] = match.settings.timer_type;
-	ret["record_player"] = match.settings.record_player;
-	ret["record_pens"] = match.settings.record_pens;
+	ret["screen_on"] = settings.screen_on;
+	ret["timer_type"] = settings.timer_type;
+	ret["record_player"] = settings.record_player;
+	ret["record_pens"] = settings.record_pens;
 	return ret;
 }
 
@@ -978,11 +993,12 @@ function settingsRead(newsettings){
 	setNewSettings(newsettings);
 	if(!newsettings.hasOwnProperty('help_version')){
 		noStoredSettings();
-	}else if(newsettings.help_version !== match.settings.help_version){
+	}else if(newsettings.help_version !== settings.help_version){
 		showHelp();
 		storeSettings();
 	}
 	hideSplash();
+	comms_ping();
 }
 
 function noStoredSettings(){
@@ -1015,7 +1031,7 @@ function syncCustomMatchTypes(requestData){
 		}
 		hasupdate = true;
 		return false;
-    });
+	});
 
 	requestData.custom_match_types.forEach(function(match_type){
 		var found = false;
@@ -1059,12 +1075,12 @@ function checkMatchType(newsettings){
 	}
 	addCustomMatchType({
 		"name": newsettings.match_type,
-        "period_time": newsettings.period_time,
-        "period_count": newsettings.period_count,
-        "sinbin": newsettings.sinbin,
-        "points_try": newsettings.points_try,
-        "points_con": newsettings.points_con,
-        "points_goal": newsettings.points_goal
+		"period_time": newsettings.period_time,
+		"period_count": newsettings.period_count,
+		"sinbin": newsettings.sinbin,
+		"points_try": newsettings.points_try,
+		"points_con": newsettings.points_con,
+		"points_goal": newsettings.points_goal
 	});
 }
 
@@ -1075,6 +1091,14 @@ function showHelp(){
 }
 
 function setNewSettings(newsettings){
+	if(newsettings.hasOwnProperty('home_color')){
+		$('#color_home').val(newsettings.home_color);
+		color_homeChange();
+	}
+	if(newsettings.hasOwnProperty('away_color')){
+		$('#color_away').val(newsettings.away_color);
+		color_awayChange();
+	}
 	match.settings.match_type = newsettings.match_type;
 	match.settings.period_time = newsettings.period_time;
 	timer.period_time = match.settings.period_time;
@@ -1084,29 +1108,33 @@ function setNewSettings(newsettings){
 	match.settings.points_con = newsettings.points_con;
 	match.settings.points_goal = newsettings.points_goal;
 	if(newsettings.hasOwnProperty('screen_on')){
-		match.settings.screen_on = newsettings.screen_on;
+		if(typeof newsettings.screen_on !== "boolean"){//DEPRECATED Sep 2023
+			newsettings.screen_on = Boolean(newsettings.screen_on);
+		}
+		settings.screen_on = newsettings.screen_on;
 		screen_onChanged();
 	}
 	if(newsettings.hasOwnProperty('timer_type')){
-		match.settings.timer_type = newsettings.timer_type;
-		timer.type = match.settings.timer_type;
+		settings.timer_type = newsettings.timer_type;
+		timer.type = settings.timer_type;
 		timer_typeChanged();
 	}
 	if(newsettings.hasOwnProperty('record_player')){
-		match.settings.record_player = newsettings.record_player;
+		if(typeof newsettings.record_player !== "boolean"){//DEPRECATED Sep 2023
+			newsettings.record_player = Boolean(newsettings.record_player);
+		}
+		settings.record_player = newsettings.record_player;
 		record_playerChanged();
 	}
 	if(newsettings.hasOwnProperty('record_pens')){
-		match.settings.record_pens = newsettings.record_pens;
+		if(typeof newsettings.record_pens !== "boolean"){//DEPRECATED Sep 2023
+			newsettings.record_pens = Boolean(newsettings.record_pens);
+		}
+		settings.record_pens = newsettings.record_pens;
 		record_pensChanged();
 	}
-	if(newsettings.hasOwnProperty('home_color')){
-		$('#color_home').val(newsettings.home_color);
-		color_homeChange();
-	}
-	if(newsettings.hasOwnProperty('away_color')){
-		$('#color_away').val(newsettings.away_color);
-		color_awayChange();
+	if(newsettings.hasOwnProperty('bluetooth')){
+		settings.bluetooth = newsettings.bluetooth;
 	}
 	checkMatchType(newsettings);
 }
@@ -1118,7 +1146,7 @@ function extratimeChange(){
 			timer.period_time = match.settings.period_time;
 			break;
 		default:
-			timer.type = match.settings.timer_type;
+			timer.type = settings.timer_type;
 			timer.period_time = parseInt($('#extratime').val());
 	}
 	updateTimer();

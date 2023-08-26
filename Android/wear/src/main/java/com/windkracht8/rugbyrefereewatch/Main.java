@@ -1,5 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import org.json.JSONObject;
 
@@ -65,21 +67,24 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
+    private View touchView;
 
-    public static MatchData match;
     public static int heightPixels = 0;
     public static int widthPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
     public static int vh25 = 0;
 
+    //Timer
     public static String timer_status = "conf";
     public static long timer_timer = 0;
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
-    public static int timer_period_time = 40;
     public static int timer_period = 0;
+    public static int timer_period_time = 40;
+    public static int timer_type_period = 1;//0:up, 1:down
+    //Settings
     public static boolean screen_on = true;
     public static int timer_type = 1;//0:up, 1:down
     public static boolean record_player = false;
@@ -87,21 +92,24 @@ public class Main extends Activity{
     public static boolean bluetooth = true;
     public final static int help_version = 4;
 
+    public static MatchData match;
     private Handler handler_main;
     private ExecutorService executorService;
+    static Vibrator vibrator;
     private Comms comms;
+
     public final static int MESSAGE_HIDE_SPLASH = 1;
     public final static int MESSAGE_TOAST = 2;
     public final static int MESSAGE_SHOW_HELP = 3;
     public final static int MESSAGE_READ_SETTINGS = 4;
     public final static int MESSAGE_CUSTOM_MATCH_TYPE = 5;
     public final static int MESSAGE_PREPARE_RECEIVED = 6;
+    public final static int MESSAGE_NO_SETTINGS = 7;
 
     private static long back_time = 0;
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
     public static long draggingEnded;
-    private View touchView;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
@@ -121,6 +129,12 @@ public class Main extends Activity{
         }
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
+        }else{
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
 
         executorService = Executors.newFixedThreadPool(4);
         setContentView(R.layout.main);
@@ -194,7 +208,7 @@ public class Main extends Activity{
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
-        isScreenRound = getBaseContext().getResources().getConfiguration().isScreenRound();
+        isScreenRound = getResources().getConfiguration().isScreenRound();
         if(isScreenRound){
             conf.setBackgroundResource(R.drawable.round_bg);
             confWatch.setBackgroundResource(R.drawable.round_bg);
@@ -215,20 +229,12 @@ public class Main extends Activity{
         int vw30 = (int) (widthPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
-        time.measure(0, 0);
-        if(time.getMeasuredHeight() > vh15){
-            time.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) Math.floor((float) time.getMeasuredHeight()/2));
-            time.setHeight(vh15);
-        }
+        fitText(time, vh15);
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         ((TextView)findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
-        tTimer.measure(0, 0);
-        if(tTimer.getMeasuredHeight() > vh30){
-            tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) Math.floor((float) tTimer.getMeasuredHeight()/2));
-            tTimer.setHeight(vh30);
-        }
+        fitText(tTimer, vh30);
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bOverTimer.setMinimumHeight(vh30);
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
@@ -247,9 +253,9 @@ public class Main extends Activity{
         handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        executorService.submit(() -> FileStore.readSettings(getBaseContext(), handler_message));
-        executorService.submit(() -> FileStore.readCustomMatchTypes(getBaseContext(), handler_message));
-        executorService.submit(() -> FileStore.cleanMatches(getBaseContext(), handler_message));
+        executorService.submit(() -> FileStore.readSettings(this, handler_message));
+        executorService.submit(() -> FileStore.readCustomMatchTypes(this, handler_message));
+        executorService.submit(() -> FileStore.cleanMatches(this, handler_message));
 
         updateBattery();
         update();
@@ -257,20 +263,12 @@ public class Main extends Activity{
         updateAfterConfig();
         handler_main.postDelayed(this::hideSplash, 1000);
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            initBT();
-        }else{
-            bluetooth = false;
-            FileStore.storeSettings(getBaseContext(), handler_message);
+    private void fitText(TextView tmp, int size){
+        tmp.measure(0, 0);
+        if(tmp.getMeasuredWidth() >= widthPixels){
+            tmp.setTextSize(TypedValue.COMPLEX_UNIT_PX, size-2);
+            fitText(tmp, size-2);
         }
-    }
-    private void initBT(){
-        if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(comms == null) comms = new Comms(this, handler_message);
-        comms.connect(this);
     }
 
     public final Handler handler_message = new Handler(Looper.getMainLooper()){
@@ -283,21 +281,23 @@ public class Main extends Activity{
                     if(msg.obj instanceof String){
                         runOnUiThread(() -> Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show());
                     }else if(msg.obj instanceof Integer){
-                        String msg_str = getBaseContext().getString((Integer) msg.obj);
+                        String msg_str = getString((Integer) msg.obj);
                         runOnUiThread(() -> Toast.makeText(getBaseContext(), msg_str, Toast.LENGTH_SHORT).show());
                     }
                     break;
                 case MESSAGE_SHOW_HELP:
-                    switch(msg.arg1){
-                        case help_version:
-                            break;
-                        case 0:
-                            help.showWelcome();
-                        default:
-                            help.show();
-                            conf.setVisibility(View.GONE);
-                            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
+                    if(msg.arg1 == help_version) return;
+                    help.show();
+                    conf.setVisibility(View.GONE);
+                    if(msg.arg1 >= 0){
+                        executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
                     }
+                    break;
+                case MESSAGE_NO_SETTINGS:
+                    initBT();
+                    help.showWelcome();
+                    help.show();
+                    executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
                     break;
                 case MESSAGE_READ_SETTINGS:
                     if(!(msg.obj instanceof JSONObject)) return;
@@ -320,7 +320,7 @@ public class Main extends Activity{
         if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
+            executorService.submit(() -> FileStore.storeSettings(this, handler_message));
             if(bluetooth){
                 initBT();
             }else{
@@ -329,7 +329,7 @@ public class Main extends Activity{
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
+            executorService.submit(() -> FileStore.storeSettings(this, handler_message));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -432,20 +432,56 @@ public class Main extends Activity{
             touchView = null;
         }
     }
+    private void initBT(){
+        if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN}, 1);
+                return;
+            }
+        }else{
+            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 1);
+                return;
+            }
+        }
+        if(comms == null) comms = new Comms(this, handler_message);
+        comms.connect();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean bt_granted = false;
+        for(int i=0; i<permissions.length; i++){
+            if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
+                    permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
+                    permissions[i].equals(Manifest.permission.BLUETOOTH)){
+                if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                    bluetooth = false;
+                    FileStore.storeSettings(this, handler_message);
+                    return;
+                }else{
+                    bt_granted = true;
+                }
+            }
+        }
+        if(bt_granted) initBT();
+    }
 
     public void timerClick(){
         if(timer_status.equals("running")){
-            singleBeep(getBaseContext());
+            singleBeep();
             timer_status = "time_off";
             timer_start_time_off = getCurrentTimestamp();
-            match.logEvent("TIME OFF", null, 0, 0, null);
+            match.logEvent("TIME OFF", null, 0, 0);
             updateButtons();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
     public void timeOffBuzz(){
         if(timer_status.equals("time_off")){
-            beep(getBaseContext());
+            beep();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
@@ -455,25 +491,25 @@ public class Main extends Activity{
                 match.match_id = getCurrentTimestamp();
                 if(comms != null) comms.stop();
             case "ready":
-                singleBeep(getBaseContext());
+                singleBeep();
                 timer_status = "running";
                 timer_start = getCurrentTimestamp();
                 String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
                 timer_period++;
-                match.logEvent("START", kickoffTeam, 0, 0, null);
+                match.logEvent("START", kickoffTeam, 0, 0);
                 updateScore();
                 break;
             case "time_off":
                 //resume running
-                singleBeep(getBaseContext());
+                singleBeep();
                 timer_status = "running";
                 timer_start += (getCurrentTimestamp() - timer_start_time_off);
-                match.logEvent("RESUME", null, 0, 0, null);
+                match.logEvent("RESUME", null, 0, 0);
                 break;
             case "rest":
                 //get ready for next period
                 timer_status = "ready";
-                timer_type = match.timer_type;
+                timer_type_period = timer_type;
                 break;
             case "finished":
                 report.show(match);
@@ -490,13 +526,13 @@ public class Main extends Activity{
                 if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
                     match.events.remove(match.events.size()-1);
                 }
-                match.logEvent("END", null, 0, 0, match.home.tot + ":" + match.away.tot);
+                match.logEvent("END", null, 0, 0);
 
                 timer_status = "rest";
                 timer_start = getCurrentTimestamp();
                 timer_period_ended = false;
-                timer_type = 0;
-                tTimer.setTextColor(getResources().getColor(R.color.pure_white, getBaseContext().getTheme()));
+                timer_type_period = 0;
+                tTimer.setTextColor(getResources().getColor(R.color.pure_white, getTheme()));
 
                 for(MatchData.sinbin sb : match.home.sinbins){
                     sb.end = sb.end - timer_timer;
@@ -519,10 +555,10 @@ public class Main extends Activity{
             case "rest":
                 timer_status = "finished";
                 timer_period_time = match.period_time;
-                timer_type = match.timer_type;
+                timer_type_period = timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.storeMatch(getBaseContext(), handler_message, match));
+                executorService.submit(() -> FileStore.storeMatch(this, handler_message, match));
                 initBT();
                 break;
             case "finished":
@@ -558,7 +594,7 @@ public class Main extends Activity{
                 break;
             case "ready":
                 bConfWatch.setVisibility(View.GONE);
-                bOverTimerText = getBaseContext().getString(R.string.start) + " ";
+                bOverTimerText = getString(R.string.start) + " ";
                 if(match.period_count == 2 && timer_period == 1) {
                     bOverTimerText += getString(R.string._2nd_half);
                 }else if(timer_period >= match.period_count){
@@ -584,7 +620,7 @@ public class Main extends Activity{
                 bStart.setVisibility(View.GONE);
                 bMatchLog.setVisibility(View.GONE);
 
-                bBottomText = getBaseContext().getString(R.string.end) + " ";
+                bBottomText = getString(R.string.end) + " ";
                 if(match.period_count == 2 && timer_period == 1){
                     bBottomText = getString(R.string.half_time);
                 }else if(match.period_count == 2 && timer_period == 2){
@@ -727,7 +763,7 @@ public class Main extends Activity{
         timer_timer = milli_secs;
 
         String temp = "";
-        if(timer_type == 1){
+        if(timer_type_period == 1){
             milli_secs = ((long)timer_period_time * 60000) - milli_secs;
         }
         if(milli_secs < 0){
@@ -739,8 +775,8 @@ public class Main extends Activity{
 
         if(!timer_period_ended && timer_status.equals("running") && timer_timer > (long)timer_period_time * 60000){
             timer_period_ended = true;
-            tTimer.setTextColor(getResources().getColor(R.color.red, getBaseContext().getTheme()));
-            beep(getBaseContext());
+            tTimer.setTextColor(getResources().getColor(R.color.red, getTheme()));
+            beep();
         }
     }
     public static String prettyTimer(long milli_secs){
@@ -771,7 +807,7 @@ public class Main extends Activity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(getBaseContext(), null, this, sinbin_data, getColor(team.color));
+                Sinbin sb = new Sinbin(this, null, this, sinbin_data, getColor(team.color));
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }
@@ -796,13 +832,13 @@ public class Main extends Activity{
         if(timer_status.equals("conf")){return;}
         match.home.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.home.id, 0, 0, null);
+        match.logEvent("PENALTY", match.home.id, 0, 0);
     }
     public void bPenAwayClick(){
         if(timer_status.equals("conf")){return;}
         match.away.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.away.id, 0, 0, null);
+        match.logEvent("PENALTY", match.away.id, 0, 0);
     }
     public void score_homeClick(){
         if(timer_status.equals("conf")){
@@ -844,7 +880,7 @@ public class Main extends Activity{
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("TRY", score.team.id, score.player_no, 0, null);
+        match.logEvent("TRY", score.team.id, score.player_no, 0);
     }
     public void conversionClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
@@ -852,7 +888,7 @@ public class Main extends Activity{
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("CONVERSION", score.team.id, score.player_no, 0, null);
+        match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
     public void goalClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
@@ -860,7 +896,7 @@ public class Main extends Activity{
         updateScore();
         score.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("GOAL", score.team.id, score.player_no, 0, null);
+        match.logEvent("GOAL", score.team.id, score.player_no, 0);
     }
     public void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -886,7 +922,7 @@ public class Main extends Activity{
     public void card_yellowClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         long time = getCurrentTimestamp();
-        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time, null);
+        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
         score.team.addSinbin(time, end);
@@ -900,11 +936,11 @@ public class Main extends Activity{
         updateScore();
         foulPlay.setVisibility(View.GONE);
         score.clear();
-        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0, null);
+        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
     }
     public void card_redClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
-        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0, null);
+        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
         foulPlay.setVisibility(View.GONE);
         score.clear();
     }
@@ -919,7 +955,7 @@ public class Main extends Activity{
         return d.getTime();
     }
     public String getPeriodName(int period){
-        return getPeriodName(getBaseContext(), period, match.period_count);
+        return getPeriodName(this, period, match.period_count);
     }
     public static String getPeriodName(Context context, int period, int period_count){
         if(period > period_count){
@@ -967,32 +1003,32 @@ public class Main extends Activity{
         }
         return null;
     }
-    public static boolean incomingSettings(Handler handler_message, JSONObject settings_new){
+    public static boolean incomingSettings(Handler handler_message, JSONObject settings){
         if(!timer_status.equals("conf")) return false;
         try{
-            match.home.team = settings_new.getString("home_name");
-            match.home.color = settings_new.getString("home_color");
-            match.away.team = settings_new.getString("away_name");
-            match.away.color = settings_new.getString("away_color");
-            match.match_type = settings_new.getString("match_type");
-            match.period_time = settings_new.getInt("period_time");
+            match.home.team = settings.getString("home_name");
+            match.home.color = settings.getString("home_color");
+            match.away.team = settings.getString("away_name");
+            match.away.color = settings.getString("away_color");
+            match.match_type = settings.getString("match_type");
+            match.period_time = settings.getInt("period_time");
             timer_period_time = match.period_time;
-            match.period_count = settings_new.getInt("period_count");
-            match.sinbin = settings_new.getInt("sinbin");
-            match.points_try = settings_new.getInt("points_try");
-            match.points_con = settings_new.getInt("points_con");
-            match.points_goal = settings_new.getInt("points_goal");
+            match.period_count = settings.getInt("period_count");
+            match.sinbin = settings.getInt("sinbin");
+            match.points_try = settings.getInt("points_try");
+            match.points_con = settings.getInt("points_con");
+            match.points_goal = settings.getInt("points_goal");
 
-            if(settings_new.has("record_player"))
-                record_player = settings_new.getInt("record_player") == 1;
-            if(settings_new.has("record_pens"))
-                record_pens = settings_new.getInt("record_pens") == 1;
-            if(settings_new.has("screen_on"))
-                screen_on = settings_new.getInt("screen_on") == 1;
-            if(settings_new.has("timer_type")) {
-                match.timer_type = settings_new.getInt("timer_type");
-                timer_type = match.timer_type;
+            if(settings.has("screen_on"))
+                screen_on = settings.getBoolean("screen_on");
+            if(settings.has("timer_type")){
+                timer_type = settings.getInt("timer_type");
+                timer_type_period = timer_type;
             }
+            if(settings.has("record_player"))
+                record_player = settings.getBoolean("record_player");
+            if(settings.has("record_pens"))
+                record_pens = settings.getBoolean("record_pens");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
@@ -1004,15 +1040,9 @@ public class Main extends Activity{
     private void readSettings(JSONObject jsonSettings){
         if(!timer_status.equals("conf")) return;
         try{
-            record_player = jsonSettings.getBoolean("record_player");
-            if(jsonSettings.has("record_pens")) record_pens = jsonSettings.getBoolean("record_pens");
-            if(jsonSettings.has("bluetooth")){
-                bluetooth = jsonSettings.getBoolean("bluetooth");
-            }
-            if(bluetooth) initBT();
-            screen_on = jsonSettings.getBoolean("screen_on");
-            match.timer_type = jsonSettings.getInt("timer_type");
-            timer_type = match.timer_type;
+            match.home.color = jsonSettings.getString("home_color");
+            match.away.color = jsonSettings.getString("away_color");
+
             match.match_type = jsonSettings.getString("match_type");
             match.period_time = jsonSettings.getInt("period_time");
             timer_period_time = match.period_time;
@@ -1021,8 +1051,27 @@ public class Main extends Activity{
             match.points_try = jsonSettings.getInt("points_try");
             match.points_con = jsonSettings.getInt("points_con");
             match.points_goal = jsonSettings.getInt("points_goal");
-            if(jsonSettings.has("home_color")) match.home.color = jsonSettings.getString("home_color");
-            if(jsonSettings.has("away_color")) match.away.color = jsonSettings.getString("away_color");
+            if(jsonSettings.get("screen_on") instanceof Integer){//DEPRECATED Sep 2023
+                screen_on = jsonSettings.getInt("screen_on") == 1;
+            }else{
+                screen_on = jsonSettings.getBoolean("screen_on");
+            }
+            timer_type = jsonSettings.getInt("timer_type");
+            timer_type_period = timer_type;
+            if(jsonSettings.get("record_player") instanceof Integer){//DEPRECATED Sep 2023
+                record_player = jsonSettings.getInt("record_player") == 1;
+            }else{
+                record_player = jsonSettings.getBoolean("record_player");
+            }
+            if(jsonSettings.get("record_pens") instanceof Integer){//DEPRECATED Sep 2023
+                record_pens = jsonSettings.getInt("record_pens") == 1;
+            }else{
+                record_pens = jsonSettings.getBoolean("record_pens");
+            }
+
+            if(jsonSettings.has("bluetooth")) bluetooth = jsonSettings.getBoolean("bluetooth");
+            if(bluetooth) initBT();
+            updateAfterConfig();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
@@ -1043,10 +1092,10 @@ public class Main extends Activity{
             ret.put("points_try", match.points_try);
             ret.put("points_con", match.points_con);
             ret.put("points_goal", match.points_goal);
-            ret.put("record_player", record_player ? 1 : 0);
-            ret.put("record_pens", record_pens ? 1 : 0);
-            ret.put("screen_on", screen_on ? 1 : 0);
-            ret.put("timer_type", match.timer_type);
+            ret.put("screen_on", screen_on);
+            ret.put("timer_type", timer_type);
+            ret.put("record_player", record_player);
+            ret.put("record_pens", record_pens);
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
@@ -1058,63 +1107,34 @@ public class Main extends Activity{
     public void extraTimeChange(){
         switch(extraTime.getSelectedItemPosition()){
             case 1://2 min
-                timer_type = match.timer_type;
+                timer_type_period = timer_type;
                 timer_period_time = 2;
                 break;
             case 2://5 min
-                timer_type = match.timer_type;
+                timer_type_period = timer_type;
                 timer_period_time = 5;
                 break;
             case 3://10 min
-                timer_type = match.timer_type;
+                timer_type_period = timer_type;
                 timer_period_time = 10;
                 break;
             default://UP
-                timer_type = 0;
+                timer_type_period = 0;
                 timer_period_time = match.period_time;
         }
         updateTimer();
     }
 
-    static final long[] buzz_pattern = {300,500,300,500,300,500};
-    public static void beep(Context c){
-        final Vibrator vibrator;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
-        }else{
-            vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
-        }
-        final VibrationEffect ve = VibrationEffect.createWaveform(buzz_pattern, -1);
+    static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
+    static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
+    public static void beep(){
         vibrator.cancel();
-        vibrator.vibrate(ve);
+        vibrator.vibrate(ve_pattern);
     }
-    public static void singleBeep(Context c){
-        final Vibrator vibrator;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            vibrator = ((VibratorManager) c.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
-        }else{
-            vibrator = (Vibrator) c.getSystemService(Context.VIBRATOR_SERVICE);
-        }
-        final VibrationEffect ve = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
+    public static void singleBeep(){
         vibrator.cancel();
-        vibrator.vibrate(ve);
+        vibrator.vibrate(ve_single);
     }
-    public static JSONObject getTimer(){
-        JSONObject ret = new JSONObject();
-        try{
-            ret.put("status", timer_status);
-            ret.put("timer", timer_timer);
-            ret.put("start", timer_start);
-            ret.put("start_time_off", timer_start_time_off);
-            ret.put("period_ended", timer_period_ended);
-            ret.put("period", timer_period);
-            ret.put("period_time", timer_period_time);
-            ret.put("type", timer_type);
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "MainActivity.getTimer Exception: " + e.getMessage());
-            return null;
-        }
-        return ret;
-    }
+
     public void hideSplash(){findViewById(R.id.splash).setVisibility(View.GONE);}
 }

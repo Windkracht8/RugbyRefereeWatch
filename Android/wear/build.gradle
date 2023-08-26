@@ -6,8 +6,8 @@ android {
         minSdk 28
         targetSdk 33
         compileSdk 33
-        versionCode 176
-        versionName "1.7.6"
+        versionCode 300
+        versionName "3.0.0"
     }
     buildTypes {
         release {

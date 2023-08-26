@@ -40,7 +40,7 @@ public class Sinbin extends LinearLayout{
             remaining = 0;
             sinbin.ended = true;
             timer.setTextColor(Color.RED);
-            Main.beep(getContext());
+            Main.beep();
         }
         String tmp = Main.prettyTimer(remaining);
         timer.setText(tmp);

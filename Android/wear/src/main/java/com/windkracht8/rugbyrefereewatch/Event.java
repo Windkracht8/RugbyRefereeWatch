@@ -14,9 +14,9 @@ public class Event extends androidx.appcompat.widget.AppCompatTextView{
     public Event(Context context, MatchData.event event){
         super(context);
         this.event = event;
-        String item = Main.prettyTimer(event.timer) + " " + translator.getEventTypeLocal(context, event.what);
+        String item = Main.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(context, event.what);
         if(event.team != null){
-            item += " " + translator.getTeamLocal(context, event.team);
+            item += " " + Translator.getTeamLocal(context, event.team);
             if(event.who > 0){
                 item = item + " " + event.who;
             }

@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -21,7 +22,7 @@ import java.util.UUID;
 
 public class Comms{
     final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
-    String status = "DISCONNECTED";
+    String status = "INIT";
     boolean listen = false;
     final JSONArray requestQueue;
     final BluetoothAdapter bluetoothAdapter;
@@ -34,7 +35,8 @@ public class Comms{
         this.context = context;
         this.handler_message = handler_message;
         requestQueue = new JSONArray();
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        bluetoothAdapter = bluetoothManager.getAdapter();
         context.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
@@ -44,7 +46,7 @@ public class Comms{
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
                     stopListening();
-                    gotError(context.getString(R.string.fail_BT_disabled));
+                    bt_off();
                 }else if(btState == BluetoothAdapter.STATE_ON){
                     startListening();
                 }
@@ -54,7 +56,7 @@ public class Comms{
 
     public void startListening(){
         if(!bluetoothAdapter.isEnabled()){
-            gotError(context.getString(R.string.fail_BT_disabled));
+            bt_off();
             return;
         }
         CommsBTConnect commsBTConnect = new CommsBTConnect();
@@ -94,19 +96,23 @@ public class Comms{
         }
     }
 
-    private void gotError(final String error){
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_ERROR, error));
+    private void gotError(String fatal_string){
+        updateStatus("FATAL");
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_ERROR, fatal_string));
     }
-
-    private void updateStatus(final String status_new){
-        Log.i(Main.RRW_LOG_TAG, "CommsBT.updateStatus: " + status_new);
-        this.status = status_new;
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status_new));
+    private void bt_off(){
+        updateStatus("FATAL");
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_BT_OFF));
+    }
+    private void updateStatus(String status){
+        this.status = status;
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status));
     }
 
     private class CommsBTConnect extends Thread{
         @SuppressLint("MissingPermission")//already checked in startListening
         public CommsBTConnect(){
+            if(bluetoothServerSocket != null) return;
             try{
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
@@ -186,7 +192,7 @@ public class Comms{
                 if(requestQueue.length() < 1) return true;
                 JSONObject request = (JSONObject) requestQueue.get(0);
                 requestQueue.remove(0);
-                Log.i(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest: " + request.toString());
+                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest: " + request.toString());
                 outputStream.write(request.toString().getBytes());
             }catch(Exception e){
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
@@ -211,18 +217,17 @@ public class Comms{
                 }
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
-                gotError(context.getString(R.string.fail_response));
+                Toast.makeText(context, R.string.fail_response, Toast.LENGTH_SHORT).show();
             }
         }
 
         private void gotResponse(final JSONObject responseMessage){
-            Log.i(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage.toString());
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage.toString());
             try{
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
-
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse Exception: " + e.getMessage());
-                gotError(context.getString(R.string.fail_response));
+                Toast.makeText(context, R.string.fail_response, Toast.LENGTH_SHORT).show();
             }
         }
     }

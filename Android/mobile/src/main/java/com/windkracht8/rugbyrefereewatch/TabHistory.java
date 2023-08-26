@@ -158,6 +158,7 @@ public class TabHistory extends LinearLayout{
         }
     }
     private void showMatches(){
+        upgradeFormatOfMatches();
         try{
             matches.sort((m1, m2) -> {
                 try{
@@ -175,6 +176,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.RRW_LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
+        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_LOAD_LATEST_MATCH, matches.get(0)));
     }
 
     public void storeMatches(){
@@ -293,5 +295,50 @@ public class TabHistory extends LinearLayout{
         }
         unselect();
         return selected.toString();
+    }
+
+    private void upgradeFormatOfMatches(){
+        try{
+            for(int i = 0; i < matches.size(); i++){
+                JSONObject match = matches.get(i);
+                if(!match.has("format")){
+                    JSONArray events = match.getJSONArray("events");
+                    JSONObject settings = match.getJSONObject("settings");
+                    int points_try = settings.getInt("points_try");
+                    int points_con = settings.getInt("points_con");
+                    int points_goal = settings.getInt("points_goal");
+                    int[] score = {0, 0};
+
+                    for(int j = 0; j < events.length(); j++){
+                        JSONObject event = events.getJSONObject(j);
+                        String what = event.getString("what");
+                        //Replace Result... with END and add score (pre format 1)
+                        if(event.has("team")) TabReport.calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
+                        if(what.equals("END") || what.startsWith("Result")){
+                            String sScore = score[0] + ":" + score[1];
+                            event.put("score", sScore);
+                            event.put("what", "END");
+                        }
+                        //Replace Start... with START (pre format 1)
+                        if(what.startsWith("Start")){
+                            event.put("what", "START");
+                        }
+                        //Convert timer to long if string
+                        if(event.get("timer") instanceof String){
+                            event.put("timer", Long.parseLong(event.getString("timer"), 10));
+                        }
+                    }
+                    //Ensure period_count is in match, not only in match.settings
+                    if(!match.has("period_count")){
+                        match.put("period_count", settings.getInt("period_count"));
+                    }
+                    //Add match format version (pre format 1)
+                    match.put("format", 1);//September 2023
+                }
+            }
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "TabHistory.upgradeFormatOfMatches Exception: " + e.getMessage());
+            Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
+        }
     }
 }

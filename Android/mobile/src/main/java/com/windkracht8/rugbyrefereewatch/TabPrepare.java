@@ -64,8 +64,8 @@ public class TabPrepare extends LinearLayout{
         customMatchTypes = new JSONArray();
 
         etHomeName = findViewById(R.id.etHomeName);
-        etAwayName = findViewById(R.id.etAwayName);
         sHomeColor = findViewById(R.id.sHomeColor);
+        etAwayName = findViewById(R.id.etAwayName);
         sAwayColor = findViewById(R.id.sAwayColor);
         sMatchType = findViewById(R.id.sMatchType);
         etTimePeriod = findViewById(R.id.etTimePeriod);
@@ -226,8 +226,8 @@ public class TabPrepare extends LinearLayout{
         JSONObject settings = new JSONObject();
         try{
             settings.put("home_name", etHomeName.getText());
-            settings.put("away_name", etAwayName.getText());
             settings.put("home_color", Translator.getTeamColorSystem(getContext(), sHomeColor.getSelectedItem().toString()));
+            settings.put("away_name", etAwayName.getText());
             settings.put("away_color", Translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
             settings.put("match_type", Translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
             settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
@@ -237,10 +237,10 @@ public class TabPrepare extends LinearLayout{
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
             if(watch_settings){
-                settings.put("screen_on", cbScreenOn.isChecked() ? 1 : 0);
+                settings.put("screen_on", cbScreenOn.isChecked());
                 settings.put("timer_type", sTimerType.getSelectedItemPosition());
-                settings.put("record_player", cbRecordPlayer.isChecked() ? 1 : 0);
-                settings.put("record_pens", cbRecordPens.isChecked() ? 1 : 0);
+                settings.put("record_player", cbRecordPlayer.isChecked());
+                settings.put("record_pens", cbRecordPens.isChecked());
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
@@ -265,10 +265,10 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("points_con")) etPointsCon.setText(String.valueOf(settings.getInt("points_con")));
             if(settings.has("points_goal")) etPointsGoal.setText(String.valueOf(settings.getInt("points_goal")));
 
-            if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getInt("screen_on") == 1);
+            if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getBoolean("screen_on"));
             if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
-            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getInt("record_player") == 1);
-            if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getInt("record_pens") == 1);
+            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getBoolean("record_player"));
+            if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getBoolean("record_pens"));
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_settings, Toast.LENGTH_SHORT).show();

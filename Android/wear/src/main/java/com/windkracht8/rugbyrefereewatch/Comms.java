@@ -1,6 +1,5 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,14 +9,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,29 +57,13 @@ public class Comms{
                 }else if(btState == BluetoothAdapter.STATE_ON &&
                         (Main.timer_status.equals("conf") || Main.timer_status.equals("finished"))
                 ){
-                    connect(null);
+                    connect();
                 }
             }
         }
     };
 
-    public void connect(Main main){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-                if(main != null){
-                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN}, 1);
-                }
-                return;
-            }
-        }else{
-            if(ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
-                if(main != null){
-                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.BLUETOOTH}, 1);
-                }
-                return;
-            }
-        }
+    public void connect(){
         connect = true;
         search();
     }
@@ -208,7 +187,7 @@ public class Comms{
                 if(responseQueue.length() < 1) return true;
                 JSONObject response = (JSONObject) responseQueue.get(0);
                 responseQueue.remove(0);
-                Log.i(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextResponse: " + response.toString());
+                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextResponse: " + response.toString());
                 outputStream.write(response.toString().getBytes());
             }catch(Exception e){
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
@@ -236,18 +215,12 @@ public class Comms{
         }
 
         private void gotRequest(final JSONObject requestMessage){
-            Log.i(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + requestMessage.toString());
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + requestMessage.toString());
             try{
                 String requestType = requestMessage.getString("requestType");
                 switch(requestType){
                     case "sync":
                         onReceiveSync(requestMessage.getString("requestData"));
-                        break;
-                    case "getMatches":
-                        onReceiveGetMatches(requestMessage.getString("requestData"));
-                        break;
-                    case "getMatch":
-                        onReceiveGetMatch();
                         break;
                     case "prepare":
                         onReceivePrepare(requestMessage.getString("requestData"));
@@ -264,48 +237,18 @@ public class Comms{
     }
 
     private void onReceiveSync(String requestData){
-        if(requestData == null){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync No requestData for request sync");
-            return;
-        }
         try{
-            JSONObject responseData_json = new JSONObject();
-            responseData_json.put("matches", FileStore.deletedMatches(context, handler_message, requestData));
-            responseData_json.put("settings", Main.getSettings(handler_message));
-            sendResponse("sync", responseData_json);
+            JSONObject responseData = new JSONObject();
+            responseData.put("matches", FileStore.deletedMatches(context, handler_message, requestData));
+            responseData.put("settings", Main.getSettings(handler_message));
+            sendResponse("sync", responseData);
             Conf.syncCustomMatchTypes(handler_message, requestData);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", "unexpected error");
         }
     }
-
-    private void onReceiveGetMatches(String requestData){
-        if(requestData == null){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveGetMatches No requestData for request getMatches");
-            return;
-        }
-        sendResponse("getMatches", FileStore.deletedMatches(context, handler_message, requestData));
-        Conf.syncCustomMatchTypes(handler_message, requestData);
-    }
-
-    private void onReceiveGetMatch(){
-        if(Main.match == null) return;
-        try{
-            JSONObject responseData = Main.match.toJson(context);
-            responseData.put("timer", Main.getTimer());
-            sendResponse("getMatch", responseData);
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveGetMatch Exception: " + e.getMessage());
-            sendResponse("getMatch", "unexpected error");
-        }
-    }
-
     private void onReceivePrepare(String requestData){
-        if(requestData == null){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare No requestData for request prepare");
-            return;
-        }
         try{
             JSONObject requestData_json = new JSONObject(requestData);
             if(Main.incomingSettings(handler_message, requestData_json)){
@@ -320,7 +263,6 @@ public class Comms{
             sendResponse("prepare", "unexpected error");
         }
     }
-
     public void sendResponse(final String requestType, final String responseData){
         try{
             JSONObject response = new JSONObject();
@@ -332,7 +274,6 @@ public class Comms{
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
         }
     }
-
     public void sendResponse(final String requestType, final JSONObject responseData){
         try{
             JSONObject response = new JSONObject();
@@ -342,18 +283,6 @@ public class Comms{
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e);
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
-        }
-    }
-
-    public void sendResponse(final String requestType, final JSONArray responseData){
-        try{
-            JSONObject response = new JSONObject();
-            response.put("requestType", requestType);
-            response.put("responseData", responseData);
-            responseQueue.put(response);
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONArray Exception: " + e);
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONArray Exception: " + e.getMessage());
         }
     }
 }

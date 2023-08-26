@@ -15,12 +15,11 @@
     </string-array>
 
     <!-- history -->
-    <string name="bGetMatches_text">Haal wedstrijden van horloge op</string>
+    <string name="bSync_text">Synchroniseer met horloge</string>
     <string name="bExport_text">Exporteer selectie</string>
     <string name="bDelete_text">Verwijder selectie</string>
 
     <!-- report -->
-    <string name="bGetMatch_text">Haal wedstrijd van horloge op</string>
     <string name="tries">Try\'s</string>
     <string name="conversions">Conversies</string>
     <string name="pen_tries">Penalty try\'s</string>
@@ -137,19 +136,13 @@
     </string-array>
 
     <!-- status -->
-    <string name="status_STARTING">Starten</string>
-    <string name="status_DISCONNECTED">Niet verbonden</string>
-    <string name="status_CONNECTION_LOST">Verbinding verloren</string>
+    <string name="status_STARTING">Start</string>
+    <string name="status_LISTENING">Zoekt horloge</string>
     <string name="status_CONNECTED">Verbonden</string>
-    <string name="status_OFFLINE">Offline</string>
-    <string name="status_GETTING_MATCHES">Wedstrijden ophalen</string>
-    <string name="status_GETTING_MATCH">Wedstrijd ophalen</string>
-    <string name="status_PREPARE">Instellingen verzenden</string>
     <string name="status_ERROR">error</string>
-    <string name="status_LISTENING">Luistert</string>
 
     <!-- fail -->
-    <string name="fail_get_matches">Probleem met het ophalen van wedstrijden van het horloge</string>
+    <string name="fail_sync">Probleem met het synchroniseren met het horloge</string>
     <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
     <string name="fail_show_match">Fout bij weergeven wedstrijd</string>
     <string name="fail_show_history">Fout bij weergeven Geschiedenis</string>
@@ -178,7 +171,7 @@
     <string name="update_watch_app">Update de app op het horloge</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
-    <string name="fail_BT_denied">Niet toegestaan</string>
-    <string name="fail_BT_disabled">Bluetooth staat uit</string>
+    <string name="fail_BT_denied">Geen Bluetooth toegang</string>
+    <string name="fail_BT_off">Bluetooth staat uit</string>
 
 </resources>
