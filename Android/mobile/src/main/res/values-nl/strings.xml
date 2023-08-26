@@ -48,11 +48,11 @@
     <!-- prepare -->
     <string name="bPrepare_text">Stuur naar horloge</string>
     <string name="etHomeName_text">Thuis naam</string>
-    <string name="etHomeName_desc">Thuis naam</string>
+    <string name="etHomeName_desc">Thuis team naam</string>
     <string name="sHomeColor_text">Thuis kleur</string>
     <string name="sHomeColor_desc">Thuis kleur selectie</string>
     <string name="etAwayName_text">Gasten naam</string>
-    <string name="etAwayName_desc">Gasten naam</string>
+    <string name="etAwayName_desc">Gasten team naam</string>
     <string name="sAwayColor_text">Gasten kleur</string>
     <string name="sAwayColor_desc">Gasten kleur selectie</string>
     <string name="sMatchType_text">Wedstrijdtype</string>

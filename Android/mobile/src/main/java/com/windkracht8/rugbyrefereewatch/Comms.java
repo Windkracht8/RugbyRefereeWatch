@@ -37,6 +37,10 @@ public class Comms{
         requestQueue = new JSONArray();
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
+        if(bluetoothAdapter == null){
+            bt_off();
+            return;
+        }
         context.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
@@ -55,7 +59,7 @@ public class Comms{
     };
 
     public void startListening(){
-        if(!bluetoothAdapter.isEnabled()){
+        if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
             bt_off();
             return;
         }

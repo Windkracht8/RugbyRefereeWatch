@@ -68,11 +68,11 @@
     <!-- prepare -->
     <string name="bPrepare_text">Send to watch</string>
     <string name="etHomeName_text">Home name</string>
-    <string name="etHomeName_desc">Home name</string>
+    <string name="etHomeName_desc">Home team name</string>
     <string name="sHomeColor_text">Home color</string>
     <string name="sHomeColor_desc">Home color selection</string>
     <string name="etAwayName_text">Away name</string>
-    <string name="etAwayName_desc">Away name</string>
+    <string name="etAwayName_desc">Away team name</string>
     <string name="sAwayColor_text">Away color</string>
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_text">Match type</string>
