@@ -31,7 +31,7 @@ public class MatchLogMatch extends androidx.appcompat.widget.AppCompatTextView {
 
         this.setText(item);
         this.setGravity(Gravity.CENTER);
-        this.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
+        this.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         this.setBackground(AppCompatResources.getDrawable(context, R.drawable.menu_item_bg));
         this.setOnClickListener(v -> report.show(match));
     }
