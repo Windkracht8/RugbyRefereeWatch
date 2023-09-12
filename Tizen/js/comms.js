@@ -4,7 +4,7 @@ var RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
 
 var comms_adapter = tizen.bluetooth.getDefaultAdapter();
 var comms_socket = null;
-var comms_comms_ping_timeout;
+var comms_ping_timeout;
 
 function comms_ping(){
 	if(!settings.bluetooth){
@@ -12,25 +12,31 @@ function comms_ping(){
 		return;
 	}
 	if(!comms_adapter.powered || comms_socket !== null){
-		comms_comms_ping_timeout = setTimeout(comms_ping, 1000);
+		comms_ping_timeout = setTimeout(comms_ping, 1000);
 		return;
 	}
 	comms_adapter.getKnownDevices(comms_onGotDevices, function(e){
 		console.log("comms_connect error", e);
 	});
+	comms_ping_timeout = setTimeout(comms_ping, 1000);
 }
 function comms_start(){
 	comms_ping();
 }
 function comms_stop(){
-	clearTimeout(comms_comms_ping_timeout);
+	clearTimeout(comms_ping_timeout);
 	if(comms_socket !== null){
-		comms_socket.close();
+		try{
+			comms_socket.close();
+		}catch(e){
+			console.log("comms_stop error", e);
+		}
 		comms_socket = null;
 	}
 }
 
 function comms_onGotDevices(devices){
+	if(comms_socket !== null){return;}
 	for(var i=0; i<devices.length; i++){
 		if(devices[i].isConnected){
 			devices[i].connectToServiceByUUID(RRW_UUID, comms_onsocket, comms_onsocketerror);
@@ -43,11 +49,8 @@ function comms_onsocket(socket){
 	comms_socket.onclose = function(){comms_socket = null;};
 }
 function comms_onsocketerror(e){
-	if(e.code === 8){
-		console.log("connectToServiceByUUID not found");
-		return;
-	}
-	console.log("connectToServiceByUUID error", e);
+	if(e.code === 8){return;} //Mobile is connected, but RRW is not running
+	console.log("comms_onsocketerror error", e);
 }
 function comms_onmessage(){
 	var data = comms_socket.readData();

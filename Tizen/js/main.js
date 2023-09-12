@@ -1034,10 +1034,18 @@ function noStoredSettings(){
 	$('#help_welcome').show();
 	showHelp();
 	comms_start();
+	storeSettings();
 }
 
 function storeSettings(){
-	var newsettings = JSON.parse(JSON.stringify(match.settings));
+	var newsettings = JSON.parse(JSON.stringify(settings));
+	newsettings.match_type = match.settings.match_type;
+	newsettings.period_time = match.settings.period_time;
+	newsettings.period_count = match.settings.period_count;
+	newsettings.sinbin = match.settings.sinbin;
+	newsettings.points_try = match.settings.points_try;
+	newsettings.points_con = match.settings.points_con;
+	newsettings.points_goal = match.settings.points_goal;
 	newsettings.home_color = match.home.color;
 	newsettings.away_color = match.away.color;
 	file_storeSettings(newsettings);
@@ -1130,6 +1138,7 @@ function setNewSettings(newsettings){
 		$('#color_away').val(newsettings.away_color);
 		color_awayChange();
 	}
+
 	match.settings.match_type = newsettings.match_type;
 	match.settings.period_time = newsettings.period_time;
 	timer.period_time = match.settings.period_time;
@@ -1166,6 +1175,9 @@ function setNewSettings(newsettings){
 	}
 	if(newsettings.hasOwnProperty('bluetooth')){
 		settings.bluetooth = newsettings.bluetooth;
+	}
+	if(newsettings.hasOwnProperty('help_version')){
+		settings.help_version = newsettings.help_version;
 	}
 	checkMatchType(newsettings);
 }
