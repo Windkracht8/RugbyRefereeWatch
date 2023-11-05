@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.splashscreen.SplashScreen;
 
 import org.json.JSONObject;
 
@@ -43,6 +44,7 @@ import java.util.concurrent.Executors;
 public class Main extends Activity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
     public static boolean isScreenRound;
+    private boolean showSplash = true;
     private TextView battery;
     private TextView time;
     private TextView score_home;
@@ -116,6 +118,8 @@ public class Main extends Activity{
     @SuppressLint({"MissingInflatedId"}) //nested layout XMLs are not found
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        splashScreen.setKeepOnScreenCondition(() -> showSplash);
         super.onCreate(savedInstanceState);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
@@ -261,7 +265,7 @@ public class Main extends Activity{
         update();
         updateButtons();
         updateAfterConfig();
-        handler_main.postDelayed(this::hideSplash, 1000);
+        showSplash = false;
     }
     private void fitText(TextView tmp, int size){
         tmp.measure(0, 0);
@@ -275,7 +279,7 @@ public class Main extends Activity{
         public void handleMessage(Message msg){
             switch(msg.what){
                 case MESSAGE_HIDE_SPLASH:
-                    runOnUiThread(() -> hideSplash());
+                    showSplash = false;
                     break;
                 case MESSAGE_TOAST:
                     if(msg.obj instanceof String){
@@ -1135,6 +1139,4 @@ public class Main extends Activity{
         vibrator.cancel();
         vibrator.vibrate(ve_single);
     }
-
-    public void hideSplash(){findViewById(R.id.splash).setVisibility(View.GONE);}
 }

@@ -9,8 +9,6 @@
     <string name="tTimer_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
 
-    <string name="splash_image_desc" translatable="false">splash image</string>
-
     <!-- main screen -->
     <string name="bConfWatch_desc">Watch configuration</string>
     <string name="_0_kick">0 KICK</string>
@@ -190,5 +188,4 @@
     <string name="fail_show_score">Failed to show score screen</string>
     <string name="fail_show_sinbin">Failed to show sinbins</string>
     <string name="iHelpNew_desc">Help new icon</string>
-
 </resources>
