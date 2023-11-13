@@ -43,6 +43,10 @@
     <string name="bPenHome_desc">home penalty count</string>
     <string name="bPenAway_desc">away penalty count</string>
 
+    <!-- notification -->
+    <string name="match_ongoing">Match ongoing</string>
+    <string name="open_rrw">Open RRW</string>
+
     <!-- score screen -->
     <string name="player_desc">player</string>
     <string name="score_try_text">try</string>

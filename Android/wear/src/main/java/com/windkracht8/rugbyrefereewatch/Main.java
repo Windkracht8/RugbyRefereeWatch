@@ -3,7 +3,11 @@ package com.windkracht8.rugbyrefereewatch;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -30,7 +34,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.wear.ongoing.OngoingActivity;
+import androidx.wear.ongoing.Status;
 
 import org.json.JSONObject;
 
@@ -121,7 +128,7 @@ public class Main extends Activity{
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         splashScreen.setKeepOnScreenCondition(() -> showSplash);
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if(Build.VERSION.SDK_INT >= 30){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
             widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
         }else{
@@ -134,7 +141,7 @@ public class Main extends Activity{
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
         }else{
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -438,7 +445,7 @@ public class Main extends Activity{
     }
     private void initBT(){
         if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if(Build.VERSION.SDK_INT >= 31){
             if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN}, 1);
@@ -502,6 +509,7 @@ public class Main extends Activity{
                 timer_period++;
                 match.logEvent("START", kickoffTeam, 0, 0);
                 updateScore();
+                startOngoingNotification();
                 break;
             case "time_off":
                 //resume running
@@ -564,6 +572,7 @@ public class Main extends Activity{
 
                 executorService.submit(() -> FileStore.storeMatch(this, handler_message, match));
                 initBT();
+                stopOngoingNotification();
                 break;
             case "finished":
                 timer_status = "conf";
@@ -1138,5 +1147,61 @@ public class Main extends Activity{
     public static void singleBeep(){
         vibrator.cancel();
         vibrator.vibrate(ve_single);
+    }
+
+    private void startOngoingNotification(){
+        if(Build.VERSION.SDK_INT < 30){return;}
+
+        String RRW_Notification = "RRW_Notification";
+        int RRW_Notification_ID = 1;
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel notificationChannel = new NotificationChannel(RRW_Notification, getString(R.string.open_rrw), NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(notificationChannel);
+
+        Intent actionIntent = new Intent(this, Main.class);
+        PendingIntent actionPendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            actionIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+            this
+            ,RRW_Notification
+        )
+        .setSmallIcon(R.drawable.icon)
+		.setDefaults(NotificationCompat.DEFAULT_ALL)
+		.setCategory(NotificationCompat.CATEGORY_WORKOUT)
+		.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+		.addAction(
+            R.drawable.icon, getString(R.string.open_rrw),
+            actionPendingIntent
+		)
+        .setOngoing(true);
+
+        Status ongoingActivityStatus = new Status.Builder()
+        .addTemplate(getString(R.string.match_ongoing))
+        .build();
+
+        OngoingActivity ongoingActivity = new OngoingActivity.Builder(
+            getBaseContext()
+            ,RRW_Notification_ID
+            ,notificationBuilder
+        )
+        .setStaticIcon(R.drawable.icon)
+        .setTouchIntent(actionPendingIntent)
+        .setStatus(ongoingActivityStatus)
+        .build();
+
+        ongoingActivity.apply(getBaseContext());
+
+        notificationManager.notify(RRW_Notification_ID, notificationBuilder.build());
+    }
+    private void stopOngoingNotification(){
+        if(Build.VERSION.SDK_INT < 30){return;}
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 }

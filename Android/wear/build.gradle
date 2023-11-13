@@ -2,12 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     defaultConfig {
-        applicationId "com.windkracht8.rugbyrefereewatch"
+        applicationId 'com.windkracht8.rugbyrefereewatch'
         minSdk 28
+        //Wear OS, we have to target SDK 33 and not latest
+        //noinspection OldTargetApi
         targetSdk 33
         compileSdk 33
         versionCode 202
-        versionName "3.0"
+        versionName '3.0'
     }
     buildTypes {
         release {
@@ -20,9 +22,12 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-wearable:18.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.core:core-splashscreen:1.0.1"
+    implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.wear:wear-ongoing:1.0.0'
+    //We need to hold it back because of dependency clash
+    //noinspection GradleDependency
+    implementation 'androidx.core:core:1.9.0'
     implementation 'androidx.wear:wear:1.3.0'
 }
