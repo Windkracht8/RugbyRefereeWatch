@@ -11,11 +11,12 @@ Android/.idea
 Android/build
 Android/gradle
 Android/gradlew*
-Android/release
 Android/mobile/build
 Android/mobile/debug
+Android/mobile/release
 Android/wear/build
 Android/wear/debug
+Android/wear/release
 *.jks
 *.pepk
 *.aab
