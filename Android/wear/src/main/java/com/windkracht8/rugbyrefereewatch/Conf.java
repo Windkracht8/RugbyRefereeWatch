@@ -6,21 +6,26 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Conf extends ScrollView{
-    private static ArrayList<MenuItem> menuItems;
+public class Conf extends ConstraintLayout{
+    private ScrollView svConf;
+    private ConfSpinner confSpinner;
+    private static ArrayList<ConfItem> confItems;
     public static JSONArray customMatchTypes;
     private boolean isInitialized;
-    private int menuItemHeight = 112;
-    private boolean menuItemHeightInit;
+    private int itemHeight;
+    private boolean isItemHeightInitialized;
     private float scalePerPixel;
 
     public Conf(Context context, AttributeSet attrs){
@@ -32,55 +37,62 @@ public class Conf extends ScrollView{
         }
         inflater.inflate(R.layout.conf, this, true);
 
+        confSpinner = findViewById(R.id.confSpinner);
+        svConf = findViewById(R.id.svConf);
+
         customMatchTypes = new JSONArray();
     }
 
+    public void requestFocusSV(){
+        svConf.requestFocus();
+    }
     public void show(Main main){
         if(isInitialized){
             setVisibility(View.VISIBLE);
-            fullScroll(View.FOCUS_UP);
+            svConf.fullScroll(View.FOCUS_UP);
+            svConf.requestFocus();
             return;
         }
         isInitialized = true;
         LinearLayout llConf = findViewById(R.id.llConf);
-        menuItems = new ArrayList<>();
-        for(MenuItem.MenuItemType menuItemType : MenuItem.MenuItemType.values()){
-            MenuItem menuItem = new MenuItem(getContext(), main.handler_message, null, menuItemType);
-            menuItems.add(menuItem);
-            llConf.addView(menuItem);
-            menuItem.addOnTouch(main);
+        confItems = new ArrayList<>();
+        for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
+            ConfItem confItem = new ConfItem(getContext(), null, confItemType);
+            confItem.setOnClickListener(v -> onConfItemClick(main, (ConfItem)v, confItemType, main.handler_message));
+            confItems.add(confItem);
+            llConf.addView(confItem);
+            confItem.addOnTouch(main);
         }
         findViewById(R.id.conf_label).getLayoutParams().height = Main.vh25;
-        ((LayoutParams) llConf.getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + Main.vh25;
+        ((FrameLayout.LayoutParams) llConf.getLayoutParams()).bottomMargin += Main.vh25;
+        confSpinner.addOnTouch(main);
 
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if(!Main.isScreenRound || menuItemHeightInit) return;
-            menuItemHeightInit = true;
-            menuItemHeight = menuItems.get(0).getHeight();
-            scalePerPixel = 0.5f / (Main.vh25 + menuItemHeight);
-            menuItems.get(MenuItem.MenuItemType.values().length - 1).setHeight(menuItemHeight / 4);
-            scaleMenuItems(0);
-            setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleMenuItems(scrollY));
+            if(!Main.isScreenRound || isItemHeightInitialized) return;
+            isItemHeightInitialized = true;
+            itemHeight = confItems.get(0).getHeight();
+            scalePerPixel = 0.5f / (Main.vh25 + itemHeight);
+            confItems.get(ConfItem.ConfItemType.values().length - 1).setHeight(itemHeight / 4);
+            scaleConfItems(0);
+            svConf.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleConfItems(scrollY));
         });
 
+        updateValues();
         setVisibility(View.VISIBLE);
-        fullScroll(View.FOCUS_UP);
+        svConf.fullScroll(View.FOCUS_UP);
     }
 
     public static void updateValues(){
-        for(MenuItem menuItem : menuItems){
-            menuItem.updateValue();
-        }
+        for(ConfItem confItem : confItems) confItem.updateValue();
     }
 
-    private void scaleMenuItems(int scrollY){
+    private void scaleConfItems(int scrollY){
         float top;
         float bottom;
         float scale;
-        for(int i = 0; i < menuItems.size(); i++){
-            MenuItem menuItem = menuItems.get(i);
-            top = menuItem.getY() - scrollY;
-            bottom = top + menuItemHeight;
+        for(ConfItem confItem : confItems){
+            top = confItem.getY() - scrollY;
+            bottom = top + itemHeight;
             scale = 1.0f;
             if(bottom < 0){
                 //the item is above the screen
@@ -96,11 +108,164 @@ public class Conf extends ScrollView{
                 //the item is in the bottom quarter
                 scale = 0.5f + (scalePerPixel * (Main.heightPixels - top));
             }
-            menuItem.setScaleX(scale);
-            menuItem.setScaleY(scale);
+            confItem.setScaleX(scale);
+            confItem.setScaleY(scale);
         }
     }
 
+    private void onConfItemClick(Main main, ConfItem confItem, ConfItem.ConfItemType type, Handler handler_message){
+        switch(type){
+            case COLOR_HOME:
+            case COLOR_AWAY:
+            case MATCH_TYPE:
+            case PERIOD_TIME:
+            case PERIOD_COUNT:
+            case SINBIN:
+            case POINTS_TRY:
+            case POINTS_CON:
+            case POINTS_GOAL:
+                confSpinner.setConfItemType(main, this, confItem, type);
+                confSpinner.setVisibility(View.VISIBLE);
+                confSpinner.requestFocus();
+                break;
+            case SCREEN_ON:
+                Main.screen_on = !Main.screen_on;
+                confItem.updateValue();
+                break;
+            case TIMER_TYPE:
+                Main.timer_type_period = Main.timer_type_period == 1 ? 0 : 1;
+                confItem.updateValue();
+                break;
+            case RECORD_PLAYER:
+                Main.record_player = !Main.record_player;
+                confItem.updateValue();
+                break;
+            case RECORD_PENS:
+                Main.record_pens = !Main.record_pens;
+                confItem.updateValue();
+                break;
+            case BLUETOOTH:
+                Main.bluetooth = !Main.bluetooth;
+                confItem.updateValue();
+                break;
+            case HELP:
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
+                break;
+        }
+    }
+
+    public void onStringValueClick(ConfItem confItem, ConfItem.ConfItemType type, String value){
+        switch(type){
+            case COLOR_HOME:
+                Main.match.home.color = value;
+                confItem.updateValue();
+                break;
+            case COLOR_AWAY:
+                Main.match.away.color = value;
+                confItem.updateValue();
+                break;
+            case MATCH_TYPE:
+                Main.match.match_type = value;
+                onMatchTypeChanged(value);
+                break;
+        }
+        confItem.updateValue();
+        confSpinner.setVisibility(View.GONE);
+    }
+    public void onIntValueClick(ConfItem confItem, ConfItem.ConfItemType type, int value){
+        switch(type){
+            case PERIOD_TIME:
+                Main.match.period_time = value;
+                Main.timer_period_time = value;
+                break;
+            case PERIOD_COUNT:
+                Main.match.period_count = value;
+                break;
+            case SINBIN:
+                Main.match.sinbin = value;
+                break;
+            case POINTS_TRY:
+                Main.match.points_try = value;
+                break;
+            case POINTS_CON:
+                Main.match.points_con = value;
+                break;
+            case POINTS_GOAL:
+                Main.match.points_goal = value;
+                break;
+        }
+        confItem.updateValue();
+        confSpinner.setVisibility(View.GONE);
+    }
+    private void onMatchTypeChanged(String matchType){
+        switch(matchType){
+            case "15s":
+                Main.match.period_time = 40;
+                Main.match.period_count = 2;
+                Main.match.sinbin = 10;
+                Main.match.points_try = 5;
+                Main.match.points_con = 2;
+                Main.match.points_goal = 3;
+                break;
+            case "10s":
+                Main.match.period_time = 10;
+                Main.match.period_count = 2;
+                Main.match.sinbin = 2;
+                Main.match.points_try = 5;
+                Main.match.points_con = 2;
+                Main.match.points_goal = 3;
+                break;
+            case "7s":
+                Main.match.period_time = 7;
+                Main.match.period_count = 2;
+                Main.match.sinbin = 2;
+                Main.match.points_try = 5;
+                Main.match.points_con = 2;
+                Main.match.points_goal = 3;
+                break;
+            case "beach 7s":
+                Main.match.period_time = 7;
+                Main.match.period_count = 2;
+                Main.match.sinbin = 2;
+                Main.match.points_try = 1;
+                Main.match.points_con = 0;
+                Main.match.points_goal = 0;
+                break;
+            case "beach 5s":
+                Main.match.period_time = 5;
+                Main.match.period_count = 2;
+                Main.match.sinbin = 2;
+                Main.match.points_try = 1;
+                Main.match.points_con = 0;
+                Main.match.points_goal = 0;
+                break;
+            case "custom":
+                break;
+            default://stored custom match type
+                loadCustomMatchType(matchType);
+        }
+        Main.timer_period_time = Main.match.period_time;
+        updateValues();
+    }
+    private void loadCustomMatchType(String name){
+        try{
+            for(int i=0; i < Conf.customMatchTypes.length(); i++){
+                JSONObject matchType = Conf.customMatchTypes.getJSONObject(i);
+                if(matchType.getString("name").equals(name)){
+                    Main.match.period_time = matchType.getInt("period_time");
+                    Main.match.period_count = matchType.getInt("period_count");
+                    Main.match.sinbin = matchType.getInt("sinbin");
+                    Main.match.points_try = matchType.getInt("points_try");
+                    Main.match.points_con = matchType.getInt("points_con");
+                    Main.match.points_goal = matchType.getInt("points_goal");
+                    return;
+                }
+            }
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "Conf.loadCustomMatchType(" + name + ") Exception: " + e.getMessage());
+            Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
+        }
+    }
     public static void syncCustomMatchTypes(Handler handler_message, String request_data){
         try{
             JSONObject request_data_jo = new JSONObject(request_data);

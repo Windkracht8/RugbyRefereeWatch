@@ -69,6 +69,7 @@ public class Main extends Activity{
     private Spinner extraTime;
     private ImageButton bConfWatch;
     private Conf conf;
+    private ConfSpinner confSpinner;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
@@ -115,7 +116,6 @@ public class Main extends Activity{
     public final static int MESSAGE_PREPARE_RECEIVED = 6;
     public final static int MESSAGE_NO_SETTINGS = 7;
 
-    private static long back_time = 0;
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
     public static long draggingEnded;
@@ -136,7 +136,7 @@ public class Main extends Activity{
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
             widthPixels = displayMetrics.widthPixels;
-            SWIPE_THRESHOLD = (int) (widthPixels *.3);
+            SWIPE_THRESHOLD = (int) (widthPixels * .3);
         }
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
@@ -151,19 +151,21 @@ public class Main extends Activity{
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
-        int[] ids = new int[]{R.id.main,R.id.bConfWatch,R.id.score_home,R.id.score_away,
-                R.id.tTimer,R.id.bPenHome,R.id.bPenAway,
-                R.id.bOverTimer,R.id.bStart,R.id.bMatchLog,R.id.bBottom,R.id.bConf,
-                R.id.button_background,R.id.extraTime,
-                R.id.svConf,R.id.llConfWatch,
-                R.id.score, R.id.score_player,R.id.score_try,R.id.score_con,R.id.score_goal,
-                R.id.foul_play,R.id.foulPlay_player,R.id.card_yellow,R.id.penalty_try,R.id.card_red,
+        int[] ids = new int[]{R.id.main, R.id.bConfWatch, R.id.score_home, R.id.score_away,
+                R.id.tTimer, R.id.bPenHome, R.id.bPenAway,
+                R.id.bOverTimer, R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
+                R.id.button_background, R.id.extraTime,
+                R.id.svConf, R.id.llConfWatch, R.id.svConfSpinner,
+                R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
+                R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
                 R.id.matchLog, R.id.svMatchLog,
                 R.id.report,
-                R.id.correct,R.id.svCorrect,
+                R.id.correct, R.id.svCorrect,
                 R.id.svHelp, R.id.llHelp
         };
-        for(int id : ids){findViewById(id).setOnTouchListener(this::onTouch);}
+        for(int id : ids){
+            findViewById(id).setOnTouchListener(this::onTouch);
+        }
         findViewById(R.id.main).setOnClickListener(v -> onMainClick());
 
         battery = findViewById(R.id.battery);
@@ -183,6 +185,7 @@ public class Main extends Activity{
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
+        confSpinner = findViewById(R.id.confSpinner);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v -> conf.show(this));
         confWatch = findViewById(R.id.confWatch);
@@ -194,8 +197,10 @@ public class Main extends Activity{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 extraTimeChange();
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parentView){}
+            public void onNothingSelected(AdapterView<?> parentView){
+            }
         });
 
         score = findViewById(R.id.score);
@@ -222,6 +227,7 @@ public class Main extends Activity{
         isScreenRound = getResources().getConfiguration().isScreenRound();
         if(isScreenRound){
             conf.setBackgroundResource(R.drawable.round_bg);
+            confSpinner.setBackgroundResource(R.drawable.round_bg);
             confWatch.setBackgroundResource(R.drawable.round_bg);
             score.setBackgroundResource(R.drawable.round_bg);
             foulPlay.setBackgroundResource(R.drawable.round_bg);
@@ -243,7 +249,7 @@ public class Main extends Activity{
         fitText(time, vh15);
         score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        ((TextView)findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        ((TextView) findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
         fitText(tTimer, vh30);
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
@@ -254,7 +260,7 @@ public class Main extends Activity{
         bConfWatch.getLayoutParams().height = vh20;
         bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bStart.getLayoutParams().height = tTimer.getLayoutParams().height;
-        bStart.getLayoutParams().width = widthPixels-vw30;
+        bStart.getLayoutParams().width = widthPixels - vw30;
         bMatchLog.setPadding(0, vh5, vh5, vh5);
         bMatchLog.getLayoutParams().height = vh20;
         bMatchLog.getLayoutParams().width = vw30;
@@ -273,6 +279,12 @@ public class Main extends Activity{
         updateButtons();
         updateAfterConfig();
         showSplash = false;
+
+        if(Build.VERSION.SDK_INT >= 33){
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 2);
+            }
+        }
     }
     private void fitText(TextView tmp, int size){
         tmp.measure(0, 0);
@@ -326,9 +338,10 @@ public class Main extends Activity{
 
     @Override
     public void onBackPressed(){
-        if(back_time > getCurrentTimestamp() - 500){return;}
-        back_time = getCurrentTimestamp();
-        if(conf.getVisibility() == View.VISIBLE){
+        if(confSpinner.getVisibility() == View.VISIBLE){
+            confSpinner.setVisibility(View.GONE);
+            conf.requestFocusSV();
+        }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this, handler_message));
@@ -361,17 +374,25 @@ public class Main extends Activity{
             }
         }
     }
-    public void addOnTouch(View v){
-        v.setOnTouchListener(this::onTouch);
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent ev){
+        super.dispatchGenericMotionEvent(ev);
+        return true; //Just to let Google know we are listening to rotary events
     }
+
     public void onMainClick(){
         //We need to do this to make sure that we can listen for onTouch on main
         Log.i(RRW_LOG_TAG, "onMainClick");
+    }
+    public void addOnTouch(View v){
+        v.setOnTouchListener(this::onTouch);
     }
     private boolean onTouch(View ignoredV, MotionEvent event){
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 onTouchInit(event);
+                super.onTouchEvent(event);
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(onTouchStartY == -1) onTouchInit(event);
@@ -413,19 +434,9 @@ public class Main extends Activity{
     private void onTouchInit(MotionEvent event){
         onTouchStartY = event.getRawY();
         onTouchStartX = event.getRawX();
-        setTouchView();
-    }
-    private int getBackSwipeDiffX(MotionEvent event){
-        float diffY = event.getRawY() - onTouchStartY;
-        float diffX = event.getRawX() - onTouchStartX;
-        if(diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) return Math.round(diffX);
-        return -1;
-    }
-    private float getBackSwipeVelocity(MotionEvent event, float diffX){
-        return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
-    }
-    private void setTouchView(){
-        if(conf.getVisibility() == View.VISIBLE){
+        if(confSpinner.getVisibility() == View.VISIBLE){
+            touchView = confSpinner;
+        }else if(conf.getVisibility() == View.VISIBLE){
             touchView = conf;
         }else if(confWatch.getVisibility() == View.VISIBLE){
             touchView = confWatch;
@@ -442,6 +453,15 @@ public class Main extends Activity{
         }else{
             touchView = null;
         }
+    }
+    private int getBackSwipeDiffX(MotionEvent event){
+        float diffY = event.getRawY() - onTouchStartY;
+        float diffX = event.getRawX() - onTouchStartX;
+        if(diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) return Math.round(diffX);
+        return -1;
+    }
+    private float getBackSwipeVelocity(MotionEvent event, float diffX){
+        return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
     private void initBT(){
         if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
@@ -1043,7 +1063,7 @@ public class Main extends Activity{
             if(settings.has("record_pens"))
                 record_pens = settings.getBoolean("record_pens");
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "MainActivity.incomingSettings Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
             return false;
         }
@@ -1086,7 +1106,7 @@ public class Main extends Activity{
             if(bluetooth) initBT();
             updateAfterConfig();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "MainActivity.readSettings Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
         }
     }
@@ -1111,7 +1131,7 @@ public class Main extends Activity{
             ret.put("record_pens", record_pens);
             ret.put("help_version", help_version);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "MainActivity.getSettings Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_settings));
         }
         return ret;
@@ -1171,12 +1191,12 @@ public class Main extends Activity{
             this
             ,RRW_Notification
         )
-        .setSmallIcon(R.drawable.icon)
+        .setSmallIcon(R.drawable.icon_vector)
 		.setDefaults(NotificationCompat.DEFAULT_ALL)
 		.setCategory(NotificationCompat.CATEGORY_WORKOUT)
 		.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 		.addAction(
-            R.drawable.icon, getString(R.string.open_rrw),
+            R.drawable.icon_vector, getString(R.string.open_rrw),
             actionPendingIntent
 		)
         .setOngoing(true);
@@ -1190,7 +1210,7 @@ public class Main extends Activity{
             ,RRW_Notification_ID
             ,notificationBuilder
         )
-        .setStaticIcon(R.drawable.icon)
+        .setStaticIcon(R.drawable.icon_vector)
         .setTouchIntent(actionPendingIntent)
         .setStatus(ongoingActivityStatus)
         .build();

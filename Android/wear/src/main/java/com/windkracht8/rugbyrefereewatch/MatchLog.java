@@ -45,7 +45,7 @@ public class MatchLog extends ScrollView{
             main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
         }
         findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
-        ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.llConf_padding) + Main.vh25;
+        ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding) + Main.vh25;
 
         this.setVisibility(View.VISIBLE);
         this.fullScroll(View.FOCUS_UP);

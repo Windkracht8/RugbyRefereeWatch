@@ -277,7 +277,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/extraTime_desc"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/minTouchSize"
         android:entries="@array/extraTimeTimerType"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

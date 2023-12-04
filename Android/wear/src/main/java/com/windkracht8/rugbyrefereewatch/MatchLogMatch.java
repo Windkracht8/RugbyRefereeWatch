@@ -3,14 +3,13 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
-
-import androidx.appcompat.content.res.AppCompatResources;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MatchLogMatch extends androidx.appcompat.widget.AppCompatTextView {
+public class MatchLogMatch extends TextView{
     public MatchLogMatch(Context context){
         super(context);
     }
@@ -32,7 +31,7 @@ public class MatchLogMatch extends androidx.appcompat.widget.AppCompatTextView {
         this.setText(item);
         this.setGravity(Gravity.CENTER);
         this.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-        this.setBackground(AppCompatResources.getDrawable(context, R.drawable.menu_item_bg));
+        this.setBackgroundResource(R.drawable.conf_item_bg);
         this.setOnClickListener(v -> report.show(match));
     }
 }

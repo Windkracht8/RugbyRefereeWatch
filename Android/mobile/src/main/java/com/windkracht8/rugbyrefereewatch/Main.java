@@ -268,7 +268,7 @@ public class Main extends AppCompatActivity{
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
         @Override
-        public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY){
+        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY){
             try{
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();

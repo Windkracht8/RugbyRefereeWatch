@@ -8,7 +8,7 @@ android {
         //noinspection OldTargetApi
         targetSdk 33
         compileSdk 33
-        versionCode 400
+        versionCode 401
         versionName '3.0'
     }
     buildTypes {
@@ -24,7 +24,6 @@ android {
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core-splashscreen:1.0.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.wear:wear-ongoing:1.0.0'
     //We need to hold it back because of dependency clash
     //noinspection GradleDependency

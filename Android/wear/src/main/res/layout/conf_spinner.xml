@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/svConfSpinner"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/llConfSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/ll_in_sc_padding"
+        android:layout_marginTop="@dimen/ll_in_sc_padding"
+        android:layout_marginEnd="@dimen/ll_in_sc_padding"
+        android:layout_marginBottom="@dimen/ll_in_sc_padding" >
+        <TextView
+            android:id="@+id/conf_spinner_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/w8blue"
+            android:textSize="20sp" />
+    </LinearLayout>
+</ScrollView>

@@ -122,7 +122,7 @@ window.onload = function(){
 	}catch(e){
 		console.log("getCapability exception " + e.message);
 	}
-	setTimeout(hideSplash, 1000);
+	setTimeout(splashTimedout, 1000);
 };
  
 function back(){
@@ -1032,7 +1032,7 @@ function settingsRead(newsettings){
 		showHelp();
 		storeSettings();
 	}
-	hideSplash();
+	$('#splash').hide();
 	if(settings.bluetooth){
 		comms_start();
 	}else{
@@ -1220,4 +1220,8 @@ function showMessage(message){
 	$('#message').show();
 }
 
-function hideSplash(){$('#splash').hide();}
+function splashTimedout(){
+	$('#splash').hide();
+	$('#help_welcome').show();
+	showHelp();
+}
