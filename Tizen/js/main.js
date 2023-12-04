@@ -62,6 +62,12 @@ var match = {
 var custom_match_types = [];
 
 window.onload = function(){
+	if(typeof tizen === "undefined"){
+		$('#test_back').show();
+		$('body').css('border', 'solid thin white');
+		$('body').css('border-radius', '50vh');
+		settings.bluetooth = false;
+	}
 	document.addEventListener('tizenhwkey', function(e){
 		if(e.keyName === "back"){
 			back();
@@ -109,8 +115,12 @@ window.onload = function(){
 	}catch(e){
 		console.log("setScreenStateChangeListener exception " + e.message);
 	}
-	if(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.core.api.version").charAt(0) < 3){
-		$('#stylesheet').attr("href", "css/style.2.css");
+	try{
+		if(tizen.systeminfo.getCapability("http://tizen.org/feature/platform.core.api.version").charAt(0) < 3){
+			$('#stylesheet').attr("href", "css/style.2.css");
+		}
+	}catch(e){
+		console.log("getCapability exception " + e.message);
 	}
 	setTimeout(hideSplash, 1000);
 };

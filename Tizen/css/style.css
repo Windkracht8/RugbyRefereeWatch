@@ -1,3 +1,10 @@
+#test_back{
+	display: none;
+	position: fixed;
+	right: 0;
+	font-size: small;
+	z-index: 1000;
+}
 html, body{
 	margin: 0;
 	height: 100vh;
@@ -7,7 +14,7 @@ html, body{
 	background-color: black;
 	color: white;
 	overflow-x: hidden;
-	overflow-y: auto;
+	overflow-y: hidden;
 	font-family: Tizen, Samsung Sans, Helvetica;
 }
 select, input, button{
