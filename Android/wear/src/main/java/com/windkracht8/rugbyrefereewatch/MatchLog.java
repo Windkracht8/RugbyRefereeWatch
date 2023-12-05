@@ -47,10 +47,10 @@ public class MatchLog extends ScrollView{
         findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
         ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding) + Main.vh25;
 
-        this.setVisibility(View.VISIBLE);
-        this.fullScroll(View.FOCUS_UP);
+        setVisibility(View.VISIBLE);
+        fullScroll(View.FOCUS_UP);
         findViewById(R.id.svMatchLog).requestFocus();
-        this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+        getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if(!Main.isScreenRound || itemHeightInit) return;
             if(matchLogList.getChildCount() == 0) return;
             itemHeightInit = true;
@@ -58,7 +58,7 @@ public class MatchLog extends ScrollView{
             topBottomMargin = (Main.heightPixels - itemHeight) / 3;
             scalePerPixel = .5f / (topBottomMargin + itemHeight);
             onScroll(0);
-            this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
+            setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
         });
     }
     private void onScroll(int scrollY){

@@ -46,11 +46,11 @@ public class Correct extends ScrollView{
             event_ui.setOnClickListener(this::eventClicked);
             main.addOnTouch(event_ui);
         }
-        this.setVisibility(View.VISIBLE);
-        this.fullScroll(View.FOCUS_UP);
-        this.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
+        setVisibility(View.VISIBLE);
+        fullScroll(View.FOCUS_UP);
+        animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
         findViewById(R.id.svCorrect).requestFocus();
-        this.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+        getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if(!Main.isScreenRound || itemHeightInit) return;
             if(correctList.getChildCount() == 0) return;
             itemHeightInit = true;
@@ -58,7 +58,7 @@ public class Correct extends ScrollView{
             topBottomMargin = (Main.heightPixels - itemHeight) / 3;
             scalePerPixel = .5f / (topBottomMargin + itemHeight);
             onScroll(0);
-            this.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
+            setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
         });
     }
     private void onScroll(int scrollY){
