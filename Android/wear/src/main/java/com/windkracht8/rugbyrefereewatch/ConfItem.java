@@ -70,6 +70,7 @@ public class ConfItem extends LinearLayout{
     public void setHeight(int height){
         confItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, height*2);
         confItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, height);
+        if(type == ConfItemType.HELP) confItemValue.setVisibility(View.GONE);
     }
     public void addOnTouch(Main main){
         main.addOnTouch(this);

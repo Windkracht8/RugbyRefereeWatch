@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -64,7 +63,6 @@ public class Conf extends ConstraintLayout{
             confItem.addOnTouch(main);
         }
         findViewById(R.id.conf_label).getLayoutParams().height = Main.vh25;
-        ((FrameLayout.LayoutParams) llConf.getLayoutParams()).bottomMargin += Main.vh25;
         confSpinner.addOnTouch(main);
 
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
@@ -72,7 +70,9 @@ public class Conf extends ConstraintLayout{
             isItemHeightInitialized = true;
             itemHeight = confItems.get(0).getHeight();
             scalePerPixel = 0.5f / (Main.vh25 + itemHeight);
-            confItems.get(ConfItem.ConfItemType.values().length - 1).setHeight(itemHeight / 4);
+            ConfItem confItemHelp = confItems.get(ConfItem.ConfItemType.values().length - 1);
+            confItemHelp.setHeight(itemHeight / 4);
+            ((LinearLayout.LayoutParams) confItemHelp.getLayoutParams()).bottomMargin = Main.vh25;
             scaleConfItems(0);
             svConf.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleConfItems(scrollY));
         });
