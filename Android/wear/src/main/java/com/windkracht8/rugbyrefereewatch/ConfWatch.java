@@ -7,11 +7,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ConfWatch extends LinearLayout {
+public class ConfWatch extends ScrollView{
     private boolean isInitialized = false;
     private final ArrayList<ConfItem> confItems = new ArrayList<>();
 
@@ -28,16 +29,29 @@ public class ConfWatch extends LinearLayout {
             return;
         }
         isInitialized = true;
-        int padding = getResources().getDimensionPixelSize(R.dimen.conf_item_padding)*2;
-        int height_per_item = ((Main.heightPixels/4) - padding) / 4;
+
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
+
+        int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
+        int padding_item = getResources().getDimensionPixelSize(R.dimen.conf_item_padding)*8;
+        int minTouchSize = getResources().getDimensionPixelSize(R.dimen.minTouchSize);
+        int height_for_item = (Main.heightPixels - ll_in_sc_padding*2 - padding_item) / 16;
+        if(Main.heightPixels < ll_in_sc_padding*2+padding_item+minTouchSize*4){
+            height_for_item = minTouchSize / 6;
+            llConfWatch.setPadding(ll_in_sc_padding, 0,ll_in_sc_padding,0);
+        }
+
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
             ConfItem confItem = new ConfItem(getContext(), null, confItemType);
             confItem.setOnClickListener(v -> onConfItemClick((ConfItem)v, confItemType));
             confItems.add(confItem);
             llConfWatch.addView(confItem);
             confItem.addOnTouch(main);
-            confItem.setHeight(height_per_item);
+            confItem.setHeight(height_for_item);
+            confItem.updateValue();
+            if(Main.isScreenRound && (confItemType == TIMER_TYPE || confItemType == SCREEN_ON)){
+                confItem.setPadding(Main.vh15, 0, Main.vh15, 0);
+            }
         }
         this.setVisibility(View.VISIBLE);
     }

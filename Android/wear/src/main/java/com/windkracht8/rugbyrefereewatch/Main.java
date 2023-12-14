@@ -83,6 +83,7 @@ public class Main extends Activity{
     public static int widthPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
+    public static int vh15 = 0;
     public static int vh25 = 0;
 
     //Timer
@@ -239,7 +240,7 @@ public class Main extends Activity{
 
         //Resize elements for the heightPixels
         int vh5 = (int) (heightPixels * .05);
-        int vh15 = (int) (heightPixels * .15);
+        vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
         int vh30 = (int) (heightPixels * .3);
