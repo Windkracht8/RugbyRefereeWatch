@@ -67,9 +67,13 @@ public class ConfItem extends LinearLayout{
         return R.string.fail_oops;
     }
 
-    public void setHeight(int height){
-        confItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, height*2);
-        confItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, height);
+    public void setHeight(int heightText, int heightTotal){
+        this.setMinimumHeight(heightTotal);
+        setHeight(heightText);
+    }
+    public void setHeight(int heightText){
+        confItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, heightText*2);
+        confItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, heightText);
         if(type == ConfItemType.HELP) confItemValue.setVisibility(View.GONE);
     }
     public void addOnTouch(Main main){

@@ -33,12 +33,15 @@ public class ConfWatch extends ScrollView{
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
 
         int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
-        int padding_item = getResources().getDimensionPixelSize(R.dimen.conf_item_padding)*8;
         int minTouchSize = getResources().getDimensionPixelSize(R.dimen.minTouchSize);
-        int height_for_item = (Main.heightPixels - ll_in_sc_padding*2 - padding_item) / 16;
-        if(Main.heightPixels < ll_in_sc_padding*2+padding_item+minTouchSize*4){
-            height_for_item = minTouchSize / 6;
+        int confItemHeightText = minTouchSize / 6;
+        int confItemHeightTotal = minTouchSize;
+
+        if(Main.heightPixels <= ll_in_sc_padding*2+minTouchSize*4){
             llConfWatch.setPadding(ll_in_sc_padding, 0,ll_in_sc_padding,0);
+        }else if(Main.heightPixels > ll_in_sc_padding*2+minTouchSize*4){
+            confItemHeightText = (Main.heightPixels - ll_in_sc_padding*2) / 20;
+            confItemHeightTotal = (Main.heightPixels - ll_in_sc_padding*2) / 4;
         }
 
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
@@ -47,7 +50,7 @@ public class ConfWatch extends ScrollView{
             confItems.add(confItem);
             llConfWatch.addView(confItem);
             confItem.addOnTouch(main);
-            confItem.setHeight(height_for_item);
+            confItem.setHeight(confItemHeightText, confItemHeightTotal);
             confItem.updateValue();
             if(Main.isScreenRound && (confItemType == TIMER_TYPE || confItemType == SCREEN_ON)){
                 confItem.setPadding(Main.vh15, 0, Main.vh15, 0);
