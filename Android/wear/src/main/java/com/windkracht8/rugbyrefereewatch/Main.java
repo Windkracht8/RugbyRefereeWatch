@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -226,17 +227,6 @@ public class Main extends Activity{
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
         isScreenRound = getResources().getConfiguration().isScreenRound();
-        if(isScreenRound){
-            conf.setBackgroundResource(R.drawable.round_bg);
-            confSpinner.setBackgroundResource(R.drawable.round_bg);
-            confWatch.setBackgroundResource(R.drawable.round_bg);
-            score.setBackgroundResource(R.drawable.round_bg);
-            foulPlay.setBackgroundResource(R.drawable.round_bg);
-            report.setBackgroundResource(R.drawable.round_bg);
-            correct.setBackgroundResource(R.drawable.round_bg);
-            matchLog.setBackgroundResource(R.drawable.round_bg);
-            help.setBackgroundResource(R.drawable.round_bg);
-        }
 
         //Resize elements for the heightPixels
         int vh5 = (int) (heightPixels * .05);
@@ -408,6 +398,9 @@ public class Main extends Activity{
                 }else if(diffX1 > 0){
                     float move = event.getRawX() - onTouchStartX;
                     float scale = 1 - move/widthPixels;
+                    if(isScreenRound){
+                        touchView.setBackgroundResource(R.drawable.round_bg);
+                    }
                     touchView.animate().x(move)
                             .scaleX(scale).scaleY(scale)
                             .setDuration(0).start();
@@ -420,6 +413,10 @@ public class Main extends Activity{
                             .x(0)
                             .scaleX(1f).scaleY(1f)
                             .setDuration(150).start();
+                    if(isScreenRound){
+                        touchView.setBackgroundResource(0);
+                        touchView.setBackgroundColor(getResources().getColor(R.color.black, null));
+                    }
                 }
                 int diffX2 = getBackSwipeDiffX(event);
                 float velocity2 = getBackSwipeVelocity(event, diffX2);
@@ -841,7 +838,7 @@ public class Main extends Activity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(this, null, this, sinbin_data, getColor(team.color));
+                Sinbin sb = new Sinbin(this, null, this, sinbin_data, Objects.equals(team.id, "home"), getColor(team.color));
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }

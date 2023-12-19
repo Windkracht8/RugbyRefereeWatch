@@ -3,6 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,7 +13,7 @@ public class Sinbin extends LinearLayout{
     public MatchData.sinbin sinbin;
     private TextView timer;
     public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
-    public Sinbin(Context context, AttributeSet attrs, Main main, MatchData.sinbin sinbin, int col){
+    public Sinbin(Context context, AttributeSet attrs, Main main, MatchData.sinbin sinbin, boolean isHome, int col){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
@@ -24,6 +25,11 @@ public class Sinbin extends LinearLayout{
         main.addOnTouch(this);
         main.addOnTouch(timer);
 
+        if(isHome){
+            timer.setGravity(Gravity.LEFT);
+        }else{
+            timer.setGravity(Gravity.RIGHT);
+        }
         this.setBackgroundColor(col);
         update();
     }
