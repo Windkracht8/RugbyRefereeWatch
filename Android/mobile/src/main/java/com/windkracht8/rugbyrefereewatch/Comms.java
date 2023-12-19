@@ -216,22 +216,13 @@ public class Comms{
                 if(numBytes > 3){
                     String response = new String(buffer);
                     JSONObject responseMessage = new JSONObject(response);
-                    gotResponse(responseMessage);
+                    handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
                 }
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
         }
 
-        private void gotResponse(final JSONObject responseMessage){
-            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage.toString());
-            try{
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
-            }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse Exception: " + e.getMessage());
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
-            }
-        }
     }
 }

@@ -72,6 +72,11 @@ public class Comms{
         if(!connect) return;
         Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
 
+        if(bondedDevices == null){
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_bluetooth));
+            return;
+        }
+
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(connect_failed_addresses.contains(bondedDevice.getAddress())) continue;
             for(ParcelUuid uuid : bondedDevice.getUuids()){

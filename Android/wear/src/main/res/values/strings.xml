@@ -146,6 +146,7 @@
     <string name="help_log_title">History</string>
     <string name="help_log">Noticed this icon? It opens a list of all of your completed
         matches.</string>
+    <string name="iHelpNew_desc">Help new icon</string>
     <string name="help_pk_title">Penalty kick</string>
     <string name="help_pk">Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
@@ -190,5 +191,5 @@
     <string name="fail_show_log">Failed to show log</string>
     <string name="fail_show_score">Failed to show score screen</string>
     <string name="fail_show_sinbin">Failed to show sinbins</string>
-    <string name="iHelpNew_desc">Help new icon</string>
+    <string name="fail_bluetooth">Bluetooth connection failed</string>
 </resources>
