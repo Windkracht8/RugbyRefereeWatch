@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -203,7 +202,7 @@ public class Comms{
                     return false;
                 }
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest Exception: " + e.getMessage());
-                Toast.makeText(context, R.string.fail_send_message, Toast.LENGTH_SHORT).show();
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
             }
             return true;
         }
@@ -221,7 +220,7 @@ public class Comms{
                 }
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
-                Toast.makeText(context, R.string.fail_response, Toast.LENGTH_SHORT).show();
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
         }
 
@@ -231,7 +230,7 @@ public class Comms{
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse Exception: " + e.getMessage());
-                Toast.makeText(context, R.string.fail_response, Toast.LENGTH_SHORT).show();
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
         }
     }

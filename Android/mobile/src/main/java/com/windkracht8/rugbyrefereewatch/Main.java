@@ -54,6 +54,7 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_UPDATE_MATCH = 7;
     public static final int MESSAGE_EXPORT_MATCHES = 8;
     public static final int MESSAGE_BT_OFF = 9;
+    public static final int MESSAGE_TOAST = 10;
     private GestureDetector gestureDetector;
     private Comms comms = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
@@ -151,6 +152,10 @@ public class Main extends AppCompatActivity{
                     break;
                 case MESSAGE_BT_OFF:
                     gotError(getString(R.string.fail_BT_off));
+                    break;
+                case MESSAGE_TOAST:
+                    if(!(msg.obj instanceof String)) return;
+                    Toast.makeText(getApplicationContext(), (String) msg.obj, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
