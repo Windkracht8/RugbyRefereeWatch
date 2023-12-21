@@ -13,10 +13,12 @@ import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.UUID;
 
 public class Comms{
@@ -209,19 +211,55 @@ public class Comms{
 
         private void read(){
             try{
-                int available = inputStream.available();
-                if(available == 0) return;
-                byte[] buffer = new byte[available];
-                int numBytes = inputStream.read(buffer);
-                if(numBytes > 3){
-                    String response = new String(buffer);
-                    JSONObject responseMessage = new JSONObject(response);
-                    handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
+                if(inputStream.available() < 5) return;
+                long read_start = (new Date()).getTime();
+                String response = "";
+
+                while(inputStream.available() > 0){
+                    byte[] buffer = new byte[500];
+                    int numBytes = inputStream.read(buffer);
+                    if(numBytes < 0){
+                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read read error: " + response);
+                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        return;
+                    }
+                    String temp = new String(buffer);
+                    response += temp;
+                    if(isValidJSON(response)){
+                        gotResponse(response);
+                        return;
+                    }
+                    if((new Date()).getTime() - read_start > 3000){
+                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read started to read, no complete message after 3 seconds: " + response);
+                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        return;
+                    }
+                    sleep100();
                 }
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
+        }
+
+        private void gotResponse(String response){
+            try{
+                JSONObject responseMessage = new JSONObject(response);
+                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage);
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
+            }catch(Exception e){
+                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + e.getMessage());
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+            }
+        }
+
+        private boolean isValidJSON(String json){
+            try{
+                new JSONObject(json);
+            }catch(JSONException e){
+                return false;
+            }
+            return true;
         }
 
     }

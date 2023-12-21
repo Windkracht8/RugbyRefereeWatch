@@ -154,8 +154,8 @@ public class Main extends AppCompatActivity{
                     gotError(getString(R.string.fail_BT_off));
                     break;
                 case MESSAGE_TOAST:
-                    if(!(msg.obj instanceof String)) return;
-                    Toast.makeText(getApplicationContext(), (String) msg.obj, Toast.LENGTH_SHORT).show();
+                    if(!(msg.obj instanceof Integer)) return;
+                    Toast.makeText(getApplicationContext(), getString((Integer) msg.obj), Toast.LENGTH_SHORT).show();
                     break;
             }
         }
