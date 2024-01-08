@@ -431,7 +431,7 @@ public class TabReport extends LinearLayout{
         }
         return shareSubject;
     }
-    private String getShareBody(){//TODO: also allow to export in english
+    private String getShareBody(){
         StringBuilder shareBody = new StringBuilder();
         try{
             shareBody.append(getShareSubject()).append("\n\n");
@@ -491,7 +491,7 @@ public class TabReport extends LinearLayout{
             shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
             shareBody.append("\n");
 
-            int period_count = match.getInt("period_count");
+            int period_count = match.getJSONObject("settings").getInt("period_count");
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);

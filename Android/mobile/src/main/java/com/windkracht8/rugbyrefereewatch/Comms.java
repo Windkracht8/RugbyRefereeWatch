@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -31,10 +32,12 @@ public class Comms{
     BluetoothSocket bluetoothSocket;
     final Context context;
     final Handler handler_message;
+    final Handler handler;
 
     public Comms(Context context, Handler handler_message){
         this.context = context;
         this.handler_message = handler_message;
+        handler = new Handler(Looper.getMainLooper());
         requestQueue = new JSONArray();
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -64,8 +67,8 @@ public class Comms{
             bt_off();
             return;
         }
-        CommsBTConnect commsBTConnect = new CommsBTConnect();
-        commsBTConnect.start();
+        CommsConnect commsConnect = new CommsConnect();
+        commsConnect.start();
         updateStatus("LISTENING");
     }
 
@@ -74,30 +77,30 @@ public class Comms{
         try{
             context.unregisterReceiver(btStateReceiver);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening unregisterReceiver: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening unregisterReceiver: " + e.getMessage());
         }
         try{
             if(bluetoothSocket != null) bluetoothSocket.close();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothSocket: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening bluetoothSocket: " + e.getMessage());
         }
         try{
             if(bluetoothServerSocket != null) bluetoothServerSocket.close();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothServerSocket: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening bluetoothServerSocket: " + e.getMessage());
         }
     }
 
     public void sendRequest(String requestType, JSONObject requestData){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.sendRequest: " + requestType);
+        Log.d(Main.RRW_LOG_TAG, "Comms.sendRequest: " + requestType);
         try{
             JSONObject request = new JSONObject();
             request.put("requestType", requestType);
             request.put("requestData", requestData);
             requestQueue.put(request);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendRequest Exception: " + e);
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendRequest Exception: " + e.getMessage());
+            Log.e(Main.RRW_LOG_TAG, "Comms.sendRequest Exception: " + e);
+            Log.e(Main.RRW_LOG_TAG, "Comms.sendRequest Exception: " + e.getMessage());
         }
     }
 
@@ -114,14 +117,14 @@ public class Comms{
         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status));
     }
 
-    private class CommsBTConnect extends Thread{
+    private class CommsConnect extends Thread{
         @SuppressLint("MissingPermission")//already checked in startListening
-        public CommsBTConnect(){
+        public CommsConnect(){
             if(bluetoothServerSocket != null) return;
             try{
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnect Exception: " + e.getMessage());
                 gotError(e.getMessage());
             }
         }
@@ -129,28 +132,28 @@ public class Comms{
         public void run(){
             try{
                 bluetoothSocket = bluetoothServerSocket.accept();
-                CommsBTConnected commsBTConnected = new CommsBTConnected();
-                commsBTConnected.start();
+                CommsConnected commsConnected = new CommsConnected();
+                commsConnected.start();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnect.run Exception: " + e.getMessage());
             }
         }
     }
 
-    private class CommsBTConnected extends Thread{
+    private class CommsConnected extends Thread{
         private InputStream inputStream;
         private OutputStream outputStream;
 
-        public CommsBTConnected(){
+        public CommsConnected(){
             try{
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getInputStream Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected getInputStream Exception: " + e.getMessage());
             }
             try{
                 outputStream = bluetoothSocket.getOutputStream();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getOutputStream Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected getOutputStream Exception: " + e.getMessage());
             }
         }
 
@@ -171,15 +174,14 @@ public class Comms{
                 return;
             }
             read();
-            sleep100();
-            process();
+            handler.postDelayed(this::process, 100);
         }
 
         private void close(){
             try{
                 bluetoothSocket.close();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.close exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected.close exception: " + e.getMessage());
             }
         }
 
@@ -187,7 +189,7 @@ public class Comms{
             try{
                 Thread.sleep(100);
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sleep100 exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected.sleep100 exception: " + e.getMessage());
             }
         }
 
@@ -197,13 +199,13 @@ public class Comms{
                 if(requestQueue.length() < 1) return true;
                 JSONObject request = (JSONObject) requestQueue.get(0);
                 requestQueue.remove(0);
-                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest: " + request.toString());
+                Log.d(Main.RRW_LOG_TAG, "CommsConnected.sendNextRequest: " + request.toString());
                 outputStream.write(request.toString().getBytes());
             }catch(Exception e){
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
                     return false;
                 }
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest Exception: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected.sendNextRequest Exception: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
             }
             return true;
@@ -219,7 +221,7 @@ public class Comms{
                     byte[] buffer = new byte[500];
                     int numBytes = inputStream.read(buffer);
                     if(numBytes < 0){
-                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read read error: " + response);
+                        Log.e(Main.RRW_LOG_TAG, "CommsConnected.read read error: " + response);
                         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                         return;
                     }
@@ -230,14 +232,14 @@ public class Comms{
                         return;
                     }
                     if((new Date()).getTime() - read_start > 3000){
-                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read started to read, no complete message after 3 seconds: " + response);
+                        Log.e(Main.RRW_LOG_TAG, "CommsConnected.read started to read, no complete message after 3 seconds: " + response);
                         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                         return;
                     }
                     sleep100();
                 }
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected.read: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
         }
@@ -245,10 +247,10 @@ public class Comms{
         private void gotResponse(String response){
             try{
                 JSONObject responseMessage = new JSONObject(response);
-                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage);
+                Log.d(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + responseMessage);
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
             }
         }

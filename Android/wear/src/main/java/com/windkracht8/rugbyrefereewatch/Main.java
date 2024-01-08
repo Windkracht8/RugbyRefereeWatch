@@ -110,13 +110,11 @@ public class Main extends Activity{
     static Vibrator vibrator;
     private Comms comms;
 
-    public final static int MESSAGE_HIDE_SPLASH = 1;
-    public final static int MESSAGE_TOAST = 2;
-    public final static int MESSAGE_SHOW_HELP = 3;
-    public final static int MESSAGE_READ_SETTINGS = 4;
-    public final static int MESSAGE_CUSTOM_MATCH_TYPE = 5;
-    public final static int MESSAGE_PREPARE_RECEIVED = 6;
-    public final static int MESSAGE_NO_SETTINGS = 7;
+    public final static int MESSAGE_TOAST = 101;
+    public final static int MESSAGE_SHOW_HELP = 102;
+    public final static int MESSAGE_READ_SETTINGS = 201;
+    public final static int MESSAGE_NO_SETTINGS = 202;
+    public final static int MESSAGE_PREPARE_RECEIVED = 301;
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
@@ -124,6 +122,7 @@ public class Main extends Activity{
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
+	//TODO: move the addOnTouch to the relevant UI
     @SuppressLint({"MissingInflatedId"}) //nested layout XMLs are not found
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -138,8 +137,8 @@ public class Main extends Activity{
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             heightPixels = displayMetrics.heightPixels;
             widthPixels = displayMetrics.widthPixels;
-            SWIPE_THRESHOLD = (int) (widthPixels * .3);
         }
+        SWIPE_THRESHOLD = (int) (widthPixels * .3);
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
 
@@ -153,6 +152,7 @@ public class Main extends Activity{
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
+        //TODO: ll and labels are not necessary, only the sv
         int[] ids = new int[]{R.id.main, R.id.bConfWatch, R.id.score_home, R.id.score_away,
                 R.id.tTimer, R.id.bPenHome, R.id.bPenAway,
                 R.id.bOverTimer, R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
@@ -288,9 +288,6 @@ public class Main extends Activity{
     public final Handler handler_message = new Handler(Looper.getMainLooper()){
         public void handleMessage(Message msg){
             switch(msg.what){
-                case MESSAGE_HIDE_SPLASH:
-                    showSplash = false;
-                    break;
                 case MESSAGE_TOAST:
                     if(msg.obj instanceof String){
                         runOnUiThread(() -> Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show());
@@ -317,9 +314,11 @@ public class Main extends Activity{
                     if(!(msg.obj instanceof JSONObject)) return;
                     readSettings((JSONObject) msg.obj);
                     break;
+                    /* //TODO this is not called, we are not storing custom match types?
                 case MESSAGE_CUSTOM_MATCH_TYPE:
                     executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), handler_message));
                     break;
+                     */
                 case MESSAGE_PREPARE_RECEIVED:
                     updateAfterConfig();
                     break;
@@ -1109,7 +1108,7 @@ public class Main extends Activity{
         }
     }
 
-    public static JSONObject getSettings(Handler handler_message){
+    public static JSONObject getSettings(){
         JSONObject ret = new JSONObject();
         try{
             ret.put("home_name", match.home.team);
@@ -1130,7 +1129,7 @@ public class Main extends Activity{
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_settings));
+            return null;
         }
         return ret;
     }

@@ -12,14 +12,14 @@
         android:orientation="vertical"
         android:layout_marginTop="@dimen/ll_in_sc_padding"
         android:layout_marginBottom="@dimen/ll_in_sc_padding" >
-    <TextView
-        android:id="@+id/match_log_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/match_log_title"
-        android:textColor="@color/w8blue"
-        android:textSize="18sp" />
+        <TextView
+            android:id="@+id/match_log_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/match_log_title"
+            android:textColor="@color/w8blue"
+            android:textSize="18sp" />
         <LinearLayout
             android:id="@+id/matchLogList"
             android:layout_width="match_parent"

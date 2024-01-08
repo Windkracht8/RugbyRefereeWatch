@@ -166,8 +166,7 @@ public class Comms{
                 return;
             }
             read();
-            sleep100();
-            process();
+            handler.postDelayed(this::process, 100);
         }
 
         private void close(){
@@ -175,14 +174,6 @@ public class Comms{
                 bluetoothSocket.close();
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.close exception: " + e.getMessage());
-            }
-        }
-
-        private void sleep100(){
-            try{
-                Thread.sleep(100);
-            }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsConnected.sleep100 exception: " + e.getMessage());
             }
         }
 
@@ -243,9 +234,11 @@ public class Comms{
 
     private void onReceiveSync(String requestData){
         try{
+            JSONObject settings = Main.getSettings();
+            if(settings == null) return;
             JSONObject responseData = new JSONObject();
             responseData.put("matches", FileStore.deletedMatches(context, handler_message, requestData));
-            responseData.put("settings", Main.getSettings(handler_message));
+            responseData.put("settings", settings);
             sendResponse("sync", responseData);
             Conf.syncCustomMatchTypes(handler_message, requestData);
         }catch(Exception e){

@@ -85,7 +85,12 @@ public class FileStore{
     }
     public static void storeSettings(Context context, Handler handler_message){
         try{
-            storeFile(context, handler_message, R.string.settings_filename, Main.getSettings(handler_message).toString());
+            JSONObject settings = Main.getSettings();
+            if(settings == null){
+                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
+                return;
+            }
+            storeFile(context, handler_message, R.string.settings_filename, settings.toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
