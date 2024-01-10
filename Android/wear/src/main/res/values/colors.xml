@@ -3,6 +3,7 @@
     <color name="pure_white">#FFF</color>
     <color name="w8blue">#2BD2E3</color>
     <color name="bgConfItem">#111</color>
+    <color name="icon_background">#000000</color>
 
     <color name="black">#000</color>
     <color name="blue">#00F</color>

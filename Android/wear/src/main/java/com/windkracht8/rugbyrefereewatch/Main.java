@@ -1207,12 +1207,12 @@ public class Main extends Activity{
             this
             ,RRW_Notification
         )
-        .setSmallIcon(R.drawable.icon_vector)
+        .setSmallIcon(R.mipmap.icon)
 		.setDefaults(NotificationCompat.DEFAULT_ALL)
 		.setCategory(NotificationCompat.CATEGORY_WORKOUT)
 		.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 		.addAction(
-            R.drawable.icon_vector, getString(R.string.open_rrw),
+            R.mipmap.icon, getString(R.string.open_rrw),
             actionPendingIntent
 		)
         .setOngoing(true);
@@ -1226,7 +1226,7 @@ public class Main extends Activity{
             ,RRW_Notification_ID
             ,notificationBuilder
         )
-        .setStaticIcon(R.drawable.icon_vector)
+        .setStaticIcon(R.mipmap.icon)
         .setTouchIntent(actionPendingIntent)
         .setStatus(ongoingActivityStatus)
         .build();
