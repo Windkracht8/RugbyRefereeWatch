@@ -3,4 +3,5 @@
     <color name="background">#FFF</color>
     <color name="text">#000</color>
     <color name="error">@android:color/holo_red_dark</color>
+    <color name="icon_background">#000000</color>
 </resources>
