@@ -13,8 +13,8 @@ public class MatchLogMatch extends TextView{
     public MatchLogMatch(Context context){
         super(context);
     }
-    public MatchLogMatch(Context context, MatchData match, Report report){
-        super(context);
+    public MatchLogMatch(Main main, MatchData match, Report report){
+        super(main);
         Date match_date_d = new Date(match.match_id);
         String item = new SimpleDateFormat("E dd MMM HH:mm", Locale.getDefault()).format(match_date_d);
 
@@ -32,6 +32,6 @@ public class MatchLogMatch extends TextView{
         this.setGravity(Gravity.CENTER);
         this.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         this.setBackgroundResource(R.drawable.conf_item_bg);
-        this.setOnClickListener(v -> report.show(match));
+        this.setOnClickListener(v -> report.show(main, match));
     }
 }

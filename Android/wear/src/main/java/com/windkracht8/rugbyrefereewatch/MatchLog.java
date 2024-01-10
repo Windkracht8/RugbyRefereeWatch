@@ -25,7 +25,6 @@ public class MatchLog extends ScrollView{
         inflater.inflate(R.layout.match_log, this, true);
 
         matchLogList = findViewById(R.id.matchLogList);
-        findViewById(R.id.llMatchLog).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
     public void show(Main main, Report report) {
@@ -36,7 +35,7 @@ public class MatchLog extends ScrollView{
         try {
             for (int i = matches.length() - 1; i >= 0; i--) {
                 MatchData match = new MatchData(getContext(), matches.getJSONObject(i));
-                MatchLogMatch matchLogMatch = new MatchLogMatch(getContext(), match, report);
+                MatchLogMatch matchLogMatch = new MatchLogMatch(main, match, report);
                 matchLogList.addView(matchLogMatch);
                 main.addOnTouch(matchLogMatch);
             }

@@ -43,6 +43,13 @@ public class TabHistory extends LinearLayout{
         matches = new ArrayList<>();
         deleted_matches = new ArrayList<>();
     }
+    public void onCreateMain(Main main){
+        findViewById(R.id.bSync).setOnClickListener(view -> main.bSyncClick());
+        findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
+        findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
+        findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
+        loadMatches(main.handler_message);
+    }
     public void gotMatches(final JSONArray matches_new){
         try{
             for(int i = 0; i < matches_new.length(); i++){

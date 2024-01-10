@@ -17,11 +17,9 @@ public class Report extends ScrollView{
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_report, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report, this, true);
-
-        findViewById(R.id.llReport).setOnClickListener(v -> this.setVisibility(GONE));
     }
 
-    public void show(MatchData match){
+    public void show(Main main, MatchData match){
         LinearLayout reportList = findViewById(R.id.reportList);
         for(int i = reportList.getChildCount(); i > 0; i--){
             reportList.removeViewAt(i-1);
@@ -55,6 +53,7 @@ public class Report extends ScrollView{
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, Main.vh7);
+            main.addOnTouch(tv);
             reportList.addView(tv);
         }
         this.setVisibility(View.VISIBLE);

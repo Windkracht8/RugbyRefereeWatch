@@ -146,7 +146,7 @@ public class FileStore{
                 Conf.customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
             }
         }catch(FileNotFoundException e){
-            Log.i(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
+            Log.d(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_match_types));

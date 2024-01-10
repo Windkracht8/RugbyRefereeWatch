@@ -179,7 +179,6 @@
     <string name="fail_del_matches">Failed to delete matches</string>
     <string name="fail_store_settings">Failed to store settings</string>
     <string name="fail_read_settings">Failed to read settings</string>
-    <string name="fail_send_settings">Failed to send settings</string>
     <string name="fail_receive_settings">Failed to receive settings</string>
     <string name="fail_store_match_types">Failed to store match types</string>
     <string name="fail_read_file">Failed to read file</string>

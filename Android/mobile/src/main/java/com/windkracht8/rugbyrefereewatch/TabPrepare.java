@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -203,6 +204,16 @@ public class TabPrepare extends LinearLayout{
 
         sTimerType.setSelection(1);
         loadCustomMatchTypes();
+    }
+
+    public void onCreateMain(Main main, SharedPreferences sharedPreferences){
+        findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
+        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
+        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
+        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
+        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
+        findViewById(R.id.svPrepare).setOnTouchListener(main::onTouchEventScrollViews);
+
     }
 
     private void bWatchSettingsClick(){

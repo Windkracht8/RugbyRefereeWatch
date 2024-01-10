@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
-            android:src="@drawable/list"
+            android:src="@drawable/icon_match_log"
             android:contentDescription="@string/iHelpNew_desc" />
         <TextView
             android:layout_width="match_parent"

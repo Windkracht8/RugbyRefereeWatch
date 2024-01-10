@@ -69,6 +69,9 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
     }
 
+    public void onCreateMain(Main main){
+        findViewById(R.id.svReport).setOnTouchListener(main::onTouchEventScrollViews);
+    }
     public void loadMatch(Handler handler_message, final JSONObject match){
         this.handler_message = handler_message;
         this.match = match;

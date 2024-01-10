@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -27,7 +26,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,50 +68,32 @@ public class Main extends AppCompatActivity{
     private TextView tvStatus;
     private TextView tvError;
 
-    @SuppressLint({"MissingInflatedId"}) //bGetMatches, bGetMatch, bPrepare are in separate layouts
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.main);
         getWidthPixels();
-        tabHistory = findViewById(R.id.tabHistory);
-        tabHistory.loadMatches(handler_message);
-        tabReport = findViewById(R.id.tabReport);
-        tabPrepare = findViewById(R.id.tabPrepare);
+        handler_main = new Handler(Looper.getMainLooper());
+        SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
+        sharedPreferences_editor = sharedPreferences.edit();
+
         tvStatus = findViewById(R.id.tvStatus);
         tvError = findViewById(R.id.tvError);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
         findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
-        findViewById(R.id.bSync).setOnClickListener(view -> bSyncClick());
-        findViewById(R.id.bExport).setOnClickListener(view -> exportMatches());
-        findViewById(R.id.bPrepare).setOnClickListener(view -> bPrepareClick());
+
+        tabHistory = findViewById(R.id.tabHistory);
+        tabHistory.onCreateMain(this);
+        tabReport = findViewById(R.id.tabReport);
+        tabReport.onCreateMain(this);
+        tabPrepare = findViewById(R.id.tabPrepare);
+        tabPrepare.onCreateMain(this, sharedPreferences);
+
         handleOrientation();
-
-        SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
-        sharedPreferences_editor = sharedPreferences.edit();
-
-        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
-        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
-        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
-        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
-
-        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
-        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
-        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
-        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
-
         handleIntent();
-        handler_main = new Handler(Looper.getMainLooper());
 
-        findViewById(R.id.scrollHistory).setOnTouchListener(this::onTouchEventScrollViews);
-        findViewById(R.id.llMatches).setOnTouchListener(this::onTouchEventScrollViews);
-        findViewById(R.id.scrollReport).setOnTouchListener(this::onTouchEventScrollViews);
-        findViewById(R.id.scrollPrepare).setOnTouchListener(this::onTouchEventScrollViews);
-
-        //TODO: load latest match on TabReport
-        //TODO: on sync received, load latest match on TabReport
         initBT();
     }
     public final Handler handler_message = new Handler(Looper.getMainLooper()){
@@ -265,8 +245,7 @@ public class Main extends AppCompatActivity{
     public boolean onTouchEvent(MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
-    @SuppressWarnings("unused")
-    private boolean onTouchEventScrollViews(View v, MotionEvent event){
+    public boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
@@ -464,7 +443,7 @@ public class Main extends AppCompatActivity{
         return name;
     }
 
-    private void exportMatches(){
+    public void exportMatches(){
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/json");

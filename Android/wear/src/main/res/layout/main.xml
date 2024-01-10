@@ -10,14 +10,15 @@
     <ImageButton
         android:id="@+id/bConfWatch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/home_away"
         android:background="#000"
         android:contentDescription="@string/bConfWatch_desc"
         android:scaleType="centerInside"
-        android:src="@drawable/gear2" />
+        android:src="@drawable/icon_conf_filled" />
     <TextView
         android:id="@+id/battery"
         android:layout_width="match_parent"
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/battery"
+        app:layout_constraintTop_toBottomOf="@id/battery"
         android:layout_marginTop="-6dp"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -51,7 +52,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/time"
+        app:layout_constraintTop_toBottomOf="@id/time"
         android:baselineAligned="false">
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_away"
+        app:layout_constraintTop_toBottomOf="@id/home_away"
         android:baselineAligned="false">
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -122,7 +123,7 @@
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_away" />
+        app:layout_constraintTop_toBottomOf="@id/home_away" />
     <View
         android:id="@+id/timer_background"
         android:layout_width="match_parent"
@@ -131,7 +132,7 @@
         android:background="#A000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space"
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space"
         app:layout_constraintBottom_toBottomOf="parent" />
     <TextView
         android:id="@+id/tTimer"
@@ -145,7 +146,7 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space" />
     <TextView
         android:id="@+id/pen_label"
         android:layout_width="match_parent"
@@ -156,7 +157,7 @@
         android:text="@string/pen_label_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tTimer" />
+        app:layout_constraintTop_toBottomOf="@id/tTimer" />
     <LinearLayout
         android:id="@+id/pen"
         android:layout_width="match_parent"
@@ -165,7 +166,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tTimer"
+        app:layout_constraintTop_toBottomOf="@id/tTimer"
         android:baselineAligned="false">
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -205,7 +206,7 @@
         android:background="#A000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space"
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space"
         app:layout_constraintBottom_toBottomOf="parent" />
     <Button
         android:id="@+id/bOverTimer"
@@ -220,34 +221,33 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space" />
     <Button
         android:id="@+id/bStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="-7dp"
-        android:layout_weight=".5"
-        android:gravity="top|center"
+        android:gravity="center"
         android:text="@string/bOverTimer_text"
         android:textAllCaps="false"
         android:textColor="@color/w8blue"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/bMatchLog"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+        app:layout_constraintEnd_toStartOf="@id/bMatchLog"
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space" />
     <ImageButton
         android:id="@+id/bMatchLog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
-        android:src="@drawable/list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="-7dp"
+        android:src="@drawable/icon_match_log"
         android:scaleType="centerInside"
-        android:gravity="bottom"
         android:background="#0000"
         android:contentDescription="@string/bMatchLog_desc"
-        app:layout_constraintStart_toEndOf="@+id/bStart"
+        app:layout_constraintStart_toEndOf="@id/bStart"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sinbins_space" />
+        app:layout_constraintTop_toBottomOf="@id/sinbins_space"
+        app:layout_constraintBottom_toTopOf="@id/bConf" />
     <Button
         android:id="@+id/bBottom"
         android:layout_width="match_parent"
@@ -264,14 +264,15 @@
     <ImageButton
         android:id="@+id/bConf"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight=".5"
         android:background="#0000"
         android:contentDescription="@string/bConf_desc"
         android:scaleType="centerInside"
-        android:src="@drawable/gear"
+        android:src="@drawable/icon_conf"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bStart"
         app:layout_constraintBottom_toBottomOf="parent" />
     <Spinner
         android:id="@+id/extraTime"

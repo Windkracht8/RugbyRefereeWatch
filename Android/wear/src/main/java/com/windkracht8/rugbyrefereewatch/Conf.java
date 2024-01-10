@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class Conf extends ConstraintLayout{
     private ScrollView svConf;
-    private ConfSpinner confSpinner;
+    public ConfSpinner confSpinner;
     private static ArrayList<ConfItem> confItems;
     public static JSONArray customMatchTypes;
     private boolean isInitialized;
@@ -57,7 +57,7 @@ public class Conf extends ConstraintLayout{
         confItems = new ArrayList<>();
         for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
             ConfItem confItem = new ConfItem(getContext(), null, confItemType);
-            confItem.setOnClickListener(v -> onConfItemClick(main, (ConfItem)v, confItemType, main.handler_message));
+            confItem.setOnClickListener(v -> onConfItemClick(main, (ConfItem)v, confItemType));
             confItems.add(confItem);
             llConf.addView(confItem);
             confItem.addOnTouch(main);
@@ -113,7 +113,7 @@ public class Conf extends ConstraintLayout{
         }
     }
 
-    private void onConfItemClick(Main main, ConfItem confItem, ConfItem.ConfItemType type, Handler handler_message){
+    private void onConfItemClick(Main main, ConfItem confItem, ConfItem.ConfItemType type){
         switch(type){
             case COLOR_HOME:
             case COLOR_AWAY:
@@ -146,10 +146,11 @@ public class Conf extends ConstraintLayout{
                 break;
             case BLUETOOTH:
                 Main.bluetooth = !Main.bluetooth;
+                if(Main.bluetooth) main.bluetoothEnabled();
                 confItem.updateValue();
                 break;
             case HELP:
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
                 break;
         }
     }
@@ -304,6 +305,7 @@ public class Conf extends ConstraintLayout{
                     customMatchTypes.put(matchType_phone);
                 }
             }
+            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_STORE_MATCH_TYPES));
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_sync_match_types));

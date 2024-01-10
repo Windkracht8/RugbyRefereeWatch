@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -70,7 +69,6 @@ public class Main extends Activity{
     private Spinner extraTime;
     private ImageButton bConfWatch;
     private Conf conf;
-    private ConfSpinner confSpinner;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
@@ -115,20 +113,21 @@ public class Main extends Activity{
     public final static int MESSAGE_READ_SETTINGS = 201;
     public final static int MESSAGE_NO_SETTINGS = 202;
     public final static int MESSAGE_PREPARE_RECEIVED = 301;
+    public final static int MESSAGE_STORE_MATCH_TYPES = 302;
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
     public static long draggingEnded;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
+    private static boolean hasBTPermission = false;
 
-	//TODO: move the addOnTouch to the relevant UI
-    @SuppressLint({"MissingInflatedId"}) //nested layout XMLs are not found
     @Override
     protected void onCreate(Bundle savedInstanceState){
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         splashScreen.setKeepOnScreenCondition(() -> showSplash);
         super.onCreate(savedInstanceState);
+        isScreenRound = getResources().getConfiguration().isScreenRound();
         if(Build.VERSION.SDK_INT >= 30){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
             widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
@@ -139,30 +138,25 @@ public class Main extends Activity{
             widthPixels = displayMetrics.widthPixels;
         }
         SWIPE_THRESHOLD = (int) (widthPixels * .3);
-        vh7 = (int) (heightPixels * .07);
-        vh10 = heightPixels / 10;
 
         if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
         }else{
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
-
         executorService = Executors.newFixedThreadPool(4);
+        handler_main = new Handler(Looper.getMainLooper());
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
-        //TODO: ll and labels are not necessary, only the sv
-        int[] ids = new int[]{R.id.main, R.id.bConfWatch, R.id.score_home, R.id.score_away,
-                R.id.tTimer, R.id.bPenHome, R.id.bPenAway,
-                R.id.bOverTimer, R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
-                R.id.button_background, R.id.extraTime,
-                R.id.svConf, R.id.llConfWatch, R.id.svConfSpinner,
-                R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
+        int[] ids = new int[]{
+                R.id.main, R.id.bConfWatch, R.id.score_home, R.id.score_away, R.id.tTimer,
+                R.id.bPenHome, R.id.bPenAway, R.id.button_background, R.id.bOverTimer, R.id.bStart,
+                R.id.bMatchLog, R.id.bBottom, R.id.bConf, R.id.extraTime,
+                R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
+                R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
-                R.id.matchLog, R.id.svMatchLog,
-                R.id.report,
-                R.id.correct, R.id.svCorrect,
+                R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
                 R.id.svHelp, R.id.llHelp
         };
         for(int id : ids){
@@ -187,7 +181,6 @@ public class Main extends Activity{
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
-        confSpinner = findViewById(R.id.confSpinner);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v -> conf.show(this));
         confWatch = findViewById(R.id.confWatch);
@@ -199,21 +192,14 @@ public class Main extends Activity{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 extraTimeChange();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parentView){
-            }
+            public void onNothingSelected(AdapterView<?> parentView){}
         });
 
         score = findViewById(R.id.score);
-        findViewById(R.id.score_try).setOnClickListener(v -> tryClick());
-        findViewById(R.id.score_con).setOnClickListener(v -> conversionClick());
-        findViewById(R.id.score_goal).setOnClickListener(v -> goalClick());
-        findViewById(R.id.foul_play).setOnClickListener(v -> foulPlayClick());
+        score.onCreateMain(this);
         foulPlay = findViewById(R.id.foulPlay);
-        findViewById(R.id.card_yellow).setOnClickListener(v -> card_yellowClick());
-        findViewById(R.id.penalty_try).setOnClickListener(v -> penalty_tryClick());
-        findViewById(R.id.card_red).setOnClickListener(v -> card_redClick());
+        foulPlay.onCreateMain(this);
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
         report = findViewById(R.id.report);
@@ -226,15 +212,13 @@ public class Main extends Activity{
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
-        isScreenRound = getResources().getConfiguration().isScreenRound();
 
         //Resize elements for the heightPixels
-        int vh5 = (int) (heightPixels * .05);
+        vh7 = (int) (heightPixels * .07);
+        vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
-        int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
         int vh30 = (int) (heightPixels * .3);
-        int vw30 = (int) (widthPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
         fitText(time, vh15);
@@ -244,25 +228,16 @@ public class Main extends Activity{
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
         fitText(tTimer, vh30);
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bOverTimer.setMinimumHeight(vh30);
+        bOverTimer.setMinimumHeight(vh30);//TODO: can do with layout?
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bBottom.setMinimumHeight(vh25);
-        bConf.getLayoutParams().height = vh20;
-        bConfWatch.getLayoutParams().height = vh20;
+        bBottom.setMinimumHeight(vh25);//TODO: can do with layout?
         bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bStart.getLayoutParams().height = tTimer.getLayoutParams().height;
-        bStart.getLayoutParams().width = widthPixels - vw30;
-        bMatchLog.setPadding(0, vh5, vh5, vh5);
-        bMatchLog.getLayoutParams().height = vh20;
-        bMatchLog.getLayoutParams().width = vw30;
+        help.resizeIHelpNew(vh15);//TODO: replace with dp in xml
 
-        findViewById(R.id.iHelpNew).getLayoutParams().height = vh15;
-
-        handler_main = new Handler(Looper.getMainLooper());
         match = new MatchData();
 
-        executorService.submit(() -> FileStore.readSettings(this, handler_message));
         executorService.submit(() -> FileStore.readCustomMatchTypes(this, handler_message));
+        executorService.submit(() -> FileStore.readSettings(this, handler_message));
         executorService.submit(() -> FileStore.cleanMatches(this, handler_message));
 
         updateBattery();
@@ -271,11 +246,85 @@ public class Main extends Activity{
         updateAfterConfig();
         showSplash = false;
 
+        executorService.submit(() -> requestPermissions(false));
+
+        Log.d(RRW_LOG_TAG, "tTimer.getLayoutParams().height: " + tTimer.getLayoutParams().height);
+
+        findViewById(R.id.main).getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Log.d(RRW_LOG_TAG, "minTouchSize: " + getResources().getDimensionPixelSize(R.dimen.minTouchSize));
+            Log.d(RRW_LOG_TAG, "score_home.getHeight: " + score_home.getHeight());
+            Log.d(RRW_LOG_TAG, "bStart.getHeight: " + bStart.getHeight());
+            Log.d(RRW_LOG_TAG, "bStart.getWidth: " + bStart.getWidth());
+            Log.d(RRW_LOG_TAG, "bMatchLog.getHeight: " + bMatchLog.getHeight());
+            Log.d(RRW_LOG_TAG, "bMatchLog.getWidth: " + bMatchLog.getWidth());
+        });
+    }
+    public void bluetoothEnabled(){
+        executorService.submit(() -> requestPermissions(true));
+    }
+    private void requestPermissions(boolean onlyBluetooth){
         if(Build.VERSION.SDK_INT >= 33){
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 2);
+            if(bluetooth && onlyBluetooth){
+                if(!hasPermission(android.Manifest.permission.BLUETOOTH_SCAN) ||
+                        !hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+                ){
+                    ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.BLUETOOTH_SCAN}, 1);
+                }
+            }else if(bluetooth){
+                if(!hasPermission(android.Manifest.permission.POST_NOTIFICATIONS) ||
+                        !hasPermission(android.Manifest.permission.BLUETOOTH_SCAN) ||
+                        !hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
+                ){
+                    ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.POST_NOTIFICATIONS,
+                            android.Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.BLUETOOTH_SCAN}, 1);
+                }
+            }else if(!onlyBluetooth){
+                if(!hasPermission(Manifest.permission.POST_NOTIFICATIONS)){
+                    ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+                }
+            }
+        }else if(bluetooth && Build.VERSION.SDK_INT >= 31){
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
+                    hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
+            if(!hasBTPermission){
+                ActivityCompat.requestPermissions(this, new String[]{
+                        android.Manifest.permission.BLUETOOTH_CONNECT,
+                        android.Manifest.permission.BLUETOOTH_SCAN}, 1);
+            }
+        }else if(bluetooth){
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
+            if(!hasBTPermission){
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.BLUETOOTH}, 1);
             }
         }
+    }
+    private boolean hasPermission(String permission){
+        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for(int i=0; i<permissions.length; i++){
+            if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
+                    permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
+                    permissions[i].equals(Manifest.permission.BLUETOOTH)){
+                if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                    hasBTPermission = false;
+                    bluetooth = false;
+                    FileStore.storeSettings(this, handler_message);
+                    return;
+                }else{
+                    hasBTPermission = true;
+                }
+            }
+        }
+        if(bluetooth && hasBTPermission) initBT();
     }
     private void fitText(TextView tmp, int size){
         tmp.measure(0, 0);
@@ -314,11 +363,9 @@ public class Main extends Activity{
                     if(!(msg.obj instanceof JSONObject)) return;
                     readSettings((JSONObject) msg.obj);
                     break;
-                    /* //TODO this is not called, we are not storing custom match types?
-                case MESSAGE_CUSTOM_MATCH_TYPE:
+                case MESSAGE_STORE_MATCH_TYPES:
                     executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), handler_message));
                     break;
-                     */
                 case MESSAGE_PREPARE_RECEIVED:
                     updateAfterConfig();
                     break;
@@ -328,8 +375,8 @@ public class Main extends Activity{
 
     @Override
     public void onBackPressed(){
-        if(confSpinner.getVisibility() == View.VISIBLE){
-            confSpinner.setVisibility(View.GONE);
+        if(conf.confSpinner.getVisibility() == View.VISIBLE){
+            conf.confSpinner.setVisibility(View.GONE);
             conf.requestFocusSV();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
@@ -431,8 +478,8 @@ public class Main extends Activity{
     private void onTouchInit(MotionEvent event){
         onTouchStartY = event.getRawY();
         onTouchStartX = event.getRawX();
-        if(confSpinner.getVisibility() == View.VISIBLE){
-            touchView = confSpinner;
+        if(conf.confSpinner.getVisibility() == View.VISIBLE){
+            touchView = conf.confSpinner;
         }else if(conf.getVisibility() == View.VISIBLE){
             touchView = conf;
         }else if(confWatch.getVisibility() == View.VISIBLE){
@@ -443,6 +490,8 @@ public class Main extends Activity{
             touchView = foulPlay;
         }else if(correct.getVisibility() == View.VISIBLE){
             touchView = correct;
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            touchView = matchLog;
         }else if(report.getVisibility() == View.VISIBLE){
             touchView = report;
         }else if(help.getVisibility() == View.VISIBLE){
@@ -451,6 +500,7 @@ public class Main extends Activity{
             touchView = null;
         }
     }
+
     private int getBackSwipeDiffX(MotionEvent event){
         float diffY = event.getRawY() - onTouchStartY;
         float diffX = event.getRawX() - onTouchStartX;
@@ -461,40 +511,9 @@ public class Main extends Activity{
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
     private void initBT(){
-        if(!bluetooth || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(Build.VERSION.SDK_INT >= 31){
-            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN}, 1);
-                return;
-            }
-        }else{
-            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 1);
-                return;
-            }
-        }
+        if(!bluetooth || !hasBTPermission || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
         if(comms == null) comms = new Comms(this, handler_message);
         comms.connect();
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean bt_granted = false;
-        for(int i=0; i<permissions.length; i++){
-            if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
-                    permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
-                    permissions[i].equals(Manifest.permission.BLUETOOTH)){
-                if(grantResults[i] == PackageManager.PERMISSION_DENIED){
-                    bluetooth = false;
-                    FileStore.storeSettings(this, handler_message);
-                    return;
-                }else{
-                    bt_granted = true;
-                }
-            }
-        }
-        if(bt_granted) initBT();
     }
 
     public void timerClick(){
@@ -541,7 +560,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 break;
             case "finished":
-                report.show(match);
+                report.show(this, match);
                 break;
             default://ignore
                 return;

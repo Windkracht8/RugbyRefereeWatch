@@ -46,6 +46,12 @@ public class Score extends LinearLayout{
             }
         });
     }
+    public void onCreateMain(Main main){
+        findViewById(R.id.score_try).setOnClickListener(v -> main.tryClick());
+        findViewById(R.id.score_con).setOnClickListener(v -> main.conversionClick());
+        findViewById(R.id.score_goal).setOnClickListener(v -> main.goalClick());
+        findViewById(R.id.foul_play).setOnClickListener(v -> main.foulPlayClick());
+    }
     public void load(MatchData.team team){
         this.team = team;
     }
