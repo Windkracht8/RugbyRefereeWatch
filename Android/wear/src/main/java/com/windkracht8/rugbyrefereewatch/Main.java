@@ -212,7 +212,6 @@ public class Main extends Activity{
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
-
         //Resize elements for the heightPixels
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
@@ -228,14 +227,10 @@ public class Main extends Activity{
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
         fitText(tTimer, vh30);
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bOverTimer.setMinimumHeight(vh30);//TODO: can do with layout?
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bBottom.setMinimumHeight(vh25);//TODO: can do with layout?
         bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        help.resizeIHelpNew(vh15);//TODO: replace with dp in xml
 
         match = new MatchData();
-
         executorService.submit(() -> FileStore.readCustomMatchTypes(this, handler_message));
         executorService.submit(() -> FileStore.readSettings(this, handler_message));
         executorService.submit(() -> FileStore.cleanMatches(this, handler_message));
@@ -247,17 +242,6 @@ public class Main extends Activity{
         showSplash = false;
 
         executorService.submit(() -> requestPermissions(false));
-
-        Log.d(RRW_LOG_TAG, "tTimer.getLayoutParams().height: " + tTimer.getLayoutParams().height);
-
-        findViewById(R.id.main).getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            Log.d(RRW_LOG_TAG, "minTouchSize: " + getResources().getDimensionPixelSize(R.dimen.minTouchSize));
-            Log.d(RRW_LOG_TAG, "score_home.getHeight: " + score_home.getHeight());
-            Log.d(RRW_LOG_TAG, "bStart.getHeight: " + bStart.getHeight());
-            Log.d(RRW_LOG_TAG, "bStart.getWidth: " + bStart.getWidth());
-            Log.d(RRW_LOG_TAG, "bMatchLog.getHeight: " + bMatchLog.getHeight());
-            Log.d(RRW_LOG_TAG, "bMatchLog.getWidth: " + bMatchLog.getWidth());
-        });
     }
     public void bluetoothEnabled(){
         executorService.submit(() -> requestPermissions(true));

@@ -57,6 +57,7 @@ public class ConfWatch extends ScrollView{
             }
         }
         this.setVisibility(View.VISIBLE);
+        findViewById(R.id.svConfWatch).requestFocus();
     }
 
     private void onConfItemClick(ConfItem confItem, ConfItem.ConfItemType type){

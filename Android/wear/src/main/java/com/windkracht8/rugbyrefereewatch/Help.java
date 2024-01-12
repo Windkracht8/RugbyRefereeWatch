@@ -15,9 +15,6 @@ public class Help extends ScrollView{
         inflater.inflate(R.layout.help, this, true);
         findViewById(R.id.llHelp).setOnClickListener(v -> this.setVisibility(GONE));
     }
-    public void resizeIHelpNew(int vh15){
-        findViewById(R.id.iHelpNew).getLayoutParams().height = vh15;
-    }
     public void showWelcome(){
         findViewById(R.id.welcome).setVisibility(VISIBLE);
     }

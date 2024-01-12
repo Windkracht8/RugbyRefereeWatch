@@ -8,14 +8,13 @@ android {
         //noinspection OldTargetApi
         targetSdk 33
         compileSdk 33
-        versionCode 407
+        versionCode 408
         versionName '3.2'
     }
     buildTypes {
         release {
             shrinkResources true
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     namespace 'com.windkracht8.rugbyrefereewatch'

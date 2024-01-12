@@ -3,17 +3,16 @@ apply plugin: 'com.android.application'
 android {
     defaultConfig {
         applicationId "com.windkracht8.rugbyrefereewatch"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         compileSdk 34
-        versionCode 306
+        versionCode 307
         versionName "3.2"
     }
     buildTypes {
         release {
             shrinkResources true
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     namespace 'com.windkracht8.rugbyrefereewatch'

@@ -305,7 +305,7 @@ public class TabPrepare extends LinearLayout{
             }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.i(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
+            Log.d(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();

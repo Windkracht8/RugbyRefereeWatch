@@ -141,7 +141,7 @@ public class Main extends AppCompatActivity{
         }
     };
     private void initBT(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if(Build.VERSION.SDK_INT >= 31){
             if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN}, 1);
@@ -473,7 +473,7 @@ public class Main extends AppCompatActivity{
         }
     );
     private void getWidthPixels(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if(Build.VERSION.SDK_INT >= 30){
             widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
         }else{
             DisplayMetrics displayMetrics = new DisplayMetrics();

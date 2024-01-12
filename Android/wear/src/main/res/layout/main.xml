@@ -221,7 +221,8 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sinbins_space" />
+        app:layout_constraintTop_toTopOf="@id/tTimer"
+        app:layout_constraintBottom_toBottomOf="@id/tTimer" />
     <Button
         android:id="@+id/bStart"
         android:layout_width="wrap_content"
@@ -260,6 +261,7 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tTimer"
         app:layout_constraintBottom_toBottomOf="parent" />
     <ImageButton
         android:id="@+id/bConf"
