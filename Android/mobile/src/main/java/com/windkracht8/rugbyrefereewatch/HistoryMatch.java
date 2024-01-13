@@ -5,10 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.MotionEvent;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -19,12 +17,12 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HistoryMatch extends LinearLayout{
+public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
     TabHistory hParent;
     final Handler handler_message;
     public JSONObject match;
-    private TextView tvName;
     public boolean is_selected = false;
+    private boolean last;
 
     public HistoryMatch(Context context){super(context);handler_message=null;}
     public HistoryMatch(Context context, Handler handler_message, JSONObject match, TabHistory hParent, boolean last){
@@ -32,14 +30,16 @@ public class HistoryMatch extends LinearLayout{
         this.hParent = hParent;
         this.handler_message = handler_message;
         this.match = match;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_history, Toast.LENGTH_SHORT).show(); return;}
-        inflater.inflate(R.layout.history_match, this, true);
+        this.last = last;
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        setMinHeight(getResources().getDimensionPixelSize(R.dimen.minTouchSize));
+        setGravity(Gravity.CENTER_VERTICAL);
+        setPadding(10, 10, 10, 10);
+        int historyMatchPadding = getResources().getDimensionPixelSize(R.dimen.historyMatchPadding);
+        setPadding(historyMatchPadding, historyMatchPadding, historyMatchPadding, historyMatchPadding);
 
-        tvName = findViewById(R.id.tvName);
-
-        if(last){
-            findViewById(R.id.llHistoryMatch).setBackgroundResource(0);
+        if(!last){
+            setBackgroundResource(R.drawable.background_underline);
         }
         try{
             Date match_date_d = new Date(match.getLong("matchid"));
@@ -48,7 +48,7 @@ public class HistoryMatch extends LinearLayout{
             JSONObject away = match.getJSONObject("away");
             String name_s = match_date_s + " " + Main.getTeamName(context, home) + " v " + Main.getTeamName(context, away);
 
-            tvName.setText(name_s);
+            setText(name_s);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
@@ -93,7 +93,7 @@ public class HistoryMatch extends LinearLayout{
         }
     }
 
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings("EmptyMethod")//Because we listen to onTouchEvent, we also need to listen to this
     public boolean performClick(){return super.performClick();}
 
     private void longPress(){new Handler(Looper.getMainLooper()).post(this::toggleSelect);}
@@ -104,8 +104,8 @@ public class HistoryMatch extends LinearLayout{
         }else{
             final TypedValue value = new TypedValue();
             getContext().getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
-            tvName.setBackgroundColor(value.data);
-            tvName.setTextColor(getContext().getColor(R.color.background));
+            setBackgroundColor(value.data);
+            setTextColor(getContext().getColor(R.color.background));
             is_selected = true;
         }
         hParent.selectionChanged();
@@ -113,8 +113,9 @@ public class HistoryMatch extends LinearLayout{
 
     public boolean unselect(){
         boolean ret = is_selected;
-        tvName.setBackgroundColor(0);
-        tvName.setTextColor(getContext().getColor(R.color.text));
+        setBackgroundColor(0);
+        if(!last) setBackgroundResource(R.drawable.background_underline);
+        setTextColor(getContext().getColor(R.color.text));
         is_selected = false;
         return ret;
     }
