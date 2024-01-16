@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.splashscreen.SplashScreen;
@@ -82,6 +83,7 @@ public class Main extends Activity{
     public static int widthPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
+    public static int vh13 = 0;
     public static int vh15 = 0;
     public static int vh25 = 0;
 
@@ -215,17 +217,18 @@ public class Main extends Activity{
         //Resize elements for the heightPixels
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
+        vh13 = (int) (heightPixels * .13);
         vh15 = (int) (heightPixels * .15);
         vh25 = (int) (heightPixels * .25);
         int vh30 = (int) (heightPixels * .3);
         battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
         fitText(time, vh15);
-        score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        ((TextView) findViewById(R.id.sinbins_space)).setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
+        score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
         tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
         fitText(tTimer, vh30);
+        ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = vh15;
         bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
         bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
@@ -564,7 +567,7 @@ public class Main extends Activity{
                 timer_start = getCurrentTimestamp();
                 timer_period_ended = false;
                 timer_type_period = 0;
-                tTimer.setTextColor(getResources().getColor(R.color.pure_white, getTheme()));
+                tTimer.setTextColor(getResources().getColor(R.color.white, getTheme()));
 
                 for(MatchData.sinbin sb : match.home.sinbins){
                     sb.end = sb.end - timer_timer;
@@ -730,8 +733,10 @@ public class Main extends Activity{
     public void updateAfterConfig(){
         updateTimer();
 
-        score_home.setBackgroundColor(getColor(match.home.color));
-        score_away.setBackgroundColor(getColor(match.away.color));
+        score_home.setBackgroundColor(getColorBG(match.home.color));
+        score_home.setTextColor(getColorFG(match.home.color));
+        score_away.setBackgroundColor(getColorBG(match.away.color));
+        score_away.setTextColor(getColorFG(match.away.color));
 
         if(screen_on){
             //If this is not enough, implement wake_lock: https://developer.android.com/training/scheduling/wakelock
@@ -745,7 +750,7 @@ public class Main extends Activity{
 
         score.update(match);
     }
-    public int getColor(String name){
+    public int getColorBG(String name){
         switch(name){
             case "black":
                 return getResources().getColor(R.color.black, null);
@@ -769,6 +774,18 @@ public class Main extends Activity{
                 return getResources().getColor(R.color.white, null);
         }
         return getResources().getColor(R.color.black, null);
+    }
+    public int getColorFG(String name){
+        switch(name){
+            case "gold":
+            case "green":
+            case "orange":
+            case "pink":
+            case "white":
+                return getResources().getColor(R.color.black, null);
+        }
+        //black blue brown purple red
+        return getResources().getColor(R.color.white, null);
     }
     public long updateTime(){
         Date date = new Date();
@@ -831,6 +848,21 @@ public class Main extends Activity{
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
     public void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
+        if(team.sinbins.size() == 0){
+            if(Objects.equals(team.id, "home")){
+                score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
+            }else{
+                score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
+            }
+        }else{
+            if(Objects.equals(team.id, "home")){
+                score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+                fitText(score_home, vh10);
+            }else{
+                score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+                fitText(score_away, vh10);
+            }
+        }
         for(MatchData.sinbin sinbin_data : team.sinbins){
             boolean exists = false;
             for(Sinbin sinbin_ui : al_sinbins_ui){
@@ -840,7 +872,7 @@ public class Main extends Activity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(this, null, this, sinbin_data, Objects.equals(team.id, "home"), getColor(team.color));
+                Sinbin sb = new Sinbin(this, sinbin_data, Objects.equals(team.id, "home"), team.color);
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }

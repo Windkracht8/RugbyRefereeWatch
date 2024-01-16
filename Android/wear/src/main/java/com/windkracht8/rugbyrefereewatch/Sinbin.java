@@ -3,34 +3,30 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class Sinbin extends LinearLayout{
+public class Sinbin extends TextView{
     public MatchData.sinbin sinbin;
-    private TextView timer;
     public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
-    public Sinbin(Context context, AttributeSet attrs, Main main, MatchData.sinbin sinbin, boolean isHome, int col){
-        super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_sinbin, Toast.LENGTH_SHORT).show(); return;}
-        inflater.inflate(R.layout.sinbin, this, true);
+    public Sinbin(Main main, MatchData.sinbin sinbin, boolean isHome, String color){
+        super(main);
         this.sinbin = sinbin;
 
-        timer = findViewById(R.id.timer);
-        timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, Main.vh10);
         main.addOnTouch(this);
-        main.addOnTouch(timer);
 
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, Main.vh10);
+        setBackgroundColor(main.getColorBG(color));
+        setTextColor(main.getColorFG(color));
+        setIncludeFontPadding(false);
+        int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
+        setPadding(ll_in_sc_padding, 0, ll_in_sc_padding, 0);
         if(isHome){
-            timer.setGravity(Gravity.LEFT);
+            setGravity(Gravity.LEFT);
         }else{
-            timer.setGravity(Gravity.RIGHT);
+            setGravity(Gravity.RIGHT);
         }
-        this.setBackgroundColor(col);
         update();
     }
 
@@ -45,10 +41,10 @@ public class Sinbin extends LinearLayout{
         if(remaining <= 0){
             remaining = 0;
             sinbin.ended = true;
-            timer.setTextColor(Color.RED);
+            setTextColor(Color.RED);
             Main.beep();
         }
         String tmp = Main.prettyTimer(remaining);
-        timer.setText(tmp);
+        setText(tmp);
     }
 }
