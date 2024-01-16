@@ -19,7 +19,6 @@
         <activity
             android:name=".Main"
             android:taskAffinity="com.windkracht8.rugbyrefereewatch.Main"
-            android:launchMode="singleTop"
             android:exported="true"
             android:theme="@style/rrw_splash" >
             <intent-filter>
