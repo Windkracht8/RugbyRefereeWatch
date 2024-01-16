@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -52,7 +53,7 @@ public class Report extends ScrollView{
             }
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, Main.vh7);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             main.addOnTouch(tv);
             reportList.addView(tv);
         }

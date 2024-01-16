@@ -19,7 +19,6 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +55,8 @@ public class Main extends Activity{
     private boolean showSplash = true;
     private TextView battery;
     private TextView time;
+    private RelativeLayout home;
+    private RelativeLayout away;
     private TextView score_home;
     private TextView score_away;
     private LinearLayout sinbins_home;
@@ -83,9 +85,10 @@ public class Main extends Activity{
     public static int widthPixels = 0;
     public static int vh7 = 0;
     public static int vh10 = 0;
-    public static int vh13 = 0;
     public static int vh15 = 0;
     public static int vh25 = 0;
+    public static int vh30 = 0;
+    public static int vh40 = 0;
 
     //Timer
     public static String timer_status = "conf";
@@ -152,9 +155,9 @@ public class Main extends Activity{
 
         // We need to listen for touch on all objects that have a click listener
         int[] ids = new int[]{
-                R.id.main, R.id.bConfWatch, R.id.score_home, R.id.score_away, R.id.tTimer,
-                R.id.bPenHome, R.id.bPenAway, R.id.button_background, R.id.bOverTimer, R.id.bStart,
-                R.id.bMatchLog, R.id.bBottom, R.id.bConf, R.id.extraTime,
+                R.id.main, R.id.bConfWatch, R.id.home, R.id.away, R.id.score_home, R.id.score_away,
+                R.id.tTimer, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
+                R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf, R.id.extraTime,
                 R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
@@ -168,10 +171,12 @@ public class Main extends Activity{
 
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
+        home = findViewById(R.id.home);
+        home.setOnClickListener(v -> homeClick());
+        away = findViewById(R.id.away);
+        away.setOnClickListener(v -> awayClick());
         score_home = findViewById(R.id.score_home);
-        score_home.setOnClickListener(v -> score_homeClick());
         score_away = findViewById(R.id.score_away);
-        score_away.setOnClickListener(v -> score_awayClick());
         sinbins_home = findViewById(R.id.sinbins_home);
         sinbins_away = findViewById(R.id.sinbins_away);
         tTimer = findViewById(R.id.tTimer);
@@ -215,23 +220,33 @@ public class Main extends Activity{
         bPenAway.setOnClickListener(v -> bPenAwayClick());
 
         //Resize elements for the heightPixels
+        int vh5 = (int) (heightPixels * .05);
         vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
-        vh13 = (int) (heightPixels * .13);
         vh15 = (int) (heightPixels * .15);
+        int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
-        int vh30 = (int) (heightPixels * .3);
-        battery.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        time.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh15);
-        fitText(time, vh15);
-        score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
-        score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
-        tTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh30);
-        fitText(tTimer, vh30);
-        ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = vh15;
-        bOverTimer.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bBottom.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-        bStart.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
+        vh30 = (int) (heightPixels * .3);
+        vh40 = (int) (heightPixels * .4);
+        battery.setHeight(vh10);
+        time.setHeight(vh15);
+        score_home.setHeight(vh25);
+        score_away.setHeight(vh25);
+        tTimer.setHeight(vh30);
+        bOverTimer.setHeight(vh25);
+        bOverTimer.setPadding(0, vh5, 0, vh5);
+        findViewById(R.id.bStartMatchLog).getLayoutParams().height = vh25;
+        bStart.setHeight(vh25);
+        bStart.setPadding(0, vh5, 0, vh5);
+        bMatchLog.setPadding(0, vh5, 0, vh5);
+        bBottom.setHeight(vh25);
+        bBottom.setPadding(0, vh5, 0, vh5);
+        bConf.getLayoutParams().height = vh25;
+        ConstraintLayout.LayoutParams pen_label_layoutParams = (ConstraintLayout.LayoutParams) findViewById(R.id.pen_label).getLayoutParams();
+        pen_label_layoutParams.height = vh10;
+        pen_label_layoutParams.bottomMargin = vh5;
+        bPenHome.setHeight(vh20);
+        bPenAway.setHeight(vh20);
 
         match = new MatchData();
         executorService.submit(() -> FileStore.readCustomMatchTypes(this, handler_message));
@@ -312,13 +327,6 @@ public class Main extends Activity{
             }
         }
         if(bluetooth && hasBTPermission) initBT();
-    }
-    private void fitText(TextView tmp, int size){
-        tmp.measure(0, 0);
-        if(tmp.getMeasuredWidth() >= widthPixels){
-            tmp.setTextSize(TypedValue.COMPLEX_UNIT_PX, size-2);
-            fitText(tmp, size-2);
-        }
     }
 
     public final Handler handler_message = new Handler(Looper.getMainLooper()){
@@ -626,7 +634,6 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "ready":
                 bConfWatch.setVisibility(View.GONE);
@@ -647,7 +654,6 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "time_off":
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -674,7 +680,6 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "rest":
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -692,7 +697,6 @@ public class Main extends Activity{
                 bBottom.setText(R.string.finish);
                 bBottom.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             case "finished":
                 bConfWatch.setVisibility(View.GONE);
@@ -704,7 +708,6 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.VISIBLE);
                 break;
             default:
                 bConfWatch.setVisibility(View.GONE);
@@ -714,7 +717,6 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
-                findViewById(R.id.button_background).setVisibility(View.GONE);
         }
         updateTimer();
     }
@@ -733,9 +735,9 @@ public class Main extends Activity{
     public void updateAfterConfig(){
         updateTimer();
 
-        score_home.setBackgroundColor(getColorBG(match.home.color));
+        home.setBackgroundColor(getColorBG(match.home.color));
         score_home.setTextColor(getColorFG(match.home.color));
-        score_away.setBackgroundColor(getColorBG(match.away.color));
+        away.setBackgroundColor(getColorBG(match.away.color));
         score_away.setTextColor(getColorFG(match.away.color));
 
         if(screen_on){
@@ -745,9 +747,17 @@ public class Main extends Activity{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        findViewById(R.id.pen).setVisibility(Main.record_pens ? View.VISIBLE : View.GONE);
-        findViewById(R.id.pen_label).setVisibility(Main.record_pens ? View.VISIBLE : View.GONE);
-
+        if(Main.record_pens){
+            findViewById(R.id.pen).setVisibility(View.VISIBLE);
+            findViewById(R.id.pen_label).setVisibility(View.VISIBLE);
+            tTimer.setHeight(vh30);
+            ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = 0;
+        }else{
+            findViewById(R.id.pen).setVisibility(View.GONE);
+            findViewById(R.id.pen_label).setVisibility(View.GONE);
+            tTimer.setHeight(vh40);
+            ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = vh10;
+        }
         score.update(match);
     }
     public int getColorBG(String name){
@@ -848,19 +858,17 @@ public class Main extends Activity{
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
     public void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
-        if(team.sinbins.size() == 0){
+        if(team.sinbins.size() == 0){//TODO: don't do this every second
             if(Objects.equals(team.id, "home")){
-                score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
+                score_home.setHeight(vh25);
             }else{
-                score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh13);
+                score_away.setHeight(vh25);
             }
         }else{
             if(Objects.equals(team.id, "home")){
-                score_home.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-                fitText(score_home, vh10);
+                score_home.setHeight(vh15);
             }else{
-                score_away.setTextSize(TypedValue.COMPLEX_UNIT_PX, vh10);
-                fitText(score_away, vh10);
+                score_away.setHeight(vh15);
             }
         }
         for(MatchData.sinbin sinbin_data : team.sinbins){
@@ -872,7 +880,7 @@ public class Main extends Activity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(this, sinbin_data, Objects.equals(team.id, "home"), team.color);
+                Sinbin sb = new Sinbin(this, sinbin_data, team.color);
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
             }
@@ -905,7 +913,7 @@ public class Main extends Activity{
         updateScore();
         match.logEvent("PENALTY", match.away.id, 0, 0);
     }
-    public void score_homeClick(){
+    public void homeClick(){
         if(timer_status.equals("conf")){
             if(match.home.kickoff){
                 match.home.kickoff = false;
@@ -922,7 +930,7 @@ public class Main extends Activity{
             score.setVisibility(View.VISIBLE);
         }
     }
-    public void score_awayClick(){
+    public void awayClick(){
         if(timer_status.equals("conf")){
             if(match.away.kickoff){
                 match.away.kickoff = false;

@@ -26,8 +26,7 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/battery_placeholder"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,35 +37,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/battery"
-        android:layout_marginTop="-6dp"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/time_placeholder"
-        android:textStyle="bold"
-        android:textSize="27sp" />
+        android:autoSizeTextType="uniform"
+        android:textStyle="bold" />
     <LinearLayout
         android:id="@+id/home_away"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-6dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/time"
         android:baselineAligned="false">
         <RelativeLayout
+            android:id="@+id/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:background="@color/green" >
             <TextView
                 android:id="@+id/score_home"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/green"
                 android:gravity="center"
-                android:text="@string/_0"
-                android:textSize="18sp"
+                android:autoSizeTextType="uniform"
                 android:textStyle="bold"
+                android:text="@string/_0"
+                android:textColor="@color/black"
                 android:contentDescription="@string/score_home_desc" />
             <LinearLayout
                 android:id="@+id/sinbins_home"
@@ -76,18 +75,19 @@
                 android:orientation="vertical" />
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/away"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:background="@color/red" >
             <TextView
                 android:id="@+id/score_away"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/red"
                 android:gravity="center"
-                android:text="@string/_0"
-                android:textSize="18sp"
+                android:autoSizeTextType="uniform"
                 android:textStyle="bold"
+                android:text="@string/_0"
                 android:contentDescription="@string/score_away_desc" />
             <LinearLayout
                 android:id="@+id/sinbins_away"
@@ -97,50 +97,38 @@
                 android:orientation="vertical" />
         </RelativeLayout>
     </LinearLayout>
-    <View
-        android:id="@+id/timer_background"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:background="#A000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tTimer"
-        app:layout_constraintBottom_toBottomOf="@id/tTimer" />
     <TextView
         android:id="@+id/tTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:gravity="top|center"
+        android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/tTimer_placeholder"
-        android:textSize="70sp"
+        android:autoSizeTextType="uniform"
         android:textStyle="bold"
+        android:background="#A000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/pen" />
     <TextView
         android:id="@+id/pen_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-15dp"
-        android:textSize="24sp"
         android:gravity="center"
+        android:autoSizeTextType="uniform"
         android:text="@string/pen_label_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tTimer" />
+        app:layout_constraintBottom_toBottomOf="parent" />
     <LinearLayout
         android:id="@+id/pen"
+        android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-20dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tTimer"
-        android:baselineAligned="false">
+        app:layout_constraintBottom_toBottomOf="parent" >
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -151,9 +139,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:autoSizeTextType="uniform"
                 android:text="@string/_0"
-                android:contentDescription="@string/bPenHome_desc"
-                android:textSize="18sp" />
+                android:contentDescription="@string/bPenHome_desc" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -166,89 +154,88 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:autoSizeTextType="uniform"
                 android:text="@string/_0"
-                android:contentDescription="@string/bPenAway_desc"
-                android:textSize="18sp" />
+                android:contentDescription="@string/bPenAway_desc" />
         </RelativeLayout>
     </LinearLayout>
-    <View
-        android:id="@+id/button_background"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:background="#A000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tTimer"
-        app:layout_constraintBottom_toBottomOf="parent" />
     <Button
         android:id="@+id/bOverTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:gravity="top|center"
-        android:text="@string/bOverTimer_text"
-        android:textAllCaps="false"
-        android:textColor="@color/w8blue"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tTimer"
-        app:layout_constraintBottom_toBottomOf="@id/tTimer" />
-    <Button
-        android:id="@+id/bStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-7dp"
         android:gravity="center"
+        android:background="#A000"
+        android:autoSizeTextType="uniform"
         android:text="@string/bOverTimer_text"
         android:textAllCaps="false"
         android:textColor="@color/w8blue"
-        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/bMatchLog"
-        app:layout_constraintTop_toTopOf="@id/tTimer"
-        app:layout_constraintBottom_toBottomOf="@id/tTimer" />
-    <ImageButton
-        android:id="@+id/bMatchLog"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="-7dp"
-        android:src="@drawable/icon_match_log"
-        android:scaleType="centerInside"
-        android:background="#0000"
-        android:contentDescription="@string/bMatchLog_desc"
-        app:layout_constraintStart_toEndOf="@id/bStart"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tTimer"
-        app:layout_constraintBottom_toBottomOf="@id/tTimer" />
+        app:layout_constraintTop_toTopOf="@id/tTimer" />
+    <LinearLayout
+        android:id="@+id/bStartMatchLog"
+        android:baselineAligned="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tTimer" >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5">
+            <Button
+                android:id="@+id/bStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="#A000"
+                android:autoSizeTextType="uniform"
+                android:text="@string/bOverTimer_text"
+                android:textAllCaps="false"
+                android:textColor="@color/w8blue" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5">
+            <ImageButton
+                android:id="@+id/bMatchLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#A000"
+                android:src="@drawable/icon_match_log"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/bMatchLog_desc" />
+        </RelativeLayout>
+    </LinearLayout>
     <Button
         android:id="@+id/bBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight=".5"
+        android:background="#A000"
         android:visibility="gone"
+        android:autoSizeTextType="uniform"
         android:text="@string/bBottom_text"
         android:textAllCaps="false"
         android:textColor="@color/w8blue"
-        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tTimer"
         app:layout_constraintBottom_toBottomOf="parent" />
     <ImageButton
         android:id="@+id/bConf"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:background="#0000"
+        android:background="#A000"
         android:contentDescription="@string/bConf_desc"
         android:scaleType="centerInside"
         android:src="@drawable/icon_conf"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bStart"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bStartMatchLog" />
     <Spinner
         android:id="@+id/extraTime"
         android:layout_width="match_parent"

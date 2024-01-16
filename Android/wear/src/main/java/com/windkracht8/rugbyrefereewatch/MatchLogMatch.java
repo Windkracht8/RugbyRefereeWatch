@@ -28,10 +28,10 @@ public class MatchLogMatch extends TextView{
         item += " : ";
         item += match.away.tot;
 
-        this.setText(item);
-        this.setGravity(Gravity.CENTER);
-        this.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-        this.setBackgroundResource(R.drawable.conf_item_bg);
-        this.setOnClickListener(v -> report.show(main, match));
+        setText(item);
+        setGravity(Gravity.CENTER);
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        setBackgroundResource(R.drawable.conf_item_bg);
+        setOnClickListener(v -> report.show(main, match));
     }
 }
