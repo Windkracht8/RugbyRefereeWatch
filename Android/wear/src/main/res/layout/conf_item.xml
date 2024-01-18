@@ -9,14 +9,16 @@
     <TextView
         android:id="@+id/confItemName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
         android:gravity="center"
-        android:textSize="20sp" />
+        android:autoSizeTextType="uniform" />
     <TextView
         android:id="@+id/confItemValue"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
         android:gravity="center"
         android:textColor="@color/w8blue"
-        android:textSize="14sp" />
+        android:autoSizeTextType="uniform" />
 </LinearLayout>

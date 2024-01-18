@@ -25,8 +25,8 @@ public class MatchData{
     public int points_goal = 3;
 
     public MatchData(){
-        home = new team("home", "home", "green");
-        away = new team("away", "away", "red");
+        home = new team("home", "home", "red");
+        away = new team("away", "away", "blue");
     }
     public MatchData(Context context, JSONObject match_json){
         try{

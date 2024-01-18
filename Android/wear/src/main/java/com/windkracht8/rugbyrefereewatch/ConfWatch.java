@@ -34,14 +34,12 @@ public class ConfWatch extends ScrollView{
 
         int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
         int minTouchSize = getResources().getDimensionPixelSize(R.dimen.minTouchSize);
-        int confItemHeightText = minTouchSize / 6;
-        int confItemHeightTotal = minTouchSize;
+        int confItemHeight = minTouchSize;
 
         if(Main.heightPixels <= ll_in_sc_padding*2+minTouchSize*4){
             llConfWatch.setPadding(ll_in_sc_padding, 0,ll_in_sc_padding,0);
         }else if(Main.heightPixels > ll_in_sc_padding*2+minTouchSize*4){
-            confItemHeightText = (Main.heightPixels - ll_in_sc_padding*2) / 20;
-            confItemHeightTotal = (Main.heightPixels - ll_in_sc_padding*2) / 4;
+            confItemHeight = (Main.heightPixels - ll_in_sc_padding*2) / 4;
         }
 
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
@@ -50,13 +48,16 @@ public class ConfWatch extends ScrollView{
             confItems.add(confItem);
             llConfWatch.addView(confItem);
             confItem.addOnTouch(main);
-            confItem.setHeight(confItemHeightText, confItemHeightTotal);
+            confItem.getLayoutParams().height = confItemHeight;
             confItem.updateValue();
-            if(Main.isScreenRound && (confItemType == TIMER_TYPE || confItemType == SCREEN_ON)){
-                confItem.setPadding(Main.vh15, 0, Main.vh15, 0);
-            }
         }
-        this.setVisibility(View.VISIBLE);
+
+        if(Main.isScreenRound){
+            confItems.get(0).setPadding(Main.vh20, 0, Main.vh20, 0);
+            confItems.get(confItems.size()-1).setPadding(Main.vh20, 0, Main.vh20, 0);
+        }
+
+        setVisibility(View.VISIBLE);
         findViewById(R.id.svConfWatch).requestFocus();
     }
 

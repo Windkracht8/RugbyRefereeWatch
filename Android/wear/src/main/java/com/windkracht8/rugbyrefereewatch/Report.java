@@ -2,7 +2,6 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;

@@ -23,7 +23,7 @@ public class Conf extends ConstraintLayout{
     private static ArrayList<ConfItem> confItems;
     public static JSONArray customMatchTypes;
     private boolean isInitialized;
-    private int itemHeight;
+    private int confItemHeight;
     private boolean isItemHeightInitialized;
     private float scalePerPixel;
 
@@ -63,16 +63,17 @@ public class Conf extends ConstraintLayout{
             confItem.addOnTouch(main);
         }
         findViewById(R.id.conf_label).getLayoutParams().height = Main.vh25;
+        if(Main.isScreenRound){
+            int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
+            llConf.setPadding(ll_in_sc_padding, 0, ll_in_sc_padding, Main.vh25);
+        }
         confSpinner.addOnTouch(main);
 
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if(!Main.isScreenRound || isItemHeightInitialized) return;
             isItemHeightInitialized = true;
-            itemHeight = confItems.get(0).getHeight();
-            scalePerPixel = 0.5f / (Main.vh25 + itemHeight);
-            ConfItem confItemHelp = confItems.get(ConfItem.ConfItemType.values().length - 1);
-            confItemHelp.setHeight(itemHeight / 4);
-            ((LinearLayout.LayoutParams) confItemHelp.getLayoutParams()).bottomMargin = Main.vh25;
+            confItemHeight = confItems.get(0).getHeight();
+            scalePerPixel = 0.5f / (Main.vh25 + confItemHeight);
             scaleConfItems(0);
             svConf.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleConfItems(scrollY));
         });
@@ -92,7 +93,7 @@ public class Conf extends ConstraintLayout{
         float scale;
         for(ConfItem confItem : confItems){
             top = confItem.getY() - scrollY;
-            bottom = top + itemHeight;
+            bottom = top + confItemHeight;
             scale = 1.0f;
             if(bottom < 0){
                 //the item is above the screen

@@ -2,11 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/rrw_black_background">
+    android:background="#000"
+    tools:ignore="Overdraw">
     <ImageButton
         android:id="@+id/bConfWatch"
         android:layout_width="match_parent"
@@ -56,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:background="@color/green" >
+            android:background="@color/red" >
             <TextView
                 android:id="@+id/score_home"
                 android:layout_width="match_parent"
@@ -79,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:background="@color/red" >
+            android:background="@color/blue" >
             <TextView
                 android:id="@+id/score_away"
                 android:layout_width="match_parent"
@@ -159,13 +161,21 @@
                 android:contentDescription="@string/bPenAway_desc" />
         </RelativeLayout>
     </LinearLayout>
+    <View
+        android:id="@+id/buttons_back"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#A000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tTimer"
+        app:layout_constraintBottom_toBottomOf="parent" />
     <Button
         android:id="@+id/bOverTimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:gravity="center"
-        android:background="#A000"
         android:autoSizeTextType="uniform"
         android:text="@string/bOverTimer_text"
         android:textAllCaps="false"
@@ -191,7 +201,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:background="#A000"
                 android:autoSizeTextType="uniform"
                 android:text="@string/bOverTimer_text"
                 android:textAllCaps="false"
@@ -205,7 +214,7 @@
                 android:id="@+id/bMatchLog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#A000"
+                android:background="#0000"
                 android:src="@drawable/icon_match_log"
                 android:scaleType="centerInside"
                 android:contentDescription="@string/bMatchLog_desc" />
@@ -215,7 +224,6 @@
         android:id="@+id/bBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#A000"
         android:visibility="gone"
         android:autoSizeTextType="uniform"
         android:text="@string/bBottom_text"
@@ -228,9 +236,9 @@
         android:id="@+id/bConf"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#A000"
         android:contentDescription="@string/bConf_desc"
         android:scaleType="centerInside"
+        android:background="#0000"
         android:src="@drawable/icon_conf"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

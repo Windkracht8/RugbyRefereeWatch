@@ -3,54 +3,47 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical">
     <Spinner
         android:id="@+id/score_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_weight="5"
-        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:background="#000"
         android:contentDescription="@string/player_desc" />
     <TextView
         android:id="@+id/score_try"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="@string/score_try_text"
-        android:textColor="#FFF" />
+        android:text="@string/score_try_text" />
     <TextView
         android:id="@+id/score_con"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="@string/score_con_text"
-        android:textColor="#FFF" />
+        android:text="@string/score_con_text" />
     <TextView
         android:id="@+id/score_goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="@string/score_goal_text"
-        android:textColor="#FFF" />
+        android:text="@string/score_goal_text" />
     <TextView
         android:id="@+id/foul_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:text="@string/foul_play_text"
-        android:textColor="#FFF" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:text="@string/foul_play_text" />
 </LinearLayout>

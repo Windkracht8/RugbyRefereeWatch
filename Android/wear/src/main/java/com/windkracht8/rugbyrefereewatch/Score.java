@@ -19,6 +19,7 @@ public class Score extends LinearLayout{
     private TextView score_try;
     private TextView score_con;
     private TextView score_goal;
+    private TextView foul_play;
 
     public Score(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -30,6 +31,7 @@ public class Score extends LinearLayout{
         score_try = findViewById(R.id.score_try);
         score_con = findViewById(R.id.score_con);
         score_goal = findViewById(R.id.score_goal);
+        foul_play = findViewById(R.id.foul_play);
 
         String[] aPlayerNumbers = new String[] {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"};
         ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
@@ -47,10 +49,10 @@ public class Score extends LinearLayout{
         });
     }
     public void onCreateMain(Main main){
-        findViewById(R.id.score_try).setOnClickListener(v -> main.tryClick());
-        findViewById(R.id.score_con).setOnClickListener(v -> main.conversionClick());
-        findViewById(R.id.score_goal).setOnClickListener(v -> main.goalClick());
-        findViewById(R.id.foul_play).setOnClickListener(v -> main.foulPlayClick());
+        score_try.setOnClickListener(v -> main.tryClick());
+        score_con.setOnClickListener(v -> main.conversionClick());
+        score_goal.setOnClickListener(v -> main.goalClick());
+        foul_play.setOnClickListener(v -> main.foulPlayClick());
     }
     public void load(MatchData.team team){
         this.team = team;
@@ -60,6 +62,10 @@ public class Score extends LinearLayout{
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);
         score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
+        if(Main.isScreenRound){
+            ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).leftMargin = Main.vh25;
+            ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).rightMargin = Main.vh25;
+        }
     }
     public void clear(){score_player.setSelection(0);}
 }

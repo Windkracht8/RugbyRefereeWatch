@@ -62,6 +62,7 @@ public class Main extends Activity{
     private LinearLayout sinbins_home;
     private LinearLayout sinbins_away;
     private TextView tTimer;
+    private View buttons_back;
     private Button bOverTimer;
     private Button bStart;
     private ImageButton bMatchLog;
@@ -83,9 +84,9 @@ public class Main extends Activity{
 
     public static int heightPixels = 0;
     public static int widthPixels = 0;
-    public static int vh7 = 0;
     public static int vh10 = 0;
     public static int vh15 = 0;
+    public static int vh20 = 0;
     public static int vh25 = 0;
     public static int vh30 = 0;
     public static int vh40 = 0;
@@ -156,7 +157,7 @@ public class Main extends Activity{
         // We need to listen for touch on all objects that have a click listener
         int[] ids = new int[]{
                 R.id.main, R.id.bConfWatch, R.id.home, R.id.away, R.id.score_home, R.id.score_away,
-                R.id.tTimer, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
+                R.id.tTimer, R.id.buttons_back, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
                 R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf, R.id.extraTime,
                 R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
@@ -181,6 +182,7 @@ public class Main extends Activity{
         sinbins_away = findViewById(R.id.sinbins_away);
         tTimer = findViewById(R.id.tTimer);
         tTimer.setOnClickListener(v -> timerClick());
+        buttons_back = findViewById(R.id.buttons_back);
         bOverTimer = findViewById(R.id.bOverTimer);
         bOverTimer.setOnClickListener(v -> bOverTimerClick());
         bStart = findViewById(R.id.bStart);
@@ -221,10 +223,9 @@ public class Main extends Activity{
 
         //Resize elements for the heightPixels
         int vh5 = (int) (heightPixels * .05);
-        vh7 = (int) (heightPixels * .07);
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
-        int vh20 = (int) (heightPixels * .2);
+        vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
         vh30 = (int) (heightPixels * .3);
         vh40 = (int) (heightPixels * .4);
@@ -634,6 +635,7 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.VISIBLE);
                 break;
             case "ready":
                 bConfWatch.setVisibility(View.GONE);
@@ -654,6 +656,7 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.VISIBLE);
                 break;
             case "time_off":
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -680,6 +683,7 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.VISIBLE);
                 break;
             case "rest":
                 bConfWatch.setVisibility(View.VISIBLE);
@@ -697,6 +701,7 @@ public class Main extends Activity{
                 bBottom.setText(R.string.finish);
                 bBottom.setVisibility(View.VISIBLE);
                 extraTime.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.VISIBLE);
                 break;
             case "finished":
                 bConfWatch.setVisibility(View.GONE);
@@ -708,6 +713,7 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.VISIBLE);
                 break;
             default:
                 bConfWatch.setVisibility(View.GONE);
@@ -717,6 +723,7 @@ public class Main extends Activity{
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
                 extraTime.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.GONE);
         }
         updateTimer();
     }

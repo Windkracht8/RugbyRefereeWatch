@@ -2,7 +2,6 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -29,7 +28,11 @@ public class ConfItem extends LinearLayout{
 
         this.type = type;
         confItemName.setText(context.getString(getConfItemName(type)));
-        confItemValue.setContentDescription(context.getString(R.string.confItemValue_desc) + type);
+        if(type == ConfItemType.HELP){
+            confItemValue.setVisibility(View.GONE);
+        }else{
+            confItemValue.setContentDescription(context.getString(R.string.confItemValue_desc) + type);
+        }
     }
     public static int getConfItemName(ConfItemType type){
         switch(type){
@@ -67,15 +70,6 @@ public class ConfItem extends LinearLayout{
         return R.string.fail_oops;
     }
 
-    public void setHeight(int heightText, int heightTotal){
-        this.setMinimumHeight(heightTotal);
-        setHeight(heightText);
-    }
-    public void setHeight(int heightText){
-        confItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, heightText*2);
-        confItemValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, heightText);
-        if(type == ConfItemType.HELP) confItemValue.setVisibility(View.GONE);
-    }
     public void addOnTouch(Main main){
         main.addOnTouch(this);
         main.addOnTouch(confItemName);

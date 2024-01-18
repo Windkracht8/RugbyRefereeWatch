@@ -208,12 +208,15 @@ public class TabPrepare extends LinearLayout{
 
     public void onCreateMain(Main main, SharedPreferences sharedPreferences){
         findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
-        TabPrepare.sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 0);
-        ((Spinner)findViewById(R.id.sHomeColor)).setSelection(TabPrepare.sHomeColorPosition);
-        TabPrepare.sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 0);
-        ((Spinner)findViewById(R.id.sAwayColor)).setSelection(TabPrepare.sAwayColorPosition);
+        sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
+        sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
         findViewById(R.id.svPrepare).setOnTouchListener(main::onTouchEventScrollViews);
-
+        try{
+            sHomeColor.setSelection(sHomeColorPosition);
+            sAwayColor.setSelection(sAwayColorPosition);
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "TabPrepare.onCreateMain: Could not set color spinner: " + e.getMessage());
+        }
     }
 
     private void bWatchSettingsClick(){
