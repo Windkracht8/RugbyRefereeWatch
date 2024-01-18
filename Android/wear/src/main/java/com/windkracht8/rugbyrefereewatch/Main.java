@@ -865,19 +865,6 @@ public class Main extends Activity{
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
     public void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
-        if(team.sinbins.size() == 0){//TODO: don't do this every second
-            if(Objects.equals(team.id, "home")){
-                score_home.setHeight(vh25);
-            }else{
-                score_away.setHeight(vh25);
-            }
-        }else{
-            if(Objects.equals(team.id, "home")){
-                score_home.setHeight(vh15);
-            }else{
-                score_away.setHeight(vh15);
-            }
-        }
         for(MatchData.sinbin sinbin_data : team.sinbins){
             boolean exists = false;
             for(Sinbin sinbin_ui : al_sinbins_ui){
@@ -890,6 +877,11 @@ public class Main extends Activity{
                 Sinbin sb = new Sinbin(this, sinbin_data, team.color);
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
+                if(Objects.equals(team.id, "home")){
+                    score_home.setHeight(vh15);
+                }else{
+                    score_away.setHeight(vh15);
+                }
             }
         }
         for(int i = al_sinbins_ui.size(); i > 0; i--){
@@ -897,6 +889,13 @@ public class Main extends Activity{
             if(!team.hasSinbin(sinbin_ui.sinbin.id) || sinbin_ui.sinbin.hide){
                 llSinbins.removeView(sinbin_ui);
                 al_sinbins_ui.remove(sinbin_ui);
+                if(al_sinbins_ui.size() == 0){
+                    if(Objects.equals(team.id, "home")){
+                        score_home.setHeight(vh25);
+                    }else{
+                        score_away.setHeight(vh25);
+                    }
+                }
             }else{
                 sinbin_ui.update();
             }

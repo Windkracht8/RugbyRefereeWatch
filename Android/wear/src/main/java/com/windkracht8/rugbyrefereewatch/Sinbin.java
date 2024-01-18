@@ -27,7 +27,7 @@ public class Sinbin extends TextView{
 
     public void update(){
         long remaining = sinbin.end - Main.timer_timer;
-        if(remaining < -((long) Main.match.sinbin / 2 * 60000)){
+        if(remaining < -60000){
             sinbin.hide = true;
         }
         if(sinbin.ended){
