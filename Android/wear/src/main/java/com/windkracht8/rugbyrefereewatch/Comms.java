@@ -64,6 +64,7 @@ public class Comms{
     };
 
     public void connect(){
+        if(connect) return;
         connect = true;
         search();
     }
@@ -104,7 +105,7 @@ public class Comms{
         try{
             context.unregisterReceiver(btStateReceiver);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Comms.stop unregisterReceiver: " + e.getMessage());
+            Log.d(Main.RRW_LOG_TAG, "Comms.stop unregisterReceiver: " + e.getMessage());
         }
     }
 

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,7 @@ public class Main extends AppCompatActivity{
     private TabReport tabReport;
     private TabPrepare tabPrepare;
 
+    private ImageView icon;
     private TextView tvStatus;
     private TextView tvError;
 
@@ -78,6 +81,7 @@ public class Main extends AppCompatActivity{
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
 
+        icon = findViewById(R.id.icon);
         tvStatus = findViewById(R.id.tvStatus);
         tvError = findViewById(R.id.tvError);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
@@ -319,9 +323,14 @@ public class Main extends AppCompatActivity{
     public void updateStatus(final String status){
         switch(status){
             case "FATAL":
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
                 tvStatus.setVisibility(View.GONE);
                 return;
             case "LISTENING":
+                icon.setBackgroundResource(R.drawable.icon_watch_searching);
+                icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
+                ((AnimatedVectorDrawable) icon.getBackground()).start();
                 tvStatus.setText(getString(R.string.status_LISTENING));
                 tvStatus.setVisibility(View.VISIBLE);
                 tvError.setText("");
@@ -329,6 +338,8 @@ public class Main extends AppCompatActivity{
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case "CONNECTED":
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
                 tvStatus.setText(getString(R.string.status_CONNECTED));
                 tvStatus.setVisibility(View.VISIBLE);
                 tvError.setText("");
@@ -337,6 +348,8 @@ public class Main extends AppCompatActivity{
                 sendSyncRequest();
                 break;
             default:
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
                 tvStatus.setVisibility(View.GONE);
                 tvError.setText(getString(R.string.status_ERROR));
                 findViewById(R.id.bSync).setVisibility(View.GONE);

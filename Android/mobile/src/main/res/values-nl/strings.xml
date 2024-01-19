@@ -1,6 +1,6 @@
 <resources>
     <!-- main ui -->
-    <string name="ivIcon_desc">icoon</string>
+    <string name="icon_desc">icoon</string>
     <string name="history">Geschiedenis</string>
     <string name="report">Rapport</string>
     <string name="prepare">Voorbereiden</string>

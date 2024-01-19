@@ -373,15 +373,15 @@ public class Main extends Activity{
     public void onBackPressed(){
         if(conf.confSpinner.getVisibility() == View.VISIBLE){
             conf.confSpinner.setVisibility(View.GONE);
-            conf.requestFocusSV();
+            conf.requestSVFocus();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this, handler_message));
             if(bluetooth){
                 initBT();
-            }else{
-                if(comms != null) comms.stop();
+            }else if(comms != null){
+                comms.stop();
             }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
@@ -393,10 +393,10 @@ public class Main extends Activity{
             foulPlay.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            matchLog.setVisibility(View.GONE);
         }else if(report.getVisibility() == View.VISIBLE){
             report.setVisibility(View.GONE);
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            matchLog.setVisibility(View.GONE);
         }else if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
         }else{
@@ -486,10 +486,10 @@ public class Main extends Activity{
             touchView = foulPlay;
         }else if(correct.getVisibility() == View.VISIBLE){
             touchView = correct;
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            touchView = matchLog;
         }else if(report.getVisibility() == View.VISIBLE){
             touchView = report;
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            touchView = matchLog;
         }else if(help.getVisibility() == View.VISIBLE){
             touchView = help;
         }else{

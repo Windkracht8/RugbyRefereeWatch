@@ -42,7 +42,7 @@ public class Conf extends ConstraintLayout{
         customMatchTypes = new JSONArray();
     }
 
-    public void requestFocusSV(){
+    public void requestSVFocus(){
         svConf.requestFocus();
     }
     public void show(Main main){
@@ -173,6 +173,7 @@ public class Conf extends ConstraintLayout{
         }
         confItem.updateValue();
         confSpinner.setVisibility(View.GONE);
+        svConf.requestFocus();
     }
     public void onIntValueClick(ConfItem confItem, ConfItem.ConfItemType type, int value){
         switch(type){
@@ -198,6 +199,7 @@ public class Conf extends ConstraintLayout{
         }
         confItem.updateValue();
         confSpinner.setVisibility(View.GONE);
+        svConf.requestFocus();
     }
     private void onMatchTypeChanged(String matchType){
         switch(matchType){

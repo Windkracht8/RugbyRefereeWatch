@@ -20,7 +20,7 @@
     <string name="x" translatable="false">X</string>
 
     <!-- main ui -->
-    <string name="ivIcon_desc">icon</string>
+    <string name="icon_desc">icon</string>
     <string name="history">History</string>
     <string name="report">Report</string>
     <string name="prepare">Prepare</string>

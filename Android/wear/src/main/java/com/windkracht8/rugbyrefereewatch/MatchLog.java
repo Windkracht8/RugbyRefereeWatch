@@ -28,18 +28,18 @@ public class MatchLog extends ScrollView{
     }
 
     public void show(Main main, Report report) {
-        for (int i = matchLogList.getChildCount(); i > 0; i--) {
+        for(int i = matchLogList.getChildCount(); i > 0; i--){
             matchLogList.removeViewAt(i - 1);
         }
         JSONArray matches = FileStore.readMatches(getContext(), main.handler_message);
-        try {
-            for (int i = matches.length() - 1; i >= 0; i--) {
+        try{
+            for(int i = matches.length() - 1; i >= 0; i--){
                 MatchData match = new MatchData(getContext(), matches.getJSONObject(i));
                 MatchLogMatch matchLogMatch = new MatchLogMatch(main, match, report);
                 matchLogList.addView(matchLogMatch);
                 main.addOnTouch(matchLogMatch);
             }
-        } catch (JSONException e) {
+        }catch(JSONException e){
             android.util.Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
             main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
         }
@@ -48,7 +48,7 @@ public class MatchLog extends ScrollView{
 
         setVisibility(View.VISIBLE);
         fullScroll(View.FOCUS_UP);
-        findViewById(R.id.svMatchLog).requestFocus();
+        requestFocus();
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if(!Main.isScreenRound || itemHeightInit) return;
             if(matchLogList.getChildCount() == 0) return;

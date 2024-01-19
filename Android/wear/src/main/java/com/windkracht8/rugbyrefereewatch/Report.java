@@ -56,7 +56,8 @@ public class Report extends ScrollView{
             main.addOnTouch(tv);
             reportList.addView(tv);
         }
-        this.setVisibility(View.VISIBLE);
-        findViewById(R.id.svReport).requestFocus();
+        setVisibility(View.VISIBLE);
+        fullScroll(View.FOCUS_UP);
+        requestFocus();
     }
 }

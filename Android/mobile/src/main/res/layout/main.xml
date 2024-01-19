@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/ivIcon"
+        android:id="@+id/icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:contentDescription="@string/ivIcon_desc"
+        android:contentDescription="@string/icon_desc"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/icon" />
+        app:srcCompat="@drawable/icon_watch" />
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivIcon"
+        app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tvError"
@@ -32,14 +32,14 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivIcon"
+        app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/ivIcon">
+        app:layout_constraintTop_toBottomOf="@+id/icon">
         <TextView
             android:id="@+id/tabHistoryLabel"
             android:layout_width="wrap_content"

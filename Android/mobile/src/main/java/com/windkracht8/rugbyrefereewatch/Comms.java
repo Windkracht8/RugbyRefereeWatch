@@ -135,7 +135,7 @@ public class Comms{
                 CommsConnected commsConnected = new CommsConnected();
                 commsConnected.start();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "CommsConnect.run Exception: " + e.getMessage());
+                Log.i(Main.RRW_LOG_TAG, "CommsConnect.run Exception: " + e.getMessage());
             }
         }
     }
