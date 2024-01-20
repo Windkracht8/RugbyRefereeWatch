@@ -136,7 +136,6 @@
     </string-array>
 
     <!-- status -->
-    <string name="status_STARTING">Start</string>
     <string name="status_LISTENING">Zoekt horloge</string>
     <string name="status_CONNECTED">Verbonden</string>
     <string name="status_ERROR">error</string>

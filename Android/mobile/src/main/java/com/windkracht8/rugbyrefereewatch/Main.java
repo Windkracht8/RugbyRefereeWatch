@@ -23,11 +23,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,8 +72,8 @@ public class Main extends AppCompatActivity{
     private TabPrepare tabPrepare;
 
     private ImageView icon;
-    private TextView tvStatus;
-    private TextView tvError;
+    private ScrollView svCommsDebug;
+    private LinearLayout llCommsDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -82,8 +86,8 @@ public class Main extends AppCompatActivity{
         sharedPreferences_editor = sharedPreferences.edit();
 
         icon = findViewById(R.id.icon);
-        tvStatus = findViewById(R.id.tvStatus);
-        tvError = findViewById(R.id.tvError);
+        svCommsDebug = findViewById(R.id.svCommsDebug);
+        llCommsDebug = findViewById(R.id.llCommsDebug);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
         findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
@@ -304,7 +308,6 @@ public class Main extends AppCompatActivity{
     public void bPrepareClick(){
         setButtonProcessing(R.id.bPrepare);
         if(cantSendRequest()){return;}
-        gotError("");
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
             gotError(getString(R.string.fail_prepare));
@@ -325,24 +328,19 @@ public class Main extends AppCompatActivity{
             case "FATAL":
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
-                tvStatus.setVisibility(View.GONE);
                 return;
             case "LISTENING":
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
-                tvStatus.setText(getString(R.string.status_LISTENING));
-                tvStatus.setVisibility(View.VISIBLE);
-                tvError.setText("");
+                gotStatus(getString(R.string.status_LISTENING));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case "CONNECTED":
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
-                tvStatus.setText(getString(R.string.status_CONNECTED));
-                tvStatus.setVisibility(View.VISIBLE);
-                tvError.setText("");
+                gotStatus(getString(R.string.status_CONNECTED));
                 findViewById(R.id.bSync).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 sendSyncRequest();
@@ -350,14 +348,12 @@ public class Main extends AppCompatActivity{
             default:
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
-                tvStatus.setVisibility(View.GONE);
-                tvError.setText(getString(R.string.status_ERROR));
+                gotError(getString(R.string.status_ERROR));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
         }
     }
     private void sendSyncRequest(){
-        gotError("");
         if(cantSendRequest()){return;}
         try {
             JSONObject requestData = new JSONObject();
@@ -395,7 +391,20 @@ public class Main extends AppCompatActivity{
             Toast.makeText(getApplicationContext(), R.string.fail_response, Toast.LENGTH_SHORT).show();
         }
     }
-    private void gotError(String error){
+    public void gotStatus(String status){
+        TextView tv = new TextView(this);
+        tv.setText(status);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        llCommsDebug.addView(tv);
+        tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                svCommsDebug.fullScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+    public void gotError(String error){
         switch(error){
             case "unknown requestType":
                 error = getString(R.string.update_watch_app);
@@ -407,7 +416,18 @@ public class Main extends AppCompatActivity{
                 error = getString(R.string.fail_unexpected);
                 break;
         }
-        ((TextView)findViewById(R.id.tvError)).setText(error);
+        TextView tv = new TextView(this);
+        tv.setText(error);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        tv.setTextColor(getColor(R.color.error));
+        llCommsDebug.addView(tv);
+        tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                svCommsDebug.fullScroll(View.FOCUS_DOWN);
+            }
+        });
     }
 
     public void tabHistoryLabelClick(){

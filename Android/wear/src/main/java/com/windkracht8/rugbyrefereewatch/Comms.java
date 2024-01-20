@@ -37,6 +37,7 @@ public class Comms{
     boolean connect = false;
     public final ArrayList<String> connect_failed_addresses = new ArrayList<>();
     public final ArrayList<String> queried_addresses = new ArrayList<>();
+    public static final ArrayList<String> comms_debug_log = new ArrayList<>();
 
     public Comms(Context context, Handler handler_message){
         this.context = context;
@@ -78,10 +79,12 @@ public class Comms{
             return;
         }
 
+        commsDebugLog("Start search");
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(connect_failed_addresses.contains(bondedDevice.getAddress())) continue;
             for(ParcelUuid uuid : bondedDevice.getUuids()){
                 if(uuid.toString().equals(RRW_UUID)){
+                    commsDebugLog("Trying device: " + bondedDevice.getName());
                     CommsConnect commsConnect = new CommsConnect(bondedDevice);
                     commsConnect.start();
                     return;
@@ -89,6 +92,7 @@ public class Comms{
             }
         }
 
+        commsDebugLog("Query other devices");
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(queried_addresses.contains(bondedDevice.getAddress())) continue;
             bondedDevice.fetchUuidsWithSdp();
@@ -100,6 +104,7 @@ public class Comms{
     }
 
     void stop(){
+        commsDebugLog("Stop");
         connect = false;
         handler.removeCallbacksAndMessages(null);
         try{
@@ -113,10 +118,12 @@ public class Comms{
         private final BluetoothDevice device;
 
         public CommsConnect(BluetoothDevice device){
+            commsDebugLog("Connect " + device.getName());
             this.device = device;
             try{
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
             }catch(Exception e){
+                commsDebugLog("Connect failed: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnect Exception: " + e.getMessage());
             }
         }
@@ -124,8 +131,10 @@ public class Comms{
         public void run(){
             bluetoothAdapter.cancelDiscovery();
             try{
+                commsDebugLog("Connect to socket " + device.getName());
                 bluetoothSocket.connect();
             }catch(IOException e){
+                commsDebugLog("Connect to socket: " + e.getMessage());
                 connect_failed_addresses.add(device.getAddress());
                 search();
                 return;
@@ -141,13 +150,17 @@ public class Comms{
 
         public CommsConnected(){
             try{
+                commsDebugLog("Connected, get input stream");
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
+                commsDebugLog("Connected, get input stream: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected getInputStream Exception: " + e.getMessage());
             }
             try{
+                commsDebugLog("Connected, get output stream");
                 outputStream = bluetoothSocket.getOutputStream();
             }catch(Exception e){
+                commsDebugLog("Connected, get output stream: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected getOutputStream Exception: " + e.getMessage());
             }
         }
@@ -172,8 +185,10 @@ public class Comms{
 
         private void close(){
             try{
+                commsDebugLog("Close");
                 bluetoothSocket.close();
             }catch(Exception e){
+                commsDebugLog("Close: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.close exception: " + e.getMessage());
             }
         }
@@ -185,8 +200,10 @@ public class Comms{
                 JSONObject response = (JSONObject) responseQueue.get(0);
                 responseQueue.remove(0);
                 Log.d(Main.RRW_LOG_TAG, "CommsConnected.sendNextResponse: " + response.toString());
+                commsDebugLog("Send response " + response.getString("requestType"));
                 outputStream.write(response.toString().getBytes());
             }catch(Exception e){
+                commsDebugLog("Send response: " + e.getMessage());
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
                     return false;
                 }
@@ -204,9 +221,11 @@ public class Comms{
                 if(numBytes > 3){
                     String request = new String(buffer);
                     JSONObject requestMessage = new JSONObject(request);
+                    commsDebugLog("Read " + requestMessage.getString("requestType"));
                     gotRequest(requestMessage);
                 }
             }catch(Exception e){
+                commsDebugLog("Read " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.read: Input stream read exception: " + e.getMessage());
             }
         }
@@ -227,6 +246,7 @@ public class Comms{
                 }
 
             }catch(Exception e){
+                commsDebugLog("gotRequest " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.gotRequest Exception: " + e);
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.gotRequest Exception: " + e.getMessage());
             }
@@ -243,6 +263,7 @@ public class Comms{
             sendResponse("sync", responseData);
             Conf.syncCustomMatchTypes(handler_message, requestData);
         }catch(Exception e){
+            commsDebugLog("onReceiveSync " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "Comms.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", "unexpected error");
         }
@@ -258,6 +279,7 @@ public class Comms{
             }
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_PREPARE_RECEIVED));
         }catch(Exception e){
+            commsDebugLog("onReceivePrepare " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "Comms.onReceivePrepare Exception: " + e.getMessage());
             sendResponse("prepare", "unexpected error");
         }
@@ -269,6 +291,7 @@ public class Comms{
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){
+            commsDebugLog("sendResponse " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "Comms.sendResponse String Exception: " + e);
             Log.e(Main.RRW_LOG_TAG, "Comms.sendResponse String Exception: " + e.getMessage());
         }
@@ -280,8 +303,13 @@ public class Comms{
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){
+            commsDebugLog("sendResponse " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "Comms.sendResponse JSONObject Exception: " + e);
             Log.e(Main.RRW_LOG_TAG, "Comms.sendResponse JSONObject Exception: " + e.getMessage());
         }
+    }
+    private void commsDebugLog(String line){
+        Log.d(Main.RRW_LOG_TAG, "commsDebugLog: " + line);
+        comms_debug_log.add(line);
     }
 }

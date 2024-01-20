@@ -153,6 +153,9 @@ public class Conf extends ConstraintLayout{
             case HELP:
                 main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
                 break;
+            case COMMS_DEBUG_LOG:
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_COMMS_DEBUG_LOG));
+                break;
         }
     }
 

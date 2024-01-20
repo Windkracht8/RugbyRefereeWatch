@@ -80,6 +80,7 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
+    private CommsDebugLog commsDebugLog;
     private View touchView;
 
     public static int heightPixels = 0;
@@ -116,6 +117,7 @@ public class Main extends Activity{
 
     public final static int MESSAGE_TOAST = 101;
     public final static int MESSAGE_SHOW_HELP = 102;
+    public final static int MESSAGE_SHOW_COMMS_DEBUG_LOG = 103;
     public final static int MESSAGE_READ_SETTINGS = 201;
     public final static int MESSAGE_NO_SETTINGS = 202;
     public final static int MESSAGE_PREPARE_RECEIVED = 301;
@@ -162,7 +164,7 @@ public class Main extends Activity{
                 R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
-                R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
+                R.id.svMatchLog, R.id.svReport, R.id.svCorrect, R.id.svCommsDebugLog,
                 R.id.svHelp, R.id.llHelp
         };
         for(int id : ids){
@@ -216,6 +218,7 @@ public class Main extends Activity{
         bMatchLog = findViewById(R.id.bMatchLog);
         bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
+        commsDebugLog = findViewById(R.id.commsDebugLog);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
@@ -349,6 +352,9 @@ public class Main extends Activity{
                         executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
                     }
                     break;
+                case MESSAGE_SHOW_COMMS_DEBUG_LOG:
+                    runOnUiThread(() -> showCommsDebugLog());
+                    break;
                 case MESSAGE_NO_SETTINGS:
                     initBT();
                     help.showWelcome();
@@ -368,6 +374,9 @@ public class Main extends Activity{
             }
         }
     };
+    private void showCommsDebugLog(){
+        commsDebugLog.show(this);
+    }
 
     @Override
     public void onBackPressed(){
@@ -399,6 +408,8 @@ public class Main extends Activity{
             matchLog.setVisibility(View.GONE);
         }else if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
+        }else if(commsDebugLog.getVisibility() == View.VISIBLE){
+            commsDebugLog.setVisibility(View.GONE);
         }else{
             if(timer_status.equals("conf") || timer_status.equals("finished")){
                 System.exit(0);
@@ -492,6 +503,8 @@ public class Main extends Activity{
             touchView = matchLog;
         }else if(help.getVisibility() == View.VISIBLE){
             touchView = help;
+        }else if(commsDebugLog.getVisibility() == View.VISIBLE){
+            touchView = commsDebugLog;
         }else{
             touchView = null;
         }

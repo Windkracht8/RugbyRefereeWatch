@@ -30,22 +30,22 @@ public class Comms{
     final BluetoothAdapter bluetoothAdapter;
     BluetoothServerSocket bluetoothServerSocket;
     BluetoothSocket bluetoothSocket;
-    final Context context;
+    final Main main;
     final Handler handler_message;
     final Handler handler;
 
-    public Comms(Context context, Handler handler_message){
-        this.context = context;
+    public Comms(Main main, Handler handler_message){
+        this.main = main;
         this.handler_message = handler_message;
         handler = new Handler(Looper.getMainLooper());
         requestQueue = new JSONArray();
-        BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if(bluetoothAdapter == null){
             bt_off();
             return;
         }
-        context.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        main.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
     }
 
     private final BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
@@ -75,7 +75,7 @@ public class Comms{
     public void stopListening(){
         listen = false;
         try{
-            context.unregisterReceiver(btStateReceiver);
+            main.unregisterReceiver(btStateReceiver);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Comms.stopListening unregisterReceiver: " + e.getMessage());
         }
@@ -93,6 +93,7 @@ public class Comms{
 
     public void sendRequest(String requestType, JSONObject requestData){
         Log.d(Main.RRW_LOG_TAG, "Comms.sendRequest: " + requestType);
+        main.gotStatus("Schedule request: " + requestType);
         try{
             JSONObject request = new JSONObject();
             request.put("requestType", requestType);
@@ -200,6 +201,7 @@ public class Comms{
                 JSONObject request = (JSONObject) requestQueue.get(0);
                 requestQueue.remove(0);
                 Log.d(Main.RRW_LOG_TAG, "CommsConnected.sendNextRequest: " + request.toString());
+                main.gotStatus("Send request: " + request.getString("requestType"));
                 outputStream.write(request.toString().getBytes());
             }catch(Exception e){
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
@@ -223,6 +225,7 @@ public class Comms{
                     if(numBytes < 0){
                         Log.e(Main.RRW_LOG_TAG, "CommsConnected.read read error: " + response);
                         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        main.gotError("Read error");
                         return;
                     }
                     String temp = new String(buffer);
@@ -234,6 +237,7 @@ public class Comms{
                     if((new Date()).getTime() - read_start > 3000){
                         Log.e(Main.RRW_LOG_TAG, "CommsConnected.read started to read, no complete message after 3 seconds: " + response);
                         handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        main.gotError("Started to read, did not complete");
                         return;
                     }
                     sleep100();
@@ -241,6 +245,7 @@ public class Comms{
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.read: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                main.gotError("Read error: " + e.getMessage());
             }
         }
 
@@ -249,9 +254,11 @@ public class Comms{
                 JSONObject responseMessage = new JSONObject(response);
                 Log.d(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + responseMessage);
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
+                main.gotStatus("Received response: " + responseMessage.getString("requestType"));
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + e.getMessage());
                 handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                main.gotError("Response error: " + e.getMessage());
             }
         }
 

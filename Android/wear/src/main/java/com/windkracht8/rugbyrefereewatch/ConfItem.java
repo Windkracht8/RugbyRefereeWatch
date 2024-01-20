@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, BLUETOOTH, HELP
+        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, BLUETOOTH, HELP, COMMS_DEBUG_LOG
     }
     public ConfItemType type;
     private TextView confItemName;
@@ -66,6 +66,8 @@ public class ConfItem extends LinearLayout{
                 return R.string.bluetooth;
             case HELP:
                 return R.string.help;
+            case COMMS_DEBUG_LOG:
+                return R.string.comms_debug_log;
         }
         return R.string.fail_oops;
     }

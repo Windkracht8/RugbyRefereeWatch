@@ -156,7 +156,6 @@
     </string-array>
 
     <!-- status -->
-    <string name="status_STARTING">Starting</string>
     <string name="status_LISTENING">Looking for watch</string>
     <string name="status_CONNECTED">Connected</string>
     <string name="status_ERROR">error</string>
