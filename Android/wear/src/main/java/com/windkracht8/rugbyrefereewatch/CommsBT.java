@@ -91,9 +91,8 @@ public class CommsBT{
     private class CommsBTConnect extends Thread{
         @SuppressLint("MissingPermission") //Permissions are handled in initBT, no further need to complain
         public CommsBTConnect(){
-            if(bluetoothServerSocket != null) return;
             try{
-                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("MusicPlayer", RRW_UUID);
+                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
                 CommsBTLog.addToLog("Connect failed: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
@@ -117,14 +116,12 @@ public class CommsBT{
 
         public CommsBTConnected(){
             try{
-                CommsBTLog.addToLog("Connected, get input stream");
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
                 CommsBTLog.addToLog("Connected, get input stream failed: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getInputStream Exception: " + e.getMessage());
             }
             try{
-                CommsBTLog.addToLog("Connected, get output stream");
                 outputStream = bluetoothSocket.getOutputStream();
             }catch(Exception e){
                 CommsBTLog.addToLog("Connected, get output stream failed: " + e.getMessage());

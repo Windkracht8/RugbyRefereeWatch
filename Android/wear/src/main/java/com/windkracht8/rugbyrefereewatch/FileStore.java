@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
