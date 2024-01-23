@@ -2,8 +2,8 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,34 +11,38 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
+@SuppressLint("MissingPermission") //Permissions are handled in initBT, no further need to complain
 public class Comms{
-    final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
-    String status = "INIT";
-    boolean listen = false;
-    final JSONArray requestQueue;
+    final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
     final BluetoothAdapter bluetoothAdapter;
-    BluetoothServerSocket bluetoothServerSocket;
     BluetoothSocket bluetoothSocket;
     final Main main;
-    final Handler handler_message;
     final Handler handler;
 
-    public Comms(Main main, Handler handler_message){
+    String status = "INIT";
+    boolean connect = false;
+    final JSONArray requestQueue = new JSONArray();
+    public final ArrayList<String> connect_failed_addresses = new ArrayList<>();
+    public final ArrayList<String> queried_addresses = new ArrayList<>();
+
+    public Comms(Main main){
         this.main = main;
-        this.handler_message = handler_message;
         handler = new Handler(Looper.getMainLooper());
-        requestQueue = new JSONArray();
         BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if(bluetoothAdapter == null){
@@ -53,91 +57,123 @@ public class Comms{
             if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
-                    stopListening();
                     bt_off();
+                    stop();
                 }else if(btState == BluetoothAdapter.STATE_ON){
-                    startListening();
+                    connect();
                 }
             }
         }
     };
 
-    public void startListening(){
-        if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
-            bt_off();
+    public void connect(){
+        Log.d(Main.RRW_LOG_TAG, "Comms.connect");
+        connect = true;
+        if(bluetoothAdapter.getState() == BluetoothAdapter.STATE_TURNING_OFF || bluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF){
+            gotError(main.getString(R.string.fail_BT_off));
             return;
         }
-        CommsConnect commsConnect = new CommsConnect();
-        commsConnect.start();
-        updateStatus("LISTENING");
+        search();
     }
 
-    public void stopListening(){
-        listen = false;
+    void stop(){
+        Log.d(Main.RRW_LOG_TAG, "Comms.stop");
+        connect = false;
+        handler.removeCallbacksAndMessages(null);
         try{
             main.unregisterReceiver(btStateReceiver);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening unregisterReceiver: " + e.getMessage());
+            Log.d(Main.RRW_LOG_TAG, "Comms.stop unregisterReceiver: " + e.getMessage());
         }
-        try{
-            if(bluetoothSocket != null) bluetoothSocket.close();
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening bluetoothSocket: " + e.getMessage());
+    }
+
+    void search(){
+        if(!connect) return;
+        Log.d(Main.RRW_LOG_TAG, "Comms.search");
+        if(!status.equals("SEARCHING")) updateStatus("SEARCHING");
+        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+
+        if(bondedDevices == null){
+            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT));
+            gotError("No devices");
+            return;
         }
-        try{
-            if(bluetoothServerSocket != null) bluetoothServerSocket.close();
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Comms.stopListening bluetoothServerSocket: " + e.getMessage());
+
+        for(BluetoothDevice bondedDevice : bondedDevices){
+            if(connect_failed_addresses.contains(bondedDevice.getAddress())) continue;
+            ParcelUuid[] uuids = bondedDevice.getUuids();
+            if(uuids == null) continue;
+            for(ParcelUuid uuid : uuids){
+                if(uuid.toString().equals(RRW_UUID)){
+                    main.gotStatus("Trying device: " + bondedDevice.getName());
+                    Comms.CommsConnect commsConnect = new Comms.CommsConnect(bondedDevice);
+                    commsConnect.start();
+                    return;
+                }
+            }
         }
+
+        main.gotStatus("Query all known devices");
+        for(BluetoothDevice bondedDevice : bondedDevices){
+            if(queried_addresses.contains(bondedDevice.getAddress())) continue;
+            bondedDevice.fetchUuidsWithSdp();
+            queried_addresses.add(bondedDevice.getAddress());
+        }
+
+        connect_failed_addresses.clear();
+        handler.postDelayed(this::search, 3000);
     }
 
     public void sendRequest(String requestType, JSONObject requestData){
         Log.d(Main.RRW_LOG_TAG, "Comms.sendRequest: " + requestType);
-        main.gotStatus("Schedule request: " + requestType);
         try{
             JSONObject request = new JSONObject();
             request.put("requestType", requestType);
             request.put("requestData", requestData);
             requestQueue.put(request);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Comms.sendRequest Exception: " + e);
             Log.e(Main.RRW_LOG_TAG, "Comms.sendRequest Exception: " + e.getMessage());
         }
     }
 
     private void gotError(String fatal_string){
         updateStatus("FATAL");
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_ERROR, fatal_string));
+        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_GOT_ERROR, fatal_string));
     }
     private void bt_off(){
         updateStatus("FATAL");
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_BT_OFF));
+        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_BT_OFF));
     }
     private void updateStatus(String status){
         this.status = status;
-        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status));
+        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_UPDATE_STATUS, status));
     }
 
     private class CommsConnect extends Thread{
-        @SuppressLint("MissingPermission")//already checked in startListening
-        public CommsConnect(){
-            if(bluetoothServerSocket != null) return;
+        private final BluetoothDevice device;
+        public CommsConnect(BluetoothDevice device){
+            Log.d(Main.RRW_LOG_TAG, "CommsConnect " + device.getName());
+            this.device = device;
             try{
-                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
+                bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnect Exception: " + e.getMessage());
-                gotError(e.getMessage());
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT));
             }
         }
 
         public void run(){
+            Log.d(Main.RRW_LOG_TAG, "CommsConnect.run");
+            bluetoothAdapter.cancelDiscovery();
             try{
-                bluetoothSocket = bluetoothServerSocket.accept();
-                CommsConnected commsConnected = new CommsConnected();
-                commsConnected.start();
-            }catch(Exception e){
-                Log.i(Main.RRW_LOG_TAG, "CommsConnect.run Exception: " + e.getMessage());
+                bluetoothSocket.connect();
+            }catch(IOException e){
+                connect_failed_addresses.add(device.getAddress());
+                search();
+                return;
             }
+            CommsConnected commsConnected = new CommsConnected();
+            commsConnected.start();
         }
     }
 
@@ -146,6 +182,7 @@ public class Comms{
         private OutputStream outputStream;
 
         public CommsConnected(){
+            Log.d(Main.RRW_LOG_TAG, "CommsConnected");
             try{
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
@@ -156,22 +193,22 @@ public class Comms{
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected getOutputStream Exception: " + e.getMessage());
             }
+            updateStatus("CONNECTED");
         }
 
         public void run(){
-            listen = true;
-            updateStatus("CONNECTED");
+            Log.d(Main.RRW_LOG_TAG, "CommsConnected.run");
             process();
         }
 
         private void process(){
-            if(!listen){
+            if(!connect){
                 close();
                 return;
             }
             if(!sendNextRequest()){
                 close();
-                startListening();
+                search();
                 return;
             }
             read();
@@ -208,7 +245,7 @@ public class Comms{
                     return false;
                 }
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.sendNextRequest Exception: " + e.getMessage());
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
             }
             return true;
         }
@@ -220,11 +257,11 @@ public class Comms{
                 String response = "";
 
                 while(inputStream.available() > 0){
-                    byte[] buffer = new byte[500];
+                    byte[] buffer = new byte[inputStream.available()];
                     int numBytes = inputStream.read(buffer);
                     if(numBytes < 0){
                         Log.e(Main.RRW_LOG_TAG, "CommsConnected.read read error: " + response);
-                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                         main.gotError("Read error");
                         return;
                     }
@@ -236,7 +273,7 @@ public class Comms{
                     }
                     if((new Date()).getTime() - read_start > 3000){
                         Log.e(Main.RRW_LOG_TAG, "CommsConnected.read started to read, no complete message after 3 seconds: " + response);
-                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                         main.gotError("Started to read, did not complete");
                         return;
                     }
@@ -244,7 +281,7 @@ public class Comms{
                 }
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.read: " + e.getMessage());
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                 main.gotError("Read error: " + e.getMessage());
             }
         }
@@ -253,11 +290,11 @@ public class Comms{
             try{
                 JSONObject responseMessage = new JSONObject(response);
                 Log.d(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + responseMessage);
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_GOT_RESPONSE, responseMessage));
                 main.gotStatus("Received response: " + responseMessage.getString("requestType"));
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsConnected.gotResponse: " + e.getMessage());
-                handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
                 main.gotError("Response error: " + e.getMessage());
             }
         }

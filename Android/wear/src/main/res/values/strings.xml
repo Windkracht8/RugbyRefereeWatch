@@ -91,7 +91,7 @@
     <string name="record_pens">Record penalties</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="help">help</string>
-    <string name="comms_debug_log">comms log</string>
+    <string name="comms_log">comms log</string>
     <string name="on">on</string>
     <string name="off">off</string>
 
@@ -189,5 +189,4 @@
     <string name="fail_show_report">Failed to show report</string>
     <string name="fail_show_log">Failed to show log</string>
     <string name="fail_show_score">Failed to show score screen</string>
-    <string name="fail_bluetooth">Bluetooth connection failed</string>
 </resources>

@@ -80,7 +80,7 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
-    private CommsDebugLog commsDebugLog;
+    private CommsLog commsLog;
     private View touchView;
 
     public static int heightPixels = 0;
@@ -117,7 +117,7 @@ public class Main extends Activity{
 
     public final static int MESSAGE_TOAST = 101;
     public final static int MESSAGE_SHOW_HELP = 102;
-    public final static int MESSAGE_SHOW_COMMS_DEBUG_LOG = 103;
+    public final static int MESSAGE_SHOW_COMMS_LOG = 103;
     public final static int MESSAGE_READ_SETTINGS = 201;
     public final static int MESSAGE_NO_SETTINGS = 202;
     public final static int MESSAGE_PREPARE_RECEIVED = 301;
@@ -164,8 +164,8 @@ public class Main extends Activity{
                 R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
-                R.id.svMatchLog, R.id.svReport, R.id.svCorrect, R.id.svCommsDebugLog,
-                R.id.svHelp, R.id.llHelp
+                R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
+                R.id.svHelp, R.id.svCommsLog
         };
         for(int id : ids){
             findViewById(id).setOnTouchListener(this::onTouch);
@@ -218,7 +218,7 @@ public class Main extends Activity{
         bMatchLog = findViewById(R.id.bMatchLog);
         bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
-        commsDebugLog = findViewById(R.id.commsDebugLog);
+        commsLog = findViewById(R.id.commsLog);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
@@ -253,9 +253,9 @@ public class Main extends Activity{
         bPenAway.setHeight(vh20);
 
         match = new MatchData();
-        executorService.submit(() -> FileStore.readCustomMatchTypes(this, handler_message));
-        executorService.submit(() -> FileStore.readSettings(this, handler_message));
-        executorService.submit(() -> FileStore.cleanMatches(this, handler_message));
+        executorService.submit(() -> FileStore.readCustomMatchTypes(this));
+        executorService.submit(() -> FileStore.readSettings(this));
+        executorService.submit(() -> FileStore.cleanMatches(this));
 
         updateBattery();
         update();
@@ -323,7 +323,7 @@ public class Main extends Activity{
                 if(grantResults[i] == PackageManager.PERMISSION_DENIED){
                     hasBTPermission = false;
                     bluetooth = false;
-                    FileStore.storeSettings(this, handler_message);
+                    FileStore.storeSettings(this);
                     return;
                 }else{
                     hasBTPermission = true;
@@ -349,24 +349,24 @@ public class Main extends Activity{
                     help.show();
                     conf.setVisibility(View.GONE);
                     if(msg.arg1 >= 0){
-                        executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
+                        storeSettings();
                     }
                     break;
-                case MESSAGE_SHOW_COMMS_DEBUG_LOG:
-                    runOnUiThread(() -> showCommsDebugLog());
+                case MESSAGE_SHOW_COMMS_LOG:
+                    commsLog.show();
                     break;
                 case MESSAGE_NO_SETTINGS:
                     initBT();
                     help.showWelcome();
                     help.show();
-                    executorService.submit(() -> FileStore.storeSettings(getBaseContext(), handler_message));
+                    storeSettings();
                     break;
                 case MESSAGE_READ_SETTINGS:
                     if(!(msg.obj instanceof JSONObject)) return;
                     readSettings((JSONObject) msg.obj);
                     break;
                 case MESSAGE_STORE_MATCH_TYPES:
-                    executorService.submit(() -> FileStore.storeCustomMatchTypes(getBaseContext(), handler_message));
+                    storeCustomMatchTypes();
                     break;
                 case MESSAGE_PREPARE_RECEIVED:
                     updateAfterConfig();
@@ -374,8 +374,11 @@ public class Main extends Activity{
             }
         }
     };
-    private void showCommsDebugLog(){
-        commsDebugLog.show(this);
+    private void storeSettings(){
+        executorService.submit(() -> FileStore.storeSettings(this));
+    }
+    private void storeCustomMatchTypes(){
+        executorService.submit(() -> FileStore.storeCustomMatchTypes(this));
     }
 
     @Override
@@ -383,19 +386,21 @@ public class Main extends Activity{
         if(conf.confSpinner.getVisibility() == View.VISIBLE){
             conf.confSpinner.setVisibility(View.GONE);
             conf.requestSVFocus();
+        }else if(commsLog.getVisibility() == View.VISIBLE){
+            commsLog.setVisibility(View.GONE);
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(this, handler_message));
+            executorService.submit(() -> FileStore.storeSettings(this));
             if(bluetooth){
                 initBT();
             }else if(comms != null){
-                comms.stop();
+                comms.stopListening();
             }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(this, handler_message));
+            executorService.submit(() -> FileStore.storeSettings(this));
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -408,8 +413,6 @@ public class Main extends Activity{
             matchLog.setVisibility(View.GONE);
         }else if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
-        }else if(commsDebugLog.getVisibility() == View.VISIBLE){
-            commsDebugLog.setVisibility(View.GONE);
         }else{
             if(timer_status.equals("conf") || timer_status.equals("finished")){
                 System.exit(0);
@@ -487,6 +490,8 @@ public class Main extends Activity{
         onTouchStartX = event.getRawX();
         if(conf.confSpinner.getVisibility() == View.VISIBLE){
             touchView = conf.confSpinner;
+        }else if(commsLog.getVisibility() == View.VISIBLE){
+            touchView = commsLog;
         }else if(conf.getVisibility() == View.VISIBLE){
             touchView = conf;
         }else if(confWatch.getVisibility() == View.VISIBLE){
@@ -503,8 +508,6 @@ public class Main extends Activity{
             touchView = matchLog;
         }else if(help.getVisibility() == View.VISIBLE){
             touchView = help;
-        }else if(commsDebugLog.getVisibility() == View.VISIBLE){
-            touchView = commsDebugLog;
         }else{
             touchView = null;
         }
@@ -521,8 +524,8 @@ public class Main extends Activity{
     }
     private void initBT(){
         if(!bluetooth || !hasBTPermission || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(comms == null) comms = new Comms(this, handler_message);
-        comms.connect();
+        if(comms == null) comms = new Comms(this);
+        comms.startListening();
     }
 
     public void timerClick(){
@@ -545,7 +548,7 @@ public class Main extends Activity{
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
-                if(comms != null) comms.stop();
+                if(comms != null) comms.stopListening();
             case "ready":
                 singleBeep();
                 timer_status = "running";
@@ -615,7 +618,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.storeMatch(this, handler_message, match));
+                executorService.submit(() -> FileStore.storeMatch(this, match));
                 initBT();
                 stopOngoingNotification();
                 break;

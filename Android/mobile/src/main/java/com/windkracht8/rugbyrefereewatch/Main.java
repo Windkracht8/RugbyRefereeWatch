@@ -44,8 +44,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
@@ -62,8 +63,8 @@ public class Main extends AppCompatActivity{
     private GestureDetector gestureDetector;
     private Comms comms = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
+    private ExecutorService executorService;
 
-    private long back_press_time;
     private Handler handler_main;
     public static int widthPixels = 0;
 
@@ -84,6 +85,7 @@ public class Main extends AppCompatActivity{
         handler_main = new Handler(Looper.getMainLooper());
         SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
+        executorService = Executors.newFixedThreadPool(4);
 
         icon = findViewById(R.id.icon);
         svCommsDebug = findViewById(R.id.svCommsDebug);
@@ -161,8 +163,8 @@ public class Main extends AppCompatActivity{
                 return;
             }
         }
-        if(comms == null) comms = new Comms(this, handler_message);
-        comms.startListening();
+        if(comms == null) comms = new Comms(this);
+        executorService.submit(() -> comms.connect());
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -237,14 +239,8 @@ public class Main extends AppCompatActivity{
             tabReportLabelClick();
             return;
         }
-        Date date = new Date();
-        if(date.getTime() - back_press_time < 1000){
-            finish();
-            System.exit(0);
-        }else{
-            handler_main.postDelayed(this::explainDoubleBack, 1000);
-        }
-        back_press_time = date.getTime();
+        finish();
+        System.exit(0);
     }
     private void explainDoubleBack(){
         Toast.makeText(getApplicationContext(), R.string.explainDoubleBack, Toast.LENGTH_SHORT).show();
@@ -329,7 +325,7 @@ public class Main extends AppCompatActivity{
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
                 return;
-            case "LISTENING":
+            case "SEARCHING":
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
@@ -392,6 +388,9 @@ public class Main extends AppCompatActivity{
         }
     }
     public void gotStatus(String status){
+        runOnUiThread(() -> gotStatusUi(status));
+    }
+    private void gotStatusUi(String status){
         TextView tv = new TextView(this);
         tv.setText(status);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
@@ -405,6 +404,7 @@ public class Main extends AppCompatActivity{
         });
     }
     public void gotError(String error){
+        Log.d(Main.RRW_LOG_TAG, "Main.gotError: " + error);
         switch(error){
             case "unknown requestType":
                 error = getString(R.string.update_watch_app);
@@ -416,6 +416,10 @@ public class Main extends AppCompatActivity{
                 error = getString(R.string.fail_unexpected);
                 break;
         }
+        final String error2 = error;
+        runOnUiThread(() -> gotErrorUi(error2));
+    }
+    private void gotErrorUi(String error){
         TextView tv = new TextView(this);
         tv.setText(error);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);

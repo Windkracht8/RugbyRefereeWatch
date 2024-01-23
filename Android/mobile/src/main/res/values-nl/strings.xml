@@ -172,5 +172,5 @@
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
     <string name="fail_BT_denied">Geen Bluetooth toegang</string>
     <string name="fail_BT_off">Bluetooth staat uit</string>
-
+    <string name="fail_BT">Bluetooth verbinding mislukt</string>
 </resources>

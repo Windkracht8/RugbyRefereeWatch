@@ -31,10 +31,10 @@ public class MatchLog extends ScrollView{
         for(int i = matchLogList.getChildCount(); i > 0; i--){
             matchLogList.removeViewAt(i - 1);
         }
-        JSONArray matches = FileStore.readMatches(getContext(), main.handler_message);
+        JSONArray matches = FileStore.readMatches(main);
         try{
             for(int i = matches.length() - 1; i >= 0; i--){
-                MatchData match = new MatchData(getContext(), matches.getJSONObject(i));
+                MatchData match = new MatchData(main, matches.getJSONObject(i));
                 MatchLogMatch matchLogMatch = new MatchLogMatch(main, match, report);
                 matchLogList.addView(matchLogMatch);
                 main.addOnTouch(matchLogMatch);

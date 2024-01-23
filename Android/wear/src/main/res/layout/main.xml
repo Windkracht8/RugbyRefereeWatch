@@ -50,15 +50,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time"
-        android:baselineAligned="false">
+        app:layout_constraintTop_toBottomOf="@id/time" >
         <RelativeLayout
             android:id="@+id/home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:paddingLeft="@dimen/ll_in_sc_padding"
+            android:paddingRight="2dp"
             android:background="@color/red" >
             <TextView
                 android:id="@+id/score_home"
@@ -82,6 +84,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:paddingRight="@dimen/ll_in_sc_padding"
+            android:paddingLeft="2dp"
             android:background="@color/blue" >
             <TextView
                 android:id="@+id/score_away"
@@ -336,8 +340,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-    <com.windkracht8.rugbyrefereewatch.CommsDebugLog
-        android:id="@+id/commsDebugLog"
+    <com.windkracht8.rugbyrefereewatch.CommsLog
+        android:id="@+id/commsLog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

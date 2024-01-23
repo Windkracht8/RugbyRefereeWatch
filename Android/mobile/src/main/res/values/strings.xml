@@ -192,5 +192,6 @@
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="fail_BT_denied">No Bluetooth permission</string>
     <string name="fail_BT_off">Bluetooth turned off</string>
+    <string name="fail_BT">Bluetooth connection failed</string>
 
 </resources>
