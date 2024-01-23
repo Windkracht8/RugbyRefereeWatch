@@ -91,7 +91,7 @@
     <string name="record_pens">Record penalties</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="help">help</string>
-    <string name="comms_log">comms log</string>
+    <string name="commsBT_log">Bluetooth log</string>
     <string name="on">on</string>
     <string name="off">off</string>
 

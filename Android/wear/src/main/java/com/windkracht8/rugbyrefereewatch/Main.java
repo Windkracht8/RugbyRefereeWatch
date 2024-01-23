@@ -80,7 +80,7 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
-    private CommsLog commsLog;
+    private CommsBTLog commsBTLog;
     private View touchView;
 
     public static int heightPixels = 0;
@@ -113,7 +113,7 @@ public class Main extends Activity{
     private Handler handler_main;
     private ExecutorService executorService;
     static Vibrator vibrator;
-    private Comms comms;
+    private CommsBT commsBT;
 
     public final static int MESSAGE_TOAST = 101;
     public final static int MESSAGE_SHOW_HELP = 102;
@@ -165,7 +165,7 @@ public class Main extends Activity{
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
                 R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
-                R.id.svHelp, R.id.svCommsLog
+                R.id.svHelp, R.id.svCommsBTLog
         };
         for(int id : ids){
             findViewById(id).setOnTouchListener(this::onTouch);
@@ -218,7 +218,7 @@ public class Main extends Activity{
         bMatchLog = findViewById(R.id.bMatchLog);
         bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
-        commsLog = findViewById(R.id.commsLog);
+        commsBTLog = findViewById(R.id.commsBTLog);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
@@ -353,7 +353,7 @@ public class Main extends Activity{
                     }
                     break;
                 case MESSAGE_SHOW_COMMS_LOG:
-                    commsLog.show();
+                    commsBTLog.show();
                     break;
                 case MESSAGE_NO_SETTINGS:
                     initBT();
@@ -386,16 +386,16 @@ public class Main extends Activity{
         if(conf.confSpinner.getVisibility() == View.VISIBLE){
             conf.confSpinner.setVisibility(View.GONE);
             conf.requestSVFocus();
-        }else if(commsLog.getVisibility() == View.VISIBLE){
-            commsLog.setVisibility(View.GONE);
+        }else if(commsBTLog.getVisibility() == View.VISIBLE){
+            commsBTLog.setVisibility(View.GONE);
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this));
             if(bluetooth){
                 initBT();
-            }else if(comms != null){
-                comms.stopListening();
+            }else if(commsBT != null){
+                commsBT.stop();
             }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
@@ -490,8 +490,8 @@ public class Main extends Activity{
         onTouchStartX = event.getRawX();
         if(conf.confSpinner.getVisibility() == View.VISIBLE){
             touchView = conf.confSpinner;
-        }else if(commsLog.getVisibility() == View.VISIBLE){
-            touchView = commsLog;
+        }else if(commsBTLog.getVisibility() == View.VISIBLE){
+            touchView = commsBTLog;
         }else if(conf.getVisibility() == View.VISIBLE){
             touchView = conf;
         }else if(confWatch.getVisibility() == View.VISIBLE){
@@ -524,8 +524,8 @@ public class Main extends Activity{
     }
     private void initBT(){
         if(!bluetooth || !hasBTPermission || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(comms == null) comms = new Comms(this);
-        comms.startListening();
+        if(commsBT == null) commsBT = new CommsBT(this);
+        executorService.submit(() -> commsBT.start());
     }
 
     public void timerClick(){
@@ -548,7 +548,7 @@ public class Main extends Activity{
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
-                if(comms != null) comms.stopListening();
+                if(commsBT != null) commsBT.stop();
             case "ready":
                 singleBeep();
                 timer_status = "running";

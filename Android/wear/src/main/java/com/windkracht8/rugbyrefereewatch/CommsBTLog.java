@@ -14,20 +14,20 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class CommsLog extends ScrollView{
+public class CommsBTLog extends ScrollView{
     public static final ArrayList<String> log = new ArrayList<>();
 
-    public CommsLog(Context context, AttributeSet attrs){
+    public CommsBTLog(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show(); return;}
-        inflater.inflate(R.layout.comms_log, this, true);
+        inflater.inflate(R.layout.comms_bt_log, this, true);
     }
 
     public void show(){
-        LinearLayout commsLogItems = findViewById(R.id.commsLogItems);
-        for(int i = commsLogItems.getChildCount(); i > 0; i--){
-            commsLogItems.removeViewAt(i-1);
+        LinearLayout commsBTLogItems = findViewById(R.id.commsBTLogItems);
+        for(int i = commsBTLogItems.getChildCount(); i > 0; i--){
+            commsBTLogItems.removeViewAt(i-1);
         }
 
         for(String line : log){
@@ -35,14 +35,14 @@ public class CommsLog extends ScrollView{
             tv.setText(line);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
             tv.setGravity(Gravity.CENTER);
-            commsLogItems.addView(tv);
+            commsBTLogItems.addView(tv);
         }
         setVisibility(View.VISIBLE);
         fullScroll(View.FOCUS_UP);
         requestFocus();
     }
     public static void addToLog(String line){
-        Log.d(Main.RRW_LOG_TAG, "CommsLog.add: " + line);
+        Log.d(Main.RRW_LOG_TAG, "CommsBTLog.add: " + line);
         log.add(line);
     }
 

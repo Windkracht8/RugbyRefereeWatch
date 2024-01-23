@@ -61,7 +61,7 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_BT_OFF = 9;
     public static final int MESSAGE_TOAST = 10;
     private GestureDetector gestureDetector;
-    private Comms comms = null;
+    private CommsBT commsBT = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
 
@@ -73,8 +73,8 @@ public class Main extends AppCompatActivity{
     private TabPrepare tabPrepare;
 
     private ImageView icon;
-    private ScrollView svCommsDebug;
-    private LinearLayout llCommsDebug;
+    private ScrollView svCommsBTDebug;
+    private LinearLayout llCommsBTDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -88,8 +88,8 @@ public class Main extends AppCompatActivity{
         executorService = Executors.newFixedThreadPool(4);
 
         icon = findViewById(R.id.icon);
-        svCommsDebug = findViewById(R.id.svCommsDebug);
-        llCommsDebug = findViewById(R.id.llCommsDebug);
+        svCommsBTDebug = findViewById(R.id.svCommsBTDebug);
+        llCommsBTDebug = findViewById(R.id.llCommsBTDebug);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
         findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
@@ -163,8 +163,8 @@ public class Main extends AppCompatActivity{
                 return;
             }
         }
-        if(comms == null) comms = new Comms(this);
-        executorService.submit(() -> comms.connect());
+        if(commsBT == null) commsBT = new CommsBT(this);
+        executorService.submit(() -> commsBT.start());
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -309,10 +309,10 @@ public class Main extends AppCompatActivity{
             gotError(getString(R.string.fail_prepare));
             return;
         }
-        comms.sendRequest("prepare", requestData);
+        commsBT.sendRequest("prepare", requestData);
     }
     private boolean cantSendRequest(){
-        if(comms != null && comms.status.equals("CONNECTED")){
+        if(commsBT != null && commsBT.status.equals("CONNECTED")){
             return false;
         }
         gotError(getString(R.string.first_connect));
@@ -355,7 +355,7 @@ public class Main extends AppCompatActivity{
             JSONObject requestData = new JSONObject();
             requestData.put("deleted_matches", tabHistory.getDeletedMatches());
             requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
-            comms.sendRequest("sync", requestData);
+            commsBT.sendRequest("sync", requestData);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.sendSyncRequest Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), R.string.fail_sync, Toast.LENGTH_SHORT).show();
@@ -394,12 +394,12 @@ public class Main extends AppCompatActivity{
         TextView tv = new TextView(this);
         tv.setText(status);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        llCommsDebug.addView(tv);
+        llCommsBTDebug.addView(tv);
         tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svCommsDebug.fullScroll(View.FOCUS_DOWN);
+                svCommsBTDebug.fullScroll(View.FOCUS_DOWN);
             }
         });
     }
@@ -424,12 +424,12 @@ public class Main extends AppCompatActivity{
         tv.setText(error);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         tv.setTextColor(getColor(R.color.error));
-        llCommsDebug.addView(tv);
+        llCommsBTDebug.addView(tv);
         tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svCommsDebug.fullScroll(View.FOCUS_DOWN);
+                svCommsBTDebug.fullScroll(View.FOCUS_DOWN);
             }
         });
     }

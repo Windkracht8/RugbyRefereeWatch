@@ -340,8 +340,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-    <com.windkracht8.rugbyrefereewatch.CommsLog
-        android:id="@+id/commsLog"
+    <com.windkracht8.rugbyrefereewatch.CommsBTLog
+        android:id="@+id/commsBTLog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

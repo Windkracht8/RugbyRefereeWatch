@@ -67,7 +67,7 @@ public class ConfItem extends LinearLayout{
             case HELP:
                 return R.string.help;
             case COMMS_LOG:
-                return R.string.comms_log;
+                return R.string.commsBT_log;
         }
         return R.string.fail_oops;
     }
