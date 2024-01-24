@@ -136,7 +136,8 @@
     </string-array>
 
     <!-- status -->
-    <string name="status_LISTENING">Zoekt horloge</string>
+    <string name="status_SEARCHING">Horloge zoeken</string>
+    <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden, tab op icoon om nog een keer te proberen</string>
     <string name="status_CONNECTED">Verbonden</string>
     <string name="status_ERROR">error</string>
 

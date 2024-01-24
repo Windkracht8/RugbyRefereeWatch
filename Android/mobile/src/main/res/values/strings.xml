@@ -156,7 +156,8 @@
     </string-array>
 
     <!-- status -->
-    <string name="status_LISTENING">Looking for watch</string>
+    <string name="status_SEARCHING">Looking for watch</string>
+    <string name="status_SEARCH_TIMEOUT">Did not find watch, make sure you have a bluetooth connection with the watch and that RugbyRefereeWatch is open and no game is ongoing, tab icon to try again</string>
     <string name="status_CONNECTED">Connected</string>
     <string name="status_ERROR">error</string>
 

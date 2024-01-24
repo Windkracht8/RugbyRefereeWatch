@@ -51,16 +51,16 @@ import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity{
     public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
-    public static final int MESSAGE_GOT_ERROR = 1;
-    public static final int MESSAGE_GOT_RESPONSE = 2;
-    public static final int MESSAGE_UPDATE_STATUS = 3;
-    public static final int MESSAGE_HISTORY_MATCH_CLICK = 4;
-    public static final int MESSAGE_LOAD_LATEST_MATCH = 5;
-    public static final int MESSAGE_DEL_CLICK = 6;
-    public static final int MESSAGE_UPDATE_MATCH = 7;
-    public static final int MESSAGE_EXPORT_MATCHES = 8;
-    public static final int MESSAGE_BT_OFF = 9;
-    public static final int MESSAGE_TOAST = 10;
+    public static final int MESSAGE_TOAST = 101;
+    public static final int MESSAGE_HISTORY_MATCH_CLICK = 102;
+    public static final int MESSAGE_LOAD_LATEST_MATCH = 103;
+    public static final int MESSAGE_DEL_CLICK = 104;
+    public static final int MESSAGE_UPDATE_MATCH = 105;
+    public static final int MESSAGE_EXPORT_MATCHES = 106;
+    public static final int MESSAGE_BT_OFF = 200;
+    public static final int MESSAGE_GOT_ERROR = 201;
+    public static final int MESSAGE_GOT_RESPONSE = 202;
+    public static final int MESSAGE_UPDATE_STATUS = 203;
     private GestureDetector gestureDetector;
     public static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
@@ -75,7 +75,7 @@ public class Main extends AppCompatActivity{
     private LinearLayout llCommsBTDebug;
 
     public static int widthPixels = 0;
-    ArrayList<String> prevStatuses = new ArrayList<>();
+    private final ArrayList<String> prevStatuses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -89,6 +89,7 @@ public class Main extends AppCompatActivity{
         executorService = Executors.newFixedThreadPool(4);
 
         icon = findViewById(R.id.icon);
+        icon.setOnClickListener(view -> iconClick());
         svCommsBTDebug = findViewById(R.id.svCommsBTDebug);
         llCommsBTDebug = findViewById(R.id.llCommsBTDebug);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
@@ -298,6 +299,11 @@ public class Main extends AppCompatActivity{
         findViewById(vid).setEnabled(false);
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
+    public void iconClick(){
+        if(commsBT == null || commsBT.status.equals("SEARCH_TIMEOUT")){
+            initBT();
+        }
+    }
     public void bSyncClick(){
         setButtonProcessing(R.id.bSync);
         sendSyncRequest();
@@ -330,13 +336,19 @@ public class Main extends AppCompatActivity{
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
-                gotStatus(getString(R.string.status_LISTENING));
+                gotStatus(getString(R.string.status_SEARCHING));
+                findViewById(R.id.bSync).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
+                break;
+            case "SEARCH_TIMEOUT":
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
+                gotError(getString(R.string.status_SEARCH_TIMEOUT));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case "CONNECTED":
                 icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
                 gotStatus(getString(R.string.status_CONNECTED));
                 findViewById(R.id.bSync).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);

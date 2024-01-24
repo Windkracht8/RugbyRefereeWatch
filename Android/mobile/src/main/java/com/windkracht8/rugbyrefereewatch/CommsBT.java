@@ -34,9 +34,11 @@ public class CommsBT{
     final Main main;
     final Handler handler;
 
-    String status = "INIT";
-    boolean connect = false;
-    final JSONArray requestQueue = new JSONArray();
+    public String status = "INIT";
+    private boolean connect = false;
+    private int searchCount = 0;
+    private final JSONArray requestQueue = new JSONArray();
+    public final ArrayList<BluetoothDevice> rrw_devices = new ArrayList<>();
     public final ArrayList<String> connect_failed_addresses = new ArrayList<>();
     public final ArrayList<String> queried_addresses = new ArrayList<>();
 
@@ -45,11 +47,7 @@ public class CommsBT{
         handler = new Handler(Looper.getMainLooper());
         BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
-        if(bluetoothAdapter == null){
-            bt_off();
-            return;
-        }
-        main.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+        if(bluetoothAdapter == null) bt_off();
     }
 
     private final BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
@@ -62,6 +60,12 @@ public class CommsBT{
                 }else if(btState == BluetoothAdapter.STATE_ON){
                     startComms();
                 }
+            }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
+                BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(bluetoothDevice == null) return;
+                Log.d(Main.RRW_LOG_TAG, "ACTION_UUID: " + bluetoothDevice.getName());
+                checkDeviceUuids(bluetoothDevice);
+                queried_addresses.remove(bluetoothDevice.getAddress());
             }
         }
     };
@@ -69,10 +73,15 @@ public class CommsBT{
     public void startComms(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.startComms");
         connect = true;
+        searchCount = 0;
         if(bluetoothAdapter.getState() == BluetoothAdapter.STATE_TURNING_OFF || bluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF){
             gotError(main.getString(R.string.fail_BT_off));
             return;
         }
+        IntentFilter btIntentFilter = new IntentFilter();
+        btIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
+        main.registerReceiver(btStateReceiver, btIntentFilter);
         search();
     }
 
@@ -89,7 +98,8 @@ public class CommsBT{
 
     void search(){
         if(!connect) return;
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.search");
+        searchCount++;
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.search " + searchCount);
         if(!status.equals("SEARCHING")) updateStatus("SEARCHING");
         Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
 
@@ -100,28 +110,46 @@ public class CommsBT{
         }
 
         for(BluetoothDevice bondedDevice : bondedDevices){
-            if(connect_failed_addresses.contains(bondedDevice.getAddress())) continue;
-            ParcelUuid[] uuids = bondedDevice.getUuids();
-            if(uuids == null) continue;
-            for(ParcelUuid uuid : uuids){
-                if(uuid.toString().equals(RRW_UUID)){
-                    main.gotStatus("Trying device: " + bondedDevice.getName());
-                    CommsBT.CommsBTConnect commsBTConnect = new CommsBT.CommsBTConnect(bondedDevice);
-                    commsBTConnect.start();
-                    return;
-                }
-            }
+            checkDeviceUuids(bondedDevice);
         }
+        if(connectToRRWDevice()) return;
 
         main.gotStatus("Query all known devices");
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(queried_addresses.contains(bondedDevice.getAddress())) continue;
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.search Query " + bondedDevice.getName());
             bondedDevice.fetchUuidsWithSdp();
             queried_addresses.add(bondedDevice.getAddress());
         }
 
+        if(searchCount > 5){
+            stopComms();
+            updateStatus("SEARCH_TIMEOUT");
+            return;
+        }
         connect_failed_addresses.clear();
-        handler.postDelayed(this::search, 3000);
+        handler.postDelayed(this::search, 1000);
+    }
+    private boolean connectToRRWDevice(){
+        for(BluetoothDevice rrw_device : rrw_devices){
+            if(connect_failed_addresses.contains(rrw_device.getAddress())) continue;
+            main.gotStatus("Trying to connect to " + rrw_device.getName());
+            CommsBT.CommsBTConnect commsBTConnect = new CommsBT.CommsBTConnect(rrw_device);
+            commsBTConnect.start();
+            return true;
+        }
+        return false;
+    }
+    private void checkDeviceUuids(BluetoothDevice bluetoothDevice){
+        ParcelUuid[] uuids = bluetoothDevice.getUuids();
+        if(uuids == null) return;
+        for(ParcelUuid uuid : uuids){
+            if(uuid.toString().equals(RRW_UUID)){
+                rrw_devices.add(bluetoothDevice);
+                return;
+            }
+        }
+        rrw_devices.remove(bluetoothDevice);
     }
 
     public void sendRequest(String requestType, JSONObject requestData){
@@ -168,6 +196,7 @@ public class CommsBT{
             try{
                 bluetoothSocket.connect();
             }catch(IOException e){
+                Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run failed");
                 connect_failed_addresses.add(device.getAddress());
                 search();
                 return;
