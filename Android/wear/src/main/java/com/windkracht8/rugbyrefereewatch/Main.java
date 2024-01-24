@@ -80,7 +80,7 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
-    private CommsBTLog commsBTLog;
+    public CommsBTLog commsBTLog;
     private View touchView;
 
     public static int heightPixels = 0;
@@ -395,7 +395,7 @@ public class Main extends Activity{
             if(bluetooth){
                 initBT();
             }else if(commsBT != null){
-                commsBT.stop();
+                commsBT.stopComms();
             }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
@@ -522,10 +522,10 @@ public class Main extends Activity{
     private float getBackSwipeVelocity(MotionEvent event, float diffX){
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
-    private void initBT(){
+    public void initBT(){
         if(!bluetooth || !hasBTPermission || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
-        if(commsBT == null) commsBT = new CommsBT(this);
-        executorService.submit(() -> commsBT.start());
+        commsBT = new CommsBT(this);
+        executorService.submit(() -> commsBT.startComms());
     }
 
     public void timerClick(){
@@ -548,7 +548,7 @@ public class Main extends Activity{
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
-                if(commsBT != null) commsBT.stop();
+                if(commsBT != null) commsBT.stopComms();
             case "ready":
                 singleBeep();
                 timer_status = "running";

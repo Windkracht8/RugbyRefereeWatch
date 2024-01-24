@@ -44,6 +44,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,20 +62,20 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_BT_OFF = 9;
     public static final int MESSAGE_TOAST = 10;
     private GestureDetector gestureDetector;
-    private CommsBT commsBT = null;
     public static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
-
     private Handler handler_main;
-    public static int widthPixels = 0;
+    private CommsBT commsBT = null;
 
     private TabHistory tabHistory;
     private TabReport tabReport;
     private TabPrepare tabPrepare;
-
     private ImageView icon;
     private ScrollView svCommsBTDebug;
     private LinearLayout llCommsBTDebug;
+
+    public static int widthPixels = 0;
+    ArrayList<String> prevStatuses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -164,7 +165,7 @@ public class Main extends AppCompatActivity{
             }
         }
         if(commsBT == null) commsBT = new CommsBT(this);
-        executorService.submit(() -> commsBT.start());
+        executorService.submit(() -> commsBT.startComms());
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -391,6 +392,12 @@ public class Main extends AppCompatActivity{
         runOnUiThread(() -> gotStatusUi(status));
     }
     private void gotStatusUi(String status){
+        if(prevStatuses.contains(status)){
+            return;
+        }
+        prevStatuses.add(status);
+        if(prevStatuses.size()>2) prevStatuses.remove(0);
+
         TextView tv = new TextView(this);
         tv.setText(status);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);

@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@SuppressLint("MissingPermission") //Permissions are handled in initBT, no further need to complain
+@SuppressLint("MissingPermission") //Permissions are handled in initBT
 public class CommsBT{
     final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
     final BluetoothAdapter bluetoothAdapter;
@@ -58,16 +58,16 @@ public class CommsBT{
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
                     bt_off();
-                    stop();
+                    stopComms();
                 }else if(btState == BluetoothAdapter.STATE_ON){
-                    start();
+                    startComms();
                 }
             }
         }
     };
 
-    public void start(){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.start");
+    public void startComms(){
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.startComms");
         connect = true;
         if(bluetoothAdapter.getState() == BluetoothAdapter.STATE_TURNING_OFF || bluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF){
             gotError(main.getString(R.string.fail_BT_off));
@@ -76,14 +76,14 @@ public class CommsBT{
         search();
     }
 
-    void stop(){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.stop");
+    void stopComms(){
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms");
         connect = false;
         handler.removeCallbacksAndMessages(null);
         try{
             main.unregisterReceiver(btStateReceiver);
         }catch(Exception e){
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.stop unregisterReceiver: " + e.getMessage());
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms unregisterReceiver: " + e.getMessage());
         }
     }
 
