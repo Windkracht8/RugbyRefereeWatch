@@ -96,25 +96,20 @@ public class FileStore{
         }
     }
     public static void readSettings(Main main){
-        int help_version = 0;
         try{
             String sSettings = getFileAsString(main, R.string.settings_filename);
             if(sSettings.length() < 3){
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_NO_SETTINGS));
+                main.noSettings();
                 return;
             }
             JSONObject jsonSettings = new JSONObject(sSettings);
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_READ_SETTINGS, jsonSettings));
-            if(jsonSettings.has("help_version")){
-                help_version = jsonSettings.getInt("help_version");
-            }
+            main.readSettings(jsonSettings);
+            return;
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
             main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_NO_SETTINGS));
-            return;
         }
-        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, help_version, 0));
+        main.noSettings();
     }
 
     public static void storeCustomMatchTypes(Main main){

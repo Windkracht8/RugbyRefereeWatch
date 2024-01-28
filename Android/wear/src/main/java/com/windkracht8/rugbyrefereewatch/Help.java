@@ -14,10 +14,8 @@ public class Help extends ScrollView{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_help, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.help, this, true);
     }
-    public void showWelcome(){
-        findViewById(R.id.welcome).setVisibility(VISIBLE);
-    }
-    public void show(){
+    public void show(boolean withWelcome){
+        if(withWelcome) findViewById(R.id.welcome).setVisibility(VISIBLE);
         this.setVisibility(View.VISIBLE);
         findViewById(R.id.svHelp).requestFocus();
     }

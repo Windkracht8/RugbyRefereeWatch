@@ -147,14 +147,14 @@ public class Conf extends ConstraintLayout{
                 break;
             case BLUETOOTH:
                 Main.bluetooth = !Main.bluetooth;
-                if(Main.bluetooth) main.bluetoothEnabled();
+                if(Main.bluetooth) main.requestPermissions();
                 confItem.updateValue();
                 break;
             case HELP:
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_HELP, -1, 0));
+                main.showHelp();
                 break;
             case COMMS_LOG:
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_SHOW_COMMS_LOG));
+                main.showCommsLog();
                 break;
         }
     }

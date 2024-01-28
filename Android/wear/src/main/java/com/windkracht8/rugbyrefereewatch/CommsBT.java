@@ -42,10 +42,12 @@ public class CommsBT{
             if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
+                    Log.d(Main.RRW_LOG_TAG, "btStateReceiver: stop");
                     stopComms();
                 }else if(btState == BluetoothAdapter.STATE_ON &&
                         (Main.timer_status.equals("conf") || Main.timer_status.equals("finished"))
                 ){
+                    Log.d(Main.RRW_LOG_TAG, "btStateReceiver: start");
                     startComms();
                 }
             }

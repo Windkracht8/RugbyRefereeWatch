@@ -116,10 +116,6 @@ public class Main extends Activity{
     private CommsBT commsBT;
 
     public final static int MESSAGE_TOAST = 101;
-    public final static int MESSAGE_SHOW_HELP = 102;
-    public final static int MESSAGE_SHOW_COMMS_LOG = 103;
-    public final static int MESSAGE_READ_SETTINGS = 201;
-    public final static int MESSAGE_NO_SETTINGS = 202;
     public final static int MESSAGE_PREPARE_RECEIVED = 301;
     public final static int MESSAGE_STORE_MATCH_TYPES = 302;
 
@@ -253,6 +249,7 @@ public class Main extends Activity{
         bPenAway.setHeight(vh20);
 
         match = new MatchData();
+        hasBTPermission = checkHasBTPermission();
         executorService.submit(() -> FileStore.readCustomMatchTypes(this));
         executorService.submit(() -> FileStore.readSettings(this));
         executorService.submit(() -> FileStore.cleanMatches(this));
@@ -262,53 +259,36 @@ public class Main extends Activity{
         updateButtons();
         updateAfterConfig();
         showSplash = false;
-
-        executorService.submit(() -> requestPermissions(false));
     }
-    public void bluetoothEnabled(){
-        executorService.submit(() -> requestPermissions(true));
-    }
-    private void requestPermissions(boolean onlyBluetooth){
+    public void requestPermissions(){
         if(Build.VERSION.SDK_INT >= 33){
-            if(bluetooth && onlyBluetooth){
-                if(!hasPermission(android.Manifest.permission.BLUETOOTH_SCAN) ||
-                        !hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                ){
-                    ActivityCompat.requestPermissions(this, new String[]{
-                            android.Manifest.permission.BLUETOOTH_CONNECT,
-                            Manifest.permission.BLUETOOTH_SCAN}, 1);
-                }
-            }else if(bluetooth){
-                if(!hasPermission(android.Manifest.permission.POST_NOTIFICATIONS) ||
-                        !hasPermission(android.Manifest.permission.BLUETOOTH_SCAN) ||
-                        !hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                ){
-                    ActivityCompat.requestPermissions(this, new String[]{
-                            android.Manifest.permission.POST_NOTIFICATIONS,
-                            android.Manifest.permission.BLUETOOTH_CONNECT,
-                            Manifest.permission.BLUETOOTH_SCAN}, 1);
-                }
-            }else if(!onlyBluetooth){
-                if(!hasPermission(Manifest.permission.POST_NOTIFICATIONS)){
-                    ActivityCompat.requestPermissions(this, new String[]{
-                            android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-                }
+            if(!hasPermission(android.Manifest.permission.POST_NOTIFICATIONS) ||
+                    !hasBTPermission
+            ){
+                ActivityCompat.requestPermissions(this, new String[]{
+                        android.Manifest.permission.POST_NOTIFICATIONS,
+                        android.Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.BLUETOOTH_SCAN}, 1);
             }
-        }else if(bluetooth && Build.VERSION.SDK_INT >= 31){
-            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
-                    hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
+        }else if(Build.VERSION.SDK_INT >= 31){
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
                         android.Manifest.permission.BLUETOOTH_CONNECT,
                         android.Manifest.permission.BLUETOOTH_SCAN}, 1);
             }
-        }else if(bluetooth){
-            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
+        }else{
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.BLUETOOTH}, 1);
             }
         }
+    }
+    private boolean checkHasBTPermission(){
+        if(Build.VERSION.SDK_INT >= 31){
+            return hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
+                    hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
+        }
+        return hasPermission(Manifest.permission.BLUETOOTH);
     }
     private boolean hasPermission(String permission){
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
@@ -323,13 +303,15 @@ public class Main extends Activity{
                 if(grantResults[i] == PackageManager.PERMISSION_DENIED){
                     hasBTPermission = false;
                     bluetooth = false;
-                    FileStore.storeSettings(this);
+                    executorService.submit(() -> FileStore.storeSettings(this));
+                    commsBTLog.addToLog("Bluetooth permission denied");
                     return;
                 }else{
                     hasBTPermission = true;
                 }
             }
         }
+        Log.d(RRW_LOG_TAG, "onRequestPermissionsResult: initBT");
         if(bluetooth && hasBTPermission) initBT();
     }
 
@@ -343,27 +325,6 @@ public class Main extends Activity{
                         String msg_str = getString((Integer) msg.obj);
                         runOnUiThread(() -> Toast.makeText(getBaseContext(), msg_str, Toast.LENGTH_SHORT).show());
                     }
-                    break;
-                case MESSAGE_SHOW_HELP:
-                    if(msg.arg1 == help_version) return;
-                    help.show();
-                    conf.setVisibility(View.GONE);
-                    if(msg.arg1 >= 0){
-                        storeSettings();
-                    }
-                    break;
-                case MESSAGE_SHOW_COMMS_LOG:
-                    commsBTLog.show();
-                    break;
-                case MESSAGE_NO_SETTINGS:
-                    initBT();
-                    help.showWelcome();
-                    help.show();
-                    storeSettings();
-                    break;
-                case MESSAGE_READ_SETTINGS:
-                    if(!(msg.obj instanceof JSONObject)) return;
-                    readSettings((JSONObject) msg.obj);
                     break;
                 case MESSAGE_STORE_MATCH_TYPES:
                     storeCustomMatchTypes();
@@ -393,6 +354,7 @@ public class Main extends Activity{
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this));
             if(bluetooth){
+                Log.d(RRW_LOG_TAG, "onBackPressed: initBT");
                 initBT();
             }else if(commsBT != null){
                 commsBT.stopComms();
@@ -523,7 +485,22 @@ public class Main extends Activity{
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
     public void initBT(){
-        if(!bluetooth || !hasBTPermission || !(timer_status.equals("conf") || timer_status.equals("finished"))) return;
+        Log.d(RRW_LOG_TAG, "initBT");
+        if(!timer_status.equals("conf") && !timer_status.equals("finished")) return;
+        if(!hasBTPermission){
+            Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
+            commsBTLog.addToLog("Bluetooth permission denied");
+            if(!bluetooth){
+                commsBTLog.addToLog("Bluetooth is disabled");
+            }
+            return;
+        }
+        if(!bluetooth){
+            commsBTLog.addToLog("Bluetooth is disabled");
+            return;
+        }
+
+        Log.d(RRW_LOG_TAG, "initBT: start");
         commsBT = new CommsBT(this);
         executorService.submit(() -> commsBT.startComms());
     }
@@ -619,6 +596,7 @@ public class Main extends Activity{
                 updateScore();
 
                 executorService.submit(() -> FileStore.storeMatch(this, match));
+                Log.d(RRW_LOG_TAG, "bBottomClick: initBT");
                 initBT();
                 stopOngoingNotification();
                 break;
@@ -1132,7 +1110,7 @@ public class Main extends Activity{
         return true;
     }
 
-    private void readSettings(JSONObject jsonSettings){
+    public void readSettings(JSONObject jsonSettings){
         if(!timer_status.equals("conf")) return;
         try{
             match.home.color = jsonSettings.getString("home_color");
@@ -1146,31 +1124,37 @@ public class Main extends Activity{
             match.points_try = jsonSettings.getInt("points_try");
             match.points_con = jsonSettings.getInt("points_con");
             match.points_goal = jsonSettings.getInt("points_goal");
-            if(jsonSettings.get("screen_on") instanceof Integer){//DEPRECATED Sep 2023
-                screen_on = jsonSettings.getInt("screen_on") == 1;
-            }else{
-                screen_on = jsonSettings.getBoolean("screen_on");
-            }
+            screen_on = jsonSettings.getBoolean("screen_on");
             timer_type = jsonSettings.getInt("timer_type");
             timer_type_period = timer_type;
-            if(jsonSettings.get("record_player") instanceof Integer){//DEPRECATED Sep 2023
-                record_player = jsonSettings.getInt("record_player") == 1;
-            }else{
-                record_player = jsonSettings.getBoolean("record_player");
-            }
-            if(jsonSettings.get("record_pens") instanceof Integer){//DEPRECATED Sep 2023
-                record_pens = jsonSettings.getInt("record_pens") == 1;
-            }else{
-                record_pens = jsonSettings.getBoolean("record_pens");
-            }
+            record_player = jsonSettings.getBoolean("record_player");
+            record_pens = jsonSettings.getBoolean("record_pens");
 
             if(jsonSettings.has("bluetooth")) bluetooth = jsonSettings.getBoolean("bluetooth");
-            if(bluetooth) initBT();
-            updateAfterConfig();
+            Log.d(RRW_LOG_TAG, "readSettings: initBT");
+            initBT();
+            if(jsonSettings.has("help_version") && help_version != jsonSettings.getInt("help_version")){
+                showHelp();
+                storeSettings();
+            }
+            runOnUiThread(this::updateAfterConfig);
+            requestPermissions();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
         }
+    }
+    public void noSettings(){
+        runOnUiThread(() -> help.show(true));
+        Log.d(RRW_LOG_TAG, "noSettings: initBT");
+        initBT();
+        executorService.submit(() -> FileStore.storeSettings(this));
+    }
+    public void showHelp(){
+        runOnUiThread(() -> help.show(false));
+    }
+    public void showCommsLog(){
+        runOnUiThread(() -> commsBTLog.show());
     }
 
     public static JSONObject getSettings(){
@@ -1191,6 +1175,7 @@ public class Main extends Activity{
             ret.put("timer_type", timer_type);
             ret.put("record_player", record_player);
             ret.put("record_pens", record_pens);
+            ret.put("bluetooth", bluetooth);
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
