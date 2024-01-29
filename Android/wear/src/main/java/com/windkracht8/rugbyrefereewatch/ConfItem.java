@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, BLUETOOTH, HELP, COMMS_LOG
+        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP, COMMS_LOG
     }
     public ConfItemType type;
     private TextView confItemName;
@@ -62,8 +62,6 @@ public class ConfItem extends LinearLayout{
                 return R.string.record_player;
             case RECORD_PENS:
                 return R.string.record_pens;
-            case BLUETOOTH:
-                return R.string.bluetooth;
             case HELP:
                 return R.string.help;
             case COMMS_LOG:
@@ -77,7 +75,7 @@ public class ConfItem extends LinearLayout{
         main.addOnTouch(confItemName);
         main.addOnTouch(confItemValue);
     }
-    private boolean hideForMatchType(){
+    private boolean hideForMatchType(){//Thread: Always on UI thread
         if(Main.match.match_type.equals("custom")){
             this.setVisibility(View.VISIBLE);
             return false;
@@ -86,7 +84,7 @@ public class ConfItem extends LinearLayout{
             return true;
         }
     }
-    public void updateValue(){
+    public void updateValue(){//Thread: Always on UI thread
         String value = "";
         switch(type){
             case COLOR_HOME:
@@ -133,9 +131,6 @@ public class ConfItem extends LinearLayout{
                 break;
             case RECORD_PENS:
                 value = getContext().getString(Main.record_pens ? R.string.on : R.string.off);
-                break;
-            case BLUETOOTH:
-                value = getContext().getString(Main.bluetooth ? R.string.on : R.string.off);
                 break;
             case HELP:
                 return;

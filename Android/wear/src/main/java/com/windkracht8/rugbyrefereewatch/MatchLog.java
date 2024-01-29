@@ -2,6 +2,7 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,13 +22,12 @@ public class MatchLog extends ScrollView{
     public MatchLog(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show(); return;}
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show();return;}
         inflater.inflate(R.layout.match_log, this, true);
-
         matchLogList = findViewById(R.id.matchLogList);
     }
 
-    public void show(Main main, Report report) {
+    public void show(Main main, Report report){
         for(int i = matchLogList.getChildCount(); i > 0; i--){
             matchLogList.removeViewAt(i - 1);
         }
@@ -40,8 +40,8 @@ public class MatchLog extends ScrollView{
                 main.addOnTouch(matchLogMatch);
             }
         }catch(JSONException e){
-            android.util.Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_show_log));
+            Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
+            main.toast(R.string.fail_show_log);
         }
         findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
         ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding) + Main.vh25;

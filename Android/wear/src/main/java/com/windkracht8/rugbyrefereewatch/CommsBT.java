@@ -20,11 +20,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+//Thread: All of FileStore runs on a background thread
 public class CommsBT{
     private final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothServerSocket bluetoothServerSocket;
     private BluetoothSocket bluetoothSocket;
+    private CommsBTConnect commsBTConnect;
+    private CommsBTConnected commsBTConnected;
     private final Main main;
     private final Handler handler;
 
@@ -55,6 +58,7 @@ public class CommsBT{
     };
 
     public void startComms(){
+        closeConnection = false;
         BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
@@ -62,7 +66,7 @@ public class CommsBT{
             return;
         }
         main.commsBTLog.addToLog("Start listening");
-        CommsBTConnect commsBTConnect = new CommsBTConnect();
+        commsBTConnect = new CommsBTConnect();
         commsBTConnect.start();
     }
 
@@ -84,6 +88,8 @@ public class CommsBT{
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothServerSocket: " + e.getMessage());
         }
+        commsBTConnect = null;
+        commsBTConnected = null;
     }
 
     private class CommsBTConnect extends Thread{
@@ -93,6 +99,7 @@ public class CommsBT{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect");
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
+                if(closeConnection) return;
                 main.commsBTLog.addToLog("Connect failed: " + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
             }
@@ -102,11 +109,14 @@ public class CommsBT{
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run");
                 bluetoothSocket = bluetoothServerSocket.accept();
+                if(closeConnection) return;
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run accepted");
-                CommsBTConnected commsBTConnected = new CommsBTConnected();
+                commsBTConnected = new CommsBTConnected();
                 commsBTConnected.start();
             }catch(Exception e){
+                if(closeConnection) return;
                 main.commsBTLog.addToLog("Connect to socket failed: " + e.getMessage());
+                Log.e(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception: " + e.getMessage());
             }
         }
     }
@@ -146,12 +156,12 @@ public class CommsBT{
             }catch(Exception e){
                 main.commsBTLog.addToLog("Connection closed");
                 stopComms();
-                main.initBT();
+                startComms();
                 return;
             }
             if(responseQueue.length() > 0 && !sendNextResponse()){
                 stopComms();
-                main.initBT();
+                startComms();
                 return;
             }
             read();
@@ -224,27 +234,27 @@ public class CommsBT{
             responseData.put("matches", FileStore.deletedMatches(main, requestData));
             responseData.put("settings", settings);
             sendResponse("sync", responseData);
-            Conf.syncCustomMatchTypes(main.handler_message, requestData);
+            Conf.syncCustomMatchTypes(main, requestData);
         }catch(Exception e){
             main.commsBTLog.addToLog("onReceiveSync failed: " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
-            sendResponse("sync", "unexpected error");
+            sendResponse("sync", main.getString(R.string.fail_unexpected));
         }
     }
     private void onReceivePrepare(String requestData){
         try{
             JSONObject requestData_json = new JSONObject(requestData);
-            if(Main.incomingSettings(main.handler_message, requestData_json)){
+            if(main.incomingSettings(requestData_json)){
                 sendResponse("prepare", "okilly dokilly");
                 FileStore.storeSettings(main);
             }else{
                 sendResponse("prepare", "match ongoing");
             }
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_PREPARE_RECEIVED));
+            main.runOnUiThread(main::updateAfterConfig);
         }catch(Exception e){
             main.commsBTLog.addToLog("onReceivePrepare failed: " + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare Exception: " + e.getMessage());
-            sendResponse("prepare", "unexpected error");
+            sendResponse("prepare", main.getString(R.string.fail_unexpected));
         }
     }
     public void sendResponse(final String requestType, final String responseData){

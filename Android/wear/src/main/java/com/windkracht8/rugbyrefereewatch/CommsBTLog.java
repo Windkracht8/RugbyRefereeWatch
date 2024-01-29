@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class CommsBTLog extends ScrollView{
+    private Main main;
     private LinearLayout commsBTLogItems;
     public static final ArrayList<String> log = new ArrayList<>();
 
@@ -23,11 +24,11 @@ public class CommsBTLog extends ScrollView{
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.comms_bt_log, this, true);
-
         commsBTLogItems = findViewById(R.id.commsBTLogItems);
     }
 
-    public void show(){
+    public void show(Main main){
+        this.main = main;
         for(int i = commsBTLogItems.getChildCount(); i > 0; i--){
             commsBTLogItems.removeViewAt(i-1);
         }
@@ -38,10 +39,12 @@ public class CommsBTLog extends ScrollView{
         fullScroll(View.FOCUS_UP);
         requestFocus();
     }
-    public void addToLog(String line){
+    public void addToLog(String line){//Thread: Mostly called from background thread
         Log.d(Main.RRW_LOG_TAG, "CommsBTLog.add: " + line);
         log.add(line);
-        if(getVisibility() == View.VISIBLE) addLine(line);
+        if(getVisibility() == View.VISIBLE){
+            main.runOnUiThread(() -> addLine(line));
+        }
     }
     private void addLine(String line){
         TextView tv = new TextView(getContext());

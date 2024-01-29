@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
@@ -106,18 +105,13 @@ public class Main extends Activity{
     public static int timer_type = 1;//0:up, 1:down
     public static boolean record_player = false;
     public static boolean record_pens = false;
-    public static boolean bluetooth = true;
     public final static int help_version = 4;
 
     public static MatchData match;
     private Handler handler_main;
-    private ExecutorService executorService;
+    public ExecutorService executorService;
     static Vibrator vibrator;
-    private CommsBT commsBT;
-
-    public final static int MESSAGE_TOAST = 101;
-    public final static int MESSAGE_PREPARE_RECEIVED = 301;
-    public final static int MESSAGE_STORE_MATCH_TYPES = 302;
+    private final CommsBT commsBT = new CommsBT(this);
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
@@ -258,6 +252,8 @@ public class Main extends Activity{
         update();
         updateButtons();
         updateAfterConfig();
+        initBT();
+        requestPermissions();
         showSplash = false;
     }
     public void requestPermissions(){
@@ -300,46 +296,20 @@ public class Main extends Activity{
             if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
                     permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
                     permissions[i].equals(Manifest.permission.BLUETOOTH)){
-                if(grantResults[i] == PackageManager.PERMISSION_DENIED){
-                    hasBTPermission = false;
-                    bluetooth = false;
-                    executorService.submit(() -> FileStore.storeSettings(this));
-                    commsBTLog.addToLog("Bluetooth permission denied");
-                    return;
-                }else{
+                if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     hasBTPermission = true;
+                    initBT();
+                }else{
+                    hasBTPermission = false;
+                    commsBTLog.addToLog("Bluetooth permission rejected");
                 }
+                return;
             }
         }
-        Log.d(RRW_LOG_TAG, "onRequestPermissionsResult: initBT");
-        if(bluetooth && hasBTPermission) initBT();
     }
 
-    public final Handler handler_message = new Handler(Looper.getMainLooper()){
-        public void handleMessage(Message msg){
-            switch(msg.what){
-                case MESSAGE_TOAST:
-                    if(msg.obj instanceof String){
-                        runOnUiThread(() -> Toast.makeText(getBaseContext(), (String) msg.obj, Toast.LENGTH_SHORT).show());
-                    }else if(msg.obj instanceof Integer){
-                        String msg_str = getString((Integer) msg.obj);
-                        runOnUiThread(() -> Toast.makeText(getBaseContext(), msg_str, Toast.LENGTH_SHORT).show());
-                    }
-                    break;
-                case MESSAGE_STORE_MATCH_TYPES:
-                    storeCustomMatchTypes();
-                    break;
-                case MESSAGE_PREPARE_RECEIVED:
-                    updateAfterConfig();
-                    break;
-            }
-        }
-    };
-    private void storeSettings(){
-        executorService.submit(() -> FileStore.storeSettings(this));
-    }
-    private void storeCustomMatchTypes(){
-        executorService.submit(() -> FileStore.storeCustomMatchTypes(this));
+    public void toast(int message){
+        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -353,12 +323,6 @@ public class Main extends Activity{
             conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this));
-            if(bluetooth){
-                Log.d(RRW_LOG_TAG, "onBackPressed: initBT");
-                initBT();
-            }else if(commsBT != null){
-                commsBT.stopComms();
-            }
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
@@ -485,24 +449,14 @@ public class Main extends Activity{
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
     public void initBT(){
-        Log.d(RRW_LOG_TAG, "initBT");
         if(!timer_status.equals("conf") && !timer_status.equals("finished")) return;
-        if(!hasBTPermission){
+        if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
             Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
-            commsBTLog.addToLog("Bluetooth permission denied");
-            if(!bluetooth){
-                commsBTLog.addToLog("Bluetooth is disabled");
-            }
-            return;
-        }
-        if(!bluetooth){
-            commsBTLog.addToLog("Bluetooth is disabled");
+            commsBTLog.addToLog("No Bluetooth permission");
             return;
         }
 
-        Log.d(RRW_LOG_TAG, "initBT: start");
-        commsBT = new CommsBT(this);
-        executorService.submit(() -> commsBT.startComms());
+        executorService.submit(commsBT::startComms);
     }
 
     public void timerClick(){
@@ -525,7 +479,7 @@ public class Main extends Activity{
         switch(timer_status){
             case "conf":
                 match.match_id = getCurrentTimestamp();
-                if(commsBT != null) commsBT.stopComms();
+                executorService.submit(commsBT::stopComms);
             case "ready":
                 singleBeep();
                 timer_status = "running";
@@ -733,7 +687,7 @@ public class Main extends Activity{
         handler_main.postDelayed(this::update, 1000 - milli_secs);
     }
 
-    public void updateAfterConfig(){
+    public void updateAfterConfig(){//Thread: Always on UI thread
         updateTimer();
 
         home.setBackgroundColor(getColorBG(match.home.color));
@@ -1076,7 +1030,8 @@ public class Main extends Activity{
         }
         return null;
     }
-    public static boolean incomingSettings(Handler handler_message, JSONObject settings){
+
+    public boolean incomingSettings(JSONObject settings){//Thread: Background thread
         if(!timer_status.equals("conf")) return false;
         try{
             match.home.team = settings.getString("home_name");
@@ -1104,13 +1059,13 @@ public class Main extends Activity{
                 record_pens = settings.getBoolean("record_pens");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_receive_settings));
+            toast(R.string.fail_receive_settings);
             return false;
         }
         return true;
     }
 
-    public void readSettings(JSONObject jsonSettings){
+    public void readSettings(JSONObject jsonSettings){//Thread: Background thread
         if(!timer_status.equals("conf")) return;
         try{
             match.home.color = jsonSettings.getString("home_color");
@@ -1130,31 +1085,24 @@ public class Main extends Activity{
             record_player = jsonSettings.getBoolean("record_player");
             record_pens = jsonSettings.getBoolean("record_pens");
 
-            if(jsonSettings.has("bluetooth")) bluetooth = jsonSettings.getBoolean("bluetooth");
-            Log.d(RRW_LOG_TAG, "readSettings: initBT");
-            initBT();
             if(jsonSettings.has("help_version") && help_version != jsonSettings.getInt("help_version")){
                 showHelp();
-                storeSettings();
+                executorService.submit(() -> FileStore.storeSettings(this));
             }
             runOnUiThread(this::updateAfterConfig);
-            requestPermissions();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
+            toast(R.string.fail_read_settings);
         }
     }
-    public void noSettings(){
+    public void noSettings(){//Thread: Called from background thread
         runOnUiThread(() -> help.show(true));
-        Log.d(RRW_LOG_TAG, "noSettings: initBT");
-        initBT();
-        executorService.submit(() -> FileStore.storeSettings(this));
     }
     public void showHelp(){
         runOnUiThread(() -> help.show(false));
     }
     public void showCommsLog(){
-        runOnUiThread(() -> commsBTLog.show());
+        runOnUiThread(() -> commsBTLog.show(this));
     }
 
     public static JSONObject getSettings(){
@@ -1175,7 +1123,6 @@ public class Main extends Activity{
             ret.put("timer_type", timer_type);
             ret.put("record_player", record_player);
             ret.put("record_pens", record_pens);
-            ret.put("bluetooth", bluetooth);
             ret.put("help_version", help_version);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());

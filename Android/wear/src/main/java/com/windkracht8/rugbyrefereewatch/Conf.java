@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ public class Conf extends ConstraintLayout{
     private ScrollView svConf;
     public ConfSpinner confSpinner;
     private static ArrayList<ConfItem> confItems;
-    public static JSONArray customMatchTypes;
+    public final static JSONArray customMatchTypes = new JSONArray();
     private boolean isInitialized;
     private int confItemHeight;
     private boolean isItemHeightInitialized;
@@ -30,16 +29,10 @@ public class Conf extends ConstraintLayout{
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){
-            Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();return;}
         inflater.inflate(R.layout.conf, this, true);
-
         confSpinner = findViewById(R.id.confSpinner);
         svConf = findViewById(R.id.svConf);
-
-        customMatchTypes = new JSONArray();
     }
 
     public void requestSVFocus(){
@@ -83,7 +76,7 @@ public class Conf extends ConstraintLayout{
         svConf.fullScroll(View.FOCUS_UP);
     }
 
-    public static void updateValues(){
+    public static void updateValues(){//Thread: Always on UI thread
         for(ConfItem confItem : confItems) confItem.updateValue();
     }
 
@@ -145,11 +138,6 @@ public class Conf extends ConstraintLayout{
                 Main.record_pens = !Main.record_pens;
                 confItem.updateValue();
                 break;
-            case BLUETOOTH:
-                Main.bluetooth = !Main.bluetooth;
-                if(Main.bluetooth) main.requestPermissions();
-                confItem.updateValue();
-                break;
             case HELP:
                 main.showHelp();
                 break;
@@ -204,7 +192,7 @@ public class Conf extends ConstraintLayout{
         confSpinner.setVisibility(View.GONE);
         svConf.requestFocus();
     }
-    private void onMatchTypeChanged(String matchType){
+    private void onMatchTypeChanged(String matchType){//Thread: Always on UI thread
         switch(matchType){
             case "15s":
                 Main.match.period_time = 40;
@@ -253,9 +241,12 @@ public class Conf extends ConstraintLayout{
         }
         Main.timer_period_time = Main.match.period_time;
         updateValues();
-        confItems.get(0).getViewTreeObserver().addOnPreDrawListener(() -> {scaleConfItems(svConf.getScrollY());return true;});
+        confItems.get(0).getViewTreeObserver().addOnPreDrawListener(() -> {
+            scaleConfItems(svConf.getScrollY());
+            return true;
+        });
     }
-    private void loadCustomMatchType(String name){
+    private void loadCustomMatchType(String name){//Thread: Always on UI thread
         try{
             for(int i=0; i < Conf.customMatchTypes.length(); i++){
                 JSONObject matchType = Conf.customMatchTypes.getJSONObject(i);
@@ -274,7 +265,7 @@ public class Conf extends ConstraintLayout{
             Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
         }
     }
-    public static void syncCustomMatchTypes(Handler handler_message, String request_data){
+    public static void syncCustomMatchTypes(Main main, String request_data){//Thread: Always on background thread
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
             if(!request_data_jo.has("custom_match_types")) return;
@@ -312,11 +303,10 @@ public class Conf extends ConstraintLayout{
                     customMatchTypes.put(matchType_phone);
                 }
             }
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_STORE_MATCH_TYPES));
+            FileStore.storeCustomMatchTypes(main);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_sync_match_types));
+            main.toast(R.string.fail_sync_match_types);
         }
     }
-
 }

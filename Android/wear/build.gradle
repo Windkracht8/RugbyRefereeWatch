@@ -9,7 +9,7 @@ android {
         targetSdk 33
         compileSdk 33
         versionCode 417
-        versionName '3.3'
+        versionName '3.4'
     }
     buildTypes {
         release {

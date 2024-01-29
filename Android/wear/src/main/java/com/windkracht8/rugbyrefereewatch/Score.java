@@ -57,7 +57,7 @@ public class Score extends LinearLayout{
     public void load(MatchData.team team){
         this.team = team;
     }
-    public void update(MatchData match){
+    public void update(MatchData match){//Thread: Always on UI thread
         score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);

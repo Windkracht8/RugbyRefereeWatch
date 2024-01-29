@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+//Thread: All of FileStore runs on a background thread
 public class FileStore{
     //Append a new match
     public static void storeMatch(Main main, MatchData match){
@@ -27,7 +28,7 @@ public class FileStore{
             storeFile(main, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeMatches Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_save_matches));
+            main.toast(R.string.fail_save_matches);
         }
     }
     //Return an array of stored matches
@@ -38,7 +39,7 @@ public class FileStore{
             return new JSONArray(sMatches);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readMatches Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_matches));
+            main.toast(R.string.fail_read_matches);
         }
         return new JSONArray();
     }
@@ -56,7 +57,7 @@ public class FileStore{
             storeMatches(main, matches);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_cleanMatches Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_clean_matches));
+            main.toast(R.string.fail_clean_matches);
         }
     }
     //The phone sends a list of matches that can be deleted
@@ -78,7 +79,7 @@ public class FileStore{
             return matches;
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_deletedMatches Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_del_matches));
+            main.toast(R.string.fail_del_matches);
         }
         return new JSONArray();
     }
@@ -86,13 +87,14 @@ public class FileStore{
         try{
             JSONObject settings = Main.getSettings();
             if(settings == null){
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
+                Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings: Main.getSettings == null");
+                main.toast(R.string.fail_store_settings);
                 return;
             }
             storeFile(main, R.string.settings_filename, settings.toString());
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_settings));
+            main.toast(R.string.fail_store_settings);
         }
     }
     public static void readSettings(Main main){
@@ -100,16 +102,17 @@ public class FileStore{
             String sSettings = getFileAsString(main, R.string.settings_filename);
             if(sSettings.length() < 3){
                 main.noSettings();
+                storeSettings(main);
                 return;
             }
             JSONObject jsonSettings = new JSONObject(sSettings);
             main.readSettings(jsonSettings);
-            return;
         }catch(Exception e){
+            main.noSettings();
+            storeSettings(main);
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_settings));
+            main.toast(R.string.fail_read_settings);
         }
-        main.noSettings();
     }
 
     public static void storeCustomMatchTypes(Main main){
@@ -120,7 +123,7 @@ public class FileStore{
             osr.close();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeCustomMatchTypes Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_match_types));
+            main.toast(R.string.fail_store_match_types);
         }
     }
     public static void readCustomMatchTypes(Main main){
@@ -143,7 +146,7 @@ public class FileStore{
             Log.d(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_match_types));
+            main.toast(R.string.fail_read_match_types);
         }
     }
     private static String getFileAsString(Main main, int file){
@@ -160,7 +163,7 @@ public class FileStore{
             Log.i(Main.RRW_LOG_TAG, "FileStore.getFileAsString File does not exist yet");
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_read_file));
+            main.toast(R.string.fail_read_file);
         }
         return "";
     }
@@ -172,7 +175,7 @@ public class FileStore{
             osr.close();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_store_file));
+            main.toast(R.string.fail_store_file);
         }
     }
 

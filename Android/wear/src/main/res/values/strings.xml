@@ -89,7 +89,6 @@
     <string name="timer_type_up">Count up</string>
     <string name="record_player">Record player</string>
     <string name="record_pens">Record penalties</string>
-    <string name="bluetooth">Bluetooth</string>
     <string name="help">help</string>
     <string name="commsBT_log">Bluetooth log</string>
     <string name="on">on</string>
@@ -168,6 +167,7 @@
 
     <!-- fail -->
     <string name="fail_oops">Oops</string>
+    <string name="fail_unexpected">unexpected error</string>
     <string name="fail_show_conf">Failed to show conf screen</string>
     <string name="fail_sync_match_types">Failed to sync match types</string>
     <string name="fail_read_match_types">Failed to read match types from storage</string>

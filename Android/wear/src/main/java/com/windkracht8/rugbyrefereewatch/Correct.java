@@ -91,7 +91,7 @@ public class Correct extends ScrollView{
         if(Main.draggingEnded+100 > Main.getCurrentTimestamp()) return;
         Event event_ui = (Event) v;
         match.removeEvent(event_ui.event);
-        this.setVisibility(View.GONE);
-        this.performClick();
+        setVisibility(View.GONE);
+        performClick();
     }
 }
