@@ -57,15 +57,11 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_DEL_CLICK = 104;
     public static final int MESSAGE_UPDATE_MATCH = 105;
     public static final int MESSAGE_EXPORT_MATCHES = 106;
-    public static final int MESSAGE_BT_OFF = 200;
-    public static final int MESSAGE_GOT_ERROR = 201;
-    public static final int MESSAGE_GOT_RESPONSE = 202;
-    public static final int MESSAGE_UPDATE_STATUS = 203;
     private GestureDetector gestureDetector;
     public static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
     private Handler handler_main;
-    private CommsBT commsBT = null;
+    private CommsBT commsBT;
 
     private TabHistory tabHistory;
     private TabReport tabReport;
@@ -106,23 +102,12 @@ public class Main extends AppCompatActivity{
         handleOrientation();
         handleIntent();
 
+        commsBT = new CommsBT(this);
         initBT();
     }
     public final Handler handler_message = new Handler(Looper.getMainLooper()){
         public void handleMessage(Message msg){
             switch(msg.what){
-                case MESSAGE_GOT_ERROR:
-                    if(!(msg.obj instanceof String)) return;
-                    gotError((String) msg.obj);
-                    break;
-                case MESSAGE_GOT_RESPONSE:
-                    if(!(msg.obj instanceof JSONObject)) return;
-                    gotResponse((JSONObject) msg.obj);
-                    break;
-                case MESSAGE_UPDATE_STATUS:
-                    if(!(msg.obj instanceof String)) return;
-                    updateStatus((String) msg.obj);
-                    break;
                 case MESSAGE_HISTORY_MATCH_CLICK:
                     if(!(msg.obj instanceof JSONObject)) return;
                     tabReport.loadMatch(handler_message, (JSONObject) msg.obj);
@@ -141,9 +126,6 @@ public class Main extends AppCompatActivity{
                     break;
                 case MESSAGE_EXPORT_MATCHES:
                     exportMatches();
-                    break;
-                case MESSAGE_BT_OFF:
-                    gotError(getString(R.string.fail_BT_off));
                     break;
                 case MESSAGE_TOAST:
                     if(!(msg.obj instanceof Integer)) return;
@@ -165,27 +147,24 @@ public class Main extends AppCompatActivity{
                 return;
             }
         }
-        if(commsBT == null) commsBT = new CommsBT(this);
         executorService.submit(() -> commsBT.startComms());
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean bt_granted = false;
         for(int i=0; i<permissions.length; i++){
             if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
                 permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
                 permissions[i].equals(Manifest.permission.BLUETOOTH)){
-                if(grantResults[i] == PackageManager.PERMISSION_DENIED){
+                if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                    initBT();
+                }else{
                     updateStatus("FATAL");
                     gotError(getString(R.string.fail_BT_denied));
-                    return;
-                }else{
-                    bt_granted = true;
                 }
+                return;
             }
         }
-        if(bt_granted) initBT();
     }
     private void handleIntent(){
         Intent intent = getIntent();
@@ -327,6 +306,9 @@ public class Main extends AppCompatActivity{
     }
 
     public void updateStatus(final String status){
+        runOnUiThread(() -> updateStatusUi(status));
+    }
+    private void updateStatusUi(final String status){
         switch(status){
             case "FATAL":
                 icon.setBackgroundResource(R.drawable.icon_watch);
@@ -349,6 +331,7 @@ public class Main extends AppCompatActivity{
                 break;
             case "CONNECTED":
                 icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
                 gotStatus(getString(R.string.status_CONNECTED));
                 findViewById(R.id.bSync).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
@@ -376,10 +359,15 @@ public class Main extends AppCompatActivity{
     }
 
     public void gotResponse(final JSONObject response){
+        runOnUiThread(() -> gotResponseUi(response));
+    }
+    private void gotResponseUi(final JSONObject response){
         try{
             String requestType = response.getString("requestType");
+            gotStatus("Received response: " + requestType);
             switch(requestType){
                 case "sync":
+                    findViewById(R.id.bSync).setEnabled(true);
                     JSONObject syncResponseData = response.getJSONObject("responseData");
                     if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
                         Log.e(Main.RRW_LOG_TAG, "Main.gotResponse sync: Incomplete response");
@@ -397,7 +385,7 @@ public class Main extends AppCompatActivity{
             }
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.gotResponse: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), R.string.fail_response, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fail_response, Toast.LENGTH_SHORT).show();
         }
     }
     public void gotStatus(String status){

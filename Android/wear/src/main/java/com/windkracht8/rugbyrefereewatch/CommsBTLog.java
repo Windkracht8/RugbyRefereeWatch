@@ -1,6 +1,7 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,6 +26,14 @@ public class CommsBTLog extends ScrollView{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.comms_bt_log, this, true);
         commsBTLogItems = findViewById(R.id.commsBTLogItems);
+        try{
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            String version = "Version " + packageInfo.versionName + " (" + packageInfo.getLongVersionCode() + ")";
+            Log.d(Main.RRW_LOG_TAG, version);
+            log.add(version);
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
+        }
     }
 
     public void show(Main main){
@@ -40,7 +49,7 @@ public class CommsBTLog extends ScrollView{
         requestFocus();
     }
     public void addToLog(String line){//Thread: Mostly called from background thread
-        Log.d(Main.RRW_LOG_TAG, "CommsBTLog.add: " + line);
+        Log.d(Main.RRW_LOG_TAG, "CommsBTLog.addToLog: " + line);
         log.add(line);
         if(getVisibility() == View.VISIBLE){
             main.runOnUiThread(() -> addLine(line));

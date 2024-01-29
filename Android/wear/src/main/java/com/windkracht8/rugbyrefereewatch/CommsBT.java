@@ -62,16 +62,17 @@ public class CommsBT{
         BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
         if(bluetoothAdapter == null || !bluetoothAdapter.isEnabled()){
-            main.commsBTLog.addToLog("Bluetooth disabled");
+            main.commsBTLog.addToLog(main.getString(R.string.bt_disabled));
             return;
         }
-        main.commsBTLog.addToLog("Start listening");
+        main.commsBTLog.addToLog(main.getString(R.string.start_listening));
         commsBTConnect = new CommsBTConnect();
         commsBTConnect.start();
     }
 
     public void stopComms(){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.stop");
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms");
+        main.commsBTLog.addToLog(main.getString(R.string.stop_listening));
         closeConnection = true;
         try{
             main.unregisterReceiver(btStateReceiver);
@@ -100,9 +101,10 @@ public class CommsBT{
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
             }catch(Exception e){
                 if(closeConnection) return;
-                main.commsBTLog.addToLog("Connect failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.listening_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
             }
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnect done");
         }
 
         public void run(){
@@ -114,10 +116,12 @@ public class CommsBT{
                 commsBTConnected = new CommsBTConnected();
                 commsBTConnected.start();
             }catch(Exception e){
+                Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception closeConnection:" + closeConnection);
                 if(closeConnection) return;
-                main.commsBTLog.addToLog("Connect to socket failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.connect_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception: " + e.getMessage());
             }
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run done");
         }
     }
 
@@ -130,14 +134,14 @@ public class CommsBT{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.getInputStream");
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
-                main.commsBTLog.addToLog("Input stream failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.input_stream_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getInputStream Exception: " + e.getMessage());
             }
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.getOutputStream");
                 outputStream = bluetoothSocket.getOutputStream();
             }catch(Exception e){
-                main.commsBTLog.addToLog("Output stream failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.output_stream_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getOutputStream Exception: " + e.getMessage());
             }
         }
@@ -154,7 +158,7 @@ public class CommsBT{
             try{
                 outputStream.write("".getBytes());
             }catch(Exception e){
-                main.commsBTLog.addToLog("Connection closed");
+                main.commsBTLog.addToLog(main.getString(R.string.connection_closed));
                 stopComms();
                 startComms();
                 return;
@@ -173,14 +177,14 @@ public class CommsBT{
                 JSONObject response = (JSONObject) responseQueue.get(0);
                 responseQueue.remove(0);
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextResponse: " + response.toString());
-                main.commsBTLog.addToLog("Send response: " + response.getString("requestType"));
+                main.commsBTLog.addToLog(main.getString(R.string.send_response) + response.getString("requestType"));
                 outputStream.write(response.toString().getBytes());
             }catch(Exception e){
                 if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
-                    main.commsBTLog.addToLog("Connection closed");
+                    main.commsBTLog.addToLog(main.getString(R.string.connection_closed));
                     return false;
                 }
-                main.commsBTLog.addToLog("Send response failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.sendNextResponse_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextResponse Exception: " + e.getMessage());
             }
             return true;
@@ -195,11 +199,11 @@ public class CommsBT{
                 if(numBytes > 3){
                     String request = new String(buffer);
                     JSONObject requestMessage = new JSONObject(request);
-                    main.commsBTLog.addToLog("Received request: " + requestMessage.getString("requestType"));
+                    main.commsBTLog.addToLog(main.getString(R.string.received_request) + requestMessage.getString("requestType"));
                     gotRequest(requestMessage);
                 }
             }catch(Exception e){
-                main.commsBTLog.addToLog("Read failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.read_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
             }
         }
@@ -220,7 +224,7 @@ public class CommsBT{
                 }
 
             }catch(Exception e){
-                main.commsBTLog.addToLog("gotRequest failed: " + e.getMessage());
+                main.commsBTLog.addToLog(main.getString(R.string.gotRequest_failed) + e.getMessage());
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest Exception: " + e.getMessage());
             }
         }
@@ -236,7 +240,7 @@ public class CommsBT{
             sendResponse("sync", responseData);
             Conf.syncCustomMatchTypes(main, requestData);
         }catch(Exception e){
-            main.commsBTLog.addToLog("onReceiveSync failed: " + e.getMessage());
+            main.commsBTLog.addToLog(main.getString(R.string.onReceiveSync_failed) + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", main.getString(R.string.fail_unexpected));
         }
@@ -252,7 +256,7 @@ public class CommsBT{
             }
             main.runOnUiThread(main::updateAfterConfig);
         }catch(Exception e){
-            main.commsBTLog.addToLog("onReceivePrepare failed: " + e.getMessage());
+            main.commsBTLog.addToLog(main.getString(R.string.onReceivePrepare_failed) + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare Exception: " + e.getMessage());
             sendResponse("prepare", main.getString(R.string.fail_unexpected));
         }
@@ -264,7 +268,7 @@ public class CommsBT{
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){
-            main.commsBTLog.addToLog("sendResponse failed: " + e.getMessage());
+            main.commsBTLog.addToLog(main.getString(R.string.sendResponse_failed) + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
         }
     }
@@ -275,7 +279,7 @@ public class CommsBT{
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){
-            main.commsBTLog.addToLog("sendResponse failed: " + e.getMessage());
+            main.commsBTLog.addToLog(main.getString(R.string.sendResponse_failed) + e.getMessage());
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
         }
     }

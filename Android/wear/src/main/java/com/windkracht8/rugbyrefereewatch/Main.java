@@ -111,7 +111,7 @@ public class Main extends Activity{
     private Handler handler_main;
     public ExecutorService executorService;
     static Vibrator vibrator;
-    private final CommsBT commsBT = new CommsBT(this);
+    private CommsBT commsBT;
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
@@ -144,6 +144,7 @@ public class Main extends Activity{
         }
         executorService = Executors.newFixedThreadPool(4);
         handler_main = new Handler(Looper.getMainLooper());
+        commsBT = new CommsBT(this);
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
@@ -301,7 +302,7 @@ public class Main extends Activity{
                     initBT();
                 }else{
                     hasBTPermission = false;
-                    commsBTLog.addToLog("Bluetooth permission rejected");
+                    commsBTLog.addToLog(getString(R.string.bt_permission_rejected));
                 }
                 return;
             }
@@ -319,6 +320,7 @@ public class Main extends Activity{
             conf.requestSVFocus();
         }else if(commsBTLog.getVisibility() == View.VISIBLE){
             commsBTLog.setVisibility(View.GONE);
+            conf.requestSVFocus();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
@@ -452,7 +454,7 @@ public class Main extends Activity{
         if(!timer_status.equals("conf") && !timer_status.equals("finished")) return;
         if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
             Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
-            commsBTLog.addToLog("No Bluetooth permission");
+            commsBTLog.addToLog(getString(R.string.no_bt_permission));
             return;
         }
 
@@ -550,7 +552,6 @@ public class Main extends Activity{
                 updateScore();
 
                 executorService.submit(() -> FileStore.storeMatch(this, match));
-                Log.d(RRW_LOG_TAG, "bBottomClick: initBT");
                 initBT();
                 stopOngoingNotification();
                 break;
