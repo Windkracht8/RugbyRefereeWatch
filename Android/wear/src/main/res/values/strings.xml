@@ -141,19 +141,19 @@
     <string name="bt_disabled">Bluetooth disabled</string>
     <string name="start_listening">Start listening</string>
     <string name="stop_listening">Stop listening</string>
-    <string name="onReceiveSync_failed">Problem with sync request: </string>
-    <string name="onReceivePrepare_failed">Problem with prepare request: </string>
-    <string name="sendResponse_failed">Problem with sending response: </string>
-    <string name="listening_failed">Listening failed: </string>
-    <string name="connect_failed">Connecting failed: </string>
-    <string name="input_stream_failed">Input stream failed: </string>
-    <string name="output_stream_failed">Output stream failed: </string>
+    <string name="onReceiveSync_failed">Problem with sync request:</string>
+    <string name="onReceivePrepare_failed">Problem with prepare request:</string>
+    <string name="sendResponse_failed">Problem with sending response:</string>
+    <string name="listening_failed">Listening failed:</string>
+    <string name="connect_failed">Connecting failed:</string>
+    <string name="input_stream_failed">Input stream failed:</string>
+    <string name="output_stream_failed">Output stream failed:</string>
     <string name="connection_closed">Connection closed</string>
-    <string name="send_response">Send response: </string>
-    <string name="received_request">Received request: </string>
-    <string name="sendNextResponse_failed">Send response failed: </string>
-    <string name="read_failed">Received failed: </string>
-    <string name="gotRequest_failed">Problem with processing request: </string>
+    <string name="send_response">Send response:</string>
+    <string name="received_request">Received request:</string>
+    <string name="sendNextResponse_failed">Send response failed:</string>
+    <string name="read_failed">Received failed:</string>
+    <string name="gotRequest_failed">Problem with processing request:</string>
 
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>

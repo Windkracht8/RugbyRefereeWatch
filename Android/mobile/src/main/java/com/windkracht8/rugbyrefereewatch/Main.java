@@ -58,6 +58,7 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_UPDATE_MATCH = 105;
     public static final int MESSAGE_EXPORT_MATCHES = 106;
     private GestureDetector gestureDetector;
+    public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
     private Handler handler_main;
@@ -80,7 +81,7 @@ public class Main extends AppCompatActivity{
         setContentView(R.layout.main);
         getWidthPixels();
         handler_main = new Handler(Looper.getMainLooper());
-        SharedPreferences sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
         executorService = Executors.newFixedThreadPool(4);
 
@@ -97,7 +98,7 @@ public class Main extends AppCompatActivity{
         tabReport = findViewById(R.id.tabReport);
         tabReport.onCreateMain(this);
         tabPrepare = findViewById(R.id.tabPrepare);
-        tabPrepare.onCreateMain(this, sharedPreferences);
+        tabPrepare.onCreateMain(this);
 
         handleOrientation();
         handleIntent();
@@ -360,7 +361,7 @@ public class Main extends AppCompatActivity{
     private void gotResponseUi(final JSONObject response){
         try{
             String requestType = response.getString("requestType");
-            gotStatus("Received response: " + requestType);
+            gotStatus(String.format("%s %s", getString(R.string.received_response), requestType));
             switch(requestType){
                 case "sync":
                     findViewById(R.id.bSync).setEnabled(true);

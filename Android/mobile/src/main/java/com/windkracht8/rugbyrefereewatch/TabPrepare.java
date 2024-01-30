@@ -206,10 +206,10 @@ public class TabPrepare extends LinearLayout{
         loadCustomMatchTypes();
     }
 
-    public void onCreateMain(Main main, SharedPreferences sharedPreferences){
+    public void onCreateMain(Main main){
         findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
-        sHomeColorPosition = sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
-        sAwayColorPosition = sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
+        sHomeColorPosition = Main.sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
+        sAwayColorPosition = Main.sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
         findViewById(R.id.svPrepare).setOnTouchListener(main::onTouchEventScrollViews);
         try{
             sHomeColor.setSelection(sHomeColorPosition);
