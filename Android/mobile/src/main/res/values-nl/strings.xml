@@ -137,11 +137,14 @@
 
     <!-- CommsBT -->
     <string name="status_SEARCHING">Horloge zoeken</string>
-    <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden, tab op icoon om nog een keer te proberen.</string>
+    <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
+        Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
+        Tab op het icoon om nog een keer te proberen.</string>
     <string name="status_CONNECTED">Verbonden</string>
     <string name="no_devices">Geen apparaten</string>
     <string name="try_connect_to">Verbinden met:</string>
-    <string name="look_new_device">Zoekt naar nieuw apparaat </string>
+    <string name="look_new_device">Zoekt naar nieuw apparaat. Dit kan een paar minuten duren.
+        Om te verbinden, hou de app op het horloge open, zonder een wedstrijd te starten.</string>
     <string name="send_request">Verstuur verzoek:</string>
     <string name="received_response">Antwoord ontvangen:</string>
     <string name="closing_connection">Sluit verbinding</string>

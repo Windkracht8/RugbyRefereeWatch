@@ -28,7 +28,7 @@ public class CommsBTLog extends ScrollView{
         commsBTLogItems = findViewById(R.id.commsBTLogItems);
         try{
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            String version = "Version " + packageInfo.versionName + " (" + packageInfo.getLongVersionCode() + ")";
+            String version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
             Log.d(Main.RRW_LOG_TAG, version);
             log.add(version);
         }catch(Exception e){

@@ -2,7 +2,6 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;

@@ -157,11 +157,14 @@
 
     <!-- CommsBT -->
     <string name="status_SEARCHING">Looking for watch</string>
-    <string name="status_SEARCH_TIMEOUT">Did not find watch, make sure you have a bluetooth connection with the watch and that RugbyRefereeWatch is open and no game is ongoing, tab icon to try again.</string>
+    <string name="status_SEARCH_TIMEOUT">Did not find the watch. To connect, make sure you have a
+        bluetooth connection with the watch, keep the app on the watch open, without starting a game.
+        Then tab the icon to try again.</string>
     <string name="status_CONNECTED">Connected</string>
     <string name="no_devices">No devices</string>
     <string name="try_connect_to">Trying to connect to:</string>
-    <string name="look_new_device">Looking for a new device</string>
+    <string name="look_new_device">Looking for a new device. This might take a few minutes.
+        To connect, keep the app on the watch open, without starting a game.</string>
     <string name="send_request">Send request:</string>
     <string name="received_response">Received response:</string>
     <string name="closing_connection">Closing connection</string>

@@ -53,15 +53,13 @@ public class CommsBT{
         }
         IntentFilter btIntentFilter = new IntentFilter();
         btIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        btIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        btIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
         main.registerReceiver(btStateReceiver, btIntentFilter);
     }
 
     private final BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
         public void onReceive(Context context, Intent intent){
-            Log.d(Main.RRW_LOG_TAG, "btStateReceiver: " + intent);
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: " + intent);
             if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
@@ -73,7 +71,7 @@ public class CommsBT{
             }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(bluetoothDevice == null || status != Status.SEARCHING) return;
-                Log.d(Main.RRW_LOG_TAG, "ACTION_UUID: " + bluetoothDevice.getName());
+                Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
                 searchCount--;
                 isDeviceRRW(bluetoothDevice);
                 devices_fetch_pending.remove(bluetoothDevice.getAddress());
@@ -130,7 +128,7 @@ public class CommsBT{
     }
     private void isDeviceRRW(BluetoothDevice bluetoothDevice){
         if(rrw_device_addresses.contains(bluetoothDevice.getAddress())){
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.isDeviceRRW in rrw_device_addresses: " + bluetoothDevice.getName());
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.isDeviceRRW device is in rrw_device_addresses: " + bluetoothDevice.getName());
             try_rrwDevice(bluetoothDevice);
             return;
         }
@@ -138,7 +136,7 @@ public class CommsBT{
         if(uuids == null) return;
         for(ParcelUuid uuid : uuids){
             if(uuid.toString().equals(RRW_UUID)){
-                Log.d(Main.RRW_LOG_TAG, "CommsBT.isDeviceRRW has RRW_UUID: " + bluetoothDevice.getName());
+                Log.d(Main.RRW_LOG_TAG, "CommsBT.isDeviceRRW device has RRW_UUID: " + bluetoothDevice.getName());
                 rrw_device_addresses.add(bluetoothDevice.getAddress());
                 Main.sharedPreferences_editor.putStringSet("rrw_device_addresses", rrw_device_addresses);
                 Main.sharedPreferences_editor.apply();
@@ -163,7 +161,7 @@ public class CommsBT{
             ){
                 continue;
             }
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.search_allDevices Query " + bondedDevice.getName());
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.search_allDevices fetchUuidsWithSdp for: " + bondedDevice.getName());
             devices_fetch_pending.add(bondedDevice.getAddress());
             bondedDevice.fetchUuidsWithSdp();
         }

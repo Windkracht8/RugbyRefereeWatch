@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -102,6 +103,19 @@ public class Main extends AppCompatActivity{
 
         handleOrientation();
         handleIntent();
+
+        try{
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.versionCode);
+            Log.d(Main.RRW_LOG_TAG, version);
+            if(android.os.Build.VERSION.SDK_INT >= 28){
+                version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
+            }
+            Log.d(Main.RRW_LOG_TAG, version);
+            gotStatusUi(version);
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
+        }
 
         commsBT = new CommsBT(this);
         initBT();
@@ -321,6 +335,7 @@ public class Main extends AppCompatActivity{
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
+                prevStatuses.clear();
                 gotStatus(getString(R.string.status_SEARCHING));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
