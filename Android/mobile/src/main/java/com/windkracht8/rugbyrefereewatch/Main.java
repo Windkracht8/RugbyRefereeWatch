@@ -159,7 +159,7 @@ public class Main extends AppCompatActivity{
                 if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     initBT();
                 }else{
-                    updateStatus("FATAL");
+                    updateStatus(CommsBT.Status.FATAL);
                     gotError(getString(R.string.fail_BT_denied));
                 }
                 return;
@@ -279,7 +279,7 @@ public class Main extends AppCompatActivity{
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
     public void iconClick(){
-        if(commsBT == null || commsBT.status.equals("SEARCH_TIMEOUT")){
+        if(commsBT == null || commsBT.status == CommsBT.Status.SEARCH_TIMEOUT){
             initBT();
         }
     }
@@ -298,23 +298,25 @@ public class Main extends AppCompatActivity{
         commsBT.sendRequest("prepare", requestData);
     }
     private boolean cantSendRequest(){
-        if(commsBT != null && commsBT.status.equals("CONNECTED")){
+        if(commsBT != null && commsBT.status == CommsBT.Status.CONNECTED){
             return false;
         }
         gotError(getString(R.string.first_connect));
         return true;
     }
 
-    public void updateStatus(final String status){
+    public void updateStatus(final CommsBT.Status status){
         runOnUiThread(() -> updateStatusUi(status));
     }
-    private void updateStatusUi(final String status){
+    private void updateStatusUi(final CommsBT.Status status){
         switch(status){
-            case "FATAL":
+            case FATAL:
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
+                findViewById(R.id.bSync).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 return;
-            case "SEARCHING":
+            case SEARCHING:
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
@@ -322,14 +324,14 @@ public class Main extends AppCompatActivity{
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
-            case "SEARCH_TIMEOUT":
+            case SEARCH_TIMEOUT:
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
                 gotError(getString(R.string.status_SEARCH_TIMEOUT));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
-            case "CONNECTED":
+            case CONNECTED:
                 icon.setBackgroundResource(R.drawable.icon_watch);
                 icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
                 gotStatus(getString(R.string.status_CONNECTED));
@@ -337,12 +339,6 @@ public class Main extends AppCompatActivity{
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 sendSyncRequest();
                 break;
-            default:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
-                gotError(getString(R.string.status_ERROR));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
         }
     }
     private void sendSyncRequest(){

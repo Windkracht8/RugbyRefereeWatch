@@ -35,7 +35,10 @@ public class CommsBT{
     final Main main;
     final Handler handler;
 
-    public String status = "INIT";
+    enum Status {
+        INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL
+    }
+    public Status status = Status.INIT;
     private boolean closeConnection = false;
     private int searchCount = 0;
     private final JSONArray requestQueue = new JSONArray();
@@ -72,6 +75,7 @@ public class CommsBT{
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(bluetoothDevice == null) return;
                 Log.d(Main.RRW_LOG_TAG, "ACTION_UUID: " + bluetoothDevice.getName());
+                searchCount++;
                 checkDeviceUuids(bluetoothDevice);
                 devices_fetch_pending.remove(bluetoothDevice.getAddress());
             }
@@ -104,9 +108,8 @@ public class CommsBT{
 
     void search(){
         if(closeConnection) return;
-        searchCount++;
         Log.d(Main.RRW_LOG_TAG, "CommsBT.search " + searchCount);
-        if(!status.equals("SEARCHING")) updateStatus("SEARCHING");
+        updateStatus(Status.SEARCHING);
         Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
 
         if(bondedDevices == null){
@@ -128,9 +131,9 @@ public class CommsBT{
             bondedDevice.fetchUuidsWithSdp();
         }
 
-        if(searchCount > 5){
+        if(searchCount > 5 * bondedDevices.size()){
+            updateStatus(Status.SEARCH_TIMEOUT);
             stopComms();
-            updateStatus("SEARCH_TIMEOUT");
             return;
         }
         connect_failed_addresses.clear();
@@ -171,12 +174,12 @@ public class CommsBT{
     }
 
     private void gotError(String message){
-        updateStatus("FATAL");
+        updateStatus(Status.FATAL);
         main.gotError(message);
     }
-    private void updateStatus(String status){
+    private void updateStatus(Status status){
+        if(this.status != status) main.updateStatus(status);
         this.status = status;
-        main.updateStatus(status);
     }
 
     private class CommsBTConnect extends Thread{
@@ -224,7 +227,7 @@ public class CommsBT{
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getOutputStream Exception: " + e.getMessage());
             }
-            updateStatus("CONNECTED");
+            updateStatus(Status.CONNECTED);
         }
 
         public void run(){

@@ -160,8 +160,7 @@
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
     <string name="help_bt_title">New stuff</string>
     <string name="help_bt">Connection to the RugbyRefereeWatch app on your phone now works via
-        Bluetooth, this works with any Android phone. You do need to approve permission.
-        If you don’t like it you can disable it in the settings.</string>
+        Bluetooth, this works with any Android phone. You do need to approve permission.</string>
     <string name="help_log_title">History</string>
     <string name="help_log">Noticed this icon? It opens a list of all of your completed
         matches.</string>
