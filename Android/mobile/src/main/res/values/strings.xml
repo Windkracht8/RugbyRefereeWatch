@@ -159,7 +159,6 @@
     <string name="status_SEARCHING">Looking for watch</string>
     <string name="status_SEARCH_TIMEOUT">Did not find watch, make sure you have a bluetooth connection with the watch and that RugbyRefereeWatch is open and no game is ongoing, tab icon to try again</string>
     <string name="status_CONNECTED">Connected</string>
-    <string name="status_ERROR">error</string>
 
     <!-- fail -->
     <string name="fail_sync">Failed to synchronise with watch</string>
@@ -191,7 +190,7 @@
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="first_connect">First connect with watch</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
-    <string name="fail_BT_denied">No Bluetooth permission</string>
+    <string name="fail_BT_denied">No Bluetooth permission. Close and reopen app, allow nearby devices.</string>
     <string name="fail_BT_off">Bluetooth turned off</string>
     <string name="fail_BT">Bluetooth connection failed</string>
 

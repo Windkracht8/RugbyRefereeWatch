@@ -139,7 +139,6 @@
     <string name="status_SEARCHING">Horloge zoeken</string>
     <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden, tab op icoon om nog een keer te proberen</string>
     <string name="status_CONNECTED">Verbonden</string>
-    <string name="status_ERROR">error</string>
 
     <!-- fail -->
     <string name="fail_sync">Probleem met het synchroniseren met het horloge</string>
@@ -171,7 +170,7 @@
     <string name="update_watch_app">Update de app op het horloge</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
-    <string name="fail_BT_denied">Geen Bluetooth toegang</string>
+    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de buurt toestaan.</string>
     <string name="fail_BT_off">Bluetooth staat uit</string>
     <string name="fail_BT">Bluetooth verbinding mislukt</string>
 </resources>
