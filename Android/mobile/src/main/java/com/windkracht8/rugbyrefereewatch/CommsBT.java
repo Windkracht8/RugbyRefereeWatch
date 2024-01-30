@@ -131,7 +131,7 @@ public class CommsBT{
             bondedDevice.fetchUuidsWithSdp();
         }
 
-        if(searchCount > 5 * bondedDevices.size()){
+        if(searchCount > 4 * bondedDevices.size()){
             updateStatus(Status.SEARCH_TIMEOUT);
             stopComms();
             return;
@@ -250,6 +250,8 @@ public class CommsBT{
         }
 
         private void close(){
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.close");
+            main.gotStatus("Closing connection");
             try{
                 bluetoothSocket.close();
             }catch(Exception e){
