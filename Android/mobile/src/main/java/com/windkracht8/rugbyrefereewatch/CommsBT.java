@@ -37,7 +37,8 @@ public class CommsBT{
     enum Status{INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL}
     public Status status = Status.INIT;
     private boolean closeConnection = false;
-    private int searchCount = 20;
+    private int searchCount = 0;
+    private int failedConnectCount = 0;
     private final JSONArray requestQueue = new JSONArray();
     public Set<String> rrw_device_addresses = new HashSet<>();
     public final ArrayList<String> devices_fetch_pending = new ArrayList<>();
@@ -101,7 +102,7 @@ public class CommsBT{
         }
     }
     private void search(){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.search " + closeConnection);
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.search closeConnection: " + closeConnection);
         if(closeConnection) return;
         updateStatus(Status.SEARCHING);
         Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
@@ -118,12 +119,18 @@ public class CommsBT{
                     break;
                 }
             }
-            if(!stillBonded) rrw_device_addresses.remove(rrw_device_address);
+            if(!stillBonded){
+                rrw_device_addresses.remove(rrw_device_address);
+                Main.sharedPreferences_editor.putStringSet("rrw_device_addresses", rrw_device_addresses);
+                Main.sharedPreferences_editor.apply();
+            }
         }
-        searchCount = 4 * (bondedDevices.size()-1);
         for(BluetoothDevice bondedDevice : bondedDevices){
             isDeviceRRW(bondedDevice);
         }
+        failedConnectCount += rrw_device_addresses.size();
+
+        searchCount = 4 * (bondedDevices.size() - rrw_device_addresses.size());
         search_allDevices(bondedDevices);
     }
     private void isDeviceRRW(BluetoothDevice bluetoothDevice){
@@ -152,8 +159,17 @@ public class CommsBT{
         commsBTConnect.start();
     }
     private void search_allDevices(Set<BluetoothDevice> bondedDevices){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.search_allDevices " + status + " " + searchCount);
+        Log.d(Main.RRW_LOG_TAG, String.format("CommsBT.search_allDevices status: %s searchCount: %s connectCount: %s", status, searchCount, failedConnectCount));
         if(status != Status.SEARCHING) return;
+        if(searchCount <= 0){
+            updateStatus(Status.SEARCH_TIMEOUT);
+            stopComms();
+            return;
+        }
+        if(failedConnectCount > 0){
+            handler.postDelayed(() -> search_allDevices(bondedDevices), 1000);
+            return;
+        }
         main.gotStatus(main.getString(R.string.look_new_device));
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(devices_fetch_pending.contains(bondedDevice.getAddress()) ||
@@ -164,11 +180,6 @@ public class CommsBT{
             Log.d(Main.RRW_LOG_TAG, "CommsBT.search_allDevices fetchUuidsWithSdp for: " + bondedDevice.getName());
             devices_fetch_pending.add(bondedDevice.getAddress());
             bondedDevice.fetchUuidsWithSdp();
-        }
-        if(searchCount <= 0){
-            updateStatus(Status.SEARCH_TIMEOUT);
-            stopComms();
-            return;
         }
         handler.postDelayed(() -> search_allDevices(bondedDevices), 1000);
     }
@@ -216,6 +227,7 @@ public class CommsBT{
                 }catch(Exception e2){
                     Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run close failed: " + e2.getMessage());
                 }
+                failedConnectCount--;
                 handler.postDelayed(() -> try_rrwDevice(device), 500);
                 return;
             }
