@@ -298,6 +298,10 @@ public class Main extends AppCompatActivity{
         if(commsBT == null || commsBT.status == CommsBT.Status.SEARCH_TIMEOUT){
             initBT();
         }
+        if(commsBT != null && commsBT.status == CommsBT.Status.SEARCHING){
+            commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
+            commsBT.stopComms();
+        }
     }
     public void bSyncClick(){
         setButtonProcessing(R.id.bSync);

@@ -125,7 +125,7 @@ public class CommsBT{
         }
         failedConnectCount += rrw_device_addresses.size();
 
-        searchCount = 4 * (bondedDevices.size() - rrw_device_addresses.size());
+        searchCount = 10 * (bondedDevices.size() - rrw_device_addresses.size());
         search_allDevices(bondedDevices);
     }
     private void isDeviceRRW(BluetoothDevice bluetoothDevice){
@@ -193,7 +193,7 @@ public class CommsBT{
         updateStatus(Status.FATAL);
         main.gotError(message);
     }
-    private void updateStatus(Status status){
+    public void updateStatus(Status status){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.updateStatus " + this.status + " > " + status);
         if(this.status != status) main.updateStatus(status);
         this.status = status;
