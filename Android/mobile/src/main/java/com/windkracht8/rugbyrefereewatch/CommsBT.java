@@ -55,30 +55,30 @@ public class CommsBT{
         IntentFilter btIntentFilter = new IntentFilter();
         btIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
-        main.registerReceiver(btStateReceiver, btIntentFilter);
-    }
-
-    private final BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
-        public void onReceive(Context context, Intent intent){
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: " + intent);
-            if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
-                int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-                if(btState == BluetoothAdapter.STATE_TURNING_OFF){
-                    gotError(main.getString(R.string.fail_BT_off));
-                    stopComms();
-                }else if(btState == BluetoothAdapter.STATE_ON){
-                    startComms();
+        BroadcastReceiver btBroadcastReceiver = new BroadcastReceiver(){
+            public void onReceive(Context context, Intent intent){
+                Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: " + intent);
+                if(closeConnection) return;
+                if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
+                    int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                    if(btState == BluetoothAdapter.STATE_TURNING_OFF){
+                        gotError(main.getString(R.string.fail_BT_off));
+                        stopComms();
+                    }else if(btState == BluetoothAdapter.STATE_ON){
+                        startComms();
+                    }
+                }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
+                    BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if(bluetoothDevice == null || status != Status.SEARCHING) return;
+                    Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
+                    searchCount--;
+                    isDeviceRRW(bluetoothDevice);
+                    devices_fetch_pending.remove(bluetoothDevice.getAddress());
                 }
-            }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
-                BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(bluetoothDevice == null || status != Status.SEARCHING) return;
-                Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
-                searchCount--;
-                isDeviceRRW(bluetoothDevice);
-                devices_fetch_pending.remove(bluetoothDevice.getAddress());
             }
-        }
-    };
+        };
+        main.registerReceiver(btBroadcastReceiver, btIntentFilter);
+    }
 
     public void startComms(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.startComms");
@@ -95,11 +95,6 @@ public class CommsBT{
         closeConnection = true;
         handler.removeCallbacksAndMessages(null);
         devices_fetch_pending.clear();
-        try{
-            main.unregisterReceiver(btStateReceiver);
-        }catch(Exception e){
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms unregisterReceiver: " + e.getMessage());
-        }
     }
     private void search(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.search closeConnection: " + closeConnection);
@@ -159,7 +154,7 @@ public class CommsBT{
         commsBTConnect.start();
     }
     private void search_allDevices(Set<BluetoothDevice> bondedDevices){
-        Log.d(Main.RRW_LOG_TAG, String.format("CommsBT.search_allDevices status: %s searchCount: %s connectCount: %s", status, searchCount, failedConnectCount));
+        Log.d(Main.RRW_LOG_TAG, String.format("CommsBT.search_allDevices status: %s searchCount: %s failedConnectCount: %s", status, searchCount, failedConnectCount));
         if(status != Status.SEARCHING) return;
         if(searchCount <= 0){
             updateStatus(Status.SEARCH_TIMEOUT);
