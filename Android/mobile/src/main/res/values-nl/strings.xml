@@ -143,7 +143,7 @@
     <string name="status_CONNECTED">Verbonden</string>
     <string name="no_devices">Geen apparaten.</string>
     <string name="try_connect_to">Verbinden met:</string>
-    <string name="look_new_device">Zoekt naar nieuw apparaat. Dit kan een paar minuten duren.
+    <string name="search_new_device">Zoekt naar nieuw apparaat. Dit kan een paar minuten duren.
         Om te verbinden, hou de app op het horloge open, zonder een wedstrijd te starten.</string>
     <string name="send_request">Verstuur verzoek:</string>
     <string name="received_response">Antwoord ontvangen:</string>

@@ -37,11 +37,12 @@ public class CommsBT{
     enum Status{INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL}
     public Status status = Status.INIT;
     private boolean closeConnection = false;
-    private int searchCount = 0;
-    private int failedConnectCount = 0;
+    private int remainingSearchCount = 0;
+    private int remainingFailedConnectCount = 0;
     private final JSONArray requestQueue = new JSONArray();
     public Set<String> rrw_device_addresses = new HashSet<>();
     public final ArrayList<String> devices_fetch_pending = new ArrayList<>();
+    private Set<BluetoothDevice> bondedDevices;
 
     public CommsBT(Main main){
         this.main = main;
@@ -71,7 +72,7 @@ public class CommsBT{
                     BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if(bluetoothDevice == null || status != Status.SEARCHING) return;
                     Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
-                    searchCount--;
+                    remainingSearchCount--;
                     isDeviceRRW(bluetoothDevice);
                     devices_fetch_pending.remove(bluetoothDevice.getAddress());
                 }
@@ -93,14 +94,13 @@ public class CommsBT{
     public void stopComms(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms");
         closeConnection = true;
-        handler.removeCallbacksAndMessages(null);
         devices_fetch_pending.clear();
     }
     private void search(){
-        Log.d(Main.RRW_LOG_TAG, "CommsBT.search closeConnection: " + closeConnection);
         if(closeConnection) return;
+        Log.d(Main.RRW_LOG_TAG, "CommsBT.search");
         updateStatus(Status.SEARCHING);
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+        bondedDevices = bluetoothAdapter.getBondedDevices();
         if(bondedDevices == null){
             main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT));
             gotError(main.getString(R.string.no_devices));
@@ -123,10 +123,10 @@ public class CommsBT{
         for(BluetoothDevice bondedDevice : bondedDevices){
             isDeviceRRW(bondedDevice);
         }
-        failedConnectCount += rrw_device_addresses.size();
+        remainingFailedConnectCount += rrw_device_addresses.size();
 
-        searchCount = 10 * (bondedDevices.size() - rrw_device_addresses.size());
-        search_allDevices(bondedDevices);
+        remainingSearchCount = 10 * (bondedDevices.size() - rrw_device_addresses.size());
+        search_newDevices();
     }
     private void isDeviceRRW(BluetoothDevice bluetoothDevice){
         if(rrw_device_addresses.contains(bluetoothDevice.getAddress())){
@@ -150,33 +150,32 @@ public class CommsBT{
     private void try_rrwDevice(BluetoothDevice rrw_device){
         if(status != Status.SEARCHING) return;
         main.gotStatus(String.format("%s %s", main.getString(R.string.try_connect_to), rrw_device.getName()));
-        CommsBTConnect commsBTConnect = new CommsBT.CommsBTConnect(rrw_device);
-        commsBTConnect.start();
+        (new CommsBT.CommsBTConnect(rrw_device)).start();
     }
-    private void search_allDevices(Set<BluetoothDevice> bondedDevices){
-        Log.d(Main.RRW_LOG_TAG, String.format("CommsBT.search_allDevices status: %s searchCount: %s failedConnectCount: %s", status, searchCount, failedConnectCount));
+    private void search_newDevices(){
+        Log.d(Main.RRW_LOG_TAG, String.format("CommsBT.search_newDevices status: %s remainingSearchCount: %s remainingFailedConnectCount: %s", status, remainingSearchCount, remainingFailedConnectCount));
         if(status != Status.SEARCHING) return;
-        if(searchCount <= 0){
+        if(remainingSearchCount <= 0){
             updateStatus(Status.SEARCH_TIMEOUT);
             stopComms();
             return;
         }
-        if(failedConnectCount > 0){
-            handler.postDelayed(() -> search_allDevices(bondedDevices), 1000);
+        if(remainingFailedConnectCount > 0){
+            handler.postDelayed(this::search_newDevices, 1000);
             return;
         }
-        main.gotStatus(main.getString(R.string.look_new_device));
+        main.gotStatus(main.getString(R.string.search_new_device));
         for(BluetoothDevice bondedDevice : bondedDevices){
             if(devices_fetch_pending.contains(bondedDevice.getAddress()) ||
                 rrw_device_addresses.contains(bondedDevice.getAddress())
             ){
                 continue;
             }
-            Log.d(Main.RRW_LOG_TAG, "CommsBT.search_allDevices fetchUuidsWithSdp for: " + bondedDevice.getName());
+            Log.d(Main.RRW_LOG_TAG, "CommsBT.search_newDevices fetchUuidsWithSdp for: " + bondedDevice.getName());
             devices_fetch_pending.add(bondedDevice.getAddress());
             bondedDevice.fetchUuidsWithSdp();
         }
-        handler.postDelayed(() -> search_allDevices(bondedDevices), 1000);
+        handler.postDelayed(this::search_newDevices, 1000);
     }
     public void sendRequest(String requestType, JSONObject requestData){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.sendRequest: " + requestType);
@@ -222,16 +221,13 @@ public class CommsBT{
                 }catch(Exception e2){
                     Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run close failed: " + e2.getMessage());
                 }
-                failedConnectCount--;
+                remainingFailedConnectCount--;
                 handler.postDelayed(() -> try_rrwDevice(device), 500);
                 return;
             }
-            CommsBTConnected commsBTConnected = new CommsBTConnected();
-            commsBTConnected.start();
+            (new CommsBTConnected()).start();
         }
-
     }
-
     private class CommsBTConnected extends Thread{
         private InputStream inputStream;
         private OutputStream outputStream;
@@ -298,11 +294,9 @@ public class CommsBT{
                 main.gotStatus(String.format("%s %s", main.getString(R.string.send_request), request.getString("requestType")));
                 outputStream.write(request.toString().getBytes());
             }catch(Exception e){
-                if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
-                    return false;
-                }
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextRequest Exception: " + e.getMessage());
                 main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
+                return false;
             }
             return true;
         }
