@@ -250,6 +250,8 @@ public class Main extends Activity{
             executorService.submit(() -> FileStore.readCustomMatchTypes(this));
             executorService.submit(() -> FileStore.readSettings(this));
             executorService.submit(() -> FileStore.cleanMatches(this));
+        }else{
+            updateScore();
         }
 
         updateBattery();
