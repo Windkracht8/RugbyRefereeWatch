@@ -14,10 +14,12 @@ import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.UUID;
 
 //Thread: All of FileStore runs on a background thread
@@ -45,12 +47,12 @@ public class CommsBT{
             if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
                 int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
                 if(btState == BluetoothAdapter.STATE_TURNING_OFF){
-                    Log.d(Main.RRW_LOG_TAG, "btStateReceiver: stop");
+                    Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: stop");
                     stopComms();
                 }else if(btState == BluetoothAdapter.STATE_ON &&
-                        (Main.timer_status.equals("conf") || Main.timer_status.equals("finished"))
+                        (Main.timer_status == Main.TimerStatus.CONF || Main.timer_status == Main.TimerStatus.FINISHED)
                 ){
-                    Log.d(Main.RRW_LOG_TAG, "btStateReceiver: start");
+                    Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: start");
                     startComms();
                 }
             }
@@ -104,7 +106,6 @@ public class CommsBT{
                 main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.listening_failed), e.getMessage()));
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
             }
-            Log.d(Main.RRW_LOG_TAG, "CommsBTConnect done");
         }
 
         public void run(){
@@ -192,26 +193,50 @@ public class CommsBT{
 
         private void read(){
             try{
-                int available = inputStream.available();
-                if(available == 0) return;
-                byte[] buffer = new byte[available];
-                int numBytes = inputStream.read(buffer);
-                if(numBytes > 3){
-                    String request = new String(buffer);
-                    JSONObject requestMessage = new JSONObject(request);
-                    main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.received_request), requestMessage.getString("requestType")));
-                    gotRequest(requestMessage);
+                if(inputStream.available() < 5) return;
+                long read_start = (new Date()).getTime();
+                String request = "";
+
+                while(inputStream.available() > 0){
+                    byte[] buffer = new byte[inputStream.available()];
+                    int numBytes = inputStream.read(buffer);
+                    if(numBytes < 0){
+                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read read error, request: " + request);
+                        main.commsBTLog.addToLog(main.getString(R.string.fail_request));
+                        return;
+                    }
+                    String temp = new String(buffer);
+                    request += temp;
+                    if(isValidJSON(request)){
+                        gotRequest(request);
+                        return;
+                    }
+                    if((new Date()).getTime() - read_start > 3000){
+                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read started to read, no complete message after 3 seconds: " + request);
+                        main.commsBTLog.addToLog(main.getString(R.string.fail_request));
+                        return;
+                    }
+                    sleep100();
                 }
             }catch(Exception e){
                 main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.read_failed), e.getMessage()));
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
             }
         }
-
-        private void gotRequest(final JSONObject requestMessage){
-            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + requestMessage.toString());
+        private void sleep100(){
             try{
+                Thread.sleep(100);
+            }catch(Exception e){
+                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sleep100 exception: " + e.getMessage());
+            }
+        }
+
+        private void gotRequest(String request){
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + request);
+            try{
+                JSONObject requestMessage = new JSONObject(request);
                 String requestType = requestMessage.getString("requestType");
+                main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.received_request), requestType));
                 switch(requestType){
                     case "sync":
                         onReceiveSync(requestMessage.getString("requestData"));
@@ -282,5 +307,13 @@ public class CommsBT{
             main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendResponse_failed), e.getMessage()));
             Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
         }
+    }
+    private static boolean isValidJSON(String json){
+        try{
+            new JSONObject(json);
+        }catch(JSONException e){
+            return false;
+        }
+        return true;
     }
 }

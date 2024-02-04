@@ -6,7 +6,7 @@ android {
         minSdk 26
         targetSdk 34
         compileSdk 34
-        versionCode 319
+        versionCode 321
         versionName "3.4"
     }
     buildTypes {

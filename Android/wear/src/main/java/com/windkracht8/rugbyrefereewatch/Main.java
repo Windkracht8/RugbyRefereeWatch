@@ -92,7 +92,8 @@ public class Main extends Activity{
     public static int vh40 = 0;
 
     //Timer
-    public static String timer_status = "conf";
+    enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
+    public static TimerStatus timer_status = TimerStatus.CONF;
     public static long timer_timer = 0;
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
@@ -107,7 +108,7 @@ public class Main extends Activity{
     public static boolean record_pens = false;
     public final static int help_version = 4;
 
-    public static MatchData match;
+    public static MatchData match = new MatchData();
     private Handler handler_main;
     public ExecutorService executorService;
     static Vibrator vibrator;
@@ -243,20 +244,28 @@ public class Main extends Activity{
         bPenHome.setHeight(vh20);
         bPenAway.setHeight(vh20);
 
-        match = new MatchData();
-        hasBTPermission = checkHasBTPermission();
-        executorService.submit(() -> FileStore.readCustomMatchTypes(this));
-        executorService.submit(() -> FileStore.readSettings(this));
-        executorService.submit(() -> FileStore.cleanMatches(this));
+        if(timer_status == TimerStatus.CONF){
+            hasBTPermission = checkHasBTPermission();
+            requestPermissions();
+            executorService.submit(() -> FileStore.readCustomMatchTypes(this));
+            executorService.submit(() -> FileStore.readSettings(this));
+            executorService.submit(() -> FileStore.cleanMatches(this));
+        }
 
         updateBattery();
         update();
         updateButtons();
         updateAfterConfig();
         initBT();
-        requestPermissions();
         showSplash = false;
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        commsBT.stopComms();
+        stopOngoingNotification();
+    }
+
     public void requestPermissions(){
         if(Build.VERSION.SDK_INT >= 33){
             if(!hasPermission(android.Manifest.permission.POST_NOTIFICATIONS) ||
@@ -342,7 +351,7 @@ public class Main extends Activity{
         }else if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
         }else{
-            if(timer_status.equals("conf") || timer_status.equals("finished")){
+            if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 System.exit(0);
             }else{
                 correct.show(this, match);
@@ -451,7 +460,7 @@ public class Main extends Activity{
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
     public void initBT(){
-        if(!timer_status.equals("conf") && !timer_status.equals("finished")) return;
+        if(timer_status != TimerStatus.CONF && timer_status != TimerStatus.FINISHED) return;
         if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
             Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
             commsBTLog.addToLog(getString(R.string.no_bt_permission));
@@ -462,9 +471,9 @@ public class Main extends Activity{
     }
 
     public void timerClick(){
-        if(timer_status.equals("running")){
+        if(timer_status == TimerStatus.RUNNING){
             singleBeep();
-            timer_status = "time_off";
+            timer_status = TimerStatus.TIME_OFF;
             timer_start_time_off = getCurrentTimestamp();
             match.logEvent("TIME OFF", null, 0, 0);
             updateButtons();
@@ -472,19 +481,19 @@ public class Main extends Activity{
         }
     }
     public void timeOffBuzz(){
-        if(timer_status.equals("time_off")){
+        if(timer_status == TimerStatus.TIME_OFF){
             beep();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
     public void bOverTimerClick(){
         switch(timer_status){
-            case "conf":
+            case CONF:
                 match.match_id = getCurrentTimestamp();
                 executorService.submit(commsBT::stopComms);
-            case "ready":
+            case READY:
                 singleBeep();
-                timer_status = "running";
+                timer_status = TimerStatus.RUNNING;
                 timer_start = getCurrentTimestamp();
                 String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
                 timer_period++;
@@ -492,19 +501,19 @@ public class Main extends Activity{
                 updateScore();
                 startOngoingNotification();
                 break;
-            case "time_off":
+            case TIME_OFF:
                 //resume running
                 singleBeep();
-                timer_status = "running";
+                timer_status = TimerStatus.RUNNING;
                 timer_start += (getCurrentTimestamp() - timer_start_time_off);
                 match.logEvent("RESUME", null, 0, 0);
                 break;
-            case "rest":
+            case REST:
                 //get ready for next period
-                timer_status = "ready";
+                timer_status = TimerStatus.READY;
                 timer_type_period = timer_type;
                 break;
-            case "finished":
+            case FINISHED:
                 report.show(this, match);
                 break;
             default://ignore
@@ -514,14 +523,14 @@ public class Main extends Activity{
     }
     public void bBottomClick(){
         switch(timer_status){
-            case "time_off":
+            case TIME_OFF:
                 //How did someone get here with no events in the match?
                 if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
                     match.events.remove(match.events.size()-1);
                 }
                 match.logEvent("END", null, 0, 0);
 
-                timer_status = "rest";
+                timer_status = TimerStatus.REST;
                 timer_start = getCurrentTimestamp();
                 timer_period_ended = false;
                 timer_type_period = 0;
@@ -545,8 +554,8 @@ public class Main extends Activity{
                     }
                 }
                 break;
-            case "rest":
-                timer_status = "finished";
+            case REST:
+                timer_status = TimerStatus.FINISHED;
                 timer_period_time = match.period_time;
                 timer_type_period = timer_type;
                 updateScore();
@@ -555,8 +564,8 @@ public class Main extends Activity{
                 initBT();
                 stopOngoingNotification();
                 break;
-            case "finished":
-                timer_status = "conf";
+            case FINISHED:
+                timer_status = TimerStatus.CONF;
                 timer_timer = 0;
                 timer_start = 0;
                 timer_start_time_off = 0;
@@ -576,7 +585,7 @@ public class Main extends Activity{
         String bOverTimerText;
         String bBottomText;
         switch(timer_status){
-            case "conf":
+            case CONF:
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setVisibility(View.GONE);
                 bStart.setVisibility(View.VISIBLE);
@@ -586,7 +595,7 @@ public class Main extends Activity{
                 extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
-            case "ready":
+            case READY:
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimerText = getString(R.string.start) + " ";
                 if(match.period_count == 2 && timer_period == 1) {
@@ -607,7 +616,7 @@ public class Main extends Activity{
                 bConf.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
-            case "time_off":
+            case TIME_OFF:
                 bConfWatch.setVisibility(View.VISIBLE);
                 bOverTimer.setText(R.string.resume);
                 bOverTimer.setVisibility(View.VISIBLE);
@@ -634,7 +643,7 @@ public class Main extends Activity{
                 extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
-            case "rest":
+            case REST:
                 bConfWatch.setVisibility(View.VISIBLE);
                 if(match.period_count == 2 && timer_period == 1){
                     bOverTimerText = getString(R.string._2nd_half);
@@ -652,7 +661,7 @@ public class Main extends Activity{
                 extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
-            case "finished":
+            case FINISHED:
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimer.setText(R.string.report);
                 bOverTimer.setVisibility(View.VISIBLE);
@@ -679,9 +688,9 @@ public class Main extends Activity{
     private void update(){
         long milli_secs = updateTime();
         switch(timer_status){
-            case "running":
+            case RUNNING:
                 updateSinbins();
-            case "rest":
+            case REST:
                 updateTimer();
                 break;
         }
@@ -770,10 +779,10 @@ public class Main extends Activity{
     }
     public void updateTimer(){
         long milli_secs = 0;
-        if(timer_status.equals("running") || timer_status.equals("rest")){
+        if(timer_status == TimerStatus.RUNNING || timer_status == TimerStatus.REST){
             milli_secs = getCurrentTimestamp() - timer_start;
         }
-        if(timer_status.equals("time_off")){
+        if(timer_status == TimerStatus.TIME_OFF){
             milli_secs = timer_start_time_off - timer_start;
         }
         timer_timer = milli_secs;
@@ -789,7 +798,7 @@ public class Main extends Activity{
         temp += prettyTimer(milli_secs);
         tTimer.setText(temp);
 
-        if(!timer_period_ended && timer_status.equals("running") && timer_timer > (long)timer_period_time * 60000){
+        if(!timer_period_ended && timer_status == TimerStatus.RUNNING && timer_timer > (long)timer_period_time * 60000){
             timer_period_ended = true;
             tTimer.setTextColor(getResources().getColor(R.color.red, getTheme()));
             beep();
@@ -857,19 +866,19 @@ public class Main extends Activity{
         handler_main.postDelayed(this::updateBattery, 10000);
     }
     public void bPenHomeClick(){
-        if(timer_status.equals("conf")){return;}
+        if(timer_status == TimerStatus.CONF){return;}
         match.home.pens++;
         updateScore();
         match.logEvent("PENALTY", match.home.id, 0, 0);
     }
     public void bPenAwayClick(){
-        if(timer_status.equals("conf")){return;}
+        if(timer_status == TimerStatus.CONF){return;}
         match.away.pens++;
         updateScore();
         match.logEvent("PENALTY", match.away.id, 0, 0);
     }
     public void homeClick(){
-        if(timer_status.equals("conf")){
+        if(timer_status == TimerStatus.CONF){
             if(match.home.kickoff){
                 match.home.kickoff = false;
                 score_home.setText("0");
@@ -886,7 +895,7 @@ public class Main extends Activity{
         }
     }
     public void awayClick(){
-        if(timer_status.equals("conf")){
+        if(timer_status == TimerStatus.CONF){
             if(match.away.kickoff){
                 match.away.kickoff = false;
                 score_away.setText("0");
@@ -1033,7 +1042,7 @@ public class Main extends Activity{
     }
 
     public boolean incomingSettings(JSONObject settings){//Thread: Background thread
-        if(!timer_status.equals("conf")) return false;
+        if(timer_status != TimerStatus.CONF) return false;
         try{
             match.home.team = settings.getString("home_name");
             match.home.color = settings.getString("home_color");
@@ -1067,7 +1076,7 @@ public class Main extends Activity{
     }
 
     public void readSettings(JSONObject jsonSettings){//Thread: Background thread
-        if(!timer_status.equals("conf")) return;
+        if(timer_status != TimerStatus.CONF) return;
         try{
             match.home.color = jsonSettings.getString("home_color");
             match.away.color = jsonSettings.getString("away_color");

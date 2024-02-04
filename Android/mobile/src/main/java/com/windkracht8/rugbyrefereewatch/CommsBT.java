@@ -28,61 +28,63 @@ import java.util.UUID;
 
 @SuppressLint("MissingPermission") //Permissions are handled in initBT
 public class CommsBT{
-    final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
-    final BluetoothAdapter bluetoothAdapter;
-    BluetoothSocket bluetoothSocket;
-    final Main main;
-    final Handler handler;
+    private final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothSocket bluetoothSocket;
+    private final Main main;
+    private final Handler handler;
 
     enum Status{INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL}
-    public Status status = Status.INIT;
+    Status status = Status.INIT;
     private boolean closeConnection = false;
     private int remainingSearchCount = 0;
     private int remainingFailedConnectCount = 0;
-    private final JSONArray requestQueue = new JSONArray();
-    public Set<String> rrw_device_addresses = new HashSet<>();
-    public final ArrayList<String> devices_fetch_pending = new ArrayList<>();
+    private Set<String> rrw_device_addresses = new HashSet<>();
+    private final ArrayList<String> devices_fetch_pending = new ArrayList<>();
     private Set<BluetoothDevice> bondedDevices;
+    private final JSONArray requestQueue = new JSONArray();
 
     public CommsBT(Main main){
         this.main = main;
         handler = new Handler(Looper.getMainLooper());
-        BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        if(bluetoothAdapter == null){
-            gotError(main.getString(R.string.fail_BT_off));
-            return;
-        }
-        IntentFilter btIntentFilter = new IntentFilter();
-        btIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
-        BroadcastReceiver btBroadcastReceiver = new BroadcastReceiver(){
-            public void onReceive(Context context, Intent intent){
-                Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: " + intent);
-                if(closeConnection) return;
-                if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
-                    int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
-                    if(btState == BluetoothAdapter.STATE_TURNING_OFF){
-                        gotError(main.getString(R.string.fail_BT_off));
-                        stopComms();
-                    }else if(btState == BluetoothAdapter.STATE_ON){
-                        startComms();
-                    }
-                }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
-                    BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if(bluetoothDevice == null || status != Status.SEARCHING) return;
-                    Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
-                    remainingSearchCount--;
-                    isDeviceRRW(bluetoothDevice);
-                    devices_fetch_pending.remove(bluetoothDevice.getAddress());
-                }
-            }
-        };
-        main.registerReceiver(btBroadcastReceiver, btIntentFilter);
     }
 
     public void startComms(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.startComms");
+        if(status == Status.INIT){
+            BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
+            bluetoothAdapter = bluetoothManager.getAdapter();
+            if(bluetoothAdapter == null){
+                gotError(main.getString(R.string.fail_BT_off));
+                return;
+            }
+            IntentFilter btIntentFilter = new IntentFilter();
+            btIntentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+            btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
+            BroadcastReceiver btBroadcastReceiver = new BroadcastReceiver(){
+                public void onReceive(Context context, Intent intent){
+                    Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver: " + intent);
+                    if(closeConnection) return;
+                    if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
+                        int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                        if(btState == BluetoothAdapter.STATE_TURNING_OFF){
+                            gotError(main.getString(R.string.fail_BT_off));
+                            stopComms();
+                        }else if(btState == BluetoothAdapter.STATE_ON){
+                            startComms();
+                        }
+                    }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
+                        BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if(bluetoothDevice == null || status != Status.SEARCHING) return;
+                        Log.d(Main.RRW_LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
+                        remainingSearchCount--;
+                        isDeviceRRW(bluetoothDevice);
+                        devices_fetch_pending.remove(bluetoothDevice.getAddress());
+                    }
+                }
+            };
+            main.registerReceiver(btBroadcastReceiver, btIntentFilter);
+        }
         closeConnection = false;
         if(bluetoothAdapter.getState() == BluetoothAdapter.STATE_TURNING_OFF || bluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF){
             gotError(main.getString(R.string.fail_BT_off));
@@ -102,7 +104,7 @@ public class CommsBT{
         updateStatus(Status.SEARCHING);
         bondedDevices = bluetoothAdapter.getBondedDevices();
         if(bondedDevices == null){
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT));
+            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
             gotError(main.getString(R.string.no_devices));
             return;
         }
@@ -206,7 +208,7 @@ public class CommsBT{
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT));
+                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
             }
         }
         public void run(){
@@ -338,9 +340,9 @@ public class CommsBT{
         }
 
         private void gotResponse(String response){
+            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + response);
             try{
                 JSONObject responseMessage = new JSONObject(response);
-                Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + responseMessage);
                 main.gotResponse(responseMessage);
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotResponse: " + e.getMessage());

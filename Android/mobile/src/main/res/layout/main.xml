@@ -13,14 +13,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/icon_watch" />
     <ScrollView
-        android:id="@+id/svCommsBTDebug"
+        android:id="@+id/svBTLog"
         android:layout_width="0dp"
         android:layout_height="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/icon"
         app:layout_constraintTop_toTopOf="parent" >
         <LinearLayout
-            android:id="@+id/llCommsBTDebug"
+            android:id="@+id/llBTLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

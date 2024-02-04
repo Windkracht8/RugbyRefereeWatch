@@ -69,8 +69,8 @@ public class Main extends AppCompatActivity{
     private TabReport tabReport;
     private TabPrepare tabPrepare;
     private ImageView icon;
-    private ScrollView svCommsBTDebug;
-    private LinearLayout llCommsBTDebug;
+    private ScrollView svBTLog;
+    private LinearLayout llBTLog;
 
     public static int widthPixels = 0;
     private final ArrayList<String> prevStatuses = new ArrayList<>();
@@ -88,8 +88,8 @@ public class Main extends AppCompatActivity{
 
         icon = findViewById(R.id.icon);
         icon.setOnClickListener(view -> iconClick());
-        svCommsBTDebug = findViewById(R.id.svCommsBTDebug);
-        llCommsBTDebug = findViewById(R.id.llCommsBTDebug);
+        svBTLog = findViewById(R.id.svBTLog);
+        llBTLog = findViewById(R.id.llBTLog);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
         findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
@@ -418,12 +418,12 @@ public class Main extends AppCompatActivity{
         TextView tv = new TextView(this);
         tv.setText(status);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        llCommsBTDebug.addView(tv);
+        llBTLog.addView(tv);
         tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svCommsBTDebug.fullScroll(View.FOCUS_DOWN);
+                svBTLog.fullScroll(View.FOCUS_DOWN);
             }
         });
     }
@@ -448,12 +448,12 @@ public class Main extends AppCompatActivity{
         tv.setText(error);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         tv.setTextColor(getColor(R.color.error));
-        llCommsBTDebug.addView(tv);
+        llBTLog.addView(tv);
         tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svCommsBTDebug.fullScroll(View.FOCUS_DOWN);
+                svBTLog.fullScroll(View.FOCUS_DOWN);
             }
         });
     }
