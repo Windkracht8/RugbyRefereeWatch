@@ -43,7 +43,7 @@ public class Translator{
             case "END":
                 return context.getString(R.string.Result) + " " + getPeriodName(context, period, period_count);
         }
-        Log.e(Main.RRW_LOG_TAG, "translator.getEventTypeLocal unknown value: " + eventType_system);
+        Log.e(Main.LOG_TAG, "translator.getEventTypeLocal unknown value: " + eventType_system);
         return "";
     }
     private static String getPeriodName(Context context, int period, int period_count){
@@ -82,7 +82,7 @@ public class Translator{
                 return teamColors_system[i];
             }
         }
-        Log.e(Main.RRW_LOG_TAG, "translator.getTeamColorSystem not found: " + teamColor);
+        Log.e(Main.LOG_TAG, "translator.getTeamColorSystem not found: " + teamColor);
         return teamColors_system[0];
     }
     public static String getTeamColorLocal(Context context, String teamColor_system){
@@ -93,7 +93,7 @@ public class Translator{
                 return teamColors[i];
             }
         }
-        Log.e(Main.RRW_LOG_TAG, "translator.getTeamColorLocal not found: " + teamColor_system);
+        Log.e(Main.LOG_TAG, "translator.getTeamColorLocal not found: " + teamColor_system);
         return teamColors[0];
     }
 

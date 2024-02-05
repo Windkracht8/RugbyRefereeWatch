@@ -51,7 +51,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity{
-    public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
+    public static final String LOG_TAG = "RugbyRefereeWatch";
     public static final int MESSAGE_TOAST = 101;
     public static final int MESSAGE_HISTORY_MATCH_CLICK = 102;
     public static final int MESSAGE_LOAD_LATEST_MATCH = 103;
@@ -112,10 +112,10 @@ public class Main extends AppCompatActivity{
             }else{
                 version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.versionCode);
             }
-            Log.d(Main.RRW_LOG_TAG, version);
+            Log.d(Main.LOG_TAG, version);
             gotStatusUi(version);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
         }
 
         commsBT = new CommsBT(this);
@@ -152,13 +152,13 @@ public class Main extends AppCompatActivity{
     };
     private void initBT(){
         if(Build.VERSION.SDK_INT >= 31){
-            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN}, 1);
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN}, 1);
                 return;
             }
         }else{
-            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 1);
                 return;
             }
@@ -189,7 +189,7 @@ public class Main extends AppCompatActivity{
 
         String scheme = intent.getScheme();
         if(scheme == null || !scheme.equals(ContentResolver.SCHEME_CONTENT)){
-            Log.e(Main.RRW_LOG_TAG, "Main.handleIntent Non supported scheme: " + scheme);
+            Log.e(Main.LOG_TAG, "Main.handleIntent Non supported scheme: " + scheme);
             return;
         }
         try{
@@ -209,7 +209,7 @@ public class Main extends AppCompatActivity{
             JSONArray matches_new_ja = new JSONArray(matches_new_s);
             tabHistory.gotMatches(matches_new_ja);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.handleIntent Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.handleIntent Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), R.string.problem_matches_received, Toast.LENGTH_SHORT).show();
         }
     }
@@ -268,7 +268,7 @@ public class Main extends AppCompatActivity{
                     }
                 }
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "Main.onFling Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "Main.onFling Exception: " + e.getMessage());
             }
             return false;
         }
@@ -370,7 +370,7 @@ public class Main extends AppCompatActivity{
             requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
             commsBT.sendRequest("sync", requestData);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.sendSyncRequest Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.sendSyncRequest Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), R.string.fail_sync, Toast.LENGTH_SHORT).show();
         }
     }
@@ -387,7 +387,7 @@ public class Main extends AppCompatActivity{
                     findViewById(R.id.bSync).setEnabled(true);
                     JSONObject syncResponseData = response.getJSONObject("responseData");
                     if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
-                        Log.e(Main.RRW_LOG_TAG, "Main.gotResponse sync: Incomplete response");
+                        Log.e(Main.LOG_TAG, "Main.gotResponse sync: Incomplete response");
                     }
                     tabHistory.gotMatches(syncResponseData.getJSONArray("matches"));
                     tabPrepare.gotSettings(syncResponseData.getJSONObject("settings"));
@@ -401,7 +401,7 @@ public class Main extends AppCompatActivity{
                     break;
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.gotResponse: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.gotResponse: " + e.getMessage());
             Toast.makeText(this, R.string.fail_response, Toast.LENGTH_SHORT).show();
         }
     }
@@ -428,7 +428,7 @@ public class Main extends AppCompatActivity{
         });
     }
     public void gotError(String error){
-        Log.d(Main.RRW_LOG_TAG, "Main.gotError: " + error);
+        Log.d(Main.LOG_TAG, "Main.gotError: " + error);
         switch(error){
             case "unknown requestType":
                 error = getString(R.string.update_watch_app);
@@ -499,7 +499,7 @@ public class Main extends AppCompatActivity{
             }
             return name + " (" + Translator.getTeamColorLocal(context, team.getString("color")) + ")";
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.getTeamName Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.getTeamName Exception: " + e.getMessage());
         }
         return name;
     }
@@ -528,7 +528,7 @@ public class Main extends AppCompatActivity{
                 bw.flush();
                 bw.close();
             }catch(Exception e){
-                Log.e(Main.RRW_LOG_TAG, "Main.onActivityResult Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "Main.onActivityResult Exception: " + e.getMessage());
                 Toast.makeText(getApplicationContext(), R.string.fail_export, Toast.LENGTH_SHORT).show();
             }
         }

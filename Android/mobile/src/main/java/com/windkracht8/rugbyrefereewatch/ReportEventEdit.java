@@ -81,7 +81,7 @@ public class ReportEventEdit extends LinearLayout{
                 team.setLayoutParams(new LinearLayout.LayoutParams(TabReport.team_width, LinearLayout.LayoutParams.WRAP_CONTENT));
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
@@ -91,7 +91,7 @@ public class ReportEventEdit extends LinearLayout{
         try{
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_DEL_CLICK, event.getInt("id"), 0));
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_event, Toast.LENGTH_SHORT).show();
         }
     }
@@ -139,7 +139,7 @@ public class ReportEventEdit extends LinearLayout{
             String who = ((EditText)findViewById(R.id.who)).getText().toString();
             if(event.has("who") || who.length() > 0) event.put("who", Integer.parseInt(who));
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match, Toast.LENGTH_SHORT).show();
         }
         return event;

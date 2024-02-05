@@ -50,7 +50,7 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
 
             setText(name_s);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
             Toast.makeText(context, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
         }
     }

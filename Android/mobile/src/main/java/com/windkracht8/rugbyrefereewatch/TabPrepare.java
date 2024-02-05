@@ -214,7 +214,7 @@ public class TabPrepare extends LinearLayout{
             sHomeColor.setSelection(sHomeColorPosition);
             sAwayColor.setSelection(sAwayColorPosition);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.onCreateMain: Could not set color spinner: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.onCreateMain: Could not set color spinner: " + e.getMessage());
         }
     }
 
@@ -256,7 +256,7 @@ public class TabPrepare extends LinearLayout{
                 settings.put("record_pens", cbRecordPens.isChecked());
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_prepare, Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -283,7 +283,7 @@ public class TabPrepare extends LinearLayout{
             if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getBoolean("record_player"));
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getBoolean("record_pens"));
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_settings, Toast.LENGTH_SHORT).show();
         }
     }
@@ -307,9 +307,9 @@ public class TabPrepare extends LinearLayout{
             }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.d(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
+            Log.d(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
@@ -323,7 +323,7 @@ public class TabPrepare extends LinearLayout{
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sMatchType.setAdapter(aaMatchTypes);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
         }
     }
@@ -341,7 +341,7 @@ public class TabPrepare extends LinearLayout{
                 }
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.loadCustomMatchType Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_load_custom_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -358,7 +358,7 @@ public class TabPrepare extends LinearLayout{
             storeCustomMatchTypes();
             loadCustomMatchTypesSpinner();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -403,7 +403,7 @@ public class TabPrepare extends LinearLayout{
              }
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -416,7 +416,7 @@ public class TabPrepare extends LinearLayout{
             cm.put("points_con", etPointsCon.getText().toString());
             cm.put("points_goal", etPointsGoal.getText().toString());
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -427,7 +427,7 @@ public class TabPrepare extends LinearLayout{
             osr.write(customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "TabPrepare.storeCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
         }
     }

@@ -39,7 +39,83 @@ public class CommsBT{
     public CommsBT(Main main){
         this.main = main;
         handler = new Handler(Looper.getMainLooper());
-        main.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+    }
+
+    private void gotRequest(String request){
+        Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + request);
+        try{
+            JSONObject requestMessage = new JSONObject(request);
+            String requestType = requestMessage.getString("requestType");
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.received_request), requestType));
+            switch(requestType){
+                case "sync":
+                    onReceiveSync(requestMessage.getString("requestData"));
+                    break;
+                case "prepare":
+                    onReceivePrepare(requestMessage.getString("requestData"));
+                    break;
+                default:
+                    Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest Unknown requestType: " + requestType);
+            }
+
+        }catch(Exception e){
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.gotRequest_failed), e.getMessage()));
+            Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest Exception: " + e.getMessage());
+        }
+    }
+    private void onReceiveSync(String requestData){
+        try{
+            JSONObject settings = Main.getSettings();
+            if(settings == null) return;
+            JSONObject responseData = new JSONObject();
+            responseData.put("matches", FileStore.deletedMatches(main, requestData));
+            responseData.put("settings", settings);
+            sendResponse("sync", responseData);
+            Conf.syncCustomMatchTypes(main, requestData);
+        }catch(Exception e){
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.onReceiveSync_failed), e.getMessage()));
+            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
+            sendResponse("sync", main.getString(R.string.fail_unexpected));
+        }
+    }
+    private void onReceivePrepare(String requestData){
+        try{
+            JSONObject requestData_json = new JSONObject(requestData);
+            if(main.incomingSettings(requestData_json)){
+                sendResponse("prepare", "okilly dokilly");
+                FileStore.storeSettings(main);
+            }else{
+                sendResponse("prepare", "match ongoing");
+            }
+            main.runOnUiThread(main::updateAfterConfig);
+        }catch(Exception e){
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.onReceivePrepare_failed), e.getMessage()));
+            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare Exception: " + e.getMessage());
+            sendResponse("prepare", main.getString(R.string.fail_unexpected));
+        }
+    }
+    void sendResponse(final String requestType, final String responseData){
+        try{
+            JSONObject response = new JSONObject();
+            response.put("requestType", requestType);
+            response.put("responseData", responseData);
+            responseQueue.put(response);
+        }catch(Exception e){
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendResponse_failed), e.getMessage()));
+            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
+        }
+    }
+    /** @noinspection SameParameterValue*/
+    void sendResponse(final String requestType, final JSONObject responseData){
+        try{
+            JSONObject response = new JSONObject();
+            response.put("requestType", requestType);
+            response.put("responseData", responseData);
+            responseQueue.put(response);
+        }catch(Exception e){
+            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendResponse_failed), e.getMessage()));
+            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
+        }
     }
 
     private final BroadcastReceiver btStateReceiver = new BroadcastReceiver(){
@@ -58,8 +134,7 @@ public class CommsBT{
             }
         }
     };
-
-    public void startComms(){
+    void startComms(){
         closeConnection = false;
         BluetoothManager bluetoothManager = (BluetoothManager) main.getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
@@ -68,11 +143,11 @@ public class CommsBT{
             return;
         }
         main.commsBTLog.addToLog(main.getString(R.string.start_listening));
+        main.registerReceiver(btStateReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
         commsBTConnect = new CommsBTConnect();
         commsBTConnect.start();
     }
-
-    public void stopComms(){
+    void stopComms(){
         Log.d(Main.RRW_LOG_TAG, "CommsBT.stopComms");
         main.commsBTLog.addToLog(main.getString(R.string.stop_listening));
         closeConnection = true;
@@ -107,7 +182,6 @@ public class CommsBT{
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
             }
         }
-
         public void run(){
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run");
@@ -146,12 +220,10 @@ public class CommsBT{
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected getOutputStream Exception: " + e.getMessage());
             }
         }
-
         public void run(){
             Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.run");
             process();
         }
-
         private void process(){
             if(closeConnection){
                 return;
@@ -172,7 +244,6 @@ public class CommsBT{
             read();
             handler.postDelayed(this::process, 100);
         }
-
         private boolean sendNextResponse(){
             try{
                 JSONObject response = (JSONObject) responseQueue.get(0);
@@ -181,16 +252,12 @@ public class CommsBT{
                 main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.send_response), response.getString("requestType")));
                 outputStream.write(response.toString().getBytes());
             }catch(Exception e){
-                if(e.getMessage() != null && e.getMessage().contains("Broken pipe")){
-                    main.commsBTLog.addToLog(main.getString(R.string.connection_closed));
-                    return false;
-                }
                 main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendNextResponse_failed), e.getMessage()));
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sendNextResponse Exception: " + e.getMessage());
+                return false;
             }
             return true;
         }
-
         private void read(){
             try{
                 if(inputStream.available() < 5) return;
@@ -229,83 +296,6 @@ public class CommsBT{
             }catch(Exception e){
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.sleep100 exception: " + e.getMessage());
             }
-        }
-
-        private void gotRequest(String request){
-            Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest: " + request);
-            try{
-                JSONObject requestMessage = new JSONObject(request);
-                String requestType = requestMessage.getString("requestType");
-                main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.received_request), requestType));
-                switch(requestType){
-                    case "sync":
-                        onReceiveSync(requestMessage.getString("requestData"));
-                        break;
-                    case "prepare":
-                        onReceivePrepare(requestMessage.getString("requestData"));
-                        break;
-                    default:
-                        Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest Unknown requestType: " + requestType);
-                }
-
-            }catch(Exception e){
-                main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.gotRequest_failed), e.getMessage()));
-                Log.e(Main.RRW_LOG_TAG, "CommsBTConnected.gotRequest Exception: " + e.getMessage());
-            }
-        }
-    }
-
-    private void onReceiveSync(String requestData){
-        try{
-            JSONObject settings = Main.getSettings();
-            if(settings == null) return;
-            JSONObject responseData = new JSONObject();
-            responseData.put("matches", FileStore.deletedMatches(main, requestData));
-            responseData.put("settings", settings);
-            sendResponse("sync", responseData);
-            Conf.syncCustomMatchTypes(main, requestData);
-        }catch(Exception e){
-            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.onReceiveSync_failed), e.getMessage()));
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
-            sendResponse("sync", main.getString(R.string.fail_unexpected));
-        }
-    }
-    private void onReceivePrepare(String requestData){
-        try{
-            JSONObject requestData_json = new JSONObject(requestData);
-            if(main.incomingSettings(requestData_json)){
-                sendResponse("prepare", "okilly dokilly");
-                FileStore.storeSettings(main);
-            }else{
-                sendResponse("prepare", "match ongoing");
-            }
-            main.runOnUiThread(main::updateAfterConfig);
-        }catch(Exception e){
-            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.onReceivePrepare_failed), e.getMessage()));
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.onReceivePrepare Exception: " + e.getMessage());
-            sendResponse("prepare", main.getString(R.string.fail_unexpected));
-        }
-    }
-    public void sendResponse(final String requestType, final String responseData){
-        try{
-            JSONObject response = new JSONObject();
-            response.put("requestType", requestType);
-            response.put("responseData", responseData);
-            responseQueue.put(response);
-        }catch(Exception e){
-            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendResponse_failed), e.getMessage()));
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
-        }
-    }
-    public void sendResponse(final String requestType, final JSONObject responseData){
-        try{
-            JSONObject response = new JSONObject();
-            response.put("requestType", requestType);
-            response.put("responseData", responseData);
-            responseQueue.put(response);
-        }catch(Exception e){
-            main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.sendResponse_failed), e.getMessage()));
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
         }
     }
     private static boolean isValidJSON(String json){

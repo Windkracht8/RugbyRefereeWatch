@@ -8,8 +8,8 @@ android {
         //noinspection OldTargetApi
         targetSdk 33
         compileSdk 33
-        versionCode 423
-        versionName '3.4'
+        versionCode 424
+        versionName '3.4.2'
     }
     buildTypes {
         release {

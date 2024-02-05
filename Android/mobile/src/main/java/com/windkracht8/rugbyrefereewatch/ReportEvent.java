@@ -97,7 +97,7 @@ public class ReportEvent extends LinearLayout {
                 }
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }

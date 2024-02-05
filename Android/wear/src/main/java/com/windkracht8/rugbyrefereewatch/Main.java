@@ -245,7 +245,12 @@ public class Main extends Activity{
         bPenAway.setHeight(vh20);
 
         if(timer_status == TimerStatus.CONF){
-            hasBTPermission = checkHasBTPermission();
+            if(Build.VERSION.SDK_INT >= 31){
+                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_SCAN)
+                        && hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
+            }else{
+                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
+            }
             requestPermissions();
             executorService.submit(() -> FileStore.readCustomMatchTypes(this));
             executorService.submit(() -> FileStore.readSettings(this));
@@ -270,19 +275,19 @@ public class Main extends Activity{
 
     public void requestPermissions(){
         if(Build.VERSION.SDK_INT >= 33){
-            if(!hasPermission(android.Manifest.permission.POST_NOTIFICATIONS) ||
-                    !hasBTPermission
+            if(!hasPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    || !hasBTPermission
             ){
                 ActivityCompat.requestPermissions(this, new String[]{
-                        android.Manifest.permission.POST_NOTIFICATIONS,
-                        android.Manifest.permission.BLUETOOTH_CONNECT,
-                        Manifest.permission.BLUETOOTH_SCAN}, 1);
+                        Manifest.permission.POST_NOTIFICATIONS
+                        ,Manifest.permission.BLUETOOTH_CONNECT
+                        ,Manifest.permission.BLUETOOTH_SCAN}, 1);
             }
         }else if(Build.VERSION.SDK_INT >= 31){
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
-                        android.Manifest.permission.BLUETOOTH_CONNECT,
-                        android.Manifest.permission.BLUETOOTH_SCAN}, 1);
+                        Manifest.permission.BLUETOOTH_CONNECT
+                        ,Manifest.permission.BLUETOOTH_SCAN}, 1);
             }
         }else{
             if(!hasBTPermission){
@@ -290,13 +295,6 @@ public class Main extends Activity{
                         Manifest.permission.BLUETOOTH}, 1);
             }
         }
-    }
-    private boolean checkHasBTPermission(){
-        if(Build.VERSION.SDK_INT >= 31){
-            return hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
-                    hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
-        }
-        return hasPermission(Manifest.permission.BLUETOOTH);
     }
     private boolean hasPermission(String permission){
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;

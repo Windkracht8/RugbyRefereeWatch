@@ -147,7 +147,18 @@
         Om te verbinden, hou de app op het horloge open, zonder een wedstrijd te starten.</string>
     <string name="send_request">Verstuur verzoek:</string>
     <string name="received_response">Antwoord ontvangen:</string>
+    <string name="send_error">Fout bij zenden:</string>
+    <string name="response_error">Fout in antwoord:</string>
+    <string name="incomplete_message">Onvolledig bericht ontvangen</string>
     <string name="closing_connection">Sluit verbinding.</string>
+    <string name="update_watch_app">Update de app op het horloge</string>
+    <string name="first_connect">Verbind eerst met het horloge</string>
+    <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
+    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de buurt toestaan.</string>
+    <string name="fail_BT_off">Bluetooth staat uit</string>
+    <string name="fail_BT_connect">Bluetooth verbinding mislukt</string>
+    <string name="fail_unexpected">Onverwachte technische fout</string>
+    <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
 
     <!-- fail -->
     <string name="fail_sync">Probleem met het synchroniseren met het horloge</string>
@@ -174,12 +185,4 @@
     <string name="fail_del_match">Fout bij verwijderen wedstrijd</string>
     <string name="fail_del_event">Fout bij verwijderen gebeurtenis</string>
     <string name="fail_save_match">Fout bij opslaan van wedstrijd</string>
-    <string name="fail_unexpected">Onverwachte technische fout</string>
-    <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
-    <string name="update_watch_app">Update de app op het horloge</string>
-    <string name="first_connect">Verbind eerst met het horloge</string>
-    <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
-    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de buurt toestaan.</string>
-    <string name="fail_BT_off">Bluetooth staat uit</string>
-    <string name="fail_BT_connect">Bluetooth verbinding mislukt</string>
 </resources>
