@@ -12,8 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Score extends LinearLayout{
-    public MatchData.team team;
-    public int player_no;
+    MatchData.team team;
+    int player_no;
 
     private Spinner score_player;
     private TextView score_try;
@@ -48,24 +48,24 @@ public class Score extends LinearLayout{
             }
         });
     }
-    public void onCreateMain(Main main){
+    void onCreateMain(Main main){
         score_try.setOnClickListener(v -> main.tryClick());
         score_con.setOnClickListener(v -> main.conversionClick());
         score_goal.setOnClickListener(v -> main.goalClick());
         foul_play.setOnClickListener(v -> main.foulPlayClick());
     }
-    public void load(MatchData.team team){
+    void load(MatchData.team team){
         this.team = team;
     }
-    public void update(MatchData match){//Thread: Always on UI thread
-        score_try.setVisibility(match.points_try == 0 ? View.GONE : View.VISIBLE);
-        score_con.setVisibility(match.points_con == 0 ? View.GONE : View.VISIBLE);
-        score_goal.setVisibility(match.points_goal == 0 ? View.GONE : View.VISIBLE);
+    void update(){//Thread: Always on UI thread
+        score_try.setVisibility(Main.match.points_try == 0 ? View.GONE : View.VISIBLE);
+        score_con.setVisibility(Main.match.points_con == 0 ? View.GONE : View.VISIBLE);
+        score_goal.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
         score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
         if(Main.isScreenRound){
             ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).leftMargin = Main.vh25;
             ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).rightMargin = Main.vh25;
         }
     }
-    public void clear(){score_player.setSelection(0);}
+    void clear(){score_player.setSelection(0);}
 }

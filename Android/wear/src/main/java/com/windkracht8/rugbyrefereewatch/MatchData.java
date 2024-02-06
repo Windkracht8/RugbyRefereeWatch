@@ -8,26 +8,26 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MatchData{
-    public long match_id;
+class MatchData{
+    long match_id;
     /** @noinspection FieldCanBeLocal*/
     private final int FORMAT = 1;//September 2023
-    public final ArrayList<event> events = new ArrayList<>();
-    public team home;
-    public team away;
-    public String match_type = "15s";
-    public int period_time = 40;
-    public int period_count = 2;
-    public int sinbin = 10;
-    public int points_try = 5;
-    public int points_con = 2;
-    public int points_goal = 3;
+    final ArrayList<event> events = new ArrayList<>();
+    team home;
+    team away;
+    String match_type = "15s";
+    int period_time = 40;
+    int period_count = 2;
+    int sinbin = 10;
+    int points_try = 5;
+    int points_con = 2;
+    int points_goal = 3;
 
-    public MatchData(){
+    MatchData(){
         home = new team("home", "home", "red");
         away = new team("away", "away", "blue");
     }
-    public MatchData(Main  main, JSONObject match_json){
+    MatchData(Main  main, JSONObject match_json){
         try{
             match_id = match_json.getLong("matchid");
             home = new team(main, match_json.getJSONObject("home"));
@@ -42,7 +42,7 @@ public class MatchData{
             match_id = 0;
         }
     }
-    public JSONObject toJson(Main main){
+    JSONObject toJson(Main main){
         JSONObject ret = new JSONObject();
         try{
             ret.put("matchid", match_id);
@@ -69,7 +69,7 @@ public class MatchData{
         }
         return ret;
     }
-    public void clear(){
+    void clear(){
         match_id = 0;
         events.clear();
         home.team = "home";
@@ -89,7 +89,7 @@ public class MatchData{
         away.pens = 0;
         away.sinbins.clear();
     }
-    public void removeEvent(event event_del){
+    void removeEvent(event event_del){
         events.remove(event_del);
         team team_edit = event_del.team.equals("home") ? home : away;
 
@@ -119,22 +119,22 @@ public class MatchData{
                 break;
         }
     }
-    public void logEvent(String what, String team, Integer who, long id){
+    void logEvent(String what, String team, Integer who, long id){
         event evt = new event(what, id, team, who);
         events.add(evt);
     }
-    public static class team{
-        public String id;
-        public String team;
-        public String color;
-        public int tot = 0;
-        public int tries = 0;
-        public int cons = 0;
-        public int pen_tries = 0;
-        public int goals = 0;
-        public int pens = 0;
-        public final ArrayList<sinbin> sinbins = new ArrayList<>();
-        public boolean kickoff = false;
+    static class team{
+        String id;
+        String team;
+        String color;
+        int tot = 0;
+        int tries = 0;
+        int cons = 0;
+        int pen_tries = 0;
+        int goals = 0;
+        int pens = 0;
+        final ArrayList<sinbin> sinbins = new ArrayList<>();
+        boolean kickoff = false;
         private team(String id, String team, String color){
             this.id = id;
             this.team = team;
@@ -157,11 +157,11 @@ public class MatchData{
                 main.toast(R.string.fail_read_match);
             }
         }
-        public void addSinbin(long id, long end){
+        void addSinbin(long id, long end){
             sinbin sb = new sinbin(id, end);
             sinbins.add(sb);
         }
-        public boolean hasSinbin(long id){
+        boolean hasSinbin(long id){
             for(sinbin sb : sinbins){
                 if(id == sb.id){
                     return true;
@@ -189,15 +189,15 @@ public class MatchData{
             return ret;
         }
     }
-    public static class event{
+    static class event{
         private long id;
         private String time;
-        public long timer;
-        public String what;
-        public int period;
-        public String team;
-        public int who;
-        public String score;
+        long timer;
+        String what;
+        int period;
+        String team;
+        int who;
+        String score;
         private event(String what, long id, String team, int who){
             this.id = id > 0 ? id : Main.getCurrentTimestamp();
             time = Main.prettyTime(this.id);
@@ -248,11 +248,11 @@ public class MatchData{
             return evt;
         }
     }
-    public static class sinbin{
-        public final long id;
-        public long end;
-        public boolean ended = false;
-        public boolean hide = false;
+    static class sinbin{
+        final long id;
+        long end;
+        boolean ended = false;
+        boolean hide = false;
         sinbin(long id, long end){
             this.id = id;
             this.end = end;

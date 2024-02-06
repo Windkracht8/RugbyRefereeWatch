@@ -52,15 +52,15 @@ import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity{
     public static final String LOG_TAG = "RugbyRefereeWatch";
-    public static final int MESSAGE_TOAST = 101;
-    public static final int MESSAGE_HISTORY_MATCH_CLICK = 102;
-    public static final int MESSAGE_LOAD_LATEST_MATCH = 103;
-    public static final int MESSAGE_DEL_CLICK = 104;
-    public static final int MESSAGE_UPDATE_MATCH = 105;
+    static final int MESSAGE_TOAST = 101;
+    static final int MESSAGE_HISTORY_MATCH_CLICK = 102;
+    static final int MESSAGE_LOAD_LATEST_MATCH = 103;
+    static final int MESSAGE_DEL_CLICK = 104;
+    static final int MESSAGE_UPDATE_MATCH = 105;
     private static final int MESSAGE_EXPORT_MATCHES = 106;
     private GestureDetector gestureDetector;
-    public static SharedPreferences sharedPreferences;
-    public static SharedPreferences.Editor sharedPreferences_editor;
+    static SharedPreferences sharedPreferences;
+    static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
     private Handler handler_main;
     private CommsBT commsBT;
@@ -72,7 +72,7 @@ public class Main extends AppCompatActivity{
     private ScrollView svBTLog;
     private LinearLayout llBTLog;
 
-    public static int widthPixels;
+    static int widthPixels;
     private final ArrayList<String> prevStatuses = new ArrayList<>();
 
     @Override
@@ -121,7 +121,7 @@ public class Main extends AppCompatActivity{
         commsBT = new CommsBT(this);
         initBT();
     }
-    public final Handler handler_message = new Handler(Looper.getMainLooper()){
+    final Handler handler_message = new Handler(Looper.getMainLooper()){
         public void handleMessage(Message msg){
             switch(msg.what){
                 case MESSAGE_HISTORY_MATCH_CLICK:
@@ -246,7 +246,7 @@ public class Main extends AppCompatActivity{
     public boolean onTouchEvent(MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
-    public boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
+    boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
@@ -303,11 +303,11 @@ public class Main extends AppCompatActivity{
             commsBT.stopComms();
         }
     }
-    public void bSyncClick(){
+    void bSyncClick(){
         setButtonProcessing(R.id.bSync);
         sendSyncRequest();
     }
-    public void bPrepareClick(){
+    void bPrepareClick(){
         setButtonProcessing(R.id.bPrepare);
         if(cantSendRequest()){return;}
         JSONObject requestData = tabPrepare.getSettings();
@@ -325,7 +325,7 @@ public class Main extends AppCompatActivity{
         return true;
     }
 
-    public void updateStatus(CommsBT.Status status){
+    void updateStatus(CommsBT.Status status){
         runOnUiThread(() -> updateStatusUi(status));
     }
     private void updateStatusUi(CommsBT.Status status){
@@ -375,7 +375,7 @@ public class Main extends AppCompatActivity{
         }
     }
 
-    public void gotResponse(JSONObject response){
+    void gotResponse(JSONObject response){
         runOnUiThread(() -> gotResponseUi(response));
     }
     private void gotResponseUi(JSONObject response){
@@ -405,7 +405,7 @@ public class Main extends AppCompatActivity{
             Toast.makeText(this, R.string.fail_response, Toast.LENGTH_SHORT).show();
         }
     }
-    public void gotStatus(String status){
+    void gotStatus(String status){
         runOnUiThread(() -> gotStatusUi(status));
     }
     private void gotStatusUi(String status){
@@ -427,7 +427,7 @@ public class Main extends AppCompatActivity{
             }
         });
     }
-    public void gotError(String error){
+    void gotError(String error){
         Log.d(Main.LOG_TAG, "Main.gotError: " + error);
         switch(error){
             case "unknown requestType":
@@ -490,7 +490,7 @@ public class Main extends AppCompatActivity{
         inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getRootView().getApplicationWindowToken(),0);
     }
 
-    public static String getTeamName(Context context, JSONObject team){
+    static String getTeamName(Context context, JSONObject team){
         String name = "";
         try{
             name = team.getString("team");
@@ -504,7 +504,7 @@ public class Main extends AppCompatActivity{
         return name;
     }
 
-    public void exportMatches(){
+    void exportMatches(){
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/json");

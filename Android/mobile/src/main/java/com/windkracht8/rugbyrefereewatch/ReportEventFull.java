@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class ReportEventFull extends LinearLayout{
     public ReportEventFull(Context context){super(context);}
-    public ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
+    ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

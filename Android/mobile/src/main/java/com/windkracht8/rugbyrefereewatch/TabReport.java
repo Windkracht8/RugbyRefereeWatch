@@ -27,14 +27,14 @@ public class TabReport extends LinearLayout{
     private JSONObject match;
     private long match_id;
 
-    public static int time_width;
-    public static int timer_width;
-    public static int score_width;
+    static int time_width;
+    static int timer_width;
+    static int score_width;
     private static int del_width;
-    public static int timer_edit_width;
+    static int timer_edit_width;
     private static int who_width;
-    public static int what_width = 0;
-    public static int team_width;
+    static int what_width = 0;
+    static int team_width;
 
     private int view = 0;
 
@@ -69,10 +69,10 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
     }
 
-    public void onCreateMain(Main main){
+    void onCreateMain(Main main){
         findViewById(R.id.svReport).setOnTouchListener(main::onTouchEventScrollViews);
     }
-    public void loadMatch(Handler handler_message, JSONObject match){
+    void loadMatch(Handler handler_message, JSONObject match){
         this.handler_message = handler_message;
         this.match = match;
         view = 0;
@@ -198,7 +198,7 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    public static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
+    static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
         switch(what){
             case "TRY":
                 score[team.equals("home") ? 0 : 1] += points_try;
@@ -250,7 +250,7 @@ public class TabReport extends LinearLayout{
         showEvents();
     }
 
-    public void bDelClick(int event_id){
+    void bDelClick(int event_id){
         try{
             for(int i=0; i<llEvents.getChildCount(); i++) {
                 ReportEventEdit ree = (ReportEventEdit) llEvents.getChildAt(i);

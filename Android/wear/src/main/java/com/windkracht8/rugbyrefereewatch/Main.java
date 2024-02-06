@@ -49,8 +49,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends Activity{
-    public static final String RRW_LOG_TAG = "RugbyRefereeWatch";
-    public static boolean isScreenRound;
+    static final String RRW_LOG_TAG = "RugbyRefereeWatch";
+    static boolean isScreenRound;
     private boolean showSplash = true;
     private TextView battery;
     private TextView time;
@@ -79,33 +79,33 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
-    public CommsBTLog commsBTLog;
+    CommsBTLog commsBTLog;
     private View touchView;
 
-    public static int heightPixels;
+    static int heightPixels;
     private static int widthPixels;
-    public static int vh10;
+    static int vh10;
     private static int vh15;
-    public static int vh20;
-    public static int vh25;
+    static int vh20;
+    static int vh25;
     private static int vh30;
     private static int vh40;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
-    public static TimerStatus timer_status = TimerStatus.CONF;
-    public static long timer_timer = 0;
+    static TimerStatus timer_status = TimerStatus.CONF;
+    static long timer_timer = 0;
     private static long timer_start = 0;
     private static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
-    public static int timer_period = 0;
-    public static int timer_period_time = 40;
-    public static int timer_type_period = 1;//0:up, 1:down
+    static int timer_period = 0;
+    static int timer_period_time = 40;
+    static int timer_type_period = 1;//0:up, 1:down
     //Settings
-    public static boolean screen_on = true;
+    static boolean screen_on = true;
     private static int timer_type = 1;//0:up, 1:down
-    public static boolean record_player = false;
-    public static boolean record_pens = false;
+    static boolean record_player = false;
+    static boolean record_pens = false;
     private final static int HELP_VERSION = 4;
 
     public static final MatchData match = new MatchData();
@@ -116,7 +116,7 @@ public class Main extends Activity{
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
-    public static long draggingEnded;
+    static long draggingEnded;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
     private static boolean hasBTPermission = false;
@@ -318,7 +318,7 @@ public class Main extends Activity{
         }
     }
 
-    public void toast(int message){
+    void toast(int message){
         runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
 
@@ -369,7 +369,7 @@ public class Main extends Activity{
         //We need to do this to make sure that we can listen for onTouch on main
         Log.i(RRW_LOG_TAG, "onMainClick");
     }
-    public void addOnTouch(View v){
+    void addOnTouch(View v){
         v.setOnTouchListener(this::onTouch);
     }
     private boolean onTouch(View ignoredV, MotionEvent event){
@@ -697,7 +697,7 @@ public class Main extends Activity{
         handler_main.postDelayed(this::update, 1000 - milli_secs);
     }
 
-    public void updateAfterConfig(){//Thread: Always on UI thread
+    void updateAfterConfig(){//Thread: Always on UI thread
         updateTimer();
 
         home.setBackgroundColor(getColorBG(match.home.color));
@@ -723,7 +723,7 @@ public class Main extends Activity{
             tTimer.setHeight(vh40);
             ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = vh10;
         }
-        score.update(match);
+        score.update();
     }
     private int getColorBG(String name){
         switch(name){
@@ -750,7 +750,7 @@ public class Main extends Activity{
         }
         return getResources().getColor(R.color.black, null);
     }
-    public int getColorFG(String name){
+    int getColorFG(String name){
         switch(name){
             case "gold":
             case "green":
@@ -768,7 +768,7 @@ public class Main extends Activity{
         time.setText(prettyTime(date));
         return milli_secs;
     }
-    public static String prettyTime(long timestamp){
+    static String prettyTime(long timestamp){
         Date date = new Date(timestamp);
         return prettyTime(date);
     }
@@ -804,7 +804,7 @@ public class Main extends Activity{
             beep();
         }
     }
-    public static String prettyTimer(long milli_secs){
+    static String prettyTimer(long milli_secs){
         long tmp = milli_secs % 1000;
         long secs = (milli_secs - tmp) / 1000;
         tmp = secs % 60;
@@ -911,7 +911,7 @@ public class Main extends Activity{
             score.setVisibility(View.VISIBLE);
         }
     }
-    public void tryClick(){
+    void tryClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.tries++;
         updateScore();
@@ -919,7 +919,7 @@ public class Main extends Activity{
         score.clear();
         match.logEvent("TRY", score.team.id, score.player_no, 0);
     }
-    public void conversionClick(){
+    void conversionClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.cons++;
         updateScore();
@@ -927,7 +927,7 @@ public class Main extends Activity{
         score.clear();
         match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
-    public void goalClick(){
+    void goalClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.goals++;
         updateScore();
@@ -950,13 +950,13 @@ public class Main extends Activity{
         bPenHome.setText(String.valueOf(match.home.pens));
         bPenAway.setText(String.valueOf(match.away.pens));
     }
-    public void foulPlayClick(){
+    void foulPlayClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         foulPlay.setPlayer(score.player_no);
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
-    public void card_yellowClick(){
+    void card_yellowClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         long time = getCurrentTimestamp();
         match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
@@ -967,7 +967,7 @@ public class Main extends Activity{
         foulPlay.setVisibility(View.GONE);
         score.clear();
     }
-    public void penalty_tryClick(){
+    void penalty_tryClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.pen_tries++;
         updateScore();
@@ -975,7 +975,7 @@ public class Main extends Activity{
         score.clear();
         match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
     }
-    public void card_redClick(){
+    void card_redClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
         foulPlay.setVisibility(View.GONE);
@@ -987,14 +987,14 @@ public class Main extends Activity{
         updateSinbins();
     }
 
-    public static long getCurrentTimestamp(){
+    static long getCurrentTimestamp(){
         Date d = new Date();
         return d.getTime();
     }
     private String getPeriodName(int period){
         return getPeriodName(this, period, match.period_count);
     }
-    public static String getPeriodName(Context context, int period, int period_count){
+    static String getPeriodName(Context context, int period, int period_count){
         if(period > period_count){
             if(period == period_count+1){
                 return context.getString(R.string.extra_time);
@@ -1041,7 +1041,7 @@ public class Main extends Activity{
         return null;
     }
 
-    public boolean incomingSettings(JSONObject settings){//Thread: Background thread
+    boolean incomingSettings(JSONObject settings){//Thread: Background thread
         if(timer_status != TimerStatus.CONF) return false;
         try{
             match.home.team = settings.getString("home_name");
@@ -1075,7 +1075,7 @@ public class Main extends Activity{
         return true;
     }
 
-    public void readSettings(JSONObject jsonSettings){//Thread: Background thread
+    void readSettings(JSONObject jsonSettings){//Thread: Background thread
         if(timer_status != TimerStatus.CONF) return;
         try{
             match.home.color = jsonSettings.getString("home_color");
@@ -1105,17 +1105,17 @@ public class Main extends Activity{
             toast(R.string.fail_read_settings);
         }
     }
-    public void noSettings(){//Thread: Called from background thread
+    void noSettings(){//Thread: Called from background thread
         runOnUiThread(() -> help.show(true));
     }
-    public void showHelp(){
+    void showHelp(){
         runOnUiThread(() -> help.show(false));
     }
-    public void showCommsLog(){
+    void showCommsLog(){
         runOnUiThread(() -> commsBTLog.show(this));
     }
 
-    public static JSONObject getSettings(){
+    static JSONObject getSettings(){
         JSONObject ret = new JSONObject();
         try{
             ret.put("home_name", match.home.team);
@@ -1164,7 +1164,7 @@ public class Main extends Activity{
 
     private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
     private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
-    public static void beep(){
+    static void beep(){
         vibrator.cancel();
         vibrator.vibrate(ve_pattern);
     }

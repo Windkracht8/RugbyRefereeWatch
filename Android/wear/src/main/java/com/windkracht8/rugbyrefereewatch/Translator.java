@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 class Translator{
-    public static String getTeamColorLocal(Context context, String teamColor_system){
+    static String getTeamColorLocal(Context context, String teamColor_system){
         String[] teamColors = context.getResources().getStringArray(R.array.teamColors);
         String[] teamColors_system = context.getResources().getStringArray(R.array.teamColors_system);
         for(int i=0; i<teamColors_system.length; i++){
@@ -15,7 +15,7 @@ class Translator{
         Log.e(Main.RRW_LOG_TAG, "translator.getTeamColorLocal not found: " + teamColor_system);
         return teamColors[0];
     }
-    public static String getEventTypeLocal(Context context, String eventType_system){
+    static String getEventTypeLocal(Context context, String eventType_system){
         String[] eventTypesLocal = context.getResources().getStringArray(R.array.eventTypes);
         String[] eventTypes_system = context.getResources().getStringArray(R.array.eventTypes_system);
         for (int i = 0; i < eventTypes_system.length; i++) {
@@ -25,7 +25,7 @@ class Translator{
         }
         return "";
     }
-    public static String getTeamLocal(Context context, String team_system){
+    static String getTeamLocal(Context context, String team_system){
         if(team_system.equals("home")) return context.getString(R.string.home);
         if(team_system.equals("away")) return context.getString(R.string.away);
         return team_system;

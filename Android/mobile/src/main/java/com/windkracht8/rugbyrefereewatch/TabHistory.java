@@ -28,7 +28,7 @@ public class TabHistory extends LinearLayout{
     private Button bDelete;
     private ArrayList<JSONObject> matches;
     private ArrayList<Long> deleted_matches;
-    public boolean selecting = false;
+    boolean selecting = false;
 
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -43,14 +43,14 @@ public class TabHistory extends LinearLayout{
         matches = new ArrayList<>();
         deleted_matches = new ArrayList<>();
     }
-    public void onCreateMain(Main main){
+    void onCreateMain(Main main){
         findViewById(R.id.bSync).setOnClickListener(view -> main.bSyncClick());
         findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
         loadMatches(main.handler_message);
     }
-    public void gotMatches(JSONArray matches_new){
+    void gotMatches(JSONArray matches_new){
         try{
             for(int i = 0; i < matches_new.length(); i++){
                 JSONObject match_new = new JSONObject(matches_new.getString(i));
@@ -102,7 +102,7 @@ public class TabHistory extends LinearLayout{
             }
         }
     }
-    public JSONArray getDeletedMatches(){
+    JSONArray getDeletedMatches(){
         try{
             JSONArray jaDeletedMatches = new JSONArray();
             for(int i=0; i < deleted_matches.size(); i++){
@@ -212,7 +212,7 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    public boolean unselect(){
+    boolean unselect(){
         boolean ret = false;
         selecting = false;
         bExport.setVisibility(View.GONE);
@@ -252,7 +252,7 @@ public class TabHistory extends LinearLayout{
         showMatches();
         selectionChanged();
     }
-    public void selectionChanged(){
+    void selectionChanged(){
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
         selecting = false;
@@ -270,7 +270,7 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    public void updateMatch(JSONObject match){
+    void updateMatch(JSONObject match){
         try{
             long match_id = match.getLong("matchid");
             for(int i = 0; i < matches.size(); i++){
@@ -290,7 +290,7 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    public String getSelectedMatches(){
+    String getSelectedMatches(){
         JSONArray selected = new JSONArray();
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);

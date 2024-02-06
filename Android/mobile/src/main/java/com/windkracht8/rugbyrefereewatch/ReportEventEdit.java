@@ -16,7 +16,7 @@ public class ReportEventEdit extends LinearLayout{
     private final Handler handler_message;
     private JSONObject event;
     public ReportEventEdit(Context context){super(context);handler_message=null;}
-    public ReportEventEdit(Context context, Handler handler_message, JSONObject event){
+    ReportEventEdit(Context context, Handler handler_message, JSONObject event){
         super(context);
         this.handler_message = handler_message;
         this.event = event;
@@ -96,7 +96,7 @@ public class ReportEventEdit extends LinearLayout{
         }
     }
 
-    public JSONObject toJson(){
+    JSONObject toJson(){
         if(getVisibility() == GONE) return event;
         try{
             String reason = ((EditText)findViewById(R.id.reason)).getText().toString();
@@ -144,7 +144,7 @@ public class ReportEventEdit extends LinearLayout{
         }
         return event;
     }
-    public static String timerStampToString(long timer){
+    static String timerStampToString(long timer){
         int temp = (int) (timer / 1000);
         int seconds = (temp % 60);
         int minutes = (temp - seconds) / 60;

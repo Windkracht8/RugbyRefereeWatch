@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="@dimen/ll_in_sc_padding"
+            android:layout_marginEnd="@dimen/ll_in_sc_padding"
             android:layout_marginBottom="50dp" />
     </LinearLayout>
 </ScrollView>

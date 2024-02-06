@@ -19,33 +19,34 @@ public class Report extends ScrollView{
         inflater.inflate(R.layout.report, this, true);
     }
 
-    public void show(Main main, MatchData match){
+    void show(Main main, MatchData match){
         LinearLayout reportList = findViewById(R.id.reportList);
         for(int i = reportList.getChildCount(); i > 0; i--){
             reportList.removeViewAt(i-1);
         }
+
         for(MatchData.event event : match.events){
             if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){
                 continue;
             }
-            TextView tv = new TextView(getContext());
+            TextView tv = new TextView(main);
             String item = Main.prettyTimer(event.timer) + " ";
             switch(event.what){
                 case "START":
-                    item += getContext().getString(R.string.Start) + " " + Main.getPeriodName(getContext(), event.period, match.period_count);
+                    item += main.getString(R.string.Start) + " " + Main.getPeriodName(main, event.period, match.period_count);
                     break;
                 case "END":
-                    item += getContext().getString(R.string.Result) + " " + Main.getPeriodName(getContext(), event.period, match.period_count);
+                    item += main.getString(R.string.Result) + " " + Main.getPeriodName(main, event.period, match.period_count);
                     if(event.score != null){
                         item += " " + event.score;
                     }
                     break;
                 default:
-                    item += Translator.getEventTypeLocal(getContext(), event.what);
+                    item += Translator.getEventTypeLocal(main, event.what);
                     break;
             }
             if(event.team != null){
-                item += " " + Translator.getTeamLocal(getContext(), event.team);
+                item += " " + Translator.getTeamLocal(main, event.team);
                 if(event.who > 0){
                     item += ' ' + Integer.toString(event.who);
                 }
@@ -53,6 +54,7 @@ public class Report extends ScrollView{
             tv.setText(item);
             tv.setGravity(Gravity.CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+
             main.addOnTouch(tv);
             reportList.addView(tv);
         }

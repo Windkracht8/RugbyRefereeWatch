@@ -7,9 +7,9 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 public class Sinbin extends TextView{
-    public MatchData.sinbin sinbin;
+    MatchData.sinbin sinbin;
     public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
-    public Sinbin(Main main, MatchData.sinbin sinbin, String color){
+    Sinbin(Main main, MatchData.sinbin sinbin, String color){
         super(main);
         this.sinbin = sinbin;
 
@@ -25,7 +25,7 @@ public class Sinbin extends TextView{
         update();
     }
 
-    public void update(){
+    void update(){
         long remaining = sinbin.end - Main.timer_timer;
         if(remaining < -60000){
             sinbin.hide = true;

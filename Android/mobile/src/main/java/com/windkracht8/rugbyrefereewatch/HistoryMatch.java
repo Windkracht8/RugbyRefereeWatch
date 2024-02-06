@@ -20,12 +20,12 @@ import java.util.TimerTask;
 public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
     private TabHistory hParent;
     private final Handler handler_message;
-    public JSONObject match;
-    public boolean is_selected = false;
+    JSONObject match;
+    boolean is_selected = false;
     private boolean last;
 
     public HistoryMatch(Context context){super(context);handler_message=null;}
-    public HistoryMatch(Context context, Handler handler_message, JSONObject match, TabHistory hParent, boolean last){
+    HistoryMatch(Context context, Handler handler_message, JSONObject match, TabHistory hParent, boolean last){
         super(context);
         this.hParent = hParent;
         this.handler_message = handler_message;
@@ -111,7 +111,7 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         hParent.selectionChanged();
     }
 
-    public boolean unselect(){
+    boolean unselect(){
         boolean ret = is_selected;
         setBackgroundColor(0);
         if(!last) setBackgroundResource(R.drawable.background_underline);

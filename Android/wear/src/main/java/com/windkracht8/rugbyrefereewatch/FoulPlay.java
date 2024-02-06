@@ -11,7 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class FoulPlay extends LinearLayout{
-    public int player_no;
+    int player_no;
     private Spinner foulPlay_player;
     public FoulPlay(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -34,12 +34,12 @@ public class FoulPlay extends LinearLayout{
             }
         });
     }
-    public void onCreateMain(Main main){
+    void onCreateMain(Main main){
         findViewById(R.id.card_yellow).setOnClickListener(v -> main.card_yellowClick());
         findViewById(R.id.penalty_try).setOnClickListener(v -> main.penalty_tryClick());
         findViewById(R.id.card_red).setOnClickListener(v -> main.card_redClick());
     }
-    public void setPlayer(int set_player){
+    void setPlayer(int set_player){
         foulPlay_player.setSelection(set_player);
     }
 }

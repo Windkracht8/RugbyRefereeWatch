@@ -27,7 +27,7 @@ public class MatchLog extends ScrollView{
         matchLogList = findViewById(R.id.matchLogList);
     }
 
-    public void show(Main main, Report report){
+    void show(Main main, Report report){
         for(int i = matchLogList.getChildCount(); i > 0; i--){
             matchLogList.removeViewAt(i - 1);
         }

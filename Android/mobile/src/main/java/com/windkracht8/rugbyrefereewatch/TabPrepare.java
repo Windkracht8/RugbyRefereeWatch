@@ -205,7 +205,7 @@ public class TabPrepare extends LinearLayout{
         loadCustomMatchTypes();
     }
 
-    public void onCreateMain(Main main){
+    void onCreateMain(Main main){
         findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
         sHomeColorPosition = Main.sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
         sAwayColorPosition = Main.sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
@@ -234,7 +234,7 @@ public class TabPrepare extends LinearLayout{
         }
         watch_settings = !watch_settings;
     }
-    public JSONObject getSettings(){
+    JSONObject getSettings(){
         if(checkSettings()) return null;
         JSONObject settings = new JSONObject();
         try{
@@ -262,7 +262,7 @@ public class TabPrepare extends LinearLayout{
         }
         return settings;
     }
-    public void gotSettings(JSONObject settings){
+    void gotSettings(JSONObject settings){
         if(has_changed){return;}
         try{
             if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
@@ -467,5 +467,5 @@ public class TabPrepare extends LinearLayout{
         }
         return false;
     }
-    public JSONArray getCustomMatchTypes(){return customMatchTypes;}
+    JSONArray getCustomMatchTypes(){return customMatchTypes;}
 }

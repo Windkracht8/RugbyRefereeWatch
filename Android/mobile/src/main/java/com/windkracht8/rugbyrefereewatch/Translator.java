@@ -5,14 +5,14 @@ import android.util.Log;
 import android.widget.Spinner;
 
 class Translator{
-    public static String getMatchTypeSystem(Context context, int index, String fallback){
+    static String getMatchTypeSystem(Context context, int index, String fallback){
         if(index<=5){
             String[] matchTypes_system = context.getResources().getStringArray(R.array.matchTypes_system);
             return matchTypes_system[index];
         }
         return fallback;
     }
-    public static void setMatchTypeSpin(Context context, Spinner spin, String matchType_system){
+    static void setMatchTypeSpin(Context context, Spinner spin, String matchType_system){
         //First look in the standard match types
         String[] matchTypes_system = context.getResources().getStringArray(R.array.matchTypes_system);
         for(int i=0; i<matchTypes_system.length; i++){
@@ -24,7 +24,7 @@ class Translator{
         //Not found, loop the spinner to look for custom match type
         setSpinner(spin, matchType_system, 5);
     }
-    public static String getEventTypeLocal(Context context, String eventType_system, int period, int period_count){
+    static String getEventTypeLocal(Context context, String eventType_system, int period, int period_count){
         String[] eventTypesLocal = context.getResources().getStringArray(R.array.eventTypes);
         String[] eventTypes_system = context.getResources().getStringArray(R.array.eventTypes_system);
         for(int i=0; i<eventTypes_system.length; i++){
@@ -74,7 +74,7 @@ class Translator{
         }
         return context.getString(R.string.period) + " " + period;
     }
-    public static String getTeamColorSystem(Context context, String teamColor){
+    static String getTeamColorSystem(Context context, String teamColor){
         String[] teamColors = context.getResources().getStringArray(R.array.teamColors);
         String[] teamColors_system = context.getResources().getStringArray(R.array.teamColors_system);
         for(int i=0; i<teamColors.length; i++){
@@ -85,7 +85,7 @@ class Translator{
         Log.e(Main.LOG_TAG, "translator.getTeamColorSystem not found: " + teamColor);
         return teamColors_system[0];
     }
-    public static String getTeamColorLocal(Context context, String teamColor_system){
+    static String getTeamColorLocal(Context context, String teamColor_system){
         String[] teamColors = context.getResources().getStringArray(R.array.teamColors);
         String[] teamColors_system = context.getResources().getStringArray(R.array.teamColors_system);
         for(int i=0; i<teamColors_system.length; i++){
@@ -97,7 +97,7 @@ class Translator{
         return teamColors[0];
     }
 
-    public static void setTeamColorSpin(Context context, Spinner spin, String teamColor){
+    static void setTeamColorSpin(Context context, Spinner spin, String teamColor){
         setSpinner(spin, getTeamColorLocal(context, teamColor), 0);
     }
     private static void setSpinner(Spinner spin, String str, int def){

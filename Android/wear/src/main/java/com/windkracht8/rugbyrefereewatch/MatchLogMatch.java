@@ -13,7 +13,7 @@ public class MatchLogMatch extends TextView{
     public MatchLogMatch(Context context){
         super(context);
     }
-    public MatchLogMatch(Main main, MatchData match, Report report){
+    MatchLogMatch(Main main, MatchData match, Report report){
         super(main);
         Date match_date_d = new Date(match.match_id);
         String item = new SimpleDateFormat("E dd MMM HH:mm", Locale.getDefault()).format(match_date_d);
