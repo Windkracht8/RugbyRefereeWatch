@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Spinner;
 
-public class Translator{
+class Translator{
     public static String getMatchTypeSystem(Context context, int index, String fallback){
         if(index<=5){
             String[] matchTypes_system = context.getResources().getStringArray(R.array.matchTypes_system);

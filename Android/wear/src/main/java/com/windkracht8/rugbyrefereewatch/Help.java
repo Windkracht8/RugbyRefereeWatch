@@ -16,7 +16,7 @@ public class Help extends ScrollView{
     }
     public void show(boolean withWelcome){
         if(withWelcome) findViewById(R.id.welcome).setVisibility(VISIBLE);
-        this.setVisibility(View.VISIBLE);
+        setVisibility(View.VISIBLE);
         findViewById(R.id.svHelp).requestFocus();
     }
 }

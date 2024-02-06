@@ -36,9 +36,9 @@ public class CommsBT{
 
     enum Status{INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL}
     Status status = Status.INIT;
-    private boolean closeConnection = false;
-    private int remainingSearchCount = 0;
-    private int remainingFailedConnectCount = 0;
+    private boolean closeConnection;
+    private int remainingSearchCount;
+    private int remainingFailedConnectCount;
     private Set<String> rrw_device_addresses = new HashSet<>();
     private final ArrayList<String> devices_fetch_pending = new ArrayList<>();
     private Set<BluetoothDevice> bondedDevices;
@@ -213,7 +213,7 @@ public class CommsBT{
     }
     private class CommsBTConnect extends Thread{
         private final BluetoothDevice device;
-        public CommsBTConnect(BluetoothDevice device){
+        private CommsBTConnect(BluetoothDevice device){
             Log.d(Main.LOG_TAG, "CommsBTConnect " + device.getName());
             this.device = device;
             try{
@@ -246,7 +246,7 @@ public class CommsBT{
         private InputStream inputStream;
         private OutputStream outputStream;
 
-        public CommsBTConnected(){
+        CommsBTConnected(){
             Log.d(Main.LOG_TAG, "CommsBTConnected");
             try{
                 inputStream = bluetoothSocket.getInputStream();

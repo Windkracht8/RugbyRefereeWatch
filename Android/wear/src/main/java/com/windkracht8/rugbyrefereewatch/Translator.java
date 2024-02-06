@@ -3,7 +3,7 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.Log;
 
-public class Translator{
+class Translator{
     public static String getTeamColorLocal(Context context, String teamColor_system){
         String[] teamColors = context.getResources().getStringArray(R.array.teamColors);
         String[] teamColors_system = context.getResources().getStringArray(R.array.teamColors_system);

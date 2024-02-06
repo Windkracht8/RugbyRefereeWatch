@@ -18,10 +18,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
-    TabHistory hParent;
-    final Handler handler_message;
+    private TabHistory hParent;
+    private final Handler handler_message;
     public JSONObject match;
-    public boolean is_selected = false;
+    public boolean is_selected;
     private boolean last;
 
     public HistoryMatch(Context context){super(context);handler_message=null;}
@@ -102,7 +102,7 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         if(is_selected){
             unselect();
         }else{
-            final TypedValue value = new TypedValue();
+            TypedValue value = new TypedValue();
             getContext().getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
             setBackgroundColor(value.data);
             setTextColor(getContext().getColor(R.color.background));

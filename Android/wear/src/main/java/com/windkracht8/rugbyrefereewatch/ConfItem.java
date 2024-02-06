@@ -13,7 +13,7 @@ public class ConfItem extends LinearLayout{
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
         POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP, COMMS_LOG
     }
-    public ConfItemType type;
+    private ConfItemType type;
     private TextView confItemName;
     private TextView confItemValue;
     public ConfItem(Context context, AttributeSet attrs){super(context, attrs);}
@@ -77,10 +77,10 @@ public class ConfItem extends LinearLayout{
     }
     private boolean hideForMatchType(){//Thread: Always on UI thread
         if(Main.match.match_type.equals("custom")){
-            this.setVisibility(View.VISIBLE);
+            setVisibility(View.VISIBLE);
             return false;
         }else{
-            this.setVisibility(View.GONE);
+            setVisibility(View.GONE);
             return true;
         }
     }

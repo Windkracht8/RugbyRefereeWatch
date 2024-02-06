@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TabReport extends LinearLayout{
-    Handler handler_message;
+    private Handler handler_message;
     private LinearLayout llEvents;
 
     private JSONObject match;
@@ -30,13 +30,13 @@ public class TabReport extends LinearLayout{
     public static int time_width;
     public static int timer_width;
     public static int score_width;
-    public static int del_width;
+    private static int del_width;
     public static int timer_edit_width;
-    public static int who_width;
-    public static int what_width = 0;
+    private static int who_width;
+    public static int what_width;
     public static int team_width;
 
-    private int view = 0;
+    private int view;
 
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -72,12 +72,12 @@ public class TabReport extends LinearLayout{
     public void onCreateMain(Main main){
         findViewById(R.id.svReport).setOnTouchListener(main::onTouchEventScrollViews);
     }
-    public void loadMatch(Handler handler_message, final JSONObject match){
+    public void loadMatch(Handler handler_message, JSONObject match){
         this.handler_message = handler_message;
         this.match = match;
         view = 0;
         try{
-            this.match_id = match.getLong("matchid");
+            match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
@@ -217,12 +217,12 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    public void bCloseClick(View view){
+    private void bCloseClick(View view){
         InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
         bViewClick();
     }
-    public void bViewClick(){
+    private void bViewClick(){
         view = view == 0 ? 1 : 0;
         findViewById(R.id.bView).setVisibility(VISIBLE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
@@ -233,7 +233,7 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.edit_team_names).setVisibility(GONE);
         showEvents();
     }
-    public void bEditClick(){
+    private void bEditClick(){
         if(what_width == 0){
             what_width = Main.widthPixels - del_width - timer_edit_width - team_width - who_width;
             if(what_width > 500) what_width=1;
@@ -265,7 +265,7 @@ public class TabReport extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_delete, Toast.LENGTH_SHORT).show();
         }
     }
-    public void bSaveClick(View view){
+    private void bSaveClick(View view){
         InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
         try{
@@ -399,7 +399,7 @@ public class TabReport extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_save, Toast.LENGTH_SHORT).show();
         }
     }
-    public void bShareClick(){
+    private void bShareClick(){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");

@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 //Thread: All of FileStore runs on a background thread
-public class FileStore{
+class FileStore{
     //Append a new match
     public static void storeMatch(Main main, MatchData match){
         JSONArray matches = readMatches(main);
@@ -23,7 +23,7 @@ public class FileStore{
     }
 
     //Store all matches
-    public static void storeMatches(Main main, JSONArray matches){
+    private static void storeMatches(Main main, JSONArray matches){
         try{
             storeFile(main, R.string.matches_filename, matches.toString());
         }catch(Exception e){

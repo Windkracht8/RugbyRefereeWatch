@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class CommsBTLog extends ScrollView{
     private Main main;
     private LinearLayout commsBTLogItems;
-    public static final ArrayList<String> log = new ArrayList<>();
+    private static final ArrayList<String> log = new ArrayList<>();
 
     public CommsBTLog(Context context, AttributeSet attrs){
         super(context, attrs);

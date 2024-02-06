@@ -76,7 +76,7 @@ public class Conf extends ConstraintLayout{
         svConf.fullScroll(View.FOCUS_UP);
     }
 
-    public static void updateValues(){//Thread: Always on UI thread
+    private static void updateValues(){//Thread: Always on UI thread
         for(ConfItem confItem : confItems) confItem.updateValue();
     }
 

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class ConfWatch extends ScrollView{
-    private boolean isInitialized = false;
+    private boolean isInitialized;
     private final ArrayList<ConfItem> confItems = new ArrayList<>();
 
     public ConfWatch(Context context, AttributeSet attrs){
@@ -25,7 +25,7 @@ public class ConfWatch extends ScrollView{
     public void show(Main main){
         if(isInitialized){
             for(ConfItem confItem : confItems) confItem.updateValue();
-            this.setVisibility(View.VISIBLE);
+            setVisibility(View.VISIBLE);
             return;
         }
         isInitialized = true;

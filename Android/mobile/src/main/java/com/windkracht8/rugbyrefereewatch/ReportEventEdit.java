@@ -13,7 +13,7 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 public class ReportEventEdit extends LinearLayout{
-    final Handler handler_message;
+    private final Handler handler_message;
     private JSONObject event;
     public ReportEventEdit(Context context){super(context);handler_message=null;}
     public ReportEventEdit(Context context, Handler handler_message, JSONObject event){
@@ -63,7 +63,7 @@ public class ReportEventEdit extends LinearLayout{
                     what.setSelection(8);
                     break;
                 default:
-                    this.setVisibility(GONE);
+                    setVisibility(GONE);
             }
 
             if(event.has("team") && event.getString("team").equals("away")){
@@ -87,7 +87,7 @@ public class ReportEventEdit extends LinearLayout{
         findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
     }
 
-    public void bDelClick(){
+    private void bDelClick(){
         try{
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_DEL_CLICK, event.getInt("id"), 0));
         }catch(Exception e){
@@ -97,7 +97,7 @@ public class ReportEventEdit extends LinearLayout{
     }
 
     public JSONObject toJson(){
-        if(this.getVisibility() == GONE) return event;
+        if(getVisibility() == GONE) return event;
         try{
             String reason = ((EditText)findViewById(R.id.reason)).getText().toString();
             if(event.has("reason") || reason.length() > 0) event.put("reason", reason);

@@ -48,12 +48,12 @@ public class TabPrepare extends LinearLayout{
     private CheckBox cbScreenOn;
     private Button bWatchSettings;
     private Spinner sTimerType;
-    private boolean watch_settings = false;
-    private boolean has_changed = false;
+    private boolean watch_settings;
+    private boolean has_changed;
     private JSONArray customMatchTypes;
-    private int sMatchTypePosition = 0;
-    public static int sHomeColorPosition = 0;
-    public static int sAwayColorPosition = 0;
+    private int sMatchTypePosition;
+    private static int sHomeColorPosition;
+    private static int sAwayColorPosition;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -364,7 +364,7 @@ public class TabPrepare extends LinearLayout{
     }
     private void bSaveCustomClick(){
         if(checkSettings()) return;
-        final EditText etName = new EditText(getContext());
+        EditText etName = new EditText(getContext());
         etName.setHint(R.string.custom_match_hint);
         etName.setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                                     48,

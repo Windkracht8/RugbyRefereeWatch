@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.UUID;
 
 //Thread: All of FileStore runs on a background thread
-public class CommsBT{
+class CommsBT{
     private final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothServerSocket bluetoothServerSocket;
@@ -33,7 +33,7 @@ public class CommsBT{
     private final Main main;
     private final Handler handler;
 
-    private boolean closeConnection = false;
+    private boolean closeConnection;
     private final JSONArray responseQueue = new JSONArray();
 
     public CommsBT(Main main){
@@ -94,7 +94,7 @@ public class CommsBT{
             sendResponse("prepare", main.getString(R.string.fail_unexpected));
         }
     }
-    void sendResponse(final String requestType, final String responseData){
+    private void sendResponse(String requestType, String responseData){
         try{
             JSONObject response = new JSONObject();
             response.put("requestType", requestType);
@@ -106,7 +106,7 @@ public class CommsBT{
         }
     }
     /** @noinspection SameParameterValue*/
-    void sendResponse(final String requestType, final JSONObject responseData){
+    private void sendResponse(String requestType, JSONObject responseData){
         try{
             JSONObject response = new JSONObject();
             response.put("requestType", requestType);
@@ -172,7 +172,7 @@ public class CommsBT{
 
     private class CommsBTConnect extends Thread{
         @SuppressLint("MissingPermission") //Permissions are handled in initBT
-        public CommsBTConnect(){
+        private CommsBTConnect(){
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect");
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("RugbyRefereeWatch", RRW_UUID);
@@ -204,7 +204,7 @@ public class CommsBT{
         private InputStream inputStream;
         private OutputStream outputStream;
 
-        public CommsBTConnected(){
+        CommsBTConnected(){
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnected.getInputStream");
                 inputStream = bluetoothSocket.getInputStream();

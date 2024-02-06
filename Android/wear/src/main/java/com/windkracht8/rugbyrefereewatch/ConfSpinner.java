@@ -20,7 +20,7 @@ public class ConfSpinner extends ScrollView{
     private final ArrayList<TextView> confSpinnerItems = new ArrayList<>();
     private boolean isInitialized;
     private int itemHeight;
-    private boolean isItemHeightInitialized = false;
+    private boolean isItemHeightInitialized;
     private float scalePerPixel;
 
     public ConfSpinner(Context context, AttributeSet attrs){

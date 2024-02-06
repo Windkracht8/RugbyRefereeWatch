@@ -82,44 +82,44 @@ public class Main extends Activity{
     public CommsBTLog commsBTLog;
     private View touchView;
 
-    public static int heightPixels = 0;
-    public static int widthPixels = 0;
-    public static int vh10 = 0;
-    public static int vh15 = 0;
-    public static int vh20 = 0;
-    public static int vh25 = 0;
-    public static int vh30 = 0;
-    public static int vh40 = 0;
+    public static int heightPixels;
+    private static int widthPixels;
+    public static int vh10;
+    private static int vh15;
+    public static int vh20;
+    public static int vh25;
+    private static int vh30;
+    private static int vh40;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
     public static TimerStatus timer_status = TimerStatus.CONF;
-    public static long timer_timer = 0;
-    private static long timer_start = 0;
-    private static long timer_start_time_off = 0;
-    private static boolean timer_period_ended = false;
-    public static int timer_period = 0;
+    public static long timer_timer;
+    private static long timer_start;
+    private static long timer_start_time_off;
+    private static boolean timer_period_ended;
+    public static int timer_period;
     public static int timer_period_time = 40;
     public static int timer_type_period = 1;//0:up, 1:down
     //Settings
     public static boolean screen_on = true;
-    public static int timer_type = 1;//0:up, 1:down
-    public static boolean record_player = false;
-    public static boolean record_pens = false;
-    public final static int help_version = 4;
+    private static int timer_type = 1;//0:up, 1:down
+    public static boolean record_player;
+    public static boolean record_pens;
+    private final static int help_version = 4;
 
-    public static MatchData match = new MatchData();
+    public static final MatchData match = new MatchData();
     private Handler handler_main;
-    public ExecutorService executorService;
-    static Vibrator vibrator;
+    private ExecutorService executorService;
+    private static Vibrator vibrator;
     private CommsBT commsBT;
 
     private static float onTouchStartY = -1;
-    private static float onTouchStartX = 0;
+    private static float onTouchStartX;
     public static long draggingEnded;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
-    private static boolean hasBTPermission = false;
+    private static boolean hasBTPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -273,7 +273,7 @@ public class Main extends Activity{
         stopOngoingNotification();
     }
 
-    public void requestPermissions(){
+    private void requestPermissions(){
         if(Build.VERSION.SDK_INT >= 33){
             if(!hasPermission(Manifest.permission.POST_NOTIFICATIONS)
                     || !hasBTPermission
@@ -365,7 +365,7 @@ public class Main extends Activity{
         return true; //Just to let Google know we are listening to rotary events
     }
 
-    public void onMainClick(){
+    private void onMainClick(){
         //We need to do this to make sure that we can listen for onTouch on main
         Log.i(RRW_LOG_TAG, "onMainClick");
     }
@@ -459,7 +459,7 @@ public class Main extends Activity{
     private float getBackSwipeVelocity(MotionEvent event, float diffX){
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
-    public void initBT(){
+    private void initBT(){
         if(timer_status != TimerStatus.CONF && timer_status != TimerStatus.FINISHED) return;
         if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
             Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
@@ -470,7 +470,7 @@ public class Main extends Activity{
         executorService.submit(commsBT::startComms);
     }
 
-    public void timerClick(){
+    private void timerClick(){
         if(timer_status == TimerStatus.RUNNING){
             singleBeep();
             timer_status = TimerStatus.TIME_OFF;
@@ -480,13 +480,13 @@ public class Main extends Activity{
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
-    public void timeOffBuzz(){
+    private void timeOffBuzz(){
         if(timer_status == TimerStatus.TIME_OFF){
             beep();
             handler_main.postDelayed(this::timeOffBuzz, 15000);
         }
     }
-    public void bOverTimerClick(){
+    private void bOverTimerClick(){
         switch(timer_status){
             case CONF:
                 match.match_id = getCurrentTimestamp();
@@ -521,7 +521,7 @@ public class Main extends Activity{
         }
         updateButtons();
     }
-    public void bBottomClick(){
+    private void bBottomClick(){
         switch(timer_status){
             case TIME_OFF:
                 //How did someone get here with no events in the match?
@@ -725,7 +725,7 @@ public class Main extends Activity{
         }
         score.update(match);
     }
-    public int getColorBG(String name){
+    private int getColorBG(String name){
         switch(name){
             case "black":
                 return getResources().getColor(R.color.black, null);
@@ -762,7 +762,7 @@ public class Main extends Activity{
         //black blue brown purple red
         return getResources().getColor(R.color.white, null);
     }
-    public long updateTime(){
+    private long updateTime(){
         Date date = new Date();
         long milli_secs = date.getTime() % 1000;
         time.setText(prettyTime(date));
@@ -772,12 +772,12 @@ public class Main extends Activity{
         Date date = new Date(timestamp);
         return prettyTime(date);
     }
-    public static String prettyTime(Date date){
+    private static String prettyTime(Date date){
         String strDateFormat = "HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat, Locale.ENGLISH);
         return sdf.format(date);
     }
-    public void updateTimer(){
+    private void updateTimer(){
         long milli_secs = 0;
         if(timer_status == TimerStatus.RUNNING || timer_status == TimerStatus.REST){
             milli_secs = getCurrentTimestamp() - timer_start;
@@ -816,13 +816,13 @@ public class Main extends Activity{
 
         return pretty;
     }
-    public void updateSinbins(){
+    private void updateSinbins(){
         getSinbins(match.home, al_sinbins_ui_home, sinbins_home);
         getSinbins(match.away, al_sinbins_ui_away, sinbins_away);
     }
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
-    public void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
+    private void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
         for(MatchData.sinbin sinbin_data : team.sinbins){
             boolean exists = false;
             for(Sinbin sinbin_ui : al_sinbins_ui){
@@ -859,25 +859,25 @@ public class Main extends Activity{
             }
         }
     }
-    public void updateBattery(){
+    private void updateBattery(){
         BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
         String tmp = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%";
         battery.setText(tmp);
         handler_main.postDelayed(this::updateBattery, 10000);
     }
-    public void bPenHomeClick(){
+    private void bPenHomeClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.home.pens++;
         updateScore();
         match.logEvent("PENALTY", match.home.id, 0, 0);
     }
-    public void bPenAwayClick(){
+    private void bPenAwayClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.away.pens++;
         updateScore();
         match.logEvent("PENALTY", match.away.id, 0, 0);
     }
-    public void homeClick(){
+    private void homeClick(){
         if(timer_status == TimerStatus.CONF){
             if(match.home.kickoff){
                 match.home.kickoff = false;
@@ -894,7 +894,7 @@ public class Main extends Activity{
             score.setVisibility(View.VISIBLE);
         }
     }
-    public void awayClick(){
+    private void awayClick(){
         if(timer_status == TimerStatus.CONF){
             if(match.away.kickoff){
                 match.away.kickoff = false;
@@ -935,7 +935,7 @@ public class Main extends Activity{
         score.clear();
         match.logEvent("GOAL", score.team.id, score.player_no, 0);
     }
-    public void updateScore(){
+    private void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
                 match.home.cons*match.points_con +
                 match.home.pen_tries*(match.points_try + match.points_con) +
@@ -982,7 +982,7 @@ public class Main extends Activity{
         score.clear();
     }
 
-    public void correctClicked(){
+    private void correctClicked(){
         updateScore();
         updateSinbins();
     }
@@ -991,7 +991,7 @@ public class Main extends Activity{
         Date d = new Date();
         return d.getTime();
     }
-    public String getPeriodName(int period){
+    private String getPeriodName(int period){
         return getPeriodName(this, period, match.period_count);
     }
     public static String getPeriodName(Context context, int period, int period_count){
@@ -1023,7 +1023,7 @@ public class Main extends Activity{
         }
         return "";
     }
-    public String getKickoffTeam(){
+    private String getKickoffTeam(){
         if(match.home.kickoff){
             if(timer_period % 2 == 0){
                 return "home";
@@ -1141,7 +1141,7 @@ public class Main extends Activity{
         return ret;
     }
 
-    public void extraTimeChange(){
+    private void extraTimeChange(){
         switch(extraTime.getSelectedItemPosition()){
             case 1://2 min
                 timer_type_period = timer_type;
@@ -1162,13 +1162,13 @@ public class Main extends Activity{
         updateTimer();
     }
 
-    static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
-    static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
+    private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
+    private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
     public static void beep(){
         vibrator.cancel();
         vibrator.vibrate(ve_pattern);
     }
-    public static void singleBeep(){
+    private static void singleBeep(){
         vibrator.cancel();
         vibrator.vibrate(ve_single);
     }

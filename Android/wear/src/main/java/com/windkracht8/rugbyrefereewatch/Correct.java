@@ -12,10 +12,10 @@ public class Correct extends ScrollView{
     private MatchData match;
     private LinearLayout correctList;
 
-    private boolean itemHeightInit = false;
+    private boolean itemHeightInit;
     private int itemHeight = 200;
-    private int topBottomMargin = 0;
-    private float scalePerPixel = 0;
+    private int topBottomMargin;
+    private float scalePerPixel;
 
     public Correct(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -87,7 +87,7 @@ public class Correct extends ScrollView{
             item.setScaleY(scale);
         }
     }
-    public void eventClicked(View v){
+    private void eventClicked(View v){
         if(Main.draggingEnded+100 > Main.getCurrentTimestamp()) return;
         Event event_ui = (Event) v;
         match.removeEvent(event_ui.event);

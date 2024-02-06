@@ -57,7 +57,7 @@ public class Main extends AppCompatActivity{
     public static final int MESSAGE_LOAD_LATEST_MATCH = 103;
     public static final int MESSAGE_DEL_CLICK = 104;
     public static final int MESSAGE_UPDATE_MATCH = 105;
-    public static final int MESSAGE_EXPORT_MATCHES = 106;
+    private static final int MESSAGE_EXPORT_MATCHES = 106;
     private GestureDetector gestureDetector;
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor sharedPreferences_editor;
@@ -72,7 +72,7 @@ public class Main extends AppCompatActivity{
     private ScrollView svBTLog;
     private LinearLayout llBTLog;
 
-    public static int widthPixels = 0;
+    public static int widthPixels;
     private final ArrayList<String> prevStatuses = new ArrayList<>();
 
     @Override
@@ -274,7 +274,7 @@ public class Main extends AppCompatActivity{
         }
     }
 
-    public void onSwipeRight(){
+    private void onSwipeRight(){
         if(tabReport.getVisibility() == View.VISIBLE){
             tabHistoryLabelClick();
         }else if(tabPrepare.getVisibility() == View.VISIBLE){
@@ -282,7 +282,7 @@ public class Main extends AppCompatActivity{
         }
     }
 
-    public void onSwipeLeft(){
+    private void onSwipeLeft(){
         if(tabHistory.getVisibility() == View.VISIBLE){
             tabReportLabelClick();
         }else if(tabReport.getVisibility() == View.VISIBLE){
@@ -294,7 +294,7 @@ public class Main extends AppCompatActivity{
         findViewById(vid).setEnabled(false);
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
-    public void iconClick(){
+    private void iconClick(){
         if(commsBT == null || commsBT.status == CommsBT.Status.SEARCH_TIMEOUT){
             initBT();
         }
@@ -325,10 +325,10 @@ public class Main extends AppCompatActivity{
         return true;
     }
 
-    public void updateStatus(final CommsBT.Status status){
+    public void updateStatus(CommsBT.Status status){
         runOnUiThread(() -> updateStatusUi(status));
     }
-    private void updateStatusUi(final CommsBT.Status status){
+    private void updateStatusUi(CommsBT.Status status){
         switch(status){
             case FATAL:
                 icon.setBackgroundResource(R.drawable.icon_watch);
@@ -375,10 +375,10 @@ public class Main extends AppCompatActivity{
         }
     }
 
-    public void gotResponse(final JSONObject response){
+    public void gotResponse(JSONObject response){
         runOnUiThread(() -> gotResponseUi(response));
     }
-    private void gotResponseUi(final JSONObject response){
+    private void gotResponseUi(JSONObject response){
         try{
             String requestType = response.getString("requestType");
             gotStatus(String.format("%s %s", getString(R.string.received_response), requestType));
@@ -440,7 +440,7 @@ public class Main extends AppCompatActivity{
                 error = getString(R.string.fail_unexpected);
                 break;
         }
-        final String error2 = error;
+        String error2 = error;
         runOnUiThread(() -> gotErrorUi(error2));
     }
     private void gotErrorUi(String error){
@@ -458,7 +458,7 @@ public class Main extends AppCompatActivity{
         });
     }
 
-    public void tabHistoryLabelClick(){
+    private void tabHistoryLabelClick(){
         hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(R.drawable.tab_active);
         findViewById(R.id.tabReportLabel).setBackgroundResource(0);
@@ -467,7 +467,7 @@ public class Main extends AppCompatActivity{
         tabReport.setVisibility(View.GONE);
         tabPrepare.setVisibility(View.GONE);
     }
-    public void tabReportLabelClick(){
+    private void tabReportLabelClick(){
         hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
         findViewById(R.id.tabReportLabel).setBackgroundResource(R.drawable.tab_active);
@@ -476,7 +476,7 @@ public class Main extends AppCompatActivity{
         tabReport.setVisibility(View.VISIBLE);
         tabPrepare.setVisibility(View.GONE);
     }
-    public void tabPrepareLabelClick(){
+    private void tabPrepareLabelClick(){
         hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
         findViewById(R.id.tabReportLabel).setBackgroundResource(0);
@@ -512,7 +512,7 @@ public class Main extends AppCompatActivity{
 
         exportMatchesActivityResultLauncher.launch(intent);
     }
-    final ActivityResultLauncher<Intent> exportMatchesActivityResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> exportMatchesActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
             if(result.getResultCode() != Activity.RESULT_OK) return;

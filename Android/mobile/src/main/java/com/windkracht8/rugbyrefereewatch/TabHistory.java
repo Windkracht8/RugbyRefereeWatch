@@ -22,13 +22,13 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class TabHistory extends LinearLayout{
-    Handler handler_message;
+    private Handler handler_message;
     private LinearLayout llMatches;
     private Button bExport;
     private Button bDelete;
     private ArrayList<JSONObject> matches;
     private ArrayList<Long> deleted_matches;
-    public boolean selecting = false;
+    public boolean selecting;
 
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -50,7 +50,7 @@ public class TabHistory extends LinearLayout{
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
         loadMatches(main.handler_message);
     }
-    public void gotMatches(final JSONArray matches_new){
+    public void gotMatches(JSONArray matches_new){
         try{
             for(int i = 0; i < matches_new.length(); i++){
                 JSONObject match_new = new JSONObject(matches_new.getString(i));
@@ -64,7 +64,7 @@ public class TabHistory extends LinearLayout{
         storeMatches();
         cleanDeletedMatches(matches_new);
     }
-    private void insertMatch(final JSONObject match_new){
+    private void insertMatch(JSONObject match_new){
         try{
             long match_new_id = match_new.getLong("matchid");
             if(deleted_matches.contains(match_new_id)){
@@ -86,7 +86,7 @@ public class TabHistory extends LinearLayout{
             Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
     }
-    public void cleanDeletedMatches(final JSONArray matches_new){
+    private void cleanDeletedMatches(JSONArray matches_new){
         ArrayList<Long> new_matches = new ArrayList<>();
         try{
             for(int i = 0; i < matches_new.length(); i++){
@@ -115,7 +115,7 @@ public class TabHistory extends LinearLayout{
         return null;
     }
 
-    public void loadMatches(Handler handler_message){
+    private void loadMatches(Handler handler_message){
         this.handler_message = handler_message;
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
@@ -187,7 +187,7 @@ public class TabHistory extends LinearLayout{
             handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_LOAD_LATEST_MATCH, matches.get(0)));
     }
 
-    public void storeMatches(){
+    private void storeMatches(){
         try{
             JSONArray jaMatches = new JSONArray(matches);
             FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
@@ -225,7 +225,7 @@ public class TabHistory extends LinearLayout{
         }
         return ret;
     }
-    public void deleteSelected(){
+    private void deleteSelected(){
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
             if(child.getClass().getSimpleName().equals("HistoryMatch")){

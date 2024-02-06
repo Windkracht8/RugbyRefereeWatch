@@ -35,12 +35,12 @@ public class ReportEvent extends LinearLayout {
                 tvLeft.setText(String.valueOf(score[0]));
                 tvRight.setText(String.valueOf(score[1]));
                 tvMiddle.setText(what_local);
-                int width = (this.getWidth() - tvMiddle.getWidth()) / 2;
+                int width = (getWidth() - tvMiddle.getWidth()) / 2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else if(what.equals("START")){
                 tvMiddle.setText(what_local);
-                int width = (this.getWidth()-tvMiddle.getWidth())/2;
+                int width = (getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else{
@@ -93,7 +93,7 @@ public class ReportEvent extends LinearLayout {
                         }
                         break;
                     default:
-                        this.setVisibility(View.GONE);
+                        setVisibility(View.GONE);
                 }
             }
         }catch(Exception e){
