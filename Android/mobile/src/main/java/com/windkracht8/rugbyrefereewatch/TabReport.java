@@ -33,10 +33,10 @@ public class TabReport extends LinearLayout{
     private static int del_width;
     public static int timer_edit_width;
     private static int who_width;
-    public static int what_width;
+    public static int what_width = 0;
     public static int team_width;
 
-    private int view;
+    private int view = 0;
 
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);

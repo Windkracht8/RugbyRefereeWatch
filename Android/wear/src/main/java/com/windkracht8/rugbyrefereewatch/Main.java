@@ -94,19 +94,19 @@ public class Main extends Activity{
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
     public static TimerStatus timer_status = TimerStatus.CONF;
-    public static long timer_timer;
-    private static long timer_start;
-    private static long timer_start_time_off;
-    private static boolean timer_period_ended;
-    public static int timer_period;
+    public static long timer_timer = 0;
+    private static long timer_start = 0;
+    private static long timer_start_time_off = 0;
+    private static boolean timer_period_ended = false;
+    public static int timer_period = 0;
     public static int timer_period_time = 40;
     public static int timer_type_period = 1;//0:up, 1:down
     //Settings
     public static boolean screen_on = true;
     private static int timer_type = 1;//0:up, 1:down
-    public static boolean record_player;
-    public static boolean record_pens;
-    private final static int help_version = 4;
+    public static boolean record_player = false;
+    public static boolean record_pens = false;
+    private final static int HELP_VERSION = 4;
 
     public static final MatchData match = new MatchData();
     private Handler handler_main;
@@ -115,11 +115,11 @@ public class Main extends Activity{
     private CommsBT commsBT;
 
     private static float onTouchStartY = -1;
-    private static float onTouchStartX;
+    private static float onTouchStartX = 0;
     public static long draggingEnded;
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
-    private static boolean hasBTPermission;
+    private static boolean hasBTPermission = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -1095,7 +1095,7 @@ public class Main extends Activity{
             record_player = jsonSettings.getBoolean("record_player");
             record_pens = jsonSettings.getBoolean("record_pens");
 
-            if(jsonSettings.has("help_version") && help_version != jsonSettings.getInt("help_version")){
+            if(jsonSettings.has("help_version") && HELP_VERSION != jsonSettings.getInt("help_version")){
                 showHelp();
                 executorService.submit(() -> FileStore.storeSettings(this));
             }
@@ -1133,7 +1133,7 @@ public class Main extends Activity{
             ret.put("timer_type", timer_type);
             ret.put("record_player", record_player);
             ret.put("record_pens", record_pens);
-            ret.put("help_version", help_version);
+            ret.put("help_version", HELP_VERSION);
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
             return null;

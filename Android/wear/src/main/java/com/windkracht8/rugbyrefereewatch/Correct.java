@@ -12,10 +12,10 @@ public class Correct extends ScrollView{
     private MatchData match;
     private LinearLayout correctList;
 
-    private boolean itemHeightInit;
+    private boolean itemHeightInit = false;
     private int itemHeight = 200;
-    private int topBottomMargin;
-    private float scalePerPixel;
+    private int topBottomMargin = 0;
+    private float scalePerPixel = 0;
 
     public Correct(Context context, AttributeSet attrs){
         super(context, attrs);

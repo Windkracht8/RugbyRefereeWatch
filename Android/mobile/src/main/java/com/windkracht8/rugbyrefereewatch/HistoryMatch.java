@@ -21,7 +21,7 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
     private TabHistory hParent;
     private final Handler handler_message;
     public JSONObject match;
-    public boolean is_selected;
+    public boolean is_selected = false;
     private boolean last;
 
     public HistoryMatch(Context context){super(context);handler_message=null;}

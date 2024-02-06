@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@SuppressLint("MissingPermission") //Permissions are handled in initBT
+@SuppressLint("MissingPermission")//Permissions are handled in initBT
 public class CommsBT{
     private final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
     private BluetoothAdapter bluetoothAdapter;
@@ -36,9 +36,9 @@ public class CommsBT{
 
     enum Status{INIT, SEARCHING, SEARCH_TIMEOUT, CONNECTED, FATAL}
     Status status = Status.INIT;
-    private boolean closeConnection;
-    private int remainingSearchCount;
-    private int remainingFailedConnectCount;
+    private boolean closeConnection = false;
+    private int remainingSearchCount = 0;
+    private int remainingFailedConnectCount = 0;
     private Set<String> rrw_device_addresses = new HashSet<>();
     private final ArrayList<String> devices_fetch_pending = new ArrayList<>();
     private Set<BluetoothDevice> bondedDevices;

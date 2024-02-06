@@ -13,10 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class MatchLog extends ScrollView{
-    private boolean itemHeightInit;
+    private boolean itemHeightInit = false;
     private int itemHeight = 200;
-    private int topBottomMargin;
-    private float scalePerPixel;
+    private int topBottomMargin = 0;
+    private float scalePerPixel = 0;
     private LinearLayout matchLogList;
 
     public MatchLog(Context context, AttributeSet attrs){

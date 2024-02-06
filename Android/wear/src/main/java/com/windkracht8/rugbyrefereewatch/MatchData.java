@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class MatchData{
     public long match_id;
     /** @noinspection FieldCanBeLocal*/
-    private final int format = 1;//September 2023
+    private final int FORMAT = 1;//September 2023
     public final ArrayList<event> events = new ArrayList<>();
     public team home;
     public team away;
@@ -46,7 +46,7 @@ public class MatchData{
         JSONObject ret = new JSONObject();
         try{
             ret.put("matchid", match_id);
-            ret.put("format", format);
+            ret.put("format", FORMAT);
             JSONObject settings = new JSONObject();
             settings.put("match_type", match_type);
             settings.put("period_time", period_time);
@@ -127,14 +127,14 @@ public class MatchData{
         public String id;
         public String team;
         public String color;
-        public int tot;
-        public int tries;
-        public int cons;
-        public int pen_tries;
-        public int goals;
-        public int pens;
+        public int tot = 0;
+        public int tries = 0;
+        public int cons = 0;
+        public int pen_tries = 0;
+        public int goals = 0;
+        public int pens = 0;
         public final ArrayList<sinbin> sinbins = new ArrayList<>();
-        public boolean kickoff;
+        public boolean kickoff = false;
         private team(String id, String team, String color){
             this.id = id;
             this.team = team;
@@ -251,8 +251,8 @@ public class MatchData{
     public static class sinbin{
         public final long id;
         public long end;
-        public boolean ended;
-        public boolean hide;
+        public boolean ended = false;
+        public boolean hide = false;
         sinbin(long id, long end){
             this.id = id;
             this.end = end;

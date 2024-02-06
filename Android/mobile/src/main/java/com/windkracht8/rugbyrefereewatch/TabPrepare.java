@@ -14,8 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
@@ -48,12 +48,12 @@ public class TabPrepare extends LinearLayout{
     private CheckBox cbScreenOn;
     private Button bWatchSettings;
     private Spinner sTimerType;
-    private boolean watch_settings;
-    private boolean has_changed;
+    private boolean watch_settings = false;
+    private boolean has_changed = false;
     private JSONArray customMatchTypes;
-    private int sMatchTypePosition;
-    private static int sHomeColorPosition;
-    private static int sAwayColorPosition;
+    private int sMatchTypePosition = 0;
+    private static int sHomeColorPosition = 0;
+    private static int sAwayColorPosition = 0;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);

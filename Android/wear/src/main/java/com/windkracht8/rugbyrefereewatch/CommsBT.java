@@ -33,7 +33,7 @@ class CommsBT{
     private final Main main;
     private final Handler handler;
 
-    private boolean closeConnection;
+    private boolean closeConnection = false;
     private final JSONArray responseQueue = new JSONArray();
 
     public CommsBT(Main main){
@@ -171,7 +171,7 @@ class CommsBT{
     }
 
     private class CommsBTConnect extends Thread{
-        @SuppressLint("MissingPermission") //Permissions are handled in initBT
+        @SuppressLint("MissingPermission")//Permissions are handled in initBT
         private CommsBTConnect(){
             try{
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect");

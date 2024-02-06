@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class ConfWatch extends ScrollView{
-    private boolean isInitialized;
+    private boolean isInitialized = false;
     private final ArrayList<ConfItem> confItems = new ArrayList<>();
 
     public ConfWatch(Context context, AttributeSet attrs){

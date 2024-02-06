@@ -28,7 +28,7 @@ public class TabHistory extends LinearLayout{
     private Button bDelete;
     private ArrayList<JSONObject> matches;
     private ArrayList<Long> deleted_matches;
-    public boolean selecting;
+    public boolean selecting = false;
 
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
