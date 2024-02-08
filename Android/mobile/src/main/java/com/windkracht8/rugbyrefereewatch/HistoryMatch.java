@@ -1,6 +1,5 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -17,18 +16,15 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
-    private TabHistory hParent;
-    private final Handler handler_message;
-    JSONObject match;
+class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
+    private final Main main;
+    final JSONObject match;
     boolean is_selected = false;
-    private boolean last;
+    private final boolean last;
 
-    public HistoryMatch(Context context){super(context);handler_message=null;}
-    HistoryMatch(Context context, Handler handler_message, JSONObject match, TabHistory hParent, boolean last){
-        super(context);
-        this.hParent = hParent;
-        this.handler_message = handler_message;
+    HistoryMatch(Main main, JSONObject match, boolean last){
+        super(main);
+        this.main = main;
         this.match = match;
         this.last = last;
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
@@ -38,20 +34,18 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         int historyMatchPadding = getResources().getDimensionPixelSize(R.dimen.historyMatchPadding);
         setPadding(historyMatchPadding, historyMatchPadding, historyMatchPadding, historyMatchPadding);
 
-        if(!last){
-            setBackgroundResource(R.drawable.background_underline);
-        }
+        if(!last) setBackgroundResource(R.drawable.background_underline);
         try{
             Date match_date_d = new Date(match.getLong("matchid"));
             String match_date_s = new SimpleDateFormat("E d MMM HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
-            String name_s = match_date_s + " " + Main.getTeamName(context, home) + " v " + Main.getTeamName(context, away);
+            String name_s = match_date_s + " " + Main.getTeamName(main, home) + " v " + Main.getTeamName(main, away);
 
             setText(name_s);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "HistoryMatch.construct Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_show_match_history, Toast.LENGTH_SHORT).show();
         }
     }
     private float x, y;
@@ -80,10 +74,11 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
             case MotionEvent.ACTION_UP:
                 timer.cancel();
                 if(event.getEventTime() - event.getDownTime() < 500){
-                    if(hParent.selecting){
+                    if(main.tabHistory.selecting){
                         toggleSelect();
                     }else{
-                        handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_HISTORY_MATCH_CLICK, match));
+                        main.tabReport.loadMatch(main, match);
+                        main.tabReportLabelClick();
                         performClick();
                     }
                 }
@@ -108,7 +103,7 @@ public class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
             setTextColor(getContext().getColor(R.color.background));
             is_selected = true;
         }
-        hParent.selectionChanged();
+        main.tabHistory.selectionChanged();
     }
 
     boolean unselect(){

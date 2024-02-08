@@ -22,7 +22,7 @@ public class ConfWatch extends ScrollView{
         if(inflater == null){ Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.conf_watch, this, true);
     }
-    public void show(Main main){
+    void show(Main main){
         if(isInitialized){
             for(ConfItem confItem : confItems) confItem.updateValue();
             setVisibility(View.VISIBLE);
@@ -43,7 +43,7 @@ public class ConfWatch extends ScrollView{
         }
 
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
-            ConfItem confItem = new ConfItem(getContext(), null, confItemType);
+            ConfItem confItem = new ConfItem(getContext(), confItemType);
             confItem.setOnClickListener(v -> onConfItemClick((ConfItem)v, confItemType));
             confItems.add(confItem);
             llConfWatch.addView(confItem);

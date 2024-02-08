@@ -11,12 +11,9 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-
-public class ReportEvent extends LinearLayout {
-    public ReportEvent(Context context){super(context);}
+class ReportEvent extends LinearLayout{
     ReportEvent(Context context, JSONObject event, int period_count, int period_time, int[] score){
         super(context);
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event, this, true);

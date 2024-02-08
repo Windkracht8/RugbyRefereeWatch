@@ -36,7 +36,7 @@ class CommsBT{
     private boolean closeConnection = false;
     private final JSONArray responseQueue = new JSONArray();
 
-    public CommsBT(Main main){
+    CommsBT(Main main){
         this.main = main;
         handler = new Handler(Looper.getMainLooper());
     }

@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class TabHistory extends LinearLayout{
-    private Handler handler_message;
+    private Main main;
     private LinearLayout llMatches;
     private Button bExport;
     private Button bDelete;
@@ -44,11 +43,12 @@ public class TabHistory extends LinearLayout{
         deleted_matches = new ArrayList<>();
     }
     void onCreateMain(Main main){
+        this.main = main;
         findViewById(R.id.bSync).setOnClickListener(view -> main.bSyncClick());
         findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
-        loadMatches(main.handler_message);
+        loadMatches();
     }
     void gotMatches(JSONArray matches_new){
         try{
@@ -60,7 +60,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
-        showMatches();
+        showMatches(main);
         storeMatches();
         cleanDeletedMatches(matches_new);
     }
@@ -115,8 +115,7 @@ public class TabHistory extends LinearLayout{
         return null;
     }
 
-    private void loadMatches(Handler handler_message){
-        this.handler_message = handler_message;
+    private void loadMatches(){
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
             if(fis == null) return;//Probably because of viewing in IDE
@@ -140,7 +139,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_matches, Toast.LENGTH_SHORT).show();
         }
-        showMatches();
+        showMatches(main);
 
         try{
             FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.deleted_matches_filename));
@@ -164,7 +163,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
         }
     }
-    private void showMatches(){
+    private void showMatches(Main main){
         upgradeFormatOfMatches();
         try{
             matches.sort((m1, m2) -> {
@@ -177,14 +176,14 @@ public class TabHistory extends LinearLayout{
             });
             if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
             for(int i = matches.size()-1; i >= 0; i--){
-                llMatches.addView(new HistoryMatch(getContext(), handler_message, matches.get(i), this, i == 0));
+                llMatches.addView(new HistoryMatch(main, matches.get(i), i == 0));
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
-        if(!matches.isEmpty())
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_LOAD_LATEST_MATCH, matches.get(0)));
+        if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(0));
+
     }
 
     private void storeMatches(){
@@ -249,7 +248,7 @@ public class TabHistory extends LinearLayout{
             }
         }
         storeMatches();
-        showMatches();
+        showMatches(main);
         selectionChanged();
     }
     void selectionChanged(){
@@ -277,14 +276,14 @@ public class TabHistory extends LinearLayout{
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
                     storeMatches();
-                    showMatches();
+                    showMatches(main);
                     return;
                 }
             }
             if(match.has("timer")) match.remove("timer");
             matches.add(match);
             storeMatches();
-            showMatches();
+            showMatches(main);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
         }

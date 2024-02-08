@@ -1,14 +1,11 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
-public class Sinbin extends TextView{
-    MatchData.sinbin sinbin;
-    public Sinbin(Context context, AttributeSet attrs){super(context, attrs);}
+class Sinbin extends TextView{
+    final MatchData.sinbin sinbin;
     Sinbin(Main main, MatchData.sinbin sinbin, String color){
         super(main);
         this.sinbin = sinbin;

@@ -5,12 +5,9 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.TextView;
 
-public class Event extends TextView{
-    public MatchData.event event;
-    public Event(Context context){
-        super(context);
-    }
-    public Event(Context context, MatchData.event event){
+class Event extends TextView{
+    final MatchData.event event;
+    Event(Context context, MatchData.event event){
         super(context);
         this.event = event;
         String item = Main.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(context, event.what);

@@ -2,7 +2,6 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TabReport extends LinearLayout{
-    private Handler handler_message;
+    private Main main;
     private LinearLayout llEvents;
 
     private JSONObject match;
@@ -72,8 +71,8 @@ public class TabReport extends LinearLayout{
     void onCreateMain(Main main){
         findViewById(R.id.svReport).setOnTouchListener(main::onTouchEventScrollViews);
     }
-    void loadMatch(Handler handler_message, JSONObject match){
-        this.handler_message = handler_message;
+    void loadMatch(Main main, JSONObject match){
+        this.main = main;
         this.match = match;
         view = 0;
         try{
@@ -188,7 +187,7 @@ public class TabReport extends LinearLayout{
                         llEvents.addView(new ReportEventFull(getContext(), event, match, period_count, period_time));
                         break;
                     case 2:
-                        llEvents.addView(new ReportEventEdit(getContext(), handler_message, event));
+                        llEvents.addView(new ReportEventEdit(main, event));
                         break;
                 }
             }
@@ -392,8 +391,8 @@ public class TabReport extends LinearLayout{
             away.put("pens", away_pens);
             match.put("away", away);
 
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_UPDATE_MATCH, match));
-            loadMatch(handler_message, match);
+            main.tabHistory.updateMatch(match);
+            loadMatch(main, match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save, Toast.LENGTH_SHORT).show();

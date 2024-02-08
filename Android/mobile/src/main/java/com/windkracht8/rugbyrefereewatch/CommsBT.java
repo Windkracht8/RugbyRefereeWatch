@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @SuppressLint("MissingPermission")//Permissions are handled in initBT
-public class CommsBT{
+class CommsBT{
     private final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
@@ -44,7 +44,7 @@ public class CommsBT{
     private Set<BluetoothDevice> bondedDevices;
     private final JSONArray requestQueue = new JSONArray();
 
-    public CommsBT(Main main){
+    CommsBT(Main main){
         this.main = main;
         handler = new Handler(Looper.getMainLooper());
     }
@@ -67,7 +67,7 @@ public class CommsBT{
             main.gotResponse(responseMessage);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.gotResponse: " + e.getMessage());
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+            main.toast(R.string.fail_response);
             main.gotError(String.format("%s %s", main.getString(R.string.response_error), e.getMessage()));
         }
     }
@@ -136,7 +136,7 @@ public class CommsBT{
         updateStatus(Status.SEARCHING);
         bondedDevices = bluetoothAdapter.getBondedDevices();
         if(bondedDevices == null){
-            main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
+            main.toast(R.string.fail_BT_connect);
             gotError(main.getString(R.string.no_devices));
             return;
         }
@@ -220,7 +220,7 @@ public class CommsBT{
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
+                main.toast(R.string.fail_BT_connect);
             }
         }
         public void run(){
@@ -252,13 +252,13 @@ public class CommsBT{
                 inputStream = bluetoothSocket.getInputStream();
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected getInputStream Exception: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
+                main.toast(R.string.fail_BT_connect);
             }
             try{
                 outputStream = bluetoothSocket.getOutputStream();
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected getOutputStream Exception: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_BT_connect));
+                main.toast(R.string.fail_BT_connect);
             }
             updateStatus(Status.CONNECTED);
         }
@@ -307,7 +307,7 @@ public class CommsBT{
                 outputStream.write(request.toString().getBytes());
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected.sendNextRequest Exception: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_send_message));
+                main.toast(R.string.fail_send_message);
                 main.gotStatus(String.format("%s %s", main.getString(R.string.send_error), e.getMessage()));
                 return false;
             }
@@ -324,7 +324,7 @@ public class CommsBT{
                     int numBytes = inputStream.read(buffer);
                     if(numBytes < 0){
                         Log.e(Main.LOG_TAG, "CommsBTConnected.read read error: " + response);
-                        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                        main.toast(R.string.fail_response);
                         main.gotError(main.getString(R.string.fail_response));
                         return;
                     }
@@ -336,7 +336,7 @@ public class CommsBT{
                     }
                     if((new Date()).getTime() - read_start > 3000){
                         Log.e(Main.LOG_TAG, "CommsBTConnected.read started to read, no complete message after 3 seconds: " + response);
-                        main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.incomplete_message));
+                        main.toast(R.string.incomplete_message);
                         main.gotError(main.getString(R.string.incomplete_message));
                         return;
                     }
@@ -344,7 +344,7 @@ public class CommsBT{
                 }
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected.read: " + e.getMessage());
-                main.handler_message.sendMessage(main.handler_message.obtainMessage(Main.MESSAGE_TOAST, R.string.fail_response));
+                main.toast(R.string.fail_response);
                 main.gotError(String.format("%s %s", main.getString(R.string.response_error), e.getMessage()));
             }
         }

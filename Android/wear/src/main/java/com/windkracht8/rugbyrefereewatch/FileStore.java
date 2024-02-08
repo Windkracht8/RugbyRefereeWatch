@@ -16,9 +16,9 @@ import java.io.OutputStreamWriter;
 //Thread: All of FileStore runs on a background thread
 class FileStore{
     //Append a new match
-    public static void storeMatch(Main main, MatchData match){
+    static void storeMatch(Main main){
         JSONArray matches = readMatches(main);
-        matches.put(match.toJson(main));
+        matches.put(Main.match.toJson(main));
         storeMatches(main, matches);
     }
 
@@ -32,7 +32,7 @@ class FileStore{
         }
     }
     //Return an array of stored matches
-    public static JSONArray readMatches(Main main){
+    static JSONArray readMatches(Main main){
         try{
             String sMatches = getFileAsString(main, R.string.matches_filename);
             if(sMatches.length() < 3){return new JSONArray();}
@@ -45,7 +45,7 @@ class FileStore{
     }
 
     //Go through stored matches and remove old ones
-    public static void cleanMatches(Main main){
+    static void cleanMatches(Main main){
         JSONArray matches = readMatches(main);
         try{
             for(int i = matches.length(); i > 0; i--){
@@ -61,7 +61,7 @@ class FileStore{
         }
     }
     //The phone sends a list of matches that can be deleted
-    public static JSONArray deletedMatches(Main main, String request_data){
+    static JSONArray deletedMatches(Main main, String request_data){
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
             JSONArray deleted_matches = request_data_jo.getJSONArray("deleted_matches");
@@ -83,7 +83,7 @@ class FileStore{
         }
         return new JSONArray();
     }
-    public static void storeSettings(Main main){
+    static void storeSettings(Main main){
         try{
             JSONObject settings = Main.getSettings();
             if(settings == null){
@@ -97,7 +97,7 @@ class FileStore{
             main.toast(R.string.fail_store_settings);
         }
     }
-    public static void readSettings(Main main){
+    static void readSettings(Main main){
         try{
             String sSettings = getFileAsString(main, R.string.settings_filename);
             if(sSettings.length() < 3){
@@ -115,7 +115,7 @@ class FileStore{
         }
     }
 
-    public static void storeCustomMatchTypes(Main main){
+    static void storeCustomMatchTypes(Main main){
         try{
             FileOutputStream fos = main.openFileOutput(main.getString(R.string.match_types_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
@@ -126,7 +126,7 @@ class FileStore{
             main.toast(R.string.fail_store_match_types);
         }
     }
-    public static void readCustomMatchTypes(Main main){
+    static void readCustomMatchTypes(Main main){
         try{
             FileInputStream fis = main.openFileInput(main.getString(R.string.match_types_filename));
             InputStreamReader isr = new InputStreamReader(fis);

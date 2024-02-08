@@ -1,6 +1,5 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.TextView;
@@ -9,10 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MatchLogMatch extends TextView{
-    public MatchLogMatch(Context context){
-        super(context);
-    }
+class MatchLogMatch extends TextView{
     MatchLogMatch(Main main, MatchData match, Report report){
         super(main);
         Date match_date_d = new Date(match.match_id);
@@ -32,6 +28,6 @@ public class MatchLogMatch extends TextView{
         setGravity(Gravity.CENTER);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         setBackgroundResource(R.drawable.conf_item_bg);
-        setOnClickListener(v -> report.show(main, match));
+        setOnClickListener(v -> report.show(main));
     }
 }

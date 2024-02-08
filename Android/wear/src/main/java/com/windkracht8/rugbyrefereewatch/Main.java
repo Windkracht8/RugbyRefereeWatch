@@ -108,7 +108,7 @@ public class Main extends Activity{
     static boolean record_pens = false;
     private final static int HELP_VERSION = 4;
 
-    public static final MatchData match = new MatchData();
+    static final MatchData match = new MatchData();
     private Handler handler_main;
     private ExecutorService executorService;
     private static Vibrator vibrator;
@@ -354,7 +354,7 @@ public class Main extends Activity{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 System.exit(0);
             }else{
-                correct.show(this, match);
+                correct.show(this);
             }
         }
     }
@@ -514,7 +514,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 break;
             case FINISHED:
-                report.show(this, match);
+                report.show(this);
                 break;
             default://ignore
                 return;
@@ -560,7 +560,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.storeMatch(this, match));
+                executorService.submit(() -> FileStore.storeMatch(this));
                 initBT();
                 stopOngoingNotification();
                 break;

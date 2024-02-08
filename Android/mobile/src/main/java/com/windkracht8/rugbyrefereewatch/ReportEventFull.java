@@ -10,9 +10,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-
-public class ReportEventFull extends LinearLayout{
-    public ReportEventFull(Context context){super(context);}
+class ReportEventFull extends LinearLayout{
     ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
         super(context);
 

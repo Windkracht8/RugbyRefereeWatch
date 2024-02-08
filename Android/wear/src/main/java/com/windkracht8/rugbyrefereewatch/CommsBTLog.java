@@ -36,7 +36,7 @@ public class CommsBTLog extends ScrollView{
         }
     }
 
-    public void show(Main main){
+    void show(Main main){
         this.main = main;
         for(int i = commsBTLogItems.getChildCount(); i > 0; i--){
             commsBTLogItems.removeViewAt(i-1);
@@ -48,7 +48,7 @@ public class CommsBTLog extends ScrollView{
         fullScroll(View.FOCUS_UP);
         requestFocus();
     }
-    public void addToLog(String line){//Thread: Mostly called from background thread
+    void addToLog(String line){//Thread: Mostly called from background thread
         Log.d(Main.RRW_LOG_TAG, "CommsBTLog.addToLog: " + line);
         log.add(line);
         if(getVisibility() == View.VISIBLE){

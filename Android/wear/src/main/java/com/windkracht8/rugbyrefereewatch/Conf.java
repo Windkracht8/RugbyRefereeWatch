@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 public class Conf extends ConstraintLayout{
     private ScrollView svConf;
-    public ConfSpinner confSpinner;
+    ConfSpinner confSpinner;
     private static ArrayList<ConfItem> confItems;
-    public final static JSONArray customMatchTypes = new JSONArray();
+    final static JSONArray customMatchTypes = new JSONArray();
     private boolean isInitialized;
     private int confItemHeight;
     private boolean isItemHeightInitialized;
@@ -35,10 +35,10 @@ public class Conf extends ConstraintLayout{
         svConf = findViewById(R.id.svConf);
     }
 
-    public void requestSVFocus(){
+    void requestSVFocus(){
         svConf.requestFocus();
     }
-    public void show(Main main){
+    void show(Main main){
         if(isInitialized){
             setVisibility(View.VISIBLE);
             svConf.fullScroll(View.FOCUS_UP);
@@ -49,7 +49,7 @@ public class Conf extends ConstraintLayout{
         LinearLayout llConf = findViewById(R.id.llConf);
         confItems = new ArrayList<>();
         for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
-            ConfItem confItem = new ConfItem(getContext(), null, confItemType);
+            ConfItem confItem = new ConfItem(getContext(), confItemType);
             confItem.setOnClickListener(v -> onConfItemClick(main, (ConfItem)v, confItemType));
             confItems.add(confItem);
             llConf.addView(confItem);
@@ -147,7 +147,7 @@ public class Conf extends ConstraintLayout{
         }
     }
 
-    public void onStringValueClick(ConfItem confItem, ConfItem.ConfItemType type, String value){
+    void onStringValueClick(ConfItem confItem, ConfItem.ConfItemType type, String value){
         switch(type){
             case COLOR_HOME:
                 Main.match.home.color = value;
@@ -166,7 +166,7 @@ public class Conf extends ConstraintLayout{
         confSpinner.setVisibility(View.GONE);
         svConf.requestFocus();
     }
-    public void onIntValueClick(ConfItem confItem, ConfItem.ConfItemType type, int value){
+    void onIntValueClick(ConfItem confItem, ConfItem.ConfItemType type, int value){
         switch(type){
             case PERIOD_TIME:
                 Main.match.period_time = value;
@@ -265,7 +265,7 @@ public class Conf extends ConstraintLayout{
             Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
         }
     }
-    public static void syncCustomMatchTypes(Main main, String request_data){//Thread: Always on background thread
+    static void syncCustomMatchTypes(Main main, String request_data){//Thread: Always on background thread
         try{
             JSONObject request_data_jo = new JSONObject(request_data);
             if(!request_data_jo.has("custom_match_types")) return;

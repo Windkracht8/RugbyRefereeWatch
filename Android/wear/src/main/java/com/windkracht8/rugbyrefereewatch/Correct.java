@@ -9,7 +9,6 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class Correct extends ScrollView{
-    private MatchData match;
     private LinearLayout correctList;
 
     private boolean itemHeightInit = false;
@@ -23,14 +22,13 @@ public class Correct extends ScrollView{
         if(inflater == null){Toast.makeText(context, R.string.fail_show_correct, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.correct, this, true);
     }
-    public void show(Main main, MatchData match){
-        this.match = match;
+    void show(Main main){
         correctList = findViewById(R.id.correctList);
         for(int i = correctList.getChildCount(); i > 0; i--){
             correctList.removeViewAt(i-1);
         }
-        for(int i = match.events.size(); i > 0; i--){
-            MatchData.event event_data = match.events.get(i-1);
+        for(int i = Main.match.events.size(); i > 0; i--){
+            MatchData.event event_data = Main.match.events.get(i-1);
             if(!event_data.what.equals("TRY") &&
                     !event_data.what.equals("CONVERSION") &&
                     !event_data.what.equals("PENALTY TRY") &&
@@ -90,7 +88,7 @@ public class Correct extends ScrollView{
     private void eventClicked(View v){
         if(Main.draggingEnded+100 > Main.getCurrentTimestamp()) return;
         Event event_ui = (Event) v;
-        match.removeEvent(event_ui.event);
+        Main.match.removeEvent(event_ui.event);
         setVisibility(View.GONE);
         performClick();
     }

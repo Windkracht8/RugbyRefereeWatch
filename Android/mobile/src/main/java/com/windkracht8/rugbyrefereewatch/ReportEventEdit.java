@@ -1,7 +1,6 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
@@ -12,17 +11,16 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-public class ReportEventEdit extends LinearLayout{
-    private final Handler handler_message;
-    private JSONObject event;
-    public ReportEventEdit(Context context){super(context);handler_message=null;}
-    ReportEventEdit(Context context, Handler handler_message, JSONObject event){
-        super(context);
-        this.handler_message = handler_message;
+class ReportEventEdit extends LinearLayout{
+    private final Main main;
+    private final JSONObject event;
+    ReportEventEdit(Main main, JSONObject event){
+        super(main);
+        this.main = main;
         this.event = event;
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
+        LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if(inflater == null){Toast.makeText(main, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
         inflater.inflate(R.layout.report_event_edit, this, true);
 
         Spinner what = findViewById(R.id.what);
@@ -89,7 +87,7 @@ public class ReportEventEdit extends LinearLayout{
 
     private void bDelClick(){
         try{
-            handler_message.sendMessage(handler_message.obtainMessage(Main.MESSAGE_DEL_CLICK, event.getInt("id"), 0));
+            main.tabReport.bDelClick(event.getInt("id"));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "ReportEventEdit.bDelClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_event, Toast.LENGTH_SHORT).show();

@@ -1,14 +1,13 @@
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ConfItem extends LinearLayout{
+class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
         POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP, COMMS_LOG
@@ -16,9 +15,8 @@ public class ConfItem extends LinearLayout{
     private ConfItemType type;
     private TextView confItemName;
     private TextView confItemValue;
-    public ConfItem(Context context, AttributeSet attrs){super(context, attrs);}
-    public ConfItem(Context context, AttributeSet attrs, ConfItemType type){
-        super(context, attrs);
+    ConfItem(Context context, ConfItemType type){
+        super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();return;}
         inflater.inflate(R.layout.conf_item, this, true);
@@ -34,7 +32,7 @@ public class ConfItem extends LinearLayout{
             confItemValue.setContentDescription(context.getString(R.string.confItemValue_desc) + type);
         }
     }
-    public static int getConfItemName(ConfItemType type){
+    static int getConfItemName(ConfItemType type){
         switch(type){
             case COLOR_HOME:
                 return R.string.color_home;
@@ -70,7 +68,7 @@ public class ConfItem extends LinearLayout{
         return R.string.fail_oops;
     }
 
-    public void addOnTouch(Main main){
+    void addOnTouch(Main main){
         main.addOnTouch(this);
         main.addOnTouch(confItemName);
         main.addOnTouch(confItemValue);
@@ -84,7 +82,7 @@ public class ConfItem extends LinearLayout{
             return true;
         }
     }
-    public void updateValue(){//Thread: Always on UI thread
+    void updateValue(){//Thread: Always on UI thread
         String value = "";
         switch(type){
             case COLOR_HOME:

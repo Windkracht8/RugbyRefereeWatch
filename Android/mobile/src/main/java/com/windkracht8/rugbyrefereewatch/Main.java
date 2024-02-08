@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -51,13 +50,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity{
-    public static final String LOG_TAG = "RugbyRefereeWatch";
-    static final int MESSAGE_TOAST = 101;
-    static final int MESSAGE_HISTORY_MATCH_CLICK = 102;
-    static final int MESSAGE_LOAD_LATEST_MATCH = 103;
-    static final int MESSAGE_DEL_CLICK = 104;
-    static final int MESSAGE_UPDATE_MATCH = 105;
-    private static final int MESSAGE_EXPORT_MATCHES = 106;
+    static final String LOG_TAG = "RugbyRefereeWatch";
     private GestureDetector gestureDetector;
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor sharedPreferences_editor;
@@ -65,8 +58,8 @@ public class Main extends AppCompatActivity{
     private Handler handler_main;
     private CommsBT commsBT;
 
-    private TabHistory tabHistory;
-    private TabReport tabReport;
+    TabHistory tabHistory;
+    TabReport tabReport;
     private TabPrepare tabPrepare;
     private ImageView icon;
     private ScrollView svBTLog;
@@ -121,35 +114,6 @@ public class Main extends AppCompatActivity{
         commsBT = new CommsBT(this);
         initBT();
     }
-    final Handler handler_message = new Handler(Looper.getMainLooper()){
-        public void handleMessage(Message msg){
-            switch(msg.what){
-                case MESSAGE_HISTORY_MATCH_CLICK:
-                    if(!(msg.obj instanceof JSONObject)) return;
-                    tabReport.loadMatch(handler_message, (JSONObject) msg.obj);
-                    tabReportLabelClick();
-                    break;
-                case MESSAGE_LOAD_LATEST_MATCH:
-                    if(!(msg.obj instanceof JSONObject)) return;
-                    tabReport.loadMatch(handler_message, (JSONObject) msg.obj);
-                    break;
-                case MESSAGE_DEL_CLICK:
-                    tabReport.bDelClick(msg.arg1);
-                    break;
-                case MESSAGE_UPDATE_MATCH:
-                    if(!(msg.obj instanceof JSONObject)) return;
-                    tabHistory.updateMatch((JSONObject) msg.obj);
-                    break;
-                case MESSAGE_EXPORT_MATCHES:
-                    exportMatches();
-                    break;
-                case MESSAGE_TOAST:
-                    if(!(msg.obj instanceof Integer)) return;
-                    Toast.makeText(getApplicationContext(), getString((Integer) msg.obj), Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
     private void initBT(){
         if(Build.VERSION.SDK_INT >= 31){
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
@@ -223,6 +187,9 @@ public class Main extends AppCompatActivity{
     private void handleOrientation(){
         getWidthPixels();
         TabReport.what_width = 0;
+    }
+    void toast(int message){
+        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
     @Override
     public void onBackPressed(){
@@ -467,7 +434,7 @@ public class Main extends AppCompatActivity{
         tabReport.setVisibility(View.GONE);
         tabPrepare.setVisibility(View.GONE);
     }
-    private void tabReportLabelClick(){
+    void tabReportLabelClick(){
         hideKeyboard();
         findViewById(R.id.tabHistoryLabel).setBackgroundResource(0);
         findViewById(R.id.tabReportLabel).setBackgroundResource(R.drawable.tab_active);

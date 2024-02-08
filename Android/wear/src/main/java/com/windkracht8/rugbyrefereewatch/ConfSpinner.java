@@ -35,11 +35,11 @@ public class ConfSpinner extends ScrollView{
         conf_spinner_label = findViewById(R.id.conf_spinner_label);
         llConfSpinner = findViewById(R.id.llConfSpinner);
     }
-    public void addOnTouch(Main main){
+    void addOnTouch(Main main){
         main.addOnTouch(conf_spinner_label);
     }
 
-    public void setConfItemType(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
+    void setConfItemType(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
         if(isInitialized){
             for(int i = llConfSpinner.getChildCount(); i>1; i--){
                 llConfSpinner.removeViewAt(i-1);
