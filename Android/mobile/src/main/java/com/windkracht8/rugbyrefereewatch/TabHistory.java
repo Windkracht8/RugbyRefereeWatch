@@ -25,8 +25,8 @@ public class TabHistory extends LinearLayout{
     private LinearLayout llMatches;
     private Button bExport;
     private Button bDelete;
-    private ArrayList<JSONObject> matches;
-    private ArrayList<Long> deleted_matches;
+    private final ArrayList<JSONObject> matches = new ArrayList<>();
+    private final ArrayList<Long> deleted_matches = new ArrayList<>();
     boolean selecting = false;
 
     public TabHistory(Context context, AttributeSet attrs){
@@ -39,8 +39,6 @@ public class TabHistory extends LinearLayout{
         bExport = findViewById(R.id.bExport);
         bDelete = findViewById(R.id.bDelete);
         bDelete.setOnClickListener(view -> deleteSelected());
-        matches = new ArrayList<>();
-        deleted_matches = new ArrayList<>();
     }
     void onCreateMain(Main main){
         this.main = main;
@@ -48,7 +46,7 @@ public class TabHistory extends LinearLayout{
         findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
-        loadMatches();
+        main.executorService.submit(this::loadMatches);
     }
     void gotMatches(JSONArray matches_new){
         try{
@@ -58,11 +56,11 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
         showMatches(main);
-        storeMatches();
-        cleanDeletedMatches(matches_new);
+        main.executorService.submit(this::storeMatches);
+        main.executorService.submit(()-> cleanDeletedMatches(matches_new));
     }
     private void insertMatch(JSONObject match_new){
         try{
@@ -83,9 +81,10 @@ public class TabHistory extends LinearLayout{
             matches.add(match_new);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
         }
     }
+    //Thread: Background
     private void cleanDeletedMatches(JSONArray matches_new){
         ArrayList<Long> new_matches = new ArrayList<>();
         try{
@@ -114,11 +113,10 @@ public class TabHistory extends LinearLayout{
         }
         return null;
     }
-
+    //Thread: Background
     private void loadMatches(){
         try{
-            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.matches_filename));
-            if(fis == null) return;//Probably because of viewing in IDE
+            FileInputStream fis = main.openFileInput(main.getString(R.string.matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
 
@@ -133,16 +131,16 @@ public class TabHistory extends LinearLayout{
             for(int i = 0; i < jsonMatches.length(); i++){
                 matches.add(jsonMatches.getJSONObject(i));
             }
+            main.runOnUiThread(()-> showMatches(main));
         }catch(FileNotFoundException e){
             Log.d(Main.LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_read_matches, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_read_matches);
         }
-        showMatches(main);
 
         try{
-            FileInputStream fis = getContext().openFileInput(getContext().getString(R.string.deleted_matches_filename));
+            FileInputStream fis = main.openFileInput(main.getString(R.string.deleted_matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
 
@@ -164,12 +162,12 @@ public class TabHistory extends LinearLayout{
         }
     }
     private void showMatches(Main main){
-        upgradeFormatOfMatches();
         try{
+            upgradeFormatOfMatches();
             matches.sort((m1, m2) -> {
                 try{
                     return Long.compare(m1.getLong("matchid"), m2.getLong("matchid"));
-                }catch (Exception e){
+                }catch(Exception e){
                     Log.e(Main.LOG_TAG, "TabHistory.showMatches Failed to sort matches " + e.getMessage());
                 }
                 return 0;
@@ -180,29 +178,28 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
         if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(0));
-
     }
-
+    //Thread: Background
     private void storeMatches(){
         try{
             JSONArray jaMatches = new JSONArray(matches);
-            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.matches_filename), Context.MODE_PRIVATE);
+            FileOutputStream fos = main.openFileOutput(main.getString(R.string.matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
             osr.write(jaMatches.toString());
             osr.close();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.storeMatches matches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_store_matches, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_store_matches);
         }
         try{
             JSONArray jaDeletedMatches = new JSONArray();
             for(int i=0; i < deleted_matches.size(); i++){
                 jaDeletedMatches.put(deleted_matches.get(i));
             }
-            FileOutputStream fos = getContext().openFileOutput(getContext().getString(R.string.deleted_matches_filename), Context.MODE_PRIVATE);
+            FileOutputStream fos = main.openFileOutput(main.getString(R.string.deleted_matches_filename), Context.MODE_PRIVATE);
             OutputStreamWriter osr = new OutputStreamWriter(fos);
             osr.write(jaDeletedMatches.toString());
             osr.close();
@@ -242,14 +239,14 @@ public class TabHistory extends LinearLayout{
                         llMatches.removeViewAt(i);
                     }catch(Exception e){
                         Log.e(Main.LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
-                        Toast.makeText(getContext(), R.string.fail_del_match, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(main, R.string.fail_del_match, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         }
-        storeMatches();
         showMatches(main);
         selectionChanged();
+        main.executorService.submit(this::storeMatches);
     }
     void selectionChanged(){
         bExport.setVisibility(View.GONE);
@@ -269,21 +266,22 @@ public class TabHistory extends LinearLayout{
         }
     }
 
+    //Thread: UI
     void updateMatch(JSONObject match){
         try{
             long match_id = match.getLong("matchid");
             for(int i = 0; i < matches.size(); i++){
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
-                    storeMatches();
                     showMatches(main);
+                    main.executorService.submit(this::storeMatches);
                     return;
                 }
             }
             if(match.has("timer")) match.remove("timer");
             matches.add(match);
-            storeMatches();
             showMatches(main);
+            main.executorService.submit(this::storeMatches);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
         }
@@ -341,7 +339,7 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.upgradeFormatOfMatches Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_show_history, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
     }
 }

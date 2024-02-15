@@ -41,6 +41,7 @@ class CommsBT{
     private int remainingFailedConnectCount = 0;
     private Set<String> rrw_device_addresses = new HashSet<>();
     private final ArrayList<String> devices_fetch_pending = new ArrayList<>();
+    private final ArrayList<String> devices_connect_pending = new ArrayList<>();
     private Set<BluetoothDevice> bondedDevices;
     private final JSONArray requestQueue = new JSONArray();
 
@@ -217,6 +218,11 @@ class CommsBT{
             Log.d(Main.LOG_TAG, "CommsBTConnect " + device.getName());
             this.device = device;
             try{
+                if(devices_connect_pending.contains(device.getAddress())){
+                    Log.d(Main.LOG_TAG, "CommsBTConnect device already pending");
+                    return;
+                }
+                devices_connect_pending.add(device.getAddress());
                 bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
@@ -224,7 +230,6 @@ class CommsBT{
             }
         }
         public void run(){
-            Log.d(Main.LOG_TAG, "CommsBTConnect.run");
             bluetoothAdapter.cancelDiscovery();
             try{
                 bluetoothSocket.connect();
@@ -236,17 +241,18 @@ class CommsBT{
                     Log.d(Main.LOG_TAG, "CommsBTConnect.run close failed: " + e2.getMessage());
                 }
                 remainingFailedConnectCount--;
+                devices_connect_pending.remove(device.getAddress());
                 handler.postDelayed(() -> try_rrwDevice(device), 500);
                 return;
             }
-            (new CommsBTConnected()).start();
+            (new CommsBTConnected(device)).start();
         }
     }
     private class CommsBTConnected extends Thread{
         private InputStream inputStream;
         private OutputStream outputStream;
 
-        CommsBTConnected(){
+        CommsBTConnected(BluetoothDevice device){
             Log.d(Main.LOG_TAG, "CommsBTConnected");
             try{
                 inputStream = bluetoothSocket.getInputStream();
@@ -261,9 +267,9 @@ class CommsBT{
                 main.toast(R.string.fail_BT_connect);
             }
             updateStatus(Status.CONNECTED);
+            devices_connect_pending.remove(device.getAddress());
         }
         public void run(){
-            Log.d(Main.LOG_TAG, "CommsBTConnected.run");
             process();
         }
         private void close(){

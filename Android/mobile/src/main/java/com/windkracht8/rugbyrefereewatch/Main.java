@@ -54,7 +54,7 @@ public class Main extends AppCompatActivity{
     private GestureDetector gestureDetector;
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor sharedPreferences_editor;
-    private ExecutorService executorService;
+    ExecutorService executorService;
     private Handler handler_main;
     private CommsBT commsBT;
 

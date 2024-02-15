@@ -706,7 +706,6 @@ public class Main extends Activity{
         score_away.setTextColor(getColorFG(match.away.color));
 
         if(screen_on){
-            //If this is not enough, implement wake_lock: https://developer.android.com/training/scheduling/wakelock
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }else{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
