@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/extra_time_up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/count_up" />
+    <TextView
+        android:id="@+id/extra_time_2min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/_2_min" />
+    <TextView
+        android:id="@+id/extra_time_5min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/_5_min" />
+    <TextView
+        android:id="@+id/extra_time_10min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/_10_min" />
+</LinearLayout>

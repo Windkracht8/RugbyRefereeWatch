@@ -37,7 +37,6 @@
     <string name="_2nd">2nd</string>
     <string name="_3rd">3rd</string>
     <string name="_4th">4th</string>
-    <string name="extraTime_desc">Extra time selection</string>
     <string name="pen_label_text">pen</string>
     <string name="bPenHome_desc">home penalty count</string>
     <string name="bPenAway_desc">away penalty count</string>
@@ -94,6 +93,13 @@
     <string name="on">on</string>
     <string name="off">off</string>
 
+    <!--- Extra time -->
+    <string name="count_up">count up</string>
+    <string name="min">min</string>
+    <string name="_2_min">2 min</string>
+    <string name="_5_min">5 min</string>
+    <string name="_10_min">10 min</string>
+
     <string-array name="matchTypes">
         <item>15s</item>
         <item>10s</item>
@@ -126,13 +132,6 @@
         <item>YELLOW CARD</item>
         <item>RED CARD</item>
         <item>PENALTY</item>
-    </string-array>
-
-    <string-array name="extraTimeTimerType">
-        <item>count up</item>
-        <item>2 min</item>
-        <item>5 min</item>
-        <item>10 min</item>
     </string-array>
 
     <!-- Bluetooth log -->

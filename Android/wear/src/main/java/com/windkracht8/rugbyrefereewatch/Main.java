@@ -21,12 +21,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +50,7 @@ public class Main extends Activity{
     static final String RRW_LOG_TAG = "RugbyRefereeWatch";
     static boolean isScreenRound;
     private boolean showSplash = true;
+    private boolean isPenPadInitialized = false;
     private TextView battery;
     private TextView time;
     private RelativeLayout home;
@@ -65,16 +64,17 @@ public class Main extends Activity{
     private Button bOverTimer;
     private Button bStart;
     private ImageButton bMatchLog;
+    private TextView pen_label;
     private Button bPenHome;
     private Button bPenAway;
     private Button bBottom;
     private ImageButton bConf;
-    private Spinner extraTime;
     private ImageButton bConfWatch;
     private Conf conf;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
+    private ExtraTime extraTime;
     private Correct correct;
     private Report report;
     private MatchLog matchLog;
@@ -152,11 +152,12 @@ public class Main extends Activity{
         int[] ids = new int[]{
                 R.id.main, R.id.bConfWatch, R.id.home, R.id.away, R.id.score_home, R.id.score_away,
                 R.id.tTimer, R.id.buttons_back, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
-                R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf, R.id.extraTime,
+                R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
                 R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
                 R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
+                R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min, R.id.extra_time_10min,
                 R.id.svHelp, R.id.svCommsBTLog
         };
         for(int id : ids){
@@ -189,15 +190,6 @@ public class Main extends Activity{
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v -> confWatch.show(this));
-        extraTime = findViewById(R.id.extraTime);
-        extraTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
-                extraTimeChange();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView){}
-        });
 
         score = findViewById(R.id.score);
         score.onCreateMain(this);
@@ -211,10 +203,13 @@ public class Main extends Activity{
         bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
         commsBTLog = findViewById(R.id.commsBTLog);
+        pen_label = findViewById(R.id.pen_label);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
         bPenAway.setOnClickListener(v -> bPenAwayClick());
+        extraTime = findViewById(R.id.extraTime);
+        extraTime.onCreateMain(this);
 
         //Resize elements for the heightPixels
         int vh5 = (int) (heightPixels * .05);
@@ -238,11 +233,22 @@ public class Main extends Activity{
         bBottom.setHeight(vh25);
         bBottom.setPadding(0, vh5, 0, vh5);
         bConf.getLayoutParams().height = vh25;
-        ConstraintLayout.LayoutParams pen_label_layoutParams = (ConstraintLayout.LayoutParams) findViewById(R.id.pen_label).getLayoutParams();
+        ConstraintLayout.LayoutParams pen_label_layoutParams = (ConstraintLayout.LayoutParams) pen_label.getLayoutParams();
         pen_label_layoutParams.height = vh10;
         pen_label_layoutParams.bottomMargin = vh5;
         bPenHome.setHeight(vh20);
         bPenAway.setHeight(vh20);
+
+        if(isScreenRound){
+            pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()-> {
+                if(isPenPadInitialized) return;
+                int pad_for_label = pen_label.getWidth()+20;
+                int pad_outer = widthPixels/3;
+                bPenHome.setPadding(pad_outer, 0, pad_for_label/2, 0);
+                bPenAway.setPadding(pad_for_label/2, 0, pad_outer, 0);
+                isPenPadInitialized = true;
+            });
+        }
 
         if(timer_status == TimerStatus.CONF){
             if(Build.VERSION.SDK_INT >= 31){
@@ -342,12 +348,14 @@ public class Main extends Activity{
             score.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
-        }else if(correct.getVisibility() == View.VISIBLE){
-            correct.setVisibility(View.GONE);
-        }else if(report.getVisibility() == View.VISIBLE){
-            report.setVisibility(View.GONE);
+        }else if(extraTime.getVisibility() == View.VISIBLE){
+            extraTime.setVisibility(View.GONE);
         }else if(matchLog.getVisibility() == View.VISIBLE){
             matchLog.setVisibility(View.GONE);
+        }else if(report.getVisibility() == View.VISIBLE){
+            report.setVisibility(View.GONE);
+        }else if(correct.getVisibility() == View.VISIBLE){
+            correct.setVisibility(View.GONE);
         }else if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
         }else{
@@ -437,12 +445,14 @@ public class Main extends Activity{
             touchView = score;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             touchView = foulPlay;
-        }else if(correct.getVisibility() == View.VISIBLE){
-            touchView = correct;
-        }else if(report.getVisibility() == View.VISIBLE){
-            touchView = report;
+        }else if(extraTime.getVisibility() == View.VISIBLE){
+            touchView = extraTime;
         }else if(matchLog.getVisibility() == View.VISIBLE){
             touchView = matchLog;
+        }else if(report.getVisibility() == View.VISIBLE){
+            touchView = report;
+        }else if(correct.getVisibility() == View.VISIBLE){
+            touchView = correct;
         }else if(help.getVisibility() == View.VISIBLE){
             touchView = help;
         }else{
@@ -553,6 +563,7 @@ public class Main extends Activity{
                         score_away.setText(kickoffTeam);
                     }
                 }
+                updateButtons();
                 break;
             case REST:
                 timer_status = TimerStatus.FINISHED;
@@ -563,6 +574,7 @@ public class Main extends Activity{
                 executorService.submit(() -> FileStore.storeMatch(this));
                 initBT();
                 stopOngoingNotification();
+                updateButtons();
                 break;
             case FINISHED:
                 timer_status = TimerStatus.CONF;
@@ -575,11 +587,12 @@ public class Main extends Activity{
                 updateScore();
                 updateAfterConfig();
                 updateSinbins();
+                updateButtons();
                 break;
-            default://ignore
-                return;
+            case READY:
+                extraTime.setVisibility(View.VISIBLE);
+                break;
         }
-        updateButtons();
     }
     private void updateButtons(){
         String bOverTimerText;
@@ -592,27 +605,26 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.VISIBLE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.VISIBLE);
-                extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
             case READY:
                 bConfWatch.setVisibility(View.GONE);
                 bOverTimerText = getString(R.string.start) + " ";
-                if(match.period_count == 2 && timer_period == 1) {
+                if(match.period_count == 2 && timer_period == 1){
+                    bBottom.setVisibility(View.GONE);
                     bOverTimerText += getString(R.string._2nd_half);
                 }else if(timer_period >= match.period_count){
-                    extraTime.setVisibility(View.VISIBLE);
-                    extraTimeChange();
+                    extraTimeChange(0);
+                    bBottom.setVisibility(View.VISIBLE);
                     bOverTimerText += getPeriodName(timer_period+1);
                 }else{
-                    extraTime.setVisibility(View.GONE);
+                    bBottom.setVisibility(View.GONE);
                     bOverTimerText += getPeriodName(timer_period+1);
                 }
                 bOverTimer.setText(bOverTimerText);
                 bOverTimer.setVisibility(View.VISIBLE);
                 bStart.setVisibility(View.GONE);
                 bMatchLog.setVisibility(View.GONE);
-                bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
@@ -640,7 +652,6 @@ public class Main extends Activity{
                 bBottom.setText(bBottomText);
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
-                extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
             case REST:
@@ -658,7 +669,6 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setText(R.string.finish);
                 bBottom.setVisibility(View.VISIBLE);
-                extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
             case FINISHED:
@@ -670,7 +680,6 @@ public class Main extends Activity{
                 bBottom.setText(R.string.clear);
                 bBottom.setVisibility(View.VISIBLE);
                 bConf.setVisibility(View.GONE);
-                extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
             default:
@@ -680,7 +689,6 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
-                extraTime.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.GONE);
         }
         updateTimer();
@@ -1140,25 +1148,18 @@ public class Main extends Activity{
         return ret;
     }
 
-    private void extraTimeChange(){
-        switch(extraTime.getSelectedItemPosition()){
-            case 1://2 min
-                timer_type_period = timer_type;
-                timer_period_time = 2;
-                break;
-            case 2://5 min
-                timer_type_period = timer_type;
-                timer_period_time = 5;
-                break;
-            case 3://10 min
-                timer_type_period = timer_type;
-                timer_period_time = 10;
-                break;
-            default://UP
-                timer_type_period = 0;
-                timer_period_time = match.period_time;
+    void extraTimeChange(int time){
+        if(time == 0){
+            bBottom.setText(R.string.count_up);
+            timer_type_period = 0;
+            timer_period_time = match.period_time;
+        }else{
+            bBottom.setText(String.format("%s %s", time, getString(R.string.min)));
+            timer_type_period = timer_type;
+            timer_period_time = time;
         }
         updateTimer();
+        extraTime.setVisibility(View.GONE);
     }
 
     private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
