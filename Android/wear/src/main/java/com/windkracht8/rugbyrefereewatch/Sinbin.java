@@ -24,6 +24,9 @@ class Sinbin extends TextView{
 
     void update(){
         long remaining = sinbin.end - Main.timer_timer;
+        if(Main.timer_status != Main.TimerStatus.RUNNING){
+            remaining += Main.getCurrentTimestamp() - Main.timer_start_time_off;
+        }
         if(remaining < -60000){
             sinbin.hide = true;
         }

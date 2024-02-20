@@ -96,7 +96,7 @@ public class Main extends Activity{
     static TimerStatus timer_status = TimerStatus.CONF;
     static long timer_timer = 0;
     private static long timer_start = 0;
-    private static long timer_start_time_off = 0;
+    static long timer_start_time_off = 0;
     private static boolean timer_period_ended = false;
     static int timer_period = 0;
     static int timer_period_time = 40;
@@ -274,6 +274,7 @@ public class Main extends Activity{
 
         updateBattery();
         update();
+        updateSinbins();
         updateButtons();
         updateAfterConfig();
         initBT();
@@ -674,6 +675,7 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setText(R.string.finish);
                 bBottom.setVisibility(View.VISIBLE);
+                bConf.setVisibility(View.GONE);
                 buttons_back.setVisibility(View.VISIBLE);
                 break;
             case FINISHED:
