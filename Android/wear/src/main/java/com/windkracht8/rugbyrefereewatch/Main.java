@@ -149,15 +149,21 @@ public class Main extends Activity{
 
         // We need to listen for touch on all objects that have a click listener
         int[] ids = new int[]{
-                R.id.main, R.id.bConfWatch, R.id.home, R.id.away, R.id.score_home, R.id.score_away,
-                R.id.tTimer, R.id.buttons_back, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
-                R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
-                R.id.svConf, R.id.svConfSpinner,
-                R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
-                R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
-                R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
-                R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min, R.id.extra_time_10min,
-                R.id.svHelp, R.id.svCommsBTLog
+                R.id.main, R.id.bConfWatch, R.id.home, R.id.score_home, R.id.away, R.id.score_away
+                ,R.id.tTimer, R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer
+                ,R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf
+                ,R.id.conf, R.id.svConf, R.id.svConfSpinner
+                ,R.id.confWatch
+                ,R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal
+                ,R.id.foulPlay, R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow
+                ,R.id.penalty_try, R.id.card_red
+                ,R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min
+                ,R.id.extra_time_10min
+                ,R.id.matchLog, R.id.svMatchLog
+                ,R.id.report, R.id.svReport
+                ,R.id.correct, R.id.svCorrect
+                ,R.id.help, R.id.svHelp
+                ,R.id.commsBTLog, R.id.svCommsBTLog
         };
         for(int id : ids){
             findViewById(id).setOnTouchListener(this::onTouch);
@@ -329,34 +335,34 @@ public class Main extends Activity{
 
     @Override
     public void onBackPressed(){
-        if(conf.confSpinner.getVisibility() == View.VISIBLE){
-            conf.confSpinner.setVisibility(View.GONE);
-            conf.requestSVFocus();
-        }else if(commsBTLog.getVisibility() == View.VISIBLE){
+        if(commsBTLog.getVisibility() == View.VISIBLE){
             commsBTLog.setVisibility(View.GONE);
+            conf.requestSVFocus();
+        }else if(help.getVisibility() == View.VISIBLE){
+            help.setVisibility(View.GONE);
+        }else if(correct.getVisibility() == View.VISIBLE){
+            correct.setVisibility(View.GONE);
+        }else if(report.getVisibility() == View.VISIBLE){
+            report.setVisibility(View.GONE);
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            matchLog.setVisibility(View.GONE);
+        }else if(extraTime.getVisibility() == View.VISIBLE){
+            extraTime.setVisibility(View.GONE);
+        }else if(foulPlay.getVisibility() == View.VISIBLE){
+            foulPlay.setVisibility(View.GONE);
+        }else if(score.getVisibility() == View.VISIBLE){
+            score.setVisibility(View.GONE);
+        }else if(confWatch.getVisibility() == View.VISIBLE){
+            confWatch.setVisibility(View.GONE);
+            updateAfterConfig();
+            executorService.submit(() -> FileStore.storeSettings(this));
+        }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
+            conf.confSpinner.setVisibility(View.GONE);
             conf.requestSVFocus();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
             executorService.submit(() -> FileStore.storeSettings(this));
-        }else if(confWatch.getVisibility() == View.VISIBLE){
-            confWatch.setVisibility(View.GONE);
-            updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(this));
-        }else if(score.getVisibility() == View.VISIBLE){
-            score.setVisibility(View.GONE);
-        }else if(foulPlay.getVisibility() == View.VISIBLE){
-            foulPlay.setVisibility(View.GONE);
-        }else if(extraTime.getVisibility() == View.VISIBLE){
-            extraTime.setVisibility(View.GONE);
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            matchLog.setVisibility(View.GONE);
-        }else if(report.getVisibility() == View.VISIBLE){
-            report.setVisibility(View.GONE);
-        }else if(correct.getVisibility() == View.VISIBLE){
-            correct.setVisibility(View.GONE);
-        }else if(help.getVisibility() == View.VISIBLE){
-            help.setVisibility(View.GONE);
         }else{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 System.exit(0);
@@ -376,9 +382,7 @@ public class Main extends Activity{
         //We need to do this to make sure that we can listen for onTouch on main
         Log.i(RRW_LOG_TAG, "onMainClick");
     }
-    void addOnTouch(View v){
-        v.setOnTouchListener(this::onTouch);
-    }
+    void addOnTouch(View v){v.setOnTouchListener(this::onTouch);}
     private boolean onTouch(View ignoredV, MotionEvent event){
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -432,28 +436,28 @@ public class Main extends Activity{
     private void onTouchInit(MotionEvent event){
         onTouchStartY = event.getRawY();
         onTouchStartX = event.getRawX();
-        if(conf.confSpinner.getVisibility() == View.VISIBLE){
-            touchView = conf.confSpinner;
-        }else if(commsBTLog.getVisibility() == View.VISIBLE){
+        if(commsBTLog.getVisibility() == View.VISIBLE){
             touchView = commsBTLog;
-        }else if(conf.getVisibility() == View.VISIBLE){
-            touchView = conf;
-        }else if(confWatch.getVisibility() == View.VISIBLE){
-            touchView = confWatch;
-        }else if(score.getVisibility() == View.VISIBLE){
-            touchView = score;
-        }else if(foulPlay.getVisibility() == View.VISIBLE){
-            touchView = foulPlay;
-        }else if(extraTime.getVisibility() == View.VISIBLE){
-            touchView = extraTime;
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            touchView = matchLog;
-        }else if(report.getVisibility() == View.VISIBLE){
-            touchView = report;
-        }else if(correct.getVisibility() == View.VISIBLE){
-            touchView = correct;
         }else if(help.getVisibility() == View.VISIBLE){
             touchView = help;
+        }else if(correct.getVisibility() == View.VISIBLE){
+            touchView = correct;
+        }else if(report.getVisibility() == View.VISIBLE){
+            touchView = report;
+        }else if(matchLog.getVisibility() == View.VISIBLE){
+            touchView = matchLog;
+        }else if(extraTime.getVisibility() == View.VISIBLE){
+            touchView = extraTime;
+        }else if(foulPlay.getVisibility() == View.VISIBLE){
+            touchView = foulPlay;
+        }else if(score.getVisibility() == View.VISIBLE){
+            touchView = score;
+        }else if(confWatch.getVisibility() == View.VISIBLE){
+            touchView = confWatch;
+        }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
+            touchView = conf.confSpinner;
+        }else if(conf.getVisibility() == View.VISIBLE){
+            touchView = conf;
         }else{
             touchView = null;
         }

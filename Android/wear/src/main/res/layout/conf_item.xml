@@ -14,7 +14,7 @@
         android:gravity="center"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="8sp"
-        android:layout_marginTop="-3dp"
+        android:includeFontPadding="false"
         android:layout_marginLeft="@dimen/ll_in_sc_padding"
         android:layout_marginRight="@dimen/ll_in_sc_padding" />
     <TextView
@@ -26,7 +26,7 @@
         android:textColor="@color/w8blue"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="8sp"
-        android:layout_marginBottom="2dp"
+        android:includeFontPadding="false"
         android:layout_marginLeft="@dimen/ll_in_sc_padding"
         android:layout_marginRight="@dimen/ll_in_sc_padding" />
 </LinearLayout>
