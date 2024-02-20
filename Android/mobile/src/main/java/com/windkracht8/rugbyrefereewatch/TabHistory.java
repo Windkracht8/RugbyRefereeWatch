@@ -215,7 +215,7 @@ public class TabHistory extends LinearLayout{
         bDelete.setVisibility(View.GONE);
         for(int i=0; i < llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+            if(child instanceof HistoryMatch){
                 if(((HistoryMatch)child).unselect()) ret = true;
             }
         }
@@ -224,7 +224,7 @@ public class TabHistory extends LinearLayout{
     private void deleteSelected(){
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+            if(child instanceof HistoryMatch){
                 HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     try{
@@ -254,7 +254,7 @@ public class TabHistory extends LinearLayout{
         selecting = false;
         for(int i=0; i < llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+            if(child instanceof HistoryMatch){
                 HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     bExport.setVisibility(View.VISIBLE);
@@ -291,7 +291,7 @@ public class TabHistory extends LinearLayout{
         JSONArray selected = new JSONArray();
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child.getClass().getSimpleName().equals("HistoryMatch")){
+            if(child instanceof HistoryMatch){
                 HistoryMatch tmp = (HistoryMatch)child;
                 if(tmp.is_selected){
                     selected.put(tmp.match);

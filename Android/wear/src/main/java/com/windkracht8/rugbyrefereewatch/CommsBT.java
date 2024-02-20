@@ -184,7 +184,6 @@ class CommsBT{
         }
         public void run(){
             try{
-                Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run");
                 bluetoothSocket = bluetoothServerSocket.accept();
                 if(closeConnection) return;
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run accepted");
@@ -193,8 +192,8 @@ class CommsBT{
             }catch(Exception e){
                 Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception closeConnection:" + closeConnection);
                 if(closeConnection) return;
-                main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.connect_failed), e.getMessage()));
                 Log.e(Main.RRW_LOG_TAG, "CommsBTConnect.run Exception: " + e.getMessage());
+                main.commsBTLog.addToLog(String.format("%s %s", main.getString(R.string.connect_failed), e.getMessage()));
             }
             Log.d(Main.RRW_LOG_TAG, "CommsBTConnect.run done");
         }
