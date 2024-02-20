@@ -55,8 +55,8 @@ public class Report extends ScrollView{
             tv.setGravity(Gravity.CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 
-            main.addOnTouch(tv);
             reportList.addView(tv);
+            main.addOnTouch(tv);
         }
         setVisibility(View.VISIBLE);
         fullScroll(View.FOCUS_UP);

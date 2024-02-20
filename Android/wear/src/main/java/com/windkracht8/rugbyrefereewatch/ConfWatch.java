@@ -7,12 +7,11 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ConfWatch extends ScrollView{
+public class ConfWatch extends LinearLayout{
     private boolean isInitialized = false;
     private final ArrayList<ConfItem> confItems = new ArrayList<>();
 
@@ -31,16 +30,8 @@ public class ConfWatch extends ScrollView{
         isInitialized = true;
 
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
-
         int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
-        int minTouchSize = getResources().getDimensionPixelSize(R.dimen.minTouchSize);
-        int confItemHeight = minTouchSize;
-
-        if(Main.heightPixels <= ll_in_sc_padding*2+minTouchSize*4){
-            llConfWatch.setPadding(ll_in_sc_padding, 0,ll_in_sc_padding,0);
-        }else if(Main.heightPixels > ll_in_sc_padding*2+minTouchSize*4){
-            confItemHeight = (Main.heightPixels - ll_in_sc_padding*2) / 4;
-        }
+        int confItemHeight = (Main.heightPixels - (ll_in_sc_padding*4)) / 4;
 
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
@@ -53,12 +44,12 @@ public class ConfWatch extends ScrollView{
         }
 
         if(Main.isScreenRound){
-            confItems.get(0).setPadding(Main.vh20, 0, Main.vh20, 0);
-            confItems.get(confItems.size()-1).setPadding(Main.vh20, 0, Main.vh20, 0);
+            llConfWatch.setPadding(ll_in_sc_padding, Main.vh10, ll_in_sc_padding, Main.vh10);
+            confItems.get(0).setPadding(Main.vh10, 0, Main.vh10, 0);
+            confItems.get(confItems.size()-1).setPadding(Main.vh10, 0, Main.vh10, 0);
         }
 
         setVisibility(View.VISIBLE);
-        findViewById(R.id.svConfWatch).requestFocus();
     }
 
     private void onConfItemClick(ConfItem confItem, ConfItem.ConfItemType type){

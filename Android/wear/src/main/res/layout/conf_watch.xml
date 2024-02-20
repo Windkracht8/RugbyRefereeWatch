@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/svConfWatch"
+    android:id="@+id/llConfWatch"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout
-        android:id="@+id/llConfWatch"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/ll_in_sc_padding"
-        android:paddingBottom="@dimen/ll_in_sc_padding"
-        android:paddingStart="@dimen/ll_in_sc_padding"
-        android:paddingEnd="@dimen/ll_in_sc_padding" >
-    </LinearLayout>
-</ScrollView>
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/ll_in_sc_padding"
+    android:paddingBottom="@dimen/ll_in_sc_padding"
+    android:paddingStart="@dimen/ll_in_sc_padding"
+    android:paddingEnd="@dimen/ll_in_sc_padding" >
+</LinearLayout>

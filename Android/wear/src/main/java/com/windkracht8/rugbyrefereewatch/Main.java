@@ -86,7 +86,6 @@ public class Main extends Activity{
     private static int widthPixels;
     static int vh10;
     private static int vh15;
-    static int vh20;
     static int vh25;
     private static int vh30;
     private static int vh40;
@@ -153,7 +152,7 @@ public class Main extends Activity{
                 R.id.main, R.id.bConfWatch, R.id.home, R.id.away, R.id.score_home, R.id.score_away,
                 R.id.tTimer, R.id.buttons_back, R.id.bPenHome, R.id.bPenAway, R.id.bOverTimer,
                 R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
-                R.id.svConf, R.id.svConfSpinner, R.id.svConfWatch,
+                R.id.svConf, R.id.svConfSpinner,
                 R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow, R.id.penalty_try, R.id.card_red,
                 R.id.svMatchLog, R.id.svReport, R.id.svCorrect,
@@ -215,7 +214,7 @@ public class Main extends Activity{
         int vh5 = (int) (heightPixels * .05);
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
-        vh20 = (int) (heightPixels * .2);
+        int vh20 = (int) (heightPixels * .2);
         vh25 = (int) (heightPixels * .25);
         vh30 = (int) (heightPixels * .3);
         vh40 = (int) (heightPixels * .4);

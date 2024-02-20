@@ -84,8 +84,8 @@
     <string name="points_goal">Points goal</string>
     <string name="screen_on">Screen on</string>
     <string name="timer_type">Timer type</string>
-    <string name="timer_type_down">Count down</string>
-    <string name="timer_type_up">Count up</string>
+    <string name="timer_type_down">down</string>
+    <string name="timer_type_up">up</string>
     <string name="record_player">Record player</string>
     <string name="record_pens">Record penalties</string>
     <string name="help">help</string>
