@@ -70,6 +70,7 @@
 
     <!-- conf screen -->
     <string name="conf_title">Config</string>
+    <string name="confItemName_desc">menu item name</string>
     <string name="confItemValue_desc">menu item value</string>
     <string name="home">home</string>
     <string name="color_home">Color home</string>

@@ -529,7 +529,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 break;
             case FINISHED:
-                report.show(this);
+                report.show(this, match);
                 break;
             default://ignore
                 return;

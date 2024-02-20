@@ -26,6 +26,7 @@ class ConfItem extends LinearLayout{
 
         this.type = type;
         confItemName.setText(context.getString(getConfItemName(type)));
+        confItemName.setContentDescription(context.getString(R.string.confItemName_desc) + type);
         if(type == ConfItemType.HELP || type == ConfItemType.COMMS_LOG){
             confItemValue.setVisibility(View.GONE);
         }else{

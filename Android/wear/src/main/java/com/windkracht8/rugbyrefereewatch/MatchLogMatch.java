@@ -28,6 +28,6 @@ class MatchLogMatch extends TextView{
         setGravity(Gravity.CENTER);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         setBackgroundResource(R.drawable.conf_item_bg);
-        setOnClickListener(v -> report.show(main));
+        setOnClickListener(v -> report.show(main, match));
     }
 }

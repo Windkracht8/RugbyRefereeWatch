@@ -19,13 +19,12 @@ public class Report extends ScrollView{
         inflater.inflate(R.layout.report, this, true);
     }
 
-    void show(Main main){
+    void show(Main main, MatchData match){
         LinearLayout reportList = findViewById(R.id.reportList);
         for(int i = reportList.getChildCount(); i > 0; i--){
             reportList.removeViewAt(i-1);
         }
-
-        for(MatchData.event event : Main.match.events){
+        for(MatchData.event event : match.events){
             if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){
                 continue;
             }
@@ -33,10 +32,10 @@ public class Report extends ScrollView{
             String item = Main.prettyTimer(event.timer) + " ";
             switch(event.what){
                 case "START":
-                    item += main.getString(R.string.Start) + " " + Main.getPeriodName(main, event.period, Main.match.period_count);
+                    item += main.getString(R.string.Start) + " " + Main.getPeriodName(main, event.period, match.period_count);
                     break;
                 case "END":
-                    item += main.getString(R.string.Result) + " " + Main.getPeriodName(main, event.period, Main.match.period_count);
+                    item += main.getString(R.string.Result) + " " + Main.getPeriodName(main, event.period, match.period_count);
                     if(event.score != null){
                         item += " " + event.score;
                     }
