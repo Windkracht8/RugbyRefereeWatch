@@ -157,14 +157,14 @@ class CommsBT{
             Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening unregisterReceiver: " + e.getMessage());
         }
         try{
-            if(bluetoothSocket != null) bluetoothSocket.close();
-        }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothSocket: " + e.getMessage());
-        }
-        try{
             if(bluetoothServerSocket != null) bluetoothServerSocket.close();
         }catch(Exception e){
             Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothServerSocket: " + e.getMessage());
+        }
+        try{
+            if(bluetoothSocket != null) bluetoothSocket.close();
+        }catch(Exception e){
+            Log.e(Main.RRW_LOG_TAG, "CommsBT.stopListening bluetoothSocket: " + e.getMessage());
         }
         commsBTConnect = null;
         commsBTConnected = null;
