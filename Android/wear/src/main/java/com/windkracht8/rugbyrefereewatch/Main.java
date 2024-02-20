@@ -89,6 +89,7 @@ public class Main extends Activity{
     static int vh25;
     private static int vh30;
     private static int vh40;
+    static int vh75;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
@@ -224,6 +225,7 @@ public class Main extends Activity{
         vh25 = (int) (heightPixels * .25);
         vh30 = (int) (heightPixels * .3);
         vh40 = (int) (heightPixels * .4);
+        vh75 = (int) (heightPixels * .75);
         battery.setHeight(vh10);
         time.setHeight(vh15);
         score_home.setHeight(vh25);

@@ -22,9 +22,11 @@ public class Conf extends ConstraintLayout{
     private static ArrayList<ConfItem> confItems;
     final static JSONArray customMatchTypes = new JSONArray();
     private boolean isInitialized;
-    private int confItemHeight;
-    private boolean isItemHeightInitialized;
-    private float scalePerPixel;
+    private static int itemHeight;
+    private static boolean isItemHeightInitialized;
+    private static float scalePerPixel;
+    private static float bottom_quarter;
+    private static float below_screen;
 
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -65,8 +67,10 @@ public class Conf extends ConstraintLayout{
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if(!Main.isScreenRound || isItemHeightInitialized) return;
             isItemHeightInitialized = true;
-            confItemHeight = confItems.get(0).getHeight();
-            scalePerPixel = 0.5f / (Main.vh25 + confItemHeight);
+            itemHeight = confItems.get(0).getHeight();
+            bottom_quarter = Main.vh75- itemHeight;
+            below_screen = Main.heightPixels- itemHeight;
+            scalePerPixel = 0.2f / Main.vh25;
             scaleConfItems(0);
             svConf.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scaleConfItems(scrollY));
         });
@@ -82,25 +86,22 @@ public class Conf extends ConstraintLayout{
 
     private void scaleConfItems(int scrollY){
         float top;
-        float bottom;
         float scale;
         for(ConfItem confItem : confItems){
             top = confItem.getY() - scrollY;
-            bottom = top + confItemHeight;
             scale = 1.0f;
-            if(bottom < 0){
+            if(top < 0){
                 //the item is above the screen
-                scale = 0.5f;
+                scale = 0.8f;
             }else if(top < Main.vh25){
                 //the item is in the top quarter
-                scale = 0.5f + (scalePerPixel * bottom);
-            }
-            if(top > Main.heightPixels){
+                scale = 0.8f + (scalePerPixel * top);
+            }else if(top > below_screen){
                 //the item is below the screen
-                scale = 0.5f;
-            }else if(bottom > Main.heightPixels - Main.vh25){
+                scale = 0.8f;
+            }else if(top > bottom_quarter){
                 //the item is in the bottom quarter
-                scale = 0.5f + (scalePerPixel * (Main.heightPixels - top));
+                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
             }
             confItem.setScaleX(scale);
             confItem.setScaleY(scale);
