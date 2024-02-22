@@ -9,9 +9,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -107,12 +109,26 @@ class CommsBT{
                             startComms();
                         }
                     }else if(BluetoothDevice.ACTION_UUID.equals(intent.getAction())){
-                        BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        BluetoothDevice bluetoothDevice;
+                        Parcelable[] parcelUuids;
+                        if(Build.VERSION.SDK_INT >= 33){
+                            bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
+                            parcelUuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID, Parcelable.class);
+                        }else{
+                            bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                            parcelUuids = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+                        }
                         if(bluetoothDevice == null || status != Status.SEARCHING) return;
-                        Log.d(Main.LOG_TAG, "CommsBT.btStateReceiver ACTION_UUID: " + bluetoothDevice.getName());
+                        if(parcelUuids != null){
+                            for(Parcelable parcelUuid : parcelUuids){
+                                if(parcelUuid.toString().equals(RRW_UUID)){
+                                    foundDeviceWithRRW_UUID(bluetoothDevice);
+                                    break;
+                                }
+                            }
+                        }
                         remainingSearchCount--;
-                        isDeviceRRW(bluetoothDevice);
-                        devices_fetch_pending.remove(bluetoothDevice.getAddress());
+                        handler.postDelayed(()->devices_fetch_pending.remove(bluetoothDevice.getAddress()), 3000);
                     }
                 }
             };
@@ -160,7 +176,7 @@ class CommsBT{
             isDeviceRRW(bondedDevice);
         }
 
-        remainingSearchCount = 10 * (bondedDevices.size() - rrw_device_addresses.size());
+        remainingSearchCount = 5 * (bondedDevices.size() - rrw_device_addresses.size());
         search_newDevices();
     }
     private void isDeviceRRW(BluetoothDevice bluetoothDevice){
@@ -174,13 +190,16 @@ class CommsBT{
         for(ParcelUuid uuid : uuids){
             if(uuid.toString().equals(RRW_UUID)){
                 Log.d(Main.LOG_TAG, "CommsBT.isDeviceRRW device has RRW_UUID: " + bluetoothDevice.getName());
-                rrw_device_addresses.add(bluetoothDevice.getAddress());
-                Main.sharedPreferences_editor.putStringSet("rrw_device_addresses", rrw_device_addresses);
-                Main.sharedPreferences_editor.apply();
-                try_rrwDevice(bluetoothDevice);
+                foundDeviceWithRRW_UUID(bluetoothDevice);
                 return;
             }
         }
+    }
+    private void foundDeviceWithRRW_UUID(BluetoothDevice bluetoothDevice){
+        rrw_device_addresses.add(bluetoothDevice.getAddress());
+        Main.sharedPreferences_editor.putStringSet("rrw_device_addresses", rrw_device_addresses);
+        Main.sharedPreferences_editor.apply();
+        try_rrwDevice(bluetoothDevice);
     }
     private void try_rrwDevice(BluetoothDevice rrw_device){
         if(status != Status.SEARCHING) return;
