@@ -28,11 +28,13 @@ public class ConfWatch extends LinearLayout{
             return;
         }
         isInitialized = true;
-
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
         int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
-        int confItemHeight = (Main.heightPixels - (ll_in_sc_padding*4)) / 4;
-
+        int confItemHeight = (Main.heightPixels - (ll_in_sc_padding*2)) / 4;
+        if(Main.isScreenRound){
+            llConfWatch.setPadding(ll_in_sc_padding, Main.vh10, ll_in_sc_padding, Main.vh10);
+            confItemHeight = (Main.heightPixels - (Main.vh10*2)) / 4;
+        }
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
             confItem.setOnClickListener(v -> onConfItemClick((ConfItem)v, confItemType));
@@ -42,13 +44,10 @@ public class ConfWatch extends LinearLayout{
             confItem.getLayoutParams().height = confItemHeight;
             confItem.updateValue();
         }
-
         if(Main.isScreenRound){
-            llConfWatch.setPadding(ll_in_sc_padding, Main.vh10, ll_in_sc_padding, Main.vh10);
             confItems.get(0).setPadding(Main.vh10, 0, Main.vh10, 0);
             confItems.get(confItems.size()-1).setPadding(Main.vh10, 0, Main.vh10, 0);
         }
-
         setVisibility(View.VISIBLE);
     }
 
