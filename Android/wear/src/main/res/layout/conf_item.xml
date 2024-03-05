@@ -13,10 +13,7 @@
         android:layout_weight="0.6"
         android:gravity="center"
         android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
-        android:includeFontPadding="false"
-        android:layout_marginLeft="@dimen/ll_in_sc_padding"
-        android:layout_marginRight="@dimen/ll_in_sc_padding" />
+        android:autoSizeMinTextSize="8sp" />
     <TextView
         android:id="@+id/confItemValue"
         android:layout_width="match_parent"
@@ -25,8 +22,5 @@
         android:gravity="center"
         android:textColor="@color/w8blue"
         android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp"
-        android:includeFontPadding="false"
-        android:layout_marginLeft="@dimen/ll_in_sc_padding"
-        android:layout_marginRight="@dimen/ll_in_sc_padding" />
+        android:autoSizeMinTextSize="8sp" />
 </LinearLayout>
