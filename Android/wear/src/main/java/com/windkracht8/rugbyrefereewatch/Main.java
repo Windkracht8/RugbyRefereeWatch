@@ -903,8 +903,7 @@ public class Main extends Activity{
             match.away.kickoff = false;
             score_away.setText("0");
         }else{
-            score.load(match.home);
-            score.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
+            score.team = match.home;
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -920,8 +919,7 @@ public class Main extends Activity{
             match.home.kickoff = false;
             score_home.setText("0");
         }else{
-            score.load(match.away);
-            score.animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
+            score.team = match.away;
             score.setVisibility(View.VISIBLE);
         }
     }

@@ -47,15 +47,18 @@ public class Score extends LinearLayout{
                 player_no = 0;
             }
         });
+        if(!Main.isScreenRound){
+            LinearLayout llScore = findViewById(R.id.llScore);
+            LinearLayout.LayoutParams layoutParams = (LayoutParams) llScore.getLayoutParams();
+            layoutParams.bottomMargin = 0;
+            layoutParams.topMargin = 0;
+        }
     }
     void onCreateMain(Main main){
         score_try.setOnClickListener(v -> main.tryClick());
         score_con.setOnClickListener(v -> main.conversionClick());
         score_goal.setOnClickListener(v -> main.goalClick());
         foul_play.setOnClickListener(v -> main.foulPlayClick());
-    }
-    void load(MatchData.team team){
-        this.team = team;
     }
     void update(){//Thread: Always on UI thread
         score_try.setVisibility(Main.match.points_try == 0 ? View.GONE : View.VISIBLE);
