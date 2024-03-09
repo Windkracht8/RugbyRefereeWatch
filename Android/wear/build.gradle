@@ -8,7 +8,7 @@ android {
         //noinspection OldTargetApi
         targetSdk 33
         compileSdk 34
-        versionCode 432
+        versionCode 434
         versionName '3.7'
     }
     buildTypes {
