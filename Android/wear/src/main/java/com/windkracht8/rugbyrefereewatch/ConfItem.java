@@ -5,23 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
         POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP, COMMS_LOG
     }
-    private ConfItemType type;
-    private TextView confItemName;
-    private TextView confItemValue;
+    private final ConfItemType type;
+    private final TextView confItemValue;
     ConfItem(Context context, ConfItemType type){
         super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();return;}
+        assert inflater != null;
         inflater.inflate(R.layout.conf_item, this, true);
 
-        confItemName = findViewById(R.id.confItemName);
+        TextView confItemName = findViewById(R.id.confItemName);
         confItemValue = findViewById(R.id.confItemValue);
 
         this.type = type;
@@ -64,16 +62,11 @@ class ConfItem extends LinearLayout{
             case HELP:
                 return R.string.help;
             case COMMS_LOG:
-                return R.string.commsBT_log;
+                return R.string.commsBTLog;
         }
         return R.string.fail_oops;
     }
 
-    void addOnTouch(Main main){
-        main.addOnTouch(this);
-        main.addOnTouch(confItemName);
-        main.addOnTouch(confItemValue);
-    }
     private boolean hideForMatchType(){//Thread: Always on UI thread
         if(Main.match.match_type.equals("custom")){
             setVisibility(View.VISIBLE);

@@ -4,13 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class ExtraTime extends LinearLayout{
     public ExtraTime(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_oops, Toast.LENGTH_SHORT).show();return;}//oops
+        assert inflater != null;
         inflater.inflate(R.layout.extra_time, this, true);
     }
     void onCreateMain(Main main){

@@ -13,7 +13,8 @@
         android:layout_weight="0.6"
         android:gravity="center"
         android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp" />
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp" />
     <TextView
         android:id="@+id/confItemValue"
         android:layout_width="match_parent"
@@ -22,5 +23,6 @@
         android:gravity="center"
         android:textColor="@color/w8blue"
         android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="8sp" />
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeMaxTextSize="18sp" />
 </LinearLayout>

@@ -16,8 +16,7 @@ class Sinbin extends TextView{
         setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         setTextColor(main.getColorFG(color));
         setIncludeFontPadding(false);
-        int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
-        setPadding(ll_in_sc_padding, 0, ll_in_sc_padding, 0);
+        setPadding(Main.dp10, 0, Main.dp10, 0);
         setGravity(Gravity.CENTER);
         update();
     }

@@ -7,83 +7,104 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MatchLog extends ScrollView{
-    private boolean itemHeightInit = false;
-    private int itemHeight = 200;
-    private int topBottomMargin = 0;
-    private float scalePerPixel = 0;
-    private LinearLayout matchLogList;
+    private final LinearLayout llMatchLogItems;
+
+    private static int itemHeight;
+    private static float scalePerPixel = 0;
+    private static float bottom_quarter;
+    private static float below_screen;
 
     public MatchLog(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_log, Toast.LENGTH_SHORT).show();return;}
+        assert inflater != null;
         inflater.inflate(R.layout.match_log, this, true);
-        matchLogList = findViewById(R.id.matchLogList);
+        llMatchLogItems = findViewById(R.id.llMatchLogItems);
     }
 
     void show(Main main, Report report){
-        for(int i = matchLogList.getChildCount(); i > 0; i--){
-            matchLogList.removeViewAt(i - 1);
+        for(int i = llMatchLogItems.getChildCount(); i > 0; i--){
+            llMatchLogItems.removeViewAt(i - 1);
         }
         JSONArray matches = FileStore.readMatches(main);
         try{
             for(int i = matches.length() - 1; i >= 0; i--){
                 MatchData match = new MatchData(main, matches.getJSONObject(i));
-                MatchLogMatch matchLogMatch = new MatchLogMatch(main, match, report);
-                matchLogList.addView(matchLogMatch);
-                main.addOnTouch(matchLogMatch);
+                addNewItem(main, match, report);
             }
         }catch(JSONException e){
             Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
             main.toast(R.string.fail_show_log);
         }
-        findViewById(R.id.match_log_label).getLayoutParams().height = Main.vh25;
-        ((LayoutParams) findViewById(R.id.llMatchLog).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding) + Main.vh25;
+
+        if(Main.isScreenRound){
+            getViewTreeObserver().addOnGlobalLayoutListener(()->{
+                if(scalePerPixel > 0 || llMatchLogItems.getChildCount() == 0) return;
+                itemHeight = llMatchLogItems.getChildAt(0).getHeight();
+                bottom_quarter = Main.vh75 - itemHeight;
+                below_screen = Main.heightPixels - itemHeight;
+                scalePerPixel = 0.2f / Main.vh25;
+                scaleItems(0);
+                setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
+            });
+        }
 
         setVisibility(View.VISIBLE);
         fullScroll(View.FOCUS_UP);
         requestFocus();
-        getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if(!Main.isScreenRound || itemHeightInit) return;
-            if(matchLogList.getChildCount() == 0) return;
-            itemHeightInit = true;
-            itemHeight = matchLogList.getChildAt(0).getHeight();
-            topBottomMargin = (Main.heightPixels - itemHeight) / 3;
-            scalePerPixel = .5f / (topBottomMargin + itemHeight);
-            onScroll(0);
-            setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> onScroll(scrollY));
-        });
     }
-    private void onScroll(int scrollY){
+    private void scaleItems(int scrollY){
         float top;
-        float bottom;
         float scale;
-        for(int i=0; i<matchLogList.getChildCount(); i++){
-            View item = matchLogList.getChildAt(i);
-            top = matchLogList.getY() + item.getY() - scrollY;
-            bottom = top + itemHeight;
-            scale = 1f;
-            if(bottom < 0){
+        for(int i = 0; i< llMatchLogItems.getChildCount(); i++){
+            View item = llMatchLogItems.getChildAt(i);
+            top = Main.dp50 + (item.getY() - scrollY);
+            scale = 1.0f;
+            if(top < 0){
                 //the item is above the screen
-                scale = .5f;
-            }else if(top < topBottomMargin){
+                scale = 0.8f;
+            }else if(top < Main.vh25){
                 //the item is in the top quarter
-                scale = .5f + (scalePerPixel * bottom);
-            }else if(top > Main.heightPixels){
+                scale = 0.8f + (scalePerPixel * top);
+            }else if(top > below_screen){
                 //the item is below the screen
-                scale = .5f;
-            }else if(bottom > Main.heightPixels - topBottomMargin){
+                scale = 0.8f;
+            }else if(top > bottom_quarter){
                 //the item is in the bottom quarter
-                scale = .5f + (scalePerPixel * (Main.heightPixels - top));
+                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
             }
             item.setScaleX(scale);
             item.setScaleY(scale);
         }
+    }
+    private void addNewItem(Main main, MatchData match, Report report){
+        TextView item = new TextView(main, null, 0, R.style.textView_item);
+        Date match_date_d = new Date(match.match_id);
+        String text = new SimpleDateFormat("E dd MMM HH:mm", Locale.getDefault()).format(match_date_d);
+
+        text += "\n";
+        text += match.home.team.equals(match.home.id) ? match.home.color : match.home.team;
+        text += " : ";
+        text += match.away.team.equals(match.away.id) ? match.away.color : match.away.team;
+
+        text += "\n";
+        text += match.home.tot;
+        text += " : ";
+        text += match.away.tot;
+
+        item.setText(text);
+        item.setOnClickListener(v -> report.show(main, match));
+        llMatchLogItems.addView(item);
+        main.addOnTouch(item);
     }
 }

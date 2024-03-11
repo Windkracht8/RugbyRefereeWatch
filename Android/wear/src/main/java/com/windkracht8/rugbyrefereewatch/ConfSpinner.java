@@ -3,8 +3,6 @@ package com.windkracht8.rugbyrefereewatch;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,43 +13,35 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class ConfSpinner extends ScrollView{
-    private LinearLayout llConfSpinner;
-    private TextView conf_spinner_label;
+    private final LinearLayout llConfSpinner;
+    private final TextView confSpinnerLabel;
     private final ArrayList<TextView> confSpinnerItems = new ArrayList<>();
     private boolean isInitialized;
-    private int itemHeight;
-    private boolean isItemHeightInitialized = false;
-    private float scalePerPixel;
+    private static int itemHeight;
+    private static float scalePerPixel = 0;
+    private static float bottom_quarter;
+    private static float below_screen;
 
     public ConfSpinner(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){
-            Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show();
-            return;
-        }
+        assert inflater != null;
         inflater.inflate(R.layout.conf_spinner, this, true);
 
-        conf_spinner_label = findViewById(R.id.conf_spinner_label);
+        confSpinnerLabel = findViewById(R.id.confSpinnerLabel);
         llConfSpinner = findViewById(R.id.llConfSpinner);
     }
-    void addOnTouch(Main main){
-        main.addOnTouch(conf_spinner_label);
-    }
 
-    void setConfItemType(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
+    void show(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
         if(isInitialized){
             for(int i = llConfSpinner.getChildCount(); i>1; i--){
                 llConfSpinner.removeViewAt(i-1);
             }
             confSpinnerItems.clear();
-        }else{
-            findViewById(R.id.conf_spinner_label).getLayoutParams().height = Main.vh25;
-            ((LayoutParams) llConfSpinner.getLayoutParams()).bottomMargin += Main.vh25;
         }
         isInitialized = true;
 
-        conf_spinner_label.setText(ConfItem.getConfItemName(confItemType));
+        confSpinnerLabel.setText(ConfItem.getConfItemName(confItemType));
 
         int intStart = 0;
         int intEnd = 0;
@@ -103,10 +93,20 @@ public class ConfSpinner extends ScrollView{
                 llConfSpinner.addView(confSpinnerItem);
             }
         }
-        fullScroll(View.FOCUS_UP);
         if(Main.isScreenRound){
-            getViewTreeObserver().addOnGlobalLayoutListener(() -> scaleConfSpinnerItems(0));
+            getViewTreeObserver().addOnGlobalLayoutListener(()->{
+                if(scalePerPixel > 0) return;
+                itemHeight = confSpinnerItems.get(0).getHeight();
+                bottom_quarter = Main.vh75 - itemHeight;
+                below_screen = Main.heightPixels - itemHeight;
+                scalePerPixel = 0.2f / Main.vh25;
+                scaleItems(0);
+                setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
+            });
         }
+        fullScroll(View.FOCUS_UP);
+        setVisibility(View.VISIBLE);
+        requestFocus();
     }
     private void addCustomMatchTypes(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
         if(Conf.customMatchTypes.length() == 0) return;
@@ -123,47 +123,33 @@ public class ConfSpinner extends ScrollView{
         }
     }
     private TextView newConfSpinnerItem(Main main, String text){
-        TextView confSpinnerItem = new TextView(getContext());
-        confSpinnerItem.setMinHeight(getResources().getDimensionPixelSize(R.dimen.minTouchSize));
-        confSpinnerItem.setBackgroundResource(R.drawable.conf_item_bg);
-        confSpinnerItem.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        confSpinnerItem.setGravity(Gravity.CENTER);
+        TextView confSpinnerItem = new TextView(getContext(), null, 0, R.style.textView_item);
         confSpinnerItem.setText(text);
         confSpinnerItems.add(confSpinnerItem);
         main.addOnTouch(confSpinnerItem);
         return confSpinnerItem;
     }
-    private void scaleConfSpinnerItems(int scrollY){
-        if(!isItemHeightInitialized){
-            itemHeight = confSpinnerItems.get(0).getHeight();
-            scalePerPixel = 0.5f / (Main.vh25 + itemHeight);
-            setOnScrollChangeListener((v, sX, sY, osX, osY) -> scaleConfSpinnerItems(sY));
-            isItemHeightInitialized = true;
-        }
-
+    private void scaleItems(int scrollY){
         float top;
-        float bottom;
         float scale;
-        for(TextView confSpinnerItem : confSpinnerItems){
-            top = confSpinnerItem.getY() - scrollY;
-            bottom = top + itemHeight;
+        for(TextView item : confSpinnerItems){
+            top = item.getY() - scrollY;
             scale = 1.0f;
-            if(bottom < 0){
+            if(top < 0){
                 //the item is above the screen
-                scale = 0.5f;
+                scale = 0.8f;
             }else if(top < Main.vh25){
                 //the item is in the top quarter
-                scale = 0.5f + (scalePerPixel * bottom);
-            }
-            if(top > Main.heightPixels){
+                scale = 0.8f + (scalePerPixel * top);
+            }else if(top > below_screen){
                 //the item is below the screen
-                scale = 0.5f;
-            }else if(bottom > Main.heightPixels - Main.vh25){
+                scale = 0.8f;
+            }else if(top > bottom_quarter){
                 //the item is in the bottom quarter
-                scale = 0.5f + (scalePerPixel * (Main.heightPixels - top));
+                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
             }
-            confSpinnerItem.setScaleX(scale);
-            confSpinnerItem.setScaleY(scale);
+            item.setScaleX(scale);
+            item.setScaleY(scale);
         }
     }
 }

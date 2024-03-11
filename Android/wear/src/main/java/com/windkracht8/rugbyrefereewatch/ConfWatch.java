@@ -1,13 +1,10 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import static com.windkracht8.rugbyrefereewatch.ConfItem.ConfItemType.*;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,7 +15,7 @@ public class ConfWatch extends LinearLayout{
     public ConfWatch(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){ Toast.makeText(context, R.string.fail_show_conf, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.conf_watch, this, true);
     }
     void show(Main main){
@@ -29,18 +26,22 @@ public class ConfWatch extends LinearLayout{
         }
         isInitialized = true;
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
-        int ll_in_sc_padding = getResources().getDimensionPixelSize(R.dimen.ll_in_sc_padding);
-        int confItemHeight = (Main.heightPixels - (ll_in_sc_padding*2)) / 4;
+        int confItemHeight = (Main.heightPixels - (Main.dp10*2)) / 4;
         if(Main.isScreenRound){
-            llConfWatch.setPadding(ll_in_sc_padding, Main.vh10, ll_in_sc_padding, Main.vh10);
+            llConfWatch.setPadding(Main.dp10, Main.vh10, Main.dp10, Main.vh10);
             confItemHeight = (Main.heightPixels - (Main.vh10*2)) / 4;
         }
-        for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{TIMER_TYPE, RECORD_PENS, RECORD_PLAYER, SCREEN_ON}){
+        for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{
+                ConfItem.ConfItemType.TIMER_TYPE
+                ,ConfItem.ConfItemType.RECORD_PENS
+                ,ConfItem.ConfItemType.RECORD_PLAYER
+                ,ConfItem.ConfItemType.SCREEN_ON
+        }){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
             confItem.setOnClickListener(v -> onConfItemClick((ConfItem)v, confItemType));
             confItems.add(confItem);
             llConfWatch.addView(confItem);
-            confItem.addOnTouch(main);
+            main.addOnTouch(confItem);
             confItem.getLayoutParams().height = confItemHeight;
             confItem.updateValue();
         }
@@ -71,5 +72,4 @@ public class ConfWatch extends LinearLayout{
                 break;
         }
     }
-
 }

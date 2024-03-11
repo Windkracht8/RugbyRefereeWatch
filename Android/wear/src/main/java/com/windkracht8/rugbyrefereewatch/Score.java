@@ -9,22 +9,21 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Score extends LinearLayout{
     MatchData.team team;
     int player_no;
 
-    private Spinner score_player;
-    private TextView score_try;
-    private TextView score_con;
-    private TextView score_goal;
-    private TextView foul_play;
+    private final Spinner score_player;
+    private final TextView score_try;
+    private final TextView score_con;
+    private final TextView score_goal;
+    private final TextView foul_play;
 
     public Score(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_score, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.score, this, true);
 
         score_player = findViewById(R.id.score_player);
@@ -48,10 +47,7 @@ public class Score extends LinearLayout{
             }
         });
         if(!Main.isScreenRound){
-            LinearLayout llScore = findViewById(R.id.llScore);
-            LinearLayout.LayoutParams layoutParams = (LayoutParams) llScore.getLayoutParams();
-            layoutParams.bottomMargin = 0;
-            layoutParams.topMargin = 0;
+            findViewById(R.id.llScore).setPadding(0, 0, 0, 0);
         }
     }
     void onCreateMain(Main main){
@@ -66,8 +62,7 @@ public class Score extends LinearLayout{
         score_goal.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
         score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
         if(Main.isScreenRound){
-            ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).leftMargin = Main.vh25;
-            ((LinearLayout.LayoutParams) foul_play.getLayoutParams()).rightMargin = Main.vh25;
+            foul_play.setPadding(Main.vh25, 0, Main.vh25, 0);
         }
     }
     void clear(){score_player.setSelection(0);}

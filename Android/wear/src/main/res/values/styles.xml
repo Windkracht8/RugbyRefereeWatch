@@ -15,6 +15,20 @@
         <item name="android:colorControlActivated">@color/w8blue</item>
         <item name="android:textColor">#fff</item>
     </style>
+    <style name="textView_log">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#fff</item>
+    </style>
+    <style name="textView_item">
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:minHeight">@dimen/minTouchSize</item>
+        <item name="android:background">@drawable/conf_item_bg</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+    </style>
     <style name="spinnerItemStyle">
         <item name="android:gravity">center</item>
         <item name="android:textColor">#fff</item>

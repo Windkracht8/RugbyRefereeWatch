@@ -2,7 +2,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/svCorrect"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -10,23 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp" >
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="50dp" >
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
             android:text="@string/correct_title"
             android:textColor="@color/w8blue"
-            android:textSize="18sp"
-            android:layout_marginBottom="10dp"/>
+            android:textSize="18sp" />
         <LinearLayout
-            android:id="@+id/correctList"
+            android:id="@+id/llCorrectItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp" />
+            android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>

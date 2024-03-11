@@ -90,6 +90,8 @@ public class Main extends Activity{
     private static int vh30;
     private static int vh40;
     static int vh75;
+    static int dp10;
+    static int dp50;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
@@ -137,6 +139,8 @@ public class Main extends Activity{
             widthPixels = displayMetrics.widthPixels;
         }
         SWIPE_THRESHOLD = (int) (widthPixels * .3);
+        dp10 = getResources().getDimensionPixelSize(R.dimen.dp10);
+        dp50 = getResources().getDimensionPixelSize(R.dimen.dp50);
 
         if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
@@ -541,7 +545,7 @@ public class Main extends Activity{
         switch(timer_status){
             case TIME_OFF:
                 //How did someone get here with no events in the match?
-                if(match.events.size() > 0 && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
+                if(!match.events.isEmpty() && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
                     match.events.remove(match.events.size()-1);
                 }
                 match.logEvent("END", null, 0, 0);
@@ -861,7 +865,7 @@ public class Main extends Activity{
             if(!team.hasSinbin(sinbin_ui.sinbin.id) || sinbin_ui.sinbin.hide){
                 llSinbins.removeView(sinbin_ui);
                 al_sinbins_ui.remove(sinbin_ui);
-                if(al_sinbins_ui.size() == 0){
+                if(al_sinbins_ui.isEmpty()){
                     if(Objects.equals(team.id, "home")){
                         score_home.setHeight(vh25);
                     }else{
@@ -1215,7 +1219,7 @@ public class Main extends Activity{
         .build();
 
         OngoingActivity ongoingActivity = new OngoingActivity.Builder(
-            getBaseContext()
+            this
             ,RRW_Notification_ID
             ,notificationBuilder
         )
@@ -1224,7 +1228,7 @@ public class Main extends Activity{
         .setStatus(ongoingActivityStatus)
         .build();
 
-        ongoingActivity.apply(getBaseContext());
+        ongoingActivity.apply(this);
 
         notificationManager.notify(RRW_Notification_ID, notificationBuilder.build());
     }

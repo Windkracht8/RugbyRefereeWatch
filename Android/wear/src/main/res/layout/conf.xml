@@ -8,7 +8,6 @@
         android:id="@+id/svConf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,17 +16,18 @@
             android:id="@+id/llConf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ll_in_sc_padding"
-            android:layout_marginEnd="@dimen/ll_in_sc_padding"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="50dp" >
             <TextView
-                android:id="@+id/conf_label"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:gravity="center"
                 android:text="@string/conf_title"
                 android:textColor="@color/w8blue"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
         </LinearLayout>
     </ScrollView>
     <com.windkracht8.rugbyrefereewatch.ConfSpinner

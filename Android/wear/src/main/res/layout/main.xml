@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:paddingLeft="@dimen/ll_in_sc_padding"
+            android:paddingLeft="10dp"
             android:paddingRight="2dp"
             android:background="@color/red" >
             <TextView
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:paddingRight="@dimen/ll_in_sc_padding"
+            android:paddingRight="10dp"
             android:paddingLeft="2dp"
             android:background="@color/blue" >
             <TextView

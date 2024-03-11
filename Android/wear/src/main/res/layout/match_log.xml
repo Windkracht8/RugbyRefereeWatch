@@ -2,7 +2,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/svMatchLog"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -10,23 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/ll_in_sc_padding"
-        android:layout_marginBottom="@dimen/ll_in_sc_padding" >
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="50dp" >
         <TextView
-            android:id="@+id/match_log_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
             android:text="@string/match_log_title"
             android:textColor="@color/w8blue"
             android:textSize="18sp" />
         <LinearLayout
-            android:id="@+id/matchLogList"
+            android:id="@+id/llMatchLogItems"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="50dp" />
+            android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>
