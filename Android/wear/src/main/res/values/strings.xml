@@ -160,7 +160,7 @@
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
     <string name="help_bt_title">New stuff</string>
-    <string name="help_bt">Connection to the RugbyRefereeWatch app on your phone now works via
+    <string name="help_bt">Connection to the Rugby Referee Watch app on your phone now works via
         Bluetooth, this works with any Android phone. You do need to approve permission.</string>
     <string name="help_log_title">History</string>
     <string name="help_log">Noticed this icon? It opens a list of all of your completed
@@ -169,20 +169,20 @@
     <string name="help_pk_title">Penalty kick</string>
     <string name="help_pk">Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
-    <string name="help_corrections">During a game press the back button to open the correction
+    <string name="help_corrections">During a game swipe back to open the correction
         screen. On this screen you can tab the event you want to undo.</string>
     <string name="help_kickoff_title">Kick off</string>
-    <string name="help_kickoff">Before the game starts you can record which team will kick off by
+    <string name="help_kickoff">Before the game starts you can set which team will kick off by
         tapping the home or away team score.</string>
     <string name="help_battery_title">Battery</string>
     <string name="help_battery">Screen on is a very useful setting to keep the screen on during a
         game, but this will use more battery. Consider switching off Wifi, GPS and Bluetooth during
-        a game, this app does not use these.</string>
+        a game, this app does not use these during the game.</string>
     <string name="help_storage_title">Storage</string>
     <string name="help_storage">Matches will be stored on the watch for 14 days, use the companion
         app on your phone to download them.</string>
     <string name="help_help_title">Get help</string>
-    <string name="help_help">From the settings you can open this screen. Find the support contacts
+    <string name="help_help">From the settings you can open this screen. Find support contacts
         in the App Store for more help.</string>
 
     <!-- fail -->
