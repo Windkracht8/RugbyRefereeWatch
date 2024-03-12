@@ -253,18 +253,17 @@ public class Main extends Activity{
         if(isScreenRound){
             pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()-> {
                 if(isPenPadInitialized) return;
-                int pad_for_label = pen_label.getWidth()+20;
+                int pad_inner = (pen_label.getWidth()+20)/2;
                 int pad_outer = widthPixels/3;
-                bPenHome.setPadding(pad_outer, 0, pad_for_label/2, 0);
-                bPenAway.setPadding(pad_for_label/2, 0, pad_outer, 0);
+                bPenHome.setPadding(pad_outer, 0, pad_inner, 0);
+                bPenAway.setPadding(pad_inner, 0, pad_outer, 0);
                 isPenPadInitialized = true;
             });
         }
 
         if(timer_status == TimerStatus.CONF){
             if(Build.VERSION.SDK_INT >= 31){
-                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_SCAN)
-                        && hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT);
+                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT);
             }else{
                 hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
             }
@@ -298,14 +297,12 @@ public class Main extends Activity{
             ){
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.POST_NOTIFICATIONS
-                        ,Manifest.permission.BLUETOOTH_CONNECT
-                        ,Manifest.permission.BLUETOOTH_SCAN}, 1);
+                        ,Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
         }else if(Build.VERSION.SDK_INT >= 31){
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.BLUETOOTH_CONNECT
-                        ,Manifest.permission.BLUETOOTH_SCAN}, 1);
+                        Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
         }else{
             if(!hasBTPermission){
@@ -322,10 +319,10 @@ public class Main extends Activity{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for(int i=0; i<permissions.length; i++){
             if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
-                    permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
                     permissions[i].equals(Manifest.permission.BLUETOOTH)){
                 if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     hasBTPermission = true;
+                    commsBTLog.addToLog(getString(R.string.bt_permission_granted));
                     initBT();
                 }else{
                     hasBTPermission = false;

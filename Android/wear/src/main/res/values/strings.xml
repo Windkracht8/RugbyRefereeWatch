@@ -138,6 +138,7 @@
     <!-- Bluetooth log -->
     <string name="no_bt_permission">No Bluetooth permission</string>
     <string name="bt_permission_rejected">Bluetooth permission rejected</string>
+    <string name="bt_permission_granted">Bluetooth permission granted</string>
     <string name="bt_disabled">Bluetooth disabled</string>
     <string name="start_listening">Start listening</string>
     <string name="stop_listening">Stop listening</string>
