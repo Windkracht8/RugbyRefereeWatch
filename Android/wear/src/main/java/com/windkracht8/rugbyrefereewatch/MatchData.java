@@ -80,6 +80,7 @@ class MatchData{
         home.goals = 0;
         home.pens = 0;
         home.sinbins.clear();
+        home.kickoff = false;
         away.team = "away";
         away.tot = 0;
         away.tries = 0;
@@ -88,6 +89,7 @@ class MatchData{
         away.goals = 0;
         away.pens = 0;
         away.sinbins.clear();
+        away.kickoff = false;
     }
     void removeEvent(event event_del){
         events.remove(event_del);

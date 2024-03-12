@@ -233,10 +233,12 @@ public class Conf extends ConstraintLayout{
         }
         Main.timer_period_time = Main.match.period_time;
         updateValues();
-        confItems.get(0).getViewTreeObserver().addOnPreDrawListener(() -> {
-            scaleItems(svConf.getScrollY());
-            return true;
-        });
+        if(Main.isScreenRound){
+            confItems.get(0).getViewTreeObserver().addOnPreDrawListener(()->{
+                scaleItems(svConf.getScrollY());
+                return true;
+            });
+        }
     }
     private void loadCustomMatchType(String name){//Thread: Always on UI thread
         try{

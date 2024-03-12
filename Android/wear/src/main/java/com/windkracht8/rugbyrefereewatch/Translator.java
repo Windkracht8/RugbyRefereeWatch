@@ -18,8 +18,8 @@ class Translator{
     static String getEventTypeLocal(Context context, String eventType_system){
         String[] eventTypesLocal = context.getResources().getStringArray(R.array.eventTypes);
         String[] eventTypes_system = context.getResources().getStringArray(R.array.eventTypes_system);
-        for (int i = 0; i < eventTypes_system.length; i++) {
-            if (eventTypes_system[i].equals(eventType_system)) {
+        for(int i=0; i<eventTypes_system.length; i++){
+            if(eventTypes_system[i].equals(eventType_system)){
                 return eventTypesLocal[i];
             }
         }
