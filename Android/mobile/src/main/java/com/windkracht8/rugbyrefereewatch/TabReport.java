@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public class TabReport extends LinearLayout{
     private Main main;
-    private LinearLayout llEvents;
+    private final LinearLayout llEvents;
 
     private JSONObject match;
     private long match_id;
@@ -44,7 +44,7 @@ public class TabReport extends LinearLayout{
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_report, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.tab_report, this, true);
 
         findViewById(R.id.time_width_measure).measure(0, 0);
@@ -67,8 +67,8 @@ public class TabReport extends LinearLayout{
 
         findViewById(R.id.bView).setOnClickListener(view -> bViewClick());
         findViewById(R.id.bEdit).setOnClickListener(view -> bEditClick());
-        findViewById(R.id.bClose).setOnClickListener(this::bCloseClick);
-        findViewById(R.id.bSave).setOnClickListener(this::bSaveClick);
+        findViewById(R.id.bCancel).setOnClickListener(view -> bCancelClick());
+        findViewById(R.id.bSave).setOnClickListener(view -> bSaveClick());
         findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
     }
 
@@ -160,13 +160,12 @@ public class TabReport extends LinearLayout{
         }
 
         findViewById(R.id.bView).setVisibility(VISIBLE);
-        findViewById(R.id.bClose).setVisibility(GONE);
+        findViewById(R.id.bCancel).setVisibility(GONE);
         findViewById(R.id.bSave).setVisibility(GONE);
         findViewById(R.id.bShare).setVisibility(VISIBLE);
         findViewById(R.id.table).setVisibility(VISIBLE);
         findViewById(R.id.edit_team_names).setVisibility(GONE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
-        findViewById(R.id.tvNoEdit).setVisibility(GONE);
     }
     private void showEvents(){
         if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
@@ -220,16 +219,16 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    private void bCloseClick(View view){
+    private void bCancelClick(){
         InputMethodManager inputMethodManager = (InputMethodManager)main.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
+        inputMethodManager.hideSoftInputFromWindow(getApplicationWindowToken(),0);
         bViewClick();
     }
     private void bViewClick(){
         view = view == 0 ? 1 : 0;
         findViewById(R.id.bView).setVisibility(VISIBLE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
-        findViewById(R.id.bClose).setVisibility(GONE);
+        findViewById(R.id.bCancel).setVisibility(GONE);
         findViewById(R.id.bSave).setVisibility(GONE);
         findViewById(R.id.bShare).setVisibility(VISIBLE);
         findViewById(R.id.table).setVisibility(VISIBLE);
@@ -245,7 +244,7 @@ public class TabReport extends LinearLayout{
         view = 2;
         findViewById(R.id.bView).setVisibility(GONE);
         findViewById(R.id.bEdit).setVisibility(GONE);
-        findViewById(R.id.bClose).setVisibility(VISIBLE);
+        findViewById(R.id.bCancel).setVisibility(VISIBLE);
         findViewById(R.id.bSave).setVisibility(VISIBLE);
         findViewById(R.id.bShare).setVisibility(GONE);
         findViewById(R.id.table).setVisibility(GONE);
@@ -268,9 +267,9 @@ public class TabReport extends LinearLayout{
             Toast.makeText(main, R.string.fail_delete, Toast.LENGTH_SHORT).show();
         }
     }
-    private void bSaveClick(View view){
+    private void bSaveClick(){
         InputMethodManager inputMethodManager = (InputMethodManager)main.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
+        inputMethodManager.hideSoftInputFromWindow(getApplicationWindowToken(),0);
         try{
             JSONObject settings = match.getJSONObject("settings");
             int points_try = settings.getInt("points_try");
@@ -396,7 +395,6 @@ public class TabReport extends LinearLayout{
             match.put("away", away);
 
             main.tabHistory.updateMatch(match);
-            loadMatch(main, match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             Toast.makeText(main, R.string.fail_save, Toast.LENGTH_SHORT).show();
@@ -405,13 +403,13 @@ public class TabReport extends LinearLayout{
     private void bShareClick(){
         boolean[] eventTypes = {false, false, false};
         View view = View.inflate(main, R.layout.dialog_share, null);
-        ((CheckBox) view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
+        ((CheckBox)view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
                 (v, c)-> eventTypes[0] = c
         );
-        ((CheckBox) view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
+        ((CheckBox)view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
                 (v, c)-> eventTypes[1] = c
         );
-        ((CheckBox) view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
+        ((CheckBox)view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
                 (v, c)-> eventTypes[2] = c
         );
         new AlertDialog.Builder(main)

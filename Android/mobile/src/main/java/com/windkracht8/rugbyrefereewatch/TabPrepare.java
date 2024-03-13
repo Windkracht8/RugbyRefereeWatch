@@ -32,25 +32,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TabPrepare extends LinearLayout{
-    private EditText etHomeName;
-    private EditText etAwayName;
-    private Spinner sHomeColor;
-    private Spinner sAwayColor;
-    private Spinner sMatchType;
-    private EditText etTimePeriod;
-    private EditText etPeriodCount;
-    private EditText etSinbin;
-    private EditText etPointsTry;
-    private EditText etPointsCon;
-    private EditText etPointsGoal;
-    private CheckBox cbRecordPlayer;
-    private CheckBox cbRecordPens;
-    private CheckBox cbScreenOn;
-    private Button bWatchSettings;
-    private Spinner sTimerType;
+    private final EditText etHomeName;
+    private final EditText etAwayName;
+    private final Spinner sHomeColor;
+    private final Spinner sAwayColor;
+    private final Spinner sMatchType;
+    private final EditText etTimePeriod;
+    private final EditText etPeriodCount;
+    private final EditText etSinbin;
+    private final EditText etPointsTry;
+    private final EditText etPointsCon;
+    private final EditText etPointsGoal;
+    private final CheckBox cbRecordPlayer;
+    private final CheckBox cbRecordPens;
+    private final CheckBox cbScreenOn;
+    private final Button bWatchSettings;
+    private final Spinner sTimerType;
     private boolean watch_settings = false;
     private boolean has_changed = false;
-    private JSONArray customMatchTypes;
+    private final JSONArray customMatchTypes;
     private int sMatchTypePosition = 0;
     private static int sHomeColorPosition = 0;
     private static int sAwayColorPosition = 0;
@@ -58,7 +58,7 @@ public class TabPrepare extends LinearLayout{
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_prepare, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.tab_prepare, this, true);
 
         customMatchTypes = new JSONArray();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +14,8 @@ import org.json.JSONObject;
 class ReportEventFull extends LinearLayout{
     ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
         super(context);
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.report_event_full, this, true);
 
         try{
@@ -45,6 +45,19 @@ class ReportEventFull extends LinearLayout{
             timer += seconds;
             tvTimer.setText(timer);
 
+            TextView tvWhat = findViewById(R.id.tvWhat);
+            int period = event.getInt("period");
+            tvWhat.setText(Translator.getEventTypeLocal(context, event.getString("what"), period, period_count));
+            if(event.has("team")){
+                TextView tvTeam = findViewById(R.id.tvTeam);
+                String team = event.getString("team");
+                team = match.has(team) ? Main.getTeamName(context, match.getJSONObject(team)) : team;
+                tvTeam.setText(team);
+            }
+            if(event.has("who")){
+                TextView tvWho = findViewById(R.id.tvWho);
+                tvWho.setText(event.getString("who"));
+            }
             if(event.has("score")){
                 TextView tvScore = findViewById(R.id.tvScore);
                 tvScore.setWidth(TabReport.score_width);
@@ -55,21 +68,10 @@ class ReportEventFull extends LinearLayout{
                     tvScore.setGravity(score.split(":")[0].length() == 2 ? Gravity.START : Gravity.END);
                 }
             }
-
-            TextView tvWhat = findViewById(R.id.tvWhat);
-            int period = event.getInt("period");
-            tvWhat.setText(Translator.getEventTypeLocal(context, event.getString("what"), period, period_count));
-
-            if(event.has("team")){
-                TextView tvTeam = findViewById(R.id.tvTeam);
-                String team = event.getString("team");
-                team = match.has(team) ? Main.getTeamName(context, match.getJSONObject(team)) : team;
-                tvTeam.setText(team);
-            }
-
-            if(event.has("who")){
-                TextView tvWho = findViewById(R.id.tvWho);
-                tvWho.setText(event.getString("who"));
+            if(event.has("reason")){
+                TextView tvReason = findViewById(R.id.tvReason);
+                tvReason.setText(event.getString("reason"));
+                tvReason.setVisibility(View.VISIBLE);
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "ReportEventFull.construct Exception: " + e.getMessage());

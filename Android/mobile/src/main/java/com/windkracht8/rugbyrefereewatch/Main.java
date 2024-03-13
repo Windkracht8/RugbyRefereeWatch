@@ -226,6 +226,7 @@ public class Main extends AppCompatActivity{
                 float diffX = e2.getX() - e1.getX();
                 if(Math.abs(diffX) > Math.abs(diffY)){
                     if(Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD){
+                        HistoryMatch.isLongPress = false;
                         if(diffX > 0){
                             onSwipeRight();
                         }else{

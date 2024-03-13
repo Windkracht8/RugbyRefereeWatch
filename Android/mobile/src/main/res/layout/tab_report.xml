@@ -258,13 +258,6 @@
             android:entries="@array/teams"
             android:theme="@style/rrwReportEditSpinner" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/tvNoEdit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:gravity="center"
-        android:text="@string/edit" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -291,12 +284,12 @@
             android:textAllCaps="false"
             android:visibility="invisible" />
         <Button
-            android:id="@+id/bClose"
+            android:id="@+id/bCancel"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/close"
+            android:text="@string/cancel"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="gone" />

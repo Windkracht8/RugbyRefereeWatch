@@ -22,9 +22,9 @@ import java.util.ArrayList;
 
 public class TabHistory extends LinearLayout{
     private Main main;
-    private LinearLayout llMatches;
-    private Button bExport;
-    private Button bDelete;
+    private final LinearLayout llMatches;
+    private final Button bExport;
+    private final Button bDelete;
     private final ArrayList<JSONObject> matches = new ArrayList<>();
     private final ArrayList<Long> deleted_matches = new ArrayList<>();
     boolean selecting = false;
@@ -32,7 +32,7 @@ public class TabHistory extends LinearLayout{
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_history, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.tab_history, this, true);
 
         llMatches = findViewById(R.id.llMatches);
@@ -180,7 +180,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             Toast.makeText(main, R.string.fail_show_history, Toast.LENGTH_SHORT).show();
         }
-        if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(0));
+        if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(matches.size()-1));
     }
     //Thread: Background
     private void storeMatches(){

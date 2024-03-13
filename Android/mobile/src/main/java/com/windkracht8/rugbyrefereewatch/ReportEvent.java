@@ -15,7 +15,7 @@ class ReportEvent extends LinearLayout{
     ReportEvent(Context context, JSONObject event, int period_count, int period_time, int[] score){
         super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(inflater == null){Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show(); return;}
+        assert inflater != null;
         inflater.inflate(R.layout.report_event, this, true);
 
         TextView tvLeft = findViewById(R.id.tvLeft);
@@ -59,6 +59,7 @@ class ReportEvent extends LinearLayout{
                     case "RED CARD":
                         if(event.has("who")) what_local += " " + event.getString("who");
 
+                        boolean isHome = event.getString("team").equals("home");
                         long minutes = event.getLong("timer") / 60000;
                         String timer = Long.toString(minutes);
                         if(minutes > (long) period_time * period_count){
@@ -77,7 +78,7 @@ class ReportEvent extends LinearLayout{
                             tvRightTime.setWidth(TabReport.timer_width);
                         }
                         timer += "'";
-                        if(event.getString("team").equals("home")){
+                        if(isHome){
                             tvLeft.setText(what_local);
                             tvLeftTime.setText(timer);
                         }else{
@@ -85,8 +86,10 @@ class ReportEvent extends LinearLayout{
                             tvRight.setText(what_local);
                         }
                         if(event.has("reason")){
-                            ((TextView)findViewById(R.id.tvReason)).setText(event.getString("reason"));
-                            findViewById(R.id.tvReason).setVisibility(View.VISIBLE);
+                            TextView tvReason = findViewById(R.id.tvReason);
+                            tvReason.setText(event.getString("reason"));
+                            tvReason.setVisibility(View.VISIBLE);
+                            tvReason.setGravity(isHome ? Gravity.START : Gravity.END);
                         }
                         break;
                     default:

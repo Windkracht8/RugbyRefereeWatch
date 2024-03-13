@@ -49,31 +49,34 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         }
     }
     private float x, y;
-    private Timer timer;
+    private final Timer timer = new Timer();
+    static boolean isLongPress = false;
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        main.onTouchEvent(event);
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
+                isLongPress = true;
                 x = event.getX();
                 y = event.getY();
-                timer = new Timer();
                 timer.schedule(new TimerTask(){
                     @Override
                     public void run(){
                         longPress();
                     }
                 }, 500);
-                return true;
+                break;
             case MotionEvent.ACTION_MOVE:
-                float diff_x = x - event.getX();
-                float diff_y = y - event.getY();
-                if(diff_x > 10 || diff_x < -10 || diff_y > 10 || diff_y < -10){
-                    timer.cancel();
+                if(Math.abs(x - event.getX()) > 10 || Math.abs(y - event.getY()) > 10){
+                    isLongPress = false;
                 }
-                return true;
+                break;
             case MotionEvent.ACTION_UP:
-                timer.cancel();
-                if(event.getEventTime() - event.getDownTime() < 500){
+                isLongPress = false;
+                if(Math.abs(x - event.getX()) < 10 &&
+                        Math.abs(y - event.getY()) < 10 &&
+                        event.getEventTime() - event.getDownTime() < 500
+                ){
                     if(main.tabHistory.selecting){
                         toggleSelect();
                     }else{
@@ -82,16 +85,16 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
                         performClick();
                     }
                 }
-                return true;
-            default:
-                return super.onTouchEvent(event);
         }
+        return true;
     }
 
     @SuppressWarnings("EmptyMethod")//Because we listen to onTouchEvent, we also need to listen to this
     public boolean performClick(){return super.performClick();}
 
-    private void longPress(){new Handler(Looper.getMainLooper()).post(this::toggleSelect);}
+    private void longPress(){
+        if(isLongPress) new Handler(Looper.getMainLooper()).post(this::toggleSelect);
+    }
 
     private void toggleSelect(){
         if(is_selected){

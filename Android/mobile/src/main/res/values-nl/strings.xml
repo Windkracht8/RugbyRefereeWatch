@@ -31,10 +31,9 @@
     <string name="svEvents_desc">Gebeurtenissen in de wedstrijd</string>
     <string name="view">weergave</string>
     <string name="edit">bewerk</string>
-    <string name="close">sluit</string>
     <string name="save">opslaan</string>
     <string name="share">delen</string>
-    <string name="cancel">Annuleren</string>
+    <string name="cancel">annuleren</string>
 
     <!-- report.event -->
     <string name="what_desc">wat</string>
@@ -167,8 +166,6 @@
     <string name="fail_prepare">Probleem met het sturen van instellingen naar het horloge</string>
     <string name="fail_show_match">Fout bij weergeven wedstrijd</string>
     <string name="fail_show_history">Fout bij weergeven Geschiedenis</string>
-    <string name="fail_show_report">Fout bij weergeven Rapport</string>
-    <string name="fail_show_prepare">Fout bij weergeven Voorbereiden</string>
     <string name="fail_send_message">Fout bij verzenden bericht aan horloge</string>
     <string name="fail_response">Probleem met het antwoord van horloge</string>
     <string name="fail_export">Fout bij exporteren wedstrijden</string>
