@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends Activity{
-    static final String RRW_LOG_TAG = "RugbyRefereeWatch";
+    static final String LOG_TAG = "RugbyRefereeWatch";
     static boolean isScreenRound;
     private boolean showSplash = true;
     private boolean isPenPadInitialized = false;
@@ -384,7 +384,7 @@ public class Main extends Activity{
 
     private void onMainClick(){
         //We need to do this to make sure that we can listen for onTouch on main
-        Log.i(RRW_LOG_TAG, "onMainClick");
+        Log.i(LOG_TAG, "onMainClick");
     }
     void addOnTouch(View v){v.setOnTouchListener(this::onTouch);}
     private boolean onTouch(View ignoredV, MotionEvent event){
@@ -479,7 +479,7 @@ public class Main extends Activity{
     private void initBT(){
         if(timer_status != TimerStatus.CONF && timer_status != TimerStatus.FINISHED) return;
         if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
-            Log.d(RRW_LOG_TAG, "initBT !hasBTPermission");
+            Log.d(LOG_TAG, "initBT !hasBTPermission");
             commsBTLog.addToLog(getString(R.string.no_bt_permission));
             return;
         }
@@ -1081,7 +1081,7 @@ public class Main extends Activity{
             if(settings.has("record_pens"))
                 record_pens = settings.getBoolean("record_pens");
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
             toast(R.string.fail_receive_settings);
             return false;
         }
@@ -1114,7 +1114,7 @@ public class Main extends Activity{
             }
             runOnUiThread(this::updateAfterConfig);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
             toast(R.string.fail_read_settings);
         }
     }
@@ -1148,7 +1148,7 @@ public class Main extends Activity{
             ret.put("record_pens", record_pens);
             ret.put("help_version", HELP_VERSION);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
             return null;
         }
         return ret;

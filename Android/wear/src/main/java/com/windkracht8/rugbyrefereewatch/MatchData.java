@@ -37,7 +37,7 @@ class MatchData{
                 events.add(new event(main, events_json.getJSONObject(i)));
             }
         }catch(JSONException e){
-            Log.e(Main.RRW_LOG_TAG, "MatchData.MatchData Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "MatchData.MatchData Exception: " + e.getMessage());
             main.toast(R.string.fail_read_match);
             match_id = 0;
         }
@@ -64,7 +64,7 @@ class MatchData{
             }
             ret.put("events", events_json);
         }catch(JSONException e){
-            Log.e(Main.RRW_LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
             main.toast(R.string.fail_read_match);
         }
         return ret;
@@ -155,7 +155,7 @@ class MatchData{
                 pens = team_js.getInt("pens");
                 kickoff = team_js.getBoolean("kickoff");
             }catch(JSONException e){
-                Log.e(Main.RRW_LOG_TAG, "MatchData.team Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "MatchData.team Exception: " + e.getMessage());
                 main.toast(R.string.fail_read_match);
             }
         }
@@ -185,7 +185,7 @@ class MatchData{
                 ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
-                Log.e(Main.RRW_LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
                 main.toast(R.string.fail_read_match);
             }
             return ret;
@@ -222,7 +222,7 @@ class MatchData{
                 if(event_json.has("who")) who = event_json.getInt("who");
                 if(event_json.has("score")) score = event_json.getString("score");
             }catch(JSONException e){
-                Log.e(Main.RRW_LOG_TAG, "MatchData.event Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "MatchData.event Exception: " + e.getMessage());
                 main.toast(R.string.fail_read_match);
             }
         }
@@ -244,7 +244,7 @@ class MatchData{
                     evt.put("score", score);
                 }
             }catch(JSONException e){
-                Log.e(Main.RRW_LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
                 main.toast(R.string.fail_read_match);
             }
             return evt;

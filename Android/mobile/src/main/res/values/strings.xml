@@ -49,12 +49,12 @@
     <string name="penalties">Penalties</string>
     <string name="total">Total</string>
     <string name="svEvents_desc">Events in match</string>
-    <string name="bView_text">view</string>
-    <string name="bEdit_text">edit</string>
-    <string name="bClose_text">close</string>
-    <string name="bSave_text">save</string>
-    <string name="bShare_text">share</string>
-    <string name="tvNoEdit_text">match has not finished, cannot edit now</string>
+    <string name="view">view</string>
+    <string name="edit">edit</string>
+    <string name="close">close</string>
+    <string name="save">save</string>
+    <string name="share">share</string>
+    <string name="cancel">Cancel</string>
 
     <!-- report.event -->
     <string name="what_desc">what</string>
@@ -64,6 +64,10 @@
     <!-- report.share -->
     <string name="share_report">Share match report</string>
     <string name="match_report">Match report</string>
+    <string name="dialog_share_message">What to include?</string>
+    <string name="dialog_share_time">Time off/on</string>
+    <string name="dialog_share_pens">Penalties</string>
+    <string name="dialog_share_clock">Clock time</string>
 
     <!-- prepare -->
     <string name="bPrepare_text">Send to watch</string>
@@ -101,8 +105,6 @@
     <!-- prepare.custom match type -->
     <string name="custom_match_hint">Match type name</string>
     <string name="save_match_type">Save match type</string>
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
 
     <string-array name="eventTypes">
         <item>TRY</item>

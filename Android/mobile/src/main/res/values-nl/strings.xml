@@ -29,12 +29,12 @@
     <string name="penalties">Penalty\'s</string>
     <string name="total">Totaal</string>
     <string name="svEvents_desc">Gebeurtenissen in de wedstrijd</string>
-    <string name="bView_text">weergave</string>
-    <string name="bEdit_text">bewerk</string>
-    <string name="bClose_text">sluit</string>
-    <string name="bSave_text">opslaan</string>
-    <string name="bShare_text">delen</string>
-    <string name="tvNoEdit_text">wedstrijd is not bezig, kan nu niet bewerken</string>
+    <string name="view">weergave</string>
+    <string name="edit">bewerk</string>
+    <string name="close">sluit</string>
+    <string name="save">opslaan</string>
+    <string name="share">delen</string>
+    <string name="cancel">Annuleren</string>
 
     <!-- report.event -->
     <string name="what_desc">wat</string>
@@ -44,6 +44,10 @@
     <!-- report.share -->
     <string name="share_report">Deel wedstrijdrapport</string>
     <string name="match_report">Wedstrijdrapport</string>
+    <string name="dialog_share_message">Wat te laten zien?</string>
+    <string name="dialog_share_time">Tijd stop/hervat</string>
+    <string name="dialog_share_pens">Penalties</string>
+    <string name="dialog_share_clock">Klok tijd</string>
 
     <!-- prepare -->
     <string name="bPrepare_text">Stuur naar horloge</string>
@@ -81,8 +85,6 @@
     <!-- prepare.custom match type -->
     <string name="custom_match_hint">Wedstrijdtype naam</string>
     <string name="save_match_type">Sla wedstrijdtype op</string>
-    <string name="save">Opslaan</string>
-    <string name="cancel">Annuleren</string>
 
     <string-array name="eventTypes">
         <item>TRY</item>

@@ -12,7 +12,7 @@ class Translator{
                 return teamColors[i];
             }
         }
-        Log.e(Main.RRW_LOG_TAG, "translator.getTeamColorLocal not found: " + teamColor_system);
+        Log.e(Main.LOG_TAG, "translator.getTeamColorLocal not found: " + teamColor_system);
         return teamColors[0];
     }
     static String getEventTypeLocal(Context context, String eventType_system){

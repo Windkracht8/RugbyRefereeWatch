@@ -457,6 +457,9 @@ public class Main extends AppCompatActivity{
         inputMethodManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getRootView().getApplicationWindowToken(),0);
     }
 
+    String getTeamName(JSONObject team){
+        return getTeamName(this, team);
+    }
     static String getTeamName(Context context, JSONObject team){
         String name = "";
         try{

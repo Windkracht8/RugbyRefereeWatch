@@ -27,7 +27,7 @@ class FileStore{
         try{
             storeFile(main, R.string.matches_filename, matches.toString());
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeMatches Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_storeMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_save_matches);
         }
     }
@@ -38,7 +38,7 @@ class FileStore{
             if(sMatches.length() < 3){return new JSONArray();}
             return new JSONArray(sMatches);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_readMatches Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_readMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_read_matches);
         }
         return new JSONArray();
@@ -56,7 +56,7 @@ class FileStore{
             }
             storeMatches(main, matches);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_cleanMatches Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_cleanMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_clean_matches);
         }
     }
@@ -78,7 +78,7 @@ class FileStore{
             storeMatches(main, matches);
             return matches;
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_deletedMatches Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_deletedMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_del_matches);
         }
         return new JSONArray();
@@ -87,13 +87,13 @@ class FileStore{
         try{
             JSONObject settings = Main.getSettings();
             if(settings == null){
-                Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings: Main.getSettings == null");
+                Log.e(Main.LOG_TAG, "FileStore.file_storeSettings: Main.getSettings == null");
                 main.toast(R.string.fail_store_settings);
                 return;
             }
             storeFile(main, R.string.settings_filename, settings.toString());
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_storeSettings Exception: " + e.getMessage());
             main.toast(R.string.fail_store_settings);
         }
     }
@@ -110,7 +110,7 @@ class FileStore{
         }catch(Exception e){
             main.noSettings();
             storeSettings(main);
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_readSettings Exception: " + e.getMessage());
             main.toast(R.string.fail_read_settings);
         }
     }
@@ -122,7 +122,7 @@ class FileStore{
             osr.write(Conf.customMatchTypes.toString());
             osr.close();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_storeCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_storeCustomMatchTypes Exception: " + e.getMessage());
             main.toast(R.string.fail_store_match_types);
         }
     }
@@ -143,9 +143,9 @@ class FileStore{
                 Conf.customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
             }
         }catch(FileNotFoundException e){
-            Log.d(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
+            Log.d(Main.LOG_TAG, "FileStore.file_readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.file_readCustomMatchTypes Exception: " + e.getMessage());
             main.toast(R.string.fail_read_match_types);
         }
     }
@@ -160,9 +160,9 @@ class FileStore{
             br.close();
             return text.toString();
         }catch(FileNotFoundException e){
-            Log.i(Main.RRW_LOG_TAG, "FileStore.getFileAsString File does not exist yet");
+            Log.i(Main.LOG_TAG, "FileStore.getFileAsString File does not exist yet");
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
             main.toast(R.string.fail_read_file);
         }
         return "";
@@ -174,7 +174,7 @@ class FileStore{
             osr.write(content);
             osr.close();
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
             main.toast(R.string.fail_store_file);
         }
     }

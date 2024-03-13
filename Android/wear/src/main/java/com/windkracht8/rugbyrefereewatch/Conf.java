@@ -255,7 +255,7 @@ public class Conf extends ConstraintLayout{
                 }
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Conf.loadCustomMatchType(" + name + ") Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Conf.loadCustomMatchType(" + name + ") Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_load_match_type, Toast.LENGTH_SHORT).show();
         }
     }
@@ -299,7 +299,7 @@ public class Conf extends ConstraintLayout{
             }
             FileStore.storeCustomMatchTypes(main);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Conf.syncCustomMatchTypes Exception: " + e.getMessage());
             main.toast(R.string.fail_sync_match_types);
         }
     }

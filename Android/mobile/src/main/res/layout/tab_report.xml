@@ -264,7 +264,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:gravity="center"
-        android:text="@string/tvNoEdit_text" />
+        android:text="@string/edit" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -276,7 +276,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bView_text"
+            android:text="@string/view"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="invisible" />
@@ -286,7 +286,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bEdit_text"
+            android:text="@string/edit"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="invisible" />
@@ -296,7 +296,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bClose_text"
+            android:text="@string/close"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="gone" />
@@ -306,7 +306,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bSave_text"
+            android:text="@string/save"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="gone" />
@@ -316,7 +316,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bShare_text"
+            android:text="@string/share"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:visibility="invisible" />

@@ -43,7 +43,7 @@ public class MatchLog extends ScrollView{
                 addNewItem(main, match, report);
             }
         }catch(JSONException e){
-            Log.e(Main.RRW_LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
             main.toast(R.string.fail_show_log);
         }
 

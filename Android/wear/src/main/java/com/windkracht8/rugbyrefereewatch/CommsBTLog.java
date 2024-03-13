@@ -28,7 +28,7 @@ public class CommsBTLog extends ScrollView{
             String version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
             addToLog(version);
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ public class CommsBTLog extends ScrollView{
         requestFocus();
     }
     void addToLog(String line){//Thread: Mostly called from background thread
-        Log.d(Main.RRW_LOG_TAG, "CommsBTLog.addToLog: " + line);
+        Log.d(Main.LOG_TAG, "CommsBTLog.addToLog: " + line);
         log.add(line);
         if(getVisibility() == View.VISIBLE){
             main.runOnUiThread(() -> addTextView(line));

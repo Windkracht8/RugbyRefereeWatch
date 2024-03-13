@@ -7,12 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -81,10 +85,10 @@ public class TabReport extends LinearLayout{
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
 
-            ((TextView)findViewById(R.id.tvHomeName)).setText(Main.getTeamName(getContext(), home));
-            ((EditText)findViewById(R.id.etHomeName)).setText(Main.getTeamName(getContext(), home));
-            ((TextView)findViewById(R.id.tvAwayName)).setText(Main.getTeamName(getContext(), away));
-            ((EditText)findViewById(R.id.etAwayName)).setText(Main.getTeamName(getContext(), away));
+            ((TextView)findViewById(R.id.tvHomeName)).setText(main.getTeamName(home));
+            ((EditText)findViewById(R.id.etHomeName)).setText(main.getTeamName(home));
+            ((TextView)findViewById(R.id.tvAwayName)).setText(main.getTeamName(away));
+            ((EditText)findViewById(R.id.etAwayName)).setText(main.getTeamName(away));
             ((TextView)findViewById(R.id.tvHomeTries)).setText(home.getString("tries"));
             ((TextView)findViewById(R.id.tvAwayTries)).setText(away.getString("tries"));
 
@@ -152,7 +156,7 @@ public class TabReport extends LinearLayout{
             showEvents();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.loadMatch Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
 
         findViewById(R.id.bView).setVisibility(VISIBLE);
@@ -181,10 +185,10 @@ public class TabReport extends LinearLayout{
                 switch(view){
                     case 0:
                         if(event.has("team")) calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
-                        llEvents.addView(new ReportEvent(getContext(), event, period_count, period_time, score));
+                        llEvents.addView(new ReportEvent(main, event, period_count, period_time, score));
                         break;
                     case 1:
-                        llEvents.addView(new ReportEventFull(getContext(), event, match, period_count, period_time));
+                        llEvents.addView(new ReportEventFull(main, event, match, period_count, period_time));
                         break;
                     case 2:
                         llEvents.addView(new ReportEventEdit(main, event));
@@ -193,7 +197,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -217,7 +221,7 @@ public class TabReport extends LinearLayout{
     }
 
     private void bCloseClick(View view){
-        InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager)main.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
         bViewClick();
     }
@@ -261,11 +265,11 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_delete, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_delete, Toast.LENGTH_SHORT).show();
         }
     }
     private void bSaveClick(View view){
-        InputMethodManager inputMethodManager = (InputMethodManager)view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager)main.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getApplicationWindowToken(),0);
         try{
             JSONObject settings = match.getJSONObject("settings");
@@ -395,123 +399,147 @@ public class TabReport extends LinearLayout{
             loadMatch(main, match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_save, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_save, Toast.LENGTH_SHORT).show();
         }
     }
     private void bShareClick(){
+        boolean[] eventTypes = {false, false, false};
+        View view = View.inflate(main, R.layout.dialog_share, null);
+        ((CheckBox) view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
+                (v, c)-> eventTypes[0] = c
+        );
+        ((CheckBox) view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
+                (v, c)-> eventTypes[1] = c
+        );
+        ((CheckBox) view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
+                (v, c)-> eventTypes[2] = c
+        );
+        new AlertDialog.Builder(main)
+                .setMessage(R.string.dialog_share_message)
+                .setView(view)
+                .setPositiveButton(R.string.share, (d, w)-> share(eventTypes))
+                .setNegativeButton(R.string.cancel, (d, w)-> d.dismiss())
+                .create()
+                .show();
+    }
+    private void share(boolean[] eventTypes){
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getShareSubject());
-        intent.putExtra(Intent.EXTRA_TEXT, getShareBody());
+        intent.putExtra(Intent.EXTRA_TEXT, getShareBody(eventTypes));
         try{
-            getContext().startActivity(Intent.createChooser(intent, getContext().getString(R.string.share_report)));
+            main.startActivity(Intent.createChooser(intent, main.getString(R.string.share_report)));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
     }
     private String getShareSubject(){
-        String shareSubject = getContext().getString(R.string.match_report);
+        String shareSubject = main.getString(R.string.match_report);
         try{
             Date match_date_d = new Date(match_id);
             String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             shareSubject += " " + match_date_s;
 
             JSONObject home = match.getJSONObject("home");
-            shareSubject += " " + Main.getTeamName(getContext(), home);
+            shareSubject += " " + main.getTeamName(home);
             shareSubject += " " + home.getString("tot");
 
             shareSubject += " v";
 
             JSONObject away = match.getJSONObject("away");
-            shareSubject += " " + Main.getTeamName(getContext(), away);
+            shareSubject += " " + main.getTeamName(away);
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
         return shareSubject;
     }
-    private String getShareBody(){
+    private String getShareBody(boolean[] eventTypes){
         StringBuilder shareBody = new StringBuilder();
         try{
             shareBody.append(getShareSubject()).append("\n\n");
 
             JSONObject home = match.getJSONObject("home");
+            StringBuilder scoreHome = new StringBuilder();
+            scoreHome.append(main.getTeamName(home)).append("\n")
+                    .append(scoreLine(R.string.tries, home.getString("tries")));
+
             JSONObject away = match.getJSONObject("away");
+            StringBuilder scoreAway = new StringBuilder();
+            scoreAway.append(main.getTeamName(away)).append("\n")
+                    .append(scoreLine(R.string.tries, away.getString("tries")));
 
-            boolean show_cons = home.has("cons") && away.has("cons") && (home.getInt("cons") > 0 || away.getInt("cons") > 0);
-            boolean show_pen_tries = home.has("pen_tries") && away.has("pen_tries") && (home.getInt("pen_tries") > 0 || away.getInt("pen_tries") > 0);
-            boolean show_goals = home.has("goals") && away.has("goals") && (home.getInt("goals") > 0 || away.getInt("goals") > 0);
-            boolean show_pen_goals = home.has("pen_goals") && away.has("pen_goals") && (home.getInt("pen_goals") > 0 || away.getInt("pen_goals") > 0);
-            boolean show_drop_goals = home.has("drop_goals") && away.has("drop_goals") && (home.getInt("drop_goals") > 0 || away.getInt("drop_goals") > 0);
-            boolean show_pens = home.has("pens") && away.has("pens") && (home.getInt("pens") > 0 || away.getInt("pens") > 0);
-            shareBody.append(Main.getTeamName(getContext(), home)).append("\n");
-            shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(home.getString("tries")).append("\n");
-            if(show_cons){
-                shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(home.getString("cons")).append("\n");
+            if(shouldShow("cons", home, away)){
+                scoreHome.append(scoreLine(R.string.conversions, home.getString("cons")));
+                scoreAway.append(scoreLine(R.string.conversions, away.getString("cons")));
             }
-            if(show_pen_tries){
-                shareBody.append("  ").append(getContext().getString(R.string.pen_tries)).append(": ").append(home.getString("pen_tries")).append("\n");
+            if(shouldShow("pen_tries", home, away)){
+                scoreHome.append(scoreLine(R.string.pen_tries, home.getString("pen_tries")));
+                scoreAway.append(scoreLine(R.string.pen_tries, away.getString("pen_tries")));
             }
-            if(show_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.goals)).append(": ").append(home.getString("goals")).append("\n");
+            if(shouldShow("goals", home, away)){
+                scoreHome.append(scoreLine(R.string.goals, home.getString("goals")));
+                scoreAway.append(scoreLine(R.string.goals, away.getString("goals")));
             }
-            if(show_pen_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.pen_goals)).append(": ").append(home.getString("pen_goals")).append("\n");
+            if(shouldShow("pen_goals", home, away)){
+                scoreHome.append(scoreLine(R.string.pen_goals, home.getString("pen_goals")));
+                scoreAway.append(scoreLine(R.string.pen_goals, away.getString("pen_goals")));
             }
-            if(show_drop_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.drop_goals)).append(": ").append(home.getString("drop_goals")).append("\n");
+            if(shouldShow("drop_goals", home, away)){
+                scoreHome.append(scoreLine(R.string.drop_goals, home.getString("drop_goals")));
+                scoreAway.append(scoreLine(R.string.drop_goals, away.getString("drop_goals")));
             }
-            if(show_pens){
-                shareBody.append("  ").append(getContext().getString(R.string.penalties)).append(": ").append(home.getString("pens")).append("\n");
+            if(eventTypes[1] && shouldShow("pens", home, away)){
+                scoreHome.append(scoreLine(R.string.penalties, home.getString("pens")));
+                scoreAway.append(scoreLine(R.string.penalties, away.getString("pens")));
             }
-            shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(home.getString("tot")).append("\n");
-            shareBody.append("\n");
+            scoreHome.append(scoreLine(R.string.total, home.getString("tot")));
+            scoreAway.append(scoreLine(R.string.total, away.getString("tot")));
 
-            shareBody.append(Main.getTeamName(getContext(), away)).append("\n");
-            shareBody.append("  ").append(getContext().getString(R.string.tries)).append(": ").append(away.getString("tries")).append("\n");
-            if(show_cons){
-                shareBody.append("  ").append(getContext().getString(R.string.conversions)).append(": ").append(away.getString("cons")).append("\n");
-            }
-            if(show_pen_tries){
-                shareBody.append("  ").append(getContext().getString(R.string.pen_tries)).append(": ").append(away.getString("pen_tries")).append("\n");
-            }
-            if(show_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.goals)).append(": ").append(away.getString("goals")).append("\n");
-            }
-            if(show_pen_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.pen_goals)).append(": ").append(away.getString("pen_goals")).append("\n");
-            }
-            if(show_drop_goals){
-                shareBody.append("  ").append(getContext().getString(R.string.drop_goals)).append(": ").append(away.getString("drop_goals")).append("\n");
-            }
-            if(show_pens){
-                shareBody.append("  ").append(getContext().getString(R.string.penalties)).append(": ").append(away.getString("pens")).append("\n");
-            }
-            shareBody.append("  ").append(getContext().getString(R.string.total)).append(": ").append(away.getString("tot")).append("\n");
-            shareBody.append("\n");
+            shareBody.append(scoreHome).append("\n")
+                    .append(scoreAway).append("\n");
 
-            int period_count = match.getJSONObject("settings").getInt("period_count");
+            JSONObject settings = match.getJSONObject("settings");
+            int period_count = settings.getInt("period_count");
+            boolean doubleDigitTime = settings.getInt("period_time") >= 10;
             JSONArray events = match.getJSONArray("events");
             for(int i = 0; i < events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                shareBody.append(event.getString("time"));
-                shareBody.append("    ").append(ReportEventEdit.timerStampToString(event.getLong("timer")));
-                if(event.has("score")){
-                    shareBody.append("    ").append(event.getString("score"));
+                //eventTypes[0] > time events
+                //eventTypes[1] > pens
+                //eventTypes[2] > clock time
+                String what = event.getString("what");
+                if((!eventTypes[0] && what.equals("TIME OFF")) ||
+                        (!eventTypes[0] && what.equals("RESUME")) ||
+                        (!eventTypes[1] && what.equals("PENALTY"))
+                ) continue;
+
+                if(eventTypes[2]){
+                    shareBody.append(event.getString("time")).append("    ");
                 }
-                shareBody.append("    ").append(Translator.getEventTypeLocal(getContext(), event.getString("what"), event.getInt("period"), period_count));
+
+                String timer = ReportEventEdit.timerStampToString(event.getLong("timer"));
+                if(doubleDigitTime && timer.length() == 4) shareBody.append("0");
+                shareBody
+                        .append(timer)
+                        .append("    ")
+                        .append(Translator.getEventTypeLocal(main, what, event.getInt("period"), period_count));
                 if(event.has("team")){
                     if(event.getString("team").equals("home")){
-                        shareBody.append(" ").append(Main.getTeamName(getContext(), home));
+                        shareBody.append(" ").append(main.getTeamName(home));
                     }else{
-                        shareBody.append(" ").append(Main.getTeamName(getContext(), away));
+                        shareBody.append(" ").append(main.getTeamName(away));
                     }
                 }
                 if(event.has("who")){
-                    shareBody.append(" ").append(event.getString("who"));
+                    shareBody.append(" ")
+                            .append(event.getString("who"));
+                }
+                if(event.has("score")){
+                    shareBody.append(" ").append(event.getString("score"));
                 }
                 if(event.has("reason")){
                     shareBody.append("\n").append(event.getString("reason")).append("\n");
@@ -521,8 +549,16 @@ public class TabReport extends LinearLayout{
 
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
-            Toast.makeText(getContext(), R.string.fail_share, Toast.LENGTH_SHORT).show();
+            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
         }
         return shareBody.toString();
+    }
+    private boolean shouldShow(String what, JSONObject home, JSONObject away) throws JSONException{
+        return home.has(what) &&
+                away.has(what) &&
+                (home.getInt(what) > 0 || away.getInt(what) > 0);
+    }
+    private String scoreLine(int name, String value){
+        return String.format("  %s: %s\n", main.getString(name), value);
     }
 }

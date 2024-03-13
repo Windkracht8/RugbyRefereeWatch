@@ -118,7 +118,7 @@ public class ConfSpinner extends ScrollView{
                 llConfSpinner.addView(temp);
             }
         }catch(Exception e){
-            Log.e(Main.RRW_LOG_TAG, "ConfSpinner.addCustomMatchTypes Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "ConfSpinner.addCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_match_types, Toast.LENGTH_SHORT).show();
         }
     }

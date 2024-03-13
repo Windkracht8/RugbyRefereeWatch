@@ -40,7 +40,7 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
             String match_date_s = new SimpleDateFormat("E d MMM HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
-            String name_s = match_date_s + " " + Main.getTeamName(main, home) + " v " + Main.getTeamName(main, away);
+            String name_s = match_date_s + " " + main.getTeamName(home) + " v " + Main.getTeamName(main, away);
 
             setText(name_s);
         }catch(Exception e){
@@ -98,9 +98,9 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
             unselect();
         }else{
             TypedValue value = new TypedValue();
-            getContext().getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
+            main.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
             setBackgroundColor(value.data);
-            setTextColor(getContext().getColor(R.color.background));
+            setTextColor(main.getColor(R.color.background));
             is_selected = true;
         }
         main.tabHistory.selectionChanged();
@@ -110,7 +110,7 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         boolean ret = is_selected;
         setBackgroundColor(0);
         if(!last) setBackgroundResource(R.drawable.background_underline);
-        setTextColor(getContext().getColor(R.color.text));
+        setTextColor(main.getColor(R.color.text));
         is_selected = false;
         return ret;
     }
