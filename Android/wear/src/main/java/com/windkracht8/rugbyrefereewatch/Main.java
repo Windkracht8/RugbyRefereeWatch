@@ -249,6 +249,14 @@ public class Main extends Activity{
         pen_label_layoutParams.bottomMargin = vh5;
         bPenHome.setHeight(vh20);
         bPenAway.setHeight(vh20);
+        if(getResources().getConfiguration().fontScale > 1.1){
+            battery.setIncludeFontPadding(false);
+            time.setIncludeFontPadding(false);
+            score_home.setIncludeFontPadding(false);
+            score_away.setIncludeFontPadding(false);
+            tTimer.setIncludeFontPadding(false);
+            bStart.setIncludeFontPadding(false);
+        }
 
         if(isScreenRound){
             pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()-> {

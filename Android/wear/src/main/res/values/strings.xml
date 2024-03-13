@@ -12,9 +12,7 @@
     <string name="bConfWatch_desc">Watch configuration</string>
     <string name="_0_kick">0 KICK</string>
     <string name="kick">KICK</string>
-    <string name="bOverTimer_text">start</string>
     <string name="bMatchLog_desc">match log</string>
-    <string name="bBottom_text">conf</string>
     <string name="score_home_desc">home score</string>
     <string name="score_away_desc">away score</string>
     <string name="bConf_desc">configuration</string>
