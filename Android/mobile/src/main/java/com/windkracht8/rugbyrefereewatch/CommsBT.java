@@ -98,7 +98,6 @@ class CommsBT{
             btIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
             BroadcastReceiver btBroadcastReceiver = new BroadcastReceiver(){
                 public void onReceive(Context context, Intent intent){
-                    Log.d(Main.LOG_TAG, "CommsBT.btStateReceiver: " + intent);
                     if(closeConnection) return;
                     if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())){
                         int btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
@@ -194,6 +193,15 @@ class CommsBT{
                 return;
             }
         }
+        for(ParcelUuid uuid : uuids){
+            if(uuid.toString().equals("5e8945b0-9525-11e3-a5e2-0800200c9a66") || //Wear
+                    uuid.toString().equals("0000110a-0000-1000-8000-00805f9b34fb") //Audio source
+            ){
+                Log.d(Main.LOG_TAG, "CommsBT.isDeviceRRW device has potential: " + bluetoothDevice.getName());
+                try_rrwDevice(bluetoothDevice);
+                return;
+            }
+        }
     }
     private void foundDeviceWithRRW_UUID(BluetoothDevice bluetoothDevice){
         rrw_device_addresses.add(bluetoothDevice.getAddress());
@@ -225,7 +233,6 @@ class CommsBT{
             ){
                 continue;
             }
-            Log.d(Main.LOG_TAG, "CommsBT.search_newDevices fetchUuidsWithSdp for: " + bondedDevice.getName());
             devices_fetch_pending.add(bondedDevice.getAddress());
             bondedDevice.fetchUuidsWithSdp();
         }

@@ -264,15 +264,15 @@
         android:background="@color/background"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/bView"
+            android:id="@+id/bCancel"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/view"
+            android:text="@string/cancel"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:visibility="invisible" />
+            android:visibility="gone" />
         <Button
             android:id="@+id/bEdit"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -284,15 +284,15 @@
             android:textAllCaps="false"
             android:visibility="invisible" />
         <Button
-            android:id="@+id/bCancel"
+            android:id="@+id/bView"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/cancel"
+            android:text="@string/view"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:visibility="gone" />
+            android:visibility="invisible" />
         <Button
             android:id="@+id/bSave"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
