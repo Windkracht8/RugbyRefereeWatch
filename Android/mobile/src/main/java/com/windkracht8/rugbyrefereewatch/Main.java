@@ -263,12 +263,18 @@ public class Main extends AppCompatActivity{
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
     private void iconClick(){
-        if(commsBT == null || commsBT.status == CommsBT.Status.SEARCH_TIMEOUT){
+        if(commsBT == null ||
+                commsBT.status == CommsBT.Status.SEARCH_TIMEOUT ||
+                commsBT.status == CommsBT.Status.INIT
+        ){
             initBT();
-        }
-        if(commsBT != null && commsBT.status == CommsBT.Status.SEARCHING){
+        }else if(commsBT.status == CommsBT.Status.SEARCHING){
             commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
             commsBT.stopComms();
+        }else{
+            commsBT.status = CommsBT.Status.INIT;
+            commsBT.stopComms();
+            icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
         }
     }
     void bSyncClick(){
