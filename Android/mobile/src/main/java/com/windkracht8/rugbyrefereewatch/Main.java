@@ -108,13 +108,12 @@ public class Main extends AppCompatActivity{
             Log.d(Main.LOG_TAG, version);
             gotStatusUi(version);
         }catch(Exception e){
-            Log.e(Main.LOG_TAG, "CommsBTLog getPackageInfo Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "Main.onCreate getPackageInfo Exception: " + e.getMessage());
         }
 
-        commsBT = new CommsBT(this);
-        initBT();
+        startBT();
     }
-    private void initBT(){
+    private void startBT(){
         if(Build.VERSION.SDK_INT >= 31){
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
                     ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
@@ -127,6 +126,7 @@ public class Main extends AppCompatActivity{
                 return;
             }
         }
+        if(commsBT == null) commsBT = new CommsBT(this);
         executorService.submit(() -> commsBT.startComms());
     }
     @Override
@@ -137,7 +137,7 @@ public class Main extends AppCompatActivity{
                 permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
                 permissions[i].equals(Manifest.permission.BLUETOOTH)){
                 if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
-                    initBT();
+                    startBT();
                 }else{
                     updateStatus(CommsBT.Status.FATAL);
                     gotError(getString(R.string.fail_BT_denied));
@@ -263,18 +263,28 @@ public class Main extends AppCompatActivity{
         handler_main.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
     }
     private void iconClick(){
-        if(commsBT == null ||
-                commsBT.status == CommsBT.Status.SEARCH_TIMEOUT ||
-                commsBT.status == CommsBT.Status.INIT
-        ){
-            initBT();
-        }else if(commsBT.status == CommsBT.Status.SEARCHING){
-            commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
-            commsBT.stopComms();
-        }else{
-            commsBT.status = CommsBT.Status.INIT;
-            commsBT.stopComms();
-            icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
+        if(commsBT == null){
+            startBT();
+            return;
+        }
+        switch(commsBT.status){
+            case CONNECTING:
+                commsBT.updateStatus(CommsBT.Status.CONNECT_TIMEOUT);
+                commsBT.stopComms();
+                break;
+            case SEARCHING:
+                commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
+                commsBT.stopComms();
+                break;
+            case CONNECT_TIMEOUT:
+            case SEARCH_TIMEOUT:
+            case DISCONNECTED:
+                startBT();
+                break;
+            case CONNECTED:
+                commsBT.status = CommsBT.Status.DISCONNECTED;
+                commsBT.stopComms();
+                icon.setColorFilter(getColor(R.color.icon_disabled));
         }
     }
     void bSyncClick(){
@@ -306,13 +316,13 @@ public class Main extends AppCompatActivity{
         switch(status){
             case FATAL:
                 icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.error), android.graphics.PorterDuff.Mode.SRC_IN);
+                icon.setColorFilter(getColor(R.color.error));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 return;
             case SEARCHING:
                 icon.setBackgroundResource(R.drawable.icon_watch_searching);
-                icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
+                icon.setColorFilter(getColor(R.color.icon_disabled));
                 ((AnimatedVectorDrawable) icon.getBackground()).start();
                 prevStatuses.clear();
                 gotStatus(getString(R.string.status_SEARCHING));
@@ -321,18 +331,39 @@ public class Main extends AppCompatActivity{
                 break;
             case SEARCH_TIMEOUT:
                 icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.icon_disabled), android.graphics.PorterDuff.Mode.SRC_IN);
+                icon.setColorFilter(getColor(R.color.icon_disabled));
                 gotError(getString(R.string.status_SEARCH_TIMEOUT));
+                findViewById(R.id.bSync).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
+                break;
+            case CONNECTING:
+                icon.setBackgroundResource(R.drawable.icon_watch_searching);
+                icon.setColorFilter(getColor(R.color.icon_disabled));
+                ((AnimatedVectorDrawable) icon.getBackground()).start();
+                findViewById(R.id.bSync).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
+                break;
+            case CONNECT_TIMEOUT:
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.icon_disabled));
+                gotError(getString(R.string.status_CONNECT_TIMEOUT));
                 findViewById(R.id.bSync).setVisibility(View.GONE);
                 findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
             case CONNECTED:
                 icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.text), android.graphics.PorterDuff.Mode.SRC_IN);
+                icon.setColorFilter(getColor(R.color.text));
                 gotStatus(getString(R.string.status_CONNECTED));
                 findViewById(R.id.bSync).setVisibility(View.VISIBLE);
                 findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
                 sendSyncRequest();
+                break;
+            case DISCONNECTED:
+                icon.setBackgroundResource(R.drawable.icon_watch);
+                icon.setColorFilter(getColor(R.color.icon_disabled));
+                gotError(getString(R.string.status_DISCONNECTED));
+                findViewById(R.id.bSync).setVisibility(View.GONE);
+                findViewById(R.id.bPrepare).setVisibility(View.GONE);
                 break;
         }
     }

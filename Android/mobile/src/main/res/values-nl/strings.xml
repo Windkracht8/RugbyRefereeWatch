@@ -141,21 +141,24 @@
     <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
         Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
         Tab op het icoon om nog een keer te proberen.</string>
+    <string name="status_CONNECT_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
+        Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
+        Tab op het icoon om nog een keer te proberen.</string>
     <string name="status_CONNECTED">Verbonden</string>
-    <string name="no_devices">Geen apparaten.</string>
+    <string name="status_DISCONNECTED">Verbinding verbroken</string>
     <string name="try_connect_to">Verbinden met:</string>
-    <string name="search_new_device">Zoekt naar nieuw apparaat. Dit kan een paar minuten duren.
-        Om te verbinden, hou de app op het horloge open, zonder een wedstrijd te starten.</string>
+    <string name="found_new">Nieuw horloge gevonden:</string>
+    <string name="looks_like">Lijks op een horloge:</string>
     <string name="send_request">Verstuur verzoek:</string>
     <string name="received_response">Antwoord ontvangen:</string>
     <string name="send_error">Fout bij zenden:</string>
     <string name="response_error">Fout in antwoord:</string>
     <string name="incomplete_message">Onvolledig bericht ontvangen</string>
-    <string name="closing_connection">Sluit verbinding.</string>
     <string name="update_watch_app">Update de app op het horloge</string>
     <string name="first_connect">Verbind eerst met het horloge</string>
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
-    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de buurt toestaan.</string>
+    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de
+        buurt toestaan.</string>
     <string name="fail_BT_off">Bluetooth staat uit</string>
     <string name="fail_BT_connect">Bluetooth verbinding mislukt</string>
     <string name="fail_unexpected">Onverwachte technische fout</string>

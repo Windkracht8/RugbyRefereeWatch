@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/llHelp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -63,7 +62,6 @@
             android:text="@string/help_log"
             android:textSize="16sp" />
         <ImageView
-            android:id="@+id/iHelpNew"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:scaleType="centerInside"
