@@ -272,6 +272,10 @@ public class Main extends AppCompatActivity{
                 commsBT.updateStatus(CommsBT.Status.CONNECT_TIMEOUT);
                 commsBT.stopComms();
                 break;
+            case CONNECTED:
+                commsBT.updateStatus(CommsBT.Status.DISCONNECTED);
+                commsBT.stopComms();
+                break;
             case SEARCHING:
                 commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
                 commsBT.stopComms();
@@ -281,10 +285,6 @@ public class Main extends AppCompatActivity{
             case DISCONNECTED:
                 startBT();
                 break;
-            case CONNECTED:
-                commsBT.status = CommsBT.Status.DISCONNECTED;
-                commsBT.stopComms();
-                icon.setColorFilter(getColor(R.color.icon_disabled));
         }
     }
     void bSyncClick(){
