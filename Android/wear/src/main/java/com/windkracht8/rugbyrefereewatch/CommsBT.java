@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
 
-//Thread: All of FileStore runs on a background thread
+//Thread: All of CommsBT runs on a background thread
 class CommsBT{
     private final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
     private BluetoothAdapter bluetoothAdapter;
