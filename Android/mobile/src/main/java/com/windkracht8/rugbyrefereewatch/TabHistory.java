@@ -224,23 +224,20 @@ public class TabHistory extends LinearLayout{
     private void deleteSelected(){
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child instanceof HistoryMatch){
-                HistoryMatch tmp = (HistoryMatch)child;
-                if(tmp.is_selected){
-                    try{
-                        long matchid = tmp.match.getLong("matchid");
-                        deleted_matches.add(matchid);
-                        for(int j=matches.size()-1; j>=0; j--){
-                            if(matches.get(j).getLong("matchid") == matchid) {
-                                matches.remove(j);
-                                break;
-                            }
+            if(child instanceof HistoryMatch tmp && tmp.is_selected){
+                try{
+                    long matchid = tmp.match.getLong("matchid");
+                    deleted_matches.add(matchid);
+                    for(int j=matches.size()-1; j>=0; j--){
+                        if(matches.get(j).getLong("matchid") == matchid) {
+                            matches.remove(j);
+                            break;
                         }
-                        llMatches.removeViewAt(i);
-                    }catch(Exception e){
-                        Log.e(Main.LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
-                        Toast.makeText(main, R.string.fail_del_match, Toast.LENGTH_SHORT).show();
                     }
+                    llMatches.removeViewAt(i);
+                }catch(Exception e){
+                    Log.e(Main.LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
+                    Toast.makeText(main, R.string.fail_del_match, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -254,14 +251,11 @@ public class TabHistory extends LinearLayout{
         selecting = false;
         for(int i=0; i < llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
-            if(child instanceof HistoryMatch){
-                HistoryMatch tmp = (HistoryMatch)child;
-                if(tmp.is_selected){
-                    bExport.setVisibility(View.VISIBLE);
-                    bDelete.setVisibility(View.VISIBLE);
-                    selecting = true;
-                    return;
-                }
+            if(child instanceof HistoryMatch tmp && tmp.is_selected){
+                bExport.setVisibility(View.VISIBLE);
+                bDelete.setVisibility(View.VISIBLE);
+                selecting = true;
+                return;
             }
         }
     }
@@ -291,11 +285,8 @@ public class TabHistory extends LinearLayout{
         JSONArray selected = new JSONArray();
         for(int i=llMatches.getChildCount()-1; i >=0; i--){
             View child = llMatches.getChildAt(i);
-            if(child instanceof HistoryMatch){
-                HistoryMatch tmp = (HistoryMatch)child;
-                if(tmp.is_selected){
-                    selected.put(tmp.match);
-                }
+            if(child instanceof HistoryMatch tmp && tmp.is_selected){
+                selected.put(tmp.match);
             }
         }
         unselect();
