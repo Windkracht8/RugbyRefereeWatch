@@ -140,7 +140,8 @@
     <string name="status_SEARCHING">Start met zoeken naar horloge.</string>
     <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
         Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
-        Tab op het icoon om nog een keer te proberen.</string>
+        Tab op het icoon om nog een keer te proberen. De 1e keer kan het flink wat pogingen
+        duren.</string>
     <string name="status_CONNECT_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
         Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
         Tab op het icoon om nog een keer te proberen.</string>

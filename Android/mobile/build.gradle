@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     defaultConfig {
         applicationId "com.windkracht8.rugbyrefereewatch"
-        minSdk 26
+        minSdk 28
         targetSdk 35
         compileSdk 35
         versionCode 334
@@ -16,14 +16,15 @@ android {
         }
     }
     namespace 'com.windkracht8.rugbyrefereewatch'
-}
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21'
+    //Remove this and get a duplicate class error
+    //noinspection DifferentStdlibGradleVersion
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.1.0'
 }

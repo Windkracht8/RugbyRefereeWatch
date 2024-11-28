@@ -32,23 +32,39 @@ class ConfItem extends LinearLayout{
         }
     }
     static int getConfItemName(ConfItemType type){
-        return switch(type){
-            case COLOR_HOME -> R.string.color_home;
-            case COLOR_AWAY -> R.string.color_away;
-            case MATCH_TYPE -> R.string.match_type;
-            case PERIOD_TIME -> R.string.period_time;
-            case PERIOD_COUNT -> R.string.period_count;
-            case SINBIN -> R.string.sinbin;
-            case POINTS_TRY -> R.string.points_try;
-            case POINTS_CON -> R.string.points_con;
-            case POINTS_GOAL -> R.string.points_goal;
-            case SCREEN_ON -> R.string.screen_on;
-            case TIMER_TYPE -> R.string.timer_type;
-            case RECORD_PLAYER -> R.string.record_player;
-            case RECORD_PENS -> R.string.record_pens;
-            case HELP -> R.string.help;
-            case COMMS_LOG -> R.string.commsBTLog;
-        };
+        switch(type){
+            case COLOR_HOME:
+                return R.string.color_home;
+            case COLOR_AWAY:
+                return R.string.color_away;
+            case MATCH_TYPE:
+                return R.string.match_type;
+            case PERIOD_TIME:
+                return R.string.period_time;
+            case PERIOD_COUNT:
+                return R.string.period_count;
+            case SINBIN:
+                return R.string.sinbin;
+            case POINTS_TRY:
+                return R.string.points_try;
+            case POINTS_CON:
+                return R.string.points_con;
+            case POINTS_GOAL:
+                return R.string.points_goal;
+            case SCREEN_ON:
+                return R.string.screen_on;
+            case TIMER_TYPE:
+                return R.string.timer_type;
+            case RECORD_PLAYER:
+                return R.string.record_player;
+            case RECORD_PENS:
+                return R.string.record_pens;
+            case HELP:
+                return R.string.help;
+            case COMMS_LOG:
+                return R.string.commsBTLog;
+        }
+        return R.string.fail_oops;
     }
 
     private boolean hideForMatchType(){//Thread: Always on UI thread

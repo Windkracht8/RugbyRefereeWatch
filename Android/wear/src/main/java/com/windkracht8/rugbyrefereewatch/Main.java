@@ -749,28 +749,41 @@ public class Main extends Activity{
         score.update();
     }
     private int getColorBG(String name){
-        return switch(name){
-            case "black" -> getResources().getColor(R.color.black, null);
-            case "blue" -> getResources().getColor(R.color.blue, null);
-            case "brown" -> getResources().getColor(R.color.brown, null);
-            case "gold" -> getResources().getColor(R.color.gold, null);
-            case "green" -> getResources().getColor(R.color.green, null);
-            case "orange" -> getResources().getColor(R.color.orange, null);
-            case "pink" -> getResources().getColor(R.color.pink, null);
-            case "purple" -> getResources().getColor(R.color.purple, null);
-            case "red" -> getResources().getColor(R.color.red, null);
-            case "white" -> getResources().getColor(R.color.white, null);
-            default -> getResources().getColor(R.color.black, null);
-        };
+        switch(name){
+            case "black":
+                return getResources().getColor(R.color.black, null);
+            case "blue":
+                return getResources().getColor(R.color.blue, null);
+            case "brown":
+                return getResources().getColor(R.color.brown, null);
+            case "gold":
+                return getResources().getColor(R.color.gold, null);
+            case "green":
+                return getResources().getColor(R.color.green, null);
+            case "orange":
+                return getResources().getColor(R.color.orange, null);
+            case "pink":
+                return getResources().getColor(R.color.pink, null);
+            case "purple":
+                return getResources().getColor(R.color.purple, null);
+            case "red":
+                return getResources().getColor(R.color.red, null);
+            case "white":
+                return getResources().getColor(R.color.white, null);
+        }
+        return getResources().getColor(R.color.black, null);
     }
     int getColorFG(String name){
-        return switch(name){
-            case "gold", "green", "orange", "pink", "white" ->
-                    getResources().getColor(R.color.black, null);
-            default ->
-                //black blue brown purple red
-                    getResources().getColor(R.color.white, null);
-        };
+        switch(name){
+            case "gold":
+            case "green":
+            case "orange":
+            case "pink":
+            case "white":
+                return getResources().getColor(R.color.black, null);
+        }
+        //black blue brown purple red
+        return getResources().getColor(R.color.white, null);
     }
     private long updateTime(){
         Date date = new Date();
@@ -1011,20 +1024,26 @@ public class Main extends Activity{
                 return context.getString(R.string.extra_time) + " " + (period - period_count);
             }
         }else if(period_count == 2){
-            return switch(period){
-                case 1 -> context.getString(R.string.first_half);
-                case 2 -> context.getString(R.string.second_half);
-                default -> "";
-            };
+            switch(period){
+                case 1:
+                    return context.getString(R.string.first_half);
+                case 2:
+                    return context.getString(R.string.second_half);
+            }
         }else{
-            return switch(period){
-                case 1 -> context.getString(R.string._1st);
-                case 2 -> context.getString(R.string._2nd);
-                case 3 -> context.getString(R.string._3rd);
-                case 4 -> context.getString(R.string._4th);
-                default -> String.valueOf(period);
-            };
+            switch(period){
+                case 1:
+                    return context.getString(R.string._1st);
+                case 2:
+                    return context.getString(R.string._2nd);
+                case 3:
+                    return context.getString(R.string._3rd);
+                case 4:
+                    return context.getString(R.string._4th);
+            }
+            return String.valueOf(period);
         }
+        return "";
     }
     private String getKickoffTeam(){
         if(match.home.kickoff){

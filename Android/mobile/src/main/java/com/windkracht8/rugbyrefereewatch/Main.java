@@ -99,12 +99,7 @@ public class Main extends AppCompatActivity{
 
         try{
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version;
-            if(android.os.Build.VERSION.SDK_INT >= 28){
-                version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
-            }else{
-                version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.versionCode);
-            }
+            String version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
             Log.d(Main.LOG_TAG, version);
             gotStatusUi(version);
         }catch(Exception e){
