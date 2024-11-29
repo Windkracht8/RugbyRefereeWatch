@@ -39,6 +39,13 @@ class Sinbin extends TextView{
             Main.beep();
         }
         String tmp = Main.prettyTimer(remaining);
+        if(sinbin.who > 0){
+            if(sinbin.team_is_home){
+                tmp = "(" + sinbin.who + ") " + tmp;
+            }else{
+                tmp += " (" + sinbin.who + ")";
+            }
+        }
         setText(tmp);
     }
 }

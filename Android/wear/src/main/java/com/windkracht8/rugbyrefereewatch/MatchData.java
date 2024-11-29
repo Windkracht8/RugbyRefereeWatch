@@ -159,8 +159,8 @@ class MatchData{
                 main.toast(R.string.fail_read_match);
             }
         }
-        void addSinbin(long id, long end){
-            sinbin sb = new sinbin(id, end);
+        void addSinbin(long id, long end, String team, int who){
+            sinbin sb = new sinbin(id, end, team, who);
             sinbins.add(sb);
         }
         boolean hasSinbin(long id){
@@ -252,12 +252,16 @@ class MatchData{
     }
     static class sinbin{
         final long id;
+        int who;
+        boolean team_is_home;
         long end;
         boolean ended = false;
         boolean hide = false;
-        sinbin(long id, long end){
+        sinbin(long id, long end, String team, int who){
             this.id = id;
             this.end = end;
+            team_is_home = team.equals("home");
+            this.who = who;
         }
     }
 }

@@ -4,7 +4,7 @@ android {
     defaultConfig {
         applicationId 'com.windkracht8.rugbyrefereewatch'
         minSdk 28
-        //Wear OS, we have to target SDK 34 and not latest
+        //Wear OS, latest is 34
         //noinspection OldTargetApi
         targetSdk 34
         compileSdk 35

@@ -105,16 +105,18 @@ public class Main extends Activity{
     static int timer_type_period = 1;//0:up, 1:down
     //Settings
     static boolean screen_on = true;
-    private static int timer_type = 1;//0:up, 1:down
+    static int timer_type = 1;//0:up, 1:down
     static boolean record_player = false;
     static boolean record_pens = false;
     private final static int HELP_VERSION = 4;
+    private static int battery_capacity = -1;
 
     static final MatchData match = new MatchData();
     private Handler handler_main;
     private ExecutorService executorService;
     private static Vibrator vibrator;
     private CommsBT commsBT;
+    private BatteryManager batteryManager;
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
@@ -150,6 +152,7 @@ public class Main extends Activity{
         executorService = Executors.newFixedThreadPool(4);
         handler_main = new Handler(Looper.getMainLooper());
         commsBT = new CommsBT(this);
+        batteryManager = (BatteryManager)getSystemService(BATTERY_SERVICE);
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
@@ -749,41 +752,27 @@ public class Main extends Activity{
         score.update();
     }
     private int getColorBG(String name){
-        switch(name){
-            case "black":
-                return getResources().getColor(R.color.black, null);
-            case "blue":
-                return getResources().getColor(R.color.blue, null);
-            case "brown":
-                return getResources().getColor(R.color.brown, null);
-            case "gold":
-                return getResources().getColor(R.color.gold, null);
-            case "green":
-                return getResources().getColor(R.color.green, null);
-            case "orange":
-                return getResources().getColor(R.color.orange, null);
-            case "pink":
-                return getResources().getColor(R.color.pink, null);
-            case "purple":
-                return getResources().getColor(R.color.purple, null);
-            case "red":
-                return getResources().getColor(R.color.red, null);
-            case "white":
-                return getResources().getColor(R.color.white, null);
-        }
-        return getResources().getColor(R.color.black, null);
+        return switch(name){
+            case "black" -> getResources().getColor(R.color.black, null);
+            case "blue" -> getResources().getColor(R.color.blue, null);
+            case "brown" -> getResources().getColor(R.color.brown, null);
+            case "gold" -> getResources().getColor(R.color.gold, null);
+            case "green" -> getResources().getColor(R.color.green, null);
+            case "orange" -> getResources().getColor(R.color.orange, null);
+            case "pink" -> getResources().getColor(R.color.pink, null);
+            case "purple" -> getResources().getColor(R.color.purple, null);
+            case "red" -> getResources().getColor(R.color.red, null);
+            case "white" -> getResources().getColor(R.color.white, null);
+            default -> getResources().getColor(R.color.black, null);
+        };
     }
     int getColorFG(String name){
-        switch(name){
-            case "gold":
-            case "green":
-            case "orange":
-            case "pink":
-            case "white":
-                return getResources().getColor(R.color.black, null);
-        }
-        //black blue brown purple red
-        return getResources().getColor(R.color.white, null);
+        return switch(name){
+            case "gold", "green", "orange", "pink", "white" ->
+                    getResources().getColor(R.color.black, null);
+            default -> //black blue brown purple red
+                    getResources().getColor(R.color.white, null);
+        };
     }
     private long updateTime(){
         Date date = new Date();
@@ -883,11 +872,15 @@ public class Main extends Activity{
         }
     }
     private void updateBattery(){
-        BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
-        //TODO: Don't get the intProperty in the main thread
-        String tmp = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) + "%";
-        battery.setText(tmp);
-        handler_main.postDelayed(this::updateBattery, 10000);
+        executorService.submit(() -> battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+        if(battery_capacity < 0){
+            battery.setText("---%");
+            handler_main.postDelayed(this::updateBattery, 100);
+        }else{
+            String tmp = battery_capacity + "%";
+            battery.setText(tmp);
+            handler_main.postDelayed(this::updateBattery, 10000);
+        }
     }
     private void bPenHomeClick(){
         if(timer_status == TimerStatus.CONF){return;}
@@ -984,10 +977,14 @@ public class Main extends Activity{
         match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
-        score.team.addSinbin(time, end);
+        score.team.addSinbin(time, end, score.team.id, foulPlay.player_no);
         updateSinbins();
         foulPlay.setVisibility(View.GONE);
         score.clear();
+        if(record_pens){
+            score.team.pens++;
+            updateScore();
+        }
     }
     void penalty_tryClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
@@ -996,12 +993,20 @@ public class Main extends Activity{
         foulPlay.setVisibility(View.GONE);
         score.clear();
         match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
+        if(record_pens){
+            score.team.pens++;
+            updateScore();
+        }
     }
     void card_redClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
         foulPlay.setVisibility(View.GONE);
         score.clear();
+        if(record_pens){
+            score.team.pens++;
+            updateScore();
+        }
     }
 
     private void correctClicked(){
@@ -1024,26 +1029,20 @@ public class Main extends Activity{
                 return context.getString(R.string.extra_time) + " " + (period - period_count);
             }
         }else if(period_count == 2){
-            switch(period){
-                case 1:
-                    return context.getString(R.string.first_half);
-                case 2:
-                    return context.getString(R.string.second_half);
-            }
+            return switch(period){
+                case 1 -> context.getString(R.string.first_half);
+                case 2 -> context.getString(R.string.second_half);
+                default -> String.valueOf(period);
+            };
         }else{
-            switch(period){
-                case 1:
-                    return context.getString(R.string._1st);
-                case 2:
-                    return context.getString(R.string._2nd);
-                case 3:
-                    return context.getString(R.string._3rd);
-                case 4:
-                    return context.getString(R.string._4th);
-            }
-            return String.valueOf(period);
+            return switch(period){
+                case 1 -> context.getString(R.string._1st);
+                case 2 -> context.getString(R.string._2nd);
+                case 3 -> context.getString(R.string._3rd);
+                case 4 -> context.getString(R.string._4th);
+                default -> String.valueOf(period);
+            };
         }
-        return "";
     }
     private String getKickoffTeam(){
         if(match.home.kickoff){

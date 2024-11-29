@@ -157,9 +157,14 @@
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
-    <string name="help_bt_title">New stuff</string>
-    <string name="help_bt">Connection to the Rugby Referee Watch app on your phone now works via
-        Bluetooth, this works with any Android phone. You do need to approve permission.</string>
+    <string name="help_bt_title">Bluetooth</string>
+    <string name="help_bt">Connection to the Rugby Referee Watch app on your phone works via
+        Bluetooth. You do need to approve permission. The 1st time it can take a few
+        attempts.</string>
+    <string name="help_custom_title">Custom matches</string>
+    <string name="help_custom">In the settings you can select the standard match types. If you want
+        to change anything, select match type \'custom\', then you can change duration and such. Do
+        this in the phone app to store you custom match type.</string>
     <string name="help_log_title">History</string>
     <string name="help_log">Noticed this icon? It opens a list of all of your completed
         matches.</string>
@@ -167,7 +172,7 @@
     <string name="help_pk_title">Penalty kick</string>
     <string name="help_pk">Looking for penalty kick? Check under foul play.</string>
     <string name="help_corrections_title">Corrections</string>
-    <string name="help_corrections">During a game swipe back to open the correction
+    <string name="help_corrections">During a game, swipe back to open the correction
         screen. On this screen you can tab the event you want to undo.</string>
     <string name="help_kickoff_title">Kick off</string>
     <string name="help_kickoff">Before the game starts you can set which team will kick off by
@@ -184,7 +189,6 @@
         in the App Store for more help.</string>
 
     <!-- fail -->
-    <string name="fail_oops">Oops</string>
     <string name="fail_unexpected">unexpected error</string>
     <string name="fail_sync_match_types">Failed to sync match types</string>
     <string name="fail_read_match_types">Failed to read match types from storage</string>

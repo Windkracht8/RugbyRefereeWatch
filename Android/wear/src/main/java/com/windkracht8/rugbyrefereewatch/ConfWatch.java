@@ -55,7 +55,8 @@ public class ConfWatch extends LinearLayout{
     private void onConfItemClick(ConfItem confItem, ConfItem.ConfItemType type){
         switch(type){
             case TIMER_TYPE:
-                Main.timer_type_period = Main.timer_type_period == 1 ? 0 : 1;
+                Main.timer_type = Main.timer_type == 1 ? 0 : 1;
+                Main.timer_type_period = Main.timer_type;
                 confItem.updateValue();
                 break;
             case RECORD_PENS:

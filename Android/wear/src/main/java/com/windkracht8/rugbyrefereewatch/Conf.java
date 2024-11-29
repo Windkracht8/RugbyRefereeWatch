@@ -119,7 +119,8 @@ public class Conf extends ConstraintLayout{
                 confItem.updateValue();
                 break;
             case TIMER_TYPE:
-                Main.timer_type_period = Main.timer_type_period == 1 ? 0 : 1;
+                Main.timer_type = Main.timer_type == 1 ? 0 : 1;
+                Main.timer_type_period = Main.timer_type;
                 confItem.updateValue();
                 break;
             case RECORD_PLAYER:
