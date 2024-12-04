@@ -1,6 +1,7 @@
 <resources>
     <!-- main ui -->
     <string name="icon_desc">icoon</string>
+    <string name="connect">Verbind eerst met het horloge</string>
     <string name="history">Geschiedenis</string>
     <string name="report">Rapport</string>
     <string name="prepare">Voorbereiden</string>
@@ -13,6 +14,12 @@
         <item>THUIS</item>
         <item>UIT</item>
     </string-array>
+
+    <!-- device select/connect -->
+    <string name="device_select_title">Om te verbinden, open de app on het horloge, start geen
+        wedstrijd, en selecteer je horloge in de lijst hier onder</string>
+    <string name="device_connect_instruct">hou de app op het horloge open tijdens het
+        verbinden, en start geen wedstrijd</string>
 
     <!-- history -->
     <string name="bSync_text">Synchroniseer met horloge</string>
@@ -137,31 +144,20 @@
     </string-array>
 
     <!-- CommsBT -->
-    <string name="status_SEARCHING">Start met zoeken naar horloge.</string>
-    <string name="status_SEARCH_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
-        Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
-        Tab op het icoon om nog een keer te proberen. De 1e keer kan het flink wat pogingen
-        duren.</string>
-    <string name="status_CONNECT_TIMEOUT">Horloge niet gevonden. Om te verbinden, zorg dat er een
-        Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te starten.
-        Tab op het icoon om nog een keer te proberen.</string>
-    <string name="status_CONNECTED">Verbonden</string>
-    <string name="status_DISCONNECTED">Verbinding verbroken</string>
-    <string name="try_connect_to">Verbinden met:</string>
-    <string name="found_new">Nieuw horloge gevonden:</string>
-    <string name="looks_like">Lijks op een horloge:</string>
-    <string name="send_request">Verstuur verzoek:</string>
-    <string name="received_response">Antwoord ontvangen:</string>
-    <string name="send_error">Fout bij zenden:</string>
-    <string name="response_error">Fout in antwoord:</string>
-    <string name="incomplete_message">Onvolledig bericht ontvangen</string>
-    <string name="update_watch_app">Update de app op het horloge</string>
-    <string name="first_connect">Verbind eerst met het horloge</string>
-    <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
+    <string name="connecting_to">Verbinden met</string>
+    <string name="connected_to">Verbonden met</string>
+    <string name="disconnected">Niet verbonden, tab op het icoon om te verbinden</string>
+
     <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de
         buurt toestaan.</string>
     <string name="fail_BT_off">Bluetooth staat uit</string>
-    <string name="fail_BT_connect">Bluetooth verbinding mislukt</string>
+    <string name="fail_BT_no_devices">Er zijn geen apparaten verbonden. Om te verbinden, zorg dat
+        er een Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te
+        starten. Tap op het icoon om te verbinden.</string>
+    <string name="fail_BT">Dat ging niet goed, tap op het icoon om te verbinden</string>
+
+    <string name="update_watch_app">Update de app op het horloge</string>
+    <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
     <string name="fail_unexpected">Onverwachte technische fout</string>
     <string name="problem_matches_received">Probleem met wedstrijden ontvangen van het horloge</string>
 

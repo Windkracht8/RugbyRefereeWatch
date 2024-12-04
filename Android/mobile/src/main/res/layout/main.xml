@@ -12,19 +12,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/icon_watch" />
-    <ScrollView
-        android:id="@+id/svBTLog"
+    <TextView
+        android:id="@+id/device"
         android:layout_width="0dp"
-        android:layout_height="80sp"
+        android:layout_height="wrap_content"
+        android:minHeight="35sp"
+        android:text="@string/connect"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon"
-        app:layout_constraintTop_toTopOf="parent" >
-        <LinearLayout
-            android:id="@+id/llBTLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+        app:layout_constraintTop_toTopOf="parent"/>
     <LinearLayout
         android:id="@+id/llTabs"
         android:layout_width="match_parent"

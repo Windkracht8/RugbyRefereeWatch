@@ -11,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -156,7 +155,7 @@ public class TabReport extends LinearLayout{
             showEvents();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.loadMatch Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_show_match);
         }
 
         findViewById(R.id.bView).setVisibility(VISIBLE);
@@ -196,7 +195,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_show_match);
         }
     }
 
@@ -264,7 +263,7 @@ public class TabReport extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bDelClick Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_delete, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_delete);
         }
     }
     private void bSaveClick(){
@@ -397,7 +396,7 @@ public class TabReport extends LinearLayout{
             main.tabHistory.updateMatch(match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_save, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_save);
         }
     }
     private void bShareClick(){
@@ -430,7 +429,7 @@ public class TabReport extends LinearLayout{
             main.startActivity(Intent.createChooser(intent, main.getString(R.string.share_report)));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bShareClick Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_share);
         }
     }
     private String getShareSubject(){
@@ -451,7 +450,7 @@ public class TabReport extends LinearLayout{
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.getShareSubject Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_share);
         }
         return shareSubject;
     }
@@ -547,7 +546,7 @@ public class TabReport extends LinearLayout{
 
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.getShareBody Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_share, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_share);
         }
         return shareBody.toString();
     }

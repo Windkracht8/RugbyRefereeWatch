@@ -46,7 +46,7 @@ public class TabHistory extends LinearLayout{
         findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
-        main.executorService.submit(this::loadMatches);
+        Main.executorService.submit(this::loadMatches);
     }
     void gotMatches(JSONArray matches_new){
         try{
@@ -56,11 +56,11 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_receive_matches);
         }
         showMatches(main);
-        main.executorService.submit(this::storeMatches);
-        main.executorService.submit(()-> cleanDeletedMatches(matches_new));
+        Main.executorService.submit(this::storeMatches);
+        Main.executorService.submit(()-> cleanDeletedMatches(matches_new));
     }
     private void insertMatch(JSONObject match_new){
         try{
@@ -81,7 +81,7 @@ public class TabHistory extends LinearLayout{
             matches.add(match_new);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_receive_matches, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_receive_matches);
         }
     }
     //Thread: Background
@@ -237,13 +237,13 @@ public class TabHistory extends LinearLayout{
                     llMatches.removeViewAt(i);
                 }catch(Exception e){
                     Log.e(Main.LOG_TAG, "TabHistory.deleteSelected Exception: " + e.getMessage());
-                    Toast.makeText(main, R.string.fail_del_match, Toast.LENGTH_SHORT).show();
+                    main.toast(R.string.fail_del_match);
                 }
             }
         }
         showMatches(main);
         selectionChanged();
-        main.executorService.submit(this::storeMatches);
+        Main.executorService.submit(this::storeMatches);
     }
     void selectionChanged(){
         bExport.setVisibility(View.GONE);
@@ -268,14 +268,14 @@ public class TabHistory extends LinearLayout{
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
                     showMatches(main);
-                    main.executorService.submit(this::storeMatches);
+                    Main.executorService.submit(this::storeMatches);
                     return;
                 }
             }
             if(match.has("timer")) match.remove("timer");
             matches.add(match);
             showMatches(main);
-            main.executorService.submit(this::storeMatches);
+            Main.executorService.submit(this::storeMatches);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
         }
@@ -330,7 +330,7 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.upgradeFormatOfMatches Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_show_history, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_show_history);
         }
     }
 }

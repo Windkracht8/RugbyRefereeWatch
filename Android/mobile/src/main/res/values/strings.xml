@@ -21,6 +21,7 @@
 
     <!-- main ui -->
     <string name="icon_desc">icon</string>
+    <string name="connect">Tap icon to connect with watch</string>
     <string name="history">History</string>
     <string name="report">Report</string>
     <string name="prepare">Prepare</string>
@@ -33,6 +34,12 @@
         <item>HOME</item>
         <item>AWAY</item>
     </string-array>
+
+    <!-- device select/connect -->
+    <string name="device_select_title">To connect, open the app on the watch, don\'t start a match,
+        and select your watch from the list below</string>
+    <string name="device_connect_instruct">keep the app on the watch open while trying to
+        connect, and don\'t start a match</string>
 
     <!-- history -->
     <string name="bSync_text">Synchronise with watch</string>
@@ -157,31 +164,18 @@
     </string-array>
 
     <!-- CommsBT -->
-    <string name="status_SEARCHING">Starting search for watch.</string>
-    <string name="status_SEARCH_TIMEOUT">Did not find the watch. To connect, make sure you have a
-        bluetooth connection with the watch, keep the app on the watch open, without starting a game.
-        Then tab the icon to try again. The first time connecting it can take a great number of
-        tries. Patience you must have. </string>
-    <string name="status_CONNECT_TIMEOUT">Watch not found. To connect, make sure you have a
-        bluetooth connection with the watch, keep the app on the watch open, without starting a game.
-        Tab the icon to try again or search for a new device.</string>
-    <string name="status_CONNECTED">Connected</string>
-    <string name="status_DISCONNECTED">Disconnected</string>
-    <string name="try_connect_to">Trying to connect to:</string>
-    <string name="found_new">Found new Watch:</string>
-    <string name="looks_like">Looks like a watch:</string>
-    <string name="send_request">Send request:</string>
-    <string name="received_response">Received response:</string>
-    <string name="send_error">Send error:</string>
-    <string name="response_error">Response error:</string>
-    <string name="incomplete_message">Received incomplete message</string>
-    <string name="update_watch_app">Update app on watch to support this</string>
-    <string name="first_connect">First connect with watch</string>
-    <string name="match_ongoing">Match ongoing, can\'t prepare</string>
-    <string name="fail_BT_denied">No Bluetooth permission. Close and reopen app, allow nearby
-        devices.</string>
+    <string name="connecting_to">Connecting to</string>
+    <string name="connected_to">Connected to</string>
+    <string name="disconnected">Disconnected, tap icon to connect</string>
+
+    <string name="fail_BT_denied">No Bluetooth permission. Close app, allow nearby devices, try
+        again.</string>
     <string name="fail_BT_off">Bluetooth turned off</string>
-    <string name="fail_BT_connect">Bluetooth connection failed</string>
+    <string name="fail_BT_no_devices">No bluetooth devices, pair your watch first</string>
+    <string name="fail_BT">That did not work, tap icon to connect with watch</string>
+
+    <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="fail_unexpected">Unexpected technical error</string>
     <string name="problem_matches_received">Problem with matches received from watch</string>
 

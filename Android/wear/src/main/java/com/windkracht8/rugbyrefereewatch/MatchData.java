@@ -252,8 +252,8 @@ class MatchData{
     }
     static class sinbin{
         final long id;
-        int who;
-        boolean team_is_home;
+        final int who;
+        final boolean team_is_home;
         long end;
         boolean ended = false;
         boolean hide = false;

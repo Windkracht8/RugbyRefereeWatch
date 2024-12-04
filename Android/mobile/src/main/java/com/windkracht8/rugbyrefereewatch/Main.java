@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -17,15 +16,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,29 +39,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Main extends AppCompatActivity{
+public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
     static final String LOG_TAG = "RugbyRefereeWatch";
     private GestureDetector gestureDetector;
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor sharedPreferences_editor;
-    ExecutorService executorService;
+    static ExecutorService executorService;
     private Handler handler_main;
-    private CommsBT commsBT;
+    static CommsBT commsBT;
 
+    private ImageView icon;
+    private TextView device;
     TabHistory tabHistory;
     TabReport tabReport;
     private TabPrepare tabPrepare;
-    private ImageView icon;
-    private ScrollView svBTLog;
-    private LinearLayout llBTLog;
 
     static int widthPixels;
-    private final ArrayList<String> prevStatuses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -81,8 +73,8 @@ public class Main extends AppCompatActivity{
 
         icon = findViewById(R.id.icon);
         icon.setOnClickListener(view -> iconClick());
-        svBTLog = findViewById(R.id.svBTLog);
-        llBTLog = findViewById(R.id.llBTLog);
+        icon.setColorFilter(getColor(R.color.icon_disabled));
+        device = findViewById(R.id.device);
         findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
         findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
         findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
@@ -96,15 +88,6 @@ public class Main extends AppCompatActivity{
 
         handleOrientation();
         handleIntent();
-
-        try{
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version = String.format("Version %s (%s)", packageInfo.versionName, packageInfo.getLongVersionCode());
-            Log.d(Main.LOG_TAG, version);
-            gotStatusUi(version);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.onCreate getPackageInfo Exception: " + e.getMessage());
-        }
 
         startBT();
     }
@@ -121,7 +104,8 @@ public class Main extends AppCompatActivity{
                 return;
             }
         }
-        if(commsBT == null) commsBT = new CommsBT(this);
+        commsBT = new CommsBT(this);
+        commsBT.addListener(this);
         executorService.submit(() -> commsBT.startComms());
     }
     @Override
@@ -134,8 +118,7 @@ public class Main extends AppCompatActivity{
                 if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     startBT();
                 }else{
-                    updateStatus(CommsBT.Status.FATAL);
-                    gotError(getString(R.string.fail_BT_denied));
+                    onBTError(R.string.fail_BT_denied);
                 }
                 return;
             }
@@ -184,7 +167,7 @@ public class Main extends AppCompatActivity{
         TabReport.what_width = 0;
     }
     void toast(int message){
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
+        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
     @Override
     public void onBackPressed(){
@@ -210,6 +193,98 @@ public class Main extends AppCompatActivity{
     }
     boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
+    }
+    @Override
+    public void onBTStartDone(){
+        Log.d(LOG_TAG, "Main.onBTStartDone " + commsBT.status);
+        icon.setBackgroundResource(R.drawable.icon_watch);
+        icon.setColorFilter(getColor(R.color.icon_disabled));
+        device.setText(R.string.connect);
+    }
+    @Override
+    public void onBTConnecting(String deviceName){
+        Log.d(LOG_TAG, "Main.onBTConnecting");
+        runOnUiThread(()-> {
+            icon.setBackgroundResource(R.drawable.icon_watch_connecting);
+            icon.setColorFilter(getColor(R.color.icon_disabled));
+            ((AnimatedVectorDrawable) icon.getBackground()).start();
+            device.setTextColor(getColor(R.color.text));
+            device.setText(rps(R.string.connecting_to, deviceName));
+        });
+    }
+    @Override
+    public void onBTConnectFailed(){
+        Log.d(LOG_TAG, "Main.onBTConnectFailed");
+        runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
+            icon.setColorFilter(getColor(R.color.error));
+            device.setTextColor(getColor(R.color.error));
+            device.setText(R.string.fail_BT);
+        });
+    }
+    @Override
+    public void onBTConnected(String deviceName){
+        runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
+            icon.setColorFilter(getColor(R.color.text));
+            device.setTextColor(getColor(R.color.text));
+            device.setText(rps(R.string.connected_to, deviceName));
+            sendSyncRequest();
+            findViewById(R.id.bSync).setVisibility(View.VISIBLE);
+            findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
+        });
+    }
+    @Override
+    public void onBTDisconnected(){
+        runOnUiThread(()->{
+            icon.setColorFilter(getColor(R.color.icon_disabled));
+            device.setTextColor(getColor(R.color.text));
+            device.setText(R.string.disconnected);
+            findViewById(R.id.bSync).setVisibility(View.GONE);
+            findViewById(R.id.bPrepare).setVisibility(View.GONE);
+        });
+    }
+    @Override
+    public void onBTResponse(JSONObject response){
+        try{
+            String requestType = response.getString("requestType");
+            switch(requestType){
+                case "sync":
+                    findViewById(R.id.bSync).setEnabled(true);
+                    JSONObject syncResponseData = response.getJSONObject("responseData");
+                    if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
+                        Log.e(Main.LOG_TAG, "Main.onBTResponse sync: Incomplete response");
+                    }
+                    JSONArray matches = syncResponseData.getJSONArray("matches");
+                    JSONObject settings = syncResponseData.getJSONObject("settings");
+                    runOnUiThread(()->{
+                        tabHistory.gotMatches(matches);
+                        tabPrepare.gotSettings(settings);
+                    });
+                    break;
+                case "prepare":
+                    findViewById(R.id.bPrepare).setEnabled(true);
+                    String prepareResponseData = response.getString("responseData");
+                    switch(prepareResponseData){
+                        case "unknown requestType"-> toast(R.string.update_watch_app);
+                        case "match ongoing"-> toast(R.string.match_ongoing);
+                        case "unexpected error"-> toast(R.string.fail_unexpected);
+                    }
+                    break;
+            }
+        }catch(Exception e){
+            Log.e(Main.LOG_TAG, "Main.onBTResponse: " + e.getMessage());
+            toast(R.string.fail_response);
+        }
+    }
+    @Override
+    public void onBTError(int message){
+        Log.d(LOG_TAG, "Main.onBTError");
+        runOnUiThread(()->{
+            icon.setColorFilter(getColor(R.color.error));
+            device.setTextColor(getColor(R.color.error));
+            device.setText(message);
+        });
     }
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
         private static final int SWIPE_THRESHOLD = 100;
@@ -264,21 +339,11 @@ public class Main extends AppCompatActivity{
         }
         switch(commsBT.status){
             case CONNECTING:
-                commsBT.updateStatus(CommsBT.Status.CONNECT_TIMEOUT);
-                commsBT.stopComms();
-                break;
             case CONNECTED:
-                commsBT.updateStatus(CommsBT.Status.DISCONNECTED);
-                commsBT.stopComms();
+                commsBT.disconnect();
                 break;
-            case SEARCHING:
-                commsBT.updateStatus(CommsBT.Status.SEARCH_TIMEOUT);
-                commsBT.stopComms();
-                break;
-            case CONNECT_TIMEOUT:
-            case SEARCH_TIMEOUT:
             case DISCONNECTED:
-                startBT();
+                startActivity(new Intent(this, DeviceSelect.class));
                 break;
         }
     }
@@ -291,77 +356,17 @@ public class Main extends AppCompatActivity{
         if(cantSendRequest()){return;}
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
-            gotError(getString(R.string.fail_prepare));
+            onBTError(R.string.fail_prepare);
             return;
         }
         commsBT.sendRequest("prepare", requestData);
     }
     private boolean cantSendRequest(){
-        if(commsBT != null && commsBT.status == CommsBT.Status.CONNECTED){
-            return false;
-        }
-        gotError(getString(R.string.first_connect));
+        if(commsBT != null && commsBT.status == CommsBT.Status.CONNECTED) return false;
+        device.setText(R.string.fail_BT);
         return true;
     }
 
-    void updateStatus(CommsBT.Status status){
-        runOnUiThread(() -> updateStatusUi(status));
-    }
-    private void updateStatusUi(CommsBT.Status status){
-        switch(status){
-            case FATAL:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.error));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                return;
-            case SEARCHING:
-                icon.setBackgroundResource(R.drawable.icon_watch_searching);
-                icon.setColorFilter(getColor(R.color.icon_disabled));
-                ((AnimatedVectorDrawable) icon.getBackground()).start();
-                prevStatuses.clear();
-                gotStatus(getString(R.string.status_SEARCHING));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                break;
-            case SEARCH_TIMEOUT:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.icon_disabled));
-                gotError(getString(R.string.status_SEARCH_TIMEOUT));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                break;
-            case CONNECTING:
-                icon.setBackgroundResource(R.drawable.icon_watch_searching);
-                icon.setColorFilter(getColor(R.color.icon_disabled));
-                ((AnimatedVectorDrawable) icon.getBackground()).start();
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                break;
-            case CONNECT_TIMEOUT:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.icon_disabled));
-                gotError(getString(R.string.status_CONNECT_TIMEOUT));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                break;
-            case CONNECTED:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.text));
-                gotStatus(getString(R.string.status_CONNECTED));
-                findViewById(R.id.bSync).setVisibility(View.VISIBLE);
-                findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
-                sendSyncRequest();
-                break;
-            case DISCONNECTED:
-                icon.setBackgroundResource(R.drawable.icon_watch);
-                icon.setColorFilter(getColor(R.color.icon_disabled));
-                gotError(getString(R.string.status_DISCONNECTED));
-                findViewById(R.id.bSync).setVisibility(View.GONE);
-                findViewById(R.id.bPrepare).setVisibility(View.GONE);
-                break;
-        }
-    }
     private void sendSyncRequest(){
         if(cantSendRequest()){return;}
         try {
@@ -373,89 +378,6 @@ public class Main extends AppCompatActivity{
             Log.e(Main.LOG_TAG, "Main.sendSyncRequest Exception: " + e.getMessage());
             Toast.makeText(getApplicationContext(), R.string.fail_sync, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    void gotResponse(JSONObject response){
-        runOnUiThread(() -> gotResponseUi(response));
-    }
-    private void gotResponseUi(JSONObject response){
-        try{
-            String requestType = response.getString("requestType");
-            gotStatus(String.format("%s %s", getString(R.string.received_response), requestType));
-            switch(requestType){
-                case "sync":
-                    findViewById(R.id.bSync).setEnabled(true);
-                    JSONObject syncResponseData = response.getJSONObject("responseData");
-                    if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
-                        Log.e(Main.LOG_TAG, "Main.gotResponse sync: Incomplete response");
-                    }
-                    tabHistory.gotMatches(syncResponseData.getJSONArray("matches"));
-                    tabPrepare.gotSettings(syncResponseData.getJSONObject("settings"));
-                    break;
-                case "prepare":
-                    findViewById(R.id.bPrepare).setEnabled(true);
-                    String prepareResponseData = response.getString("responseData");
-                    if(!prepareResponseData.equals("okilly dokilly")){
-                        gotError(prepareResponseData);
-                    }
-                    break;
-            }
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.gotResponse: " + e.getMessage());
-            Toast.makeText(this, R.string.fail_response, Toast.LENGTH_SHORT).show();
-        }
-    }
-    void gotStatus(String status){
-        runOnUiThread(() -> gotStatusUi(status));
-    }
-    private void gotStatusUi(String status){
-        if(prevStatuses.contains(status)){
-            return;
-        }
-        prevStatuses.add(status);
-        if(prevStatuses.size()>2) prevStatuses.remove(0);
-
-        TextView tv = new TextView(this);
-        tv.setText(status);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        llBTLog.addView(tv);
-        tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svBTLog.fullScroll(View.FOCUS_DOWN);
-            }
-        });
-    }
-    void gotError(String error){
-        Log.d(Main.LOG_TAG, "Main.gotError: " + error);
-        switch(error){
-            case "unknown requestType":
-                error = getString(R.string.update_watch_app);
-                break;
-            case "match ongoing":
-                error = getString(R.string.match_ongoing);
-                break;
-            case "unexpected error":
-                error = getString(R.string.fail_unexpected);
-                break;
-        }
-        String error2 = error;
-        runOnUiThread(() -> gotErrorUi(error2));
-    }
-    private void gotErrorUi(String error){
-        TextView tv = new TextView(this);
-        tv.setText(error);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        tv.setTextColor(getColor(R.color.error));
-        llBTLog.addView(tv);
-        tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                svBTLog.fullScroll(View.FOCUS_DOWN);
-            }
-        });
     }
 
     private void tabHistoryLabelClick(){
@@ -545,4 +467,5 @@ public class Main extends AppCompatActivity{
             widthPixels = displayMetrics.widthPixels;
         }
     }
+    private String rps(int resource, String string){return getString(resource) + " " + string;}
 }
