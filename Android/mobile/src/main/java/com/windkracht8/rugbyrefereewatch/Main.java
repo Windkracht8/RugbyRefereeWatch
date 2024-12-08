@@ -58,6 +58,7 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
     TabReport tabReport;
     private TabPrepare tabPrepare;
 
+    private static boolean hasBTPermission = false;
     static int widthPixels;
 
     @Override
@@ -89,24 +90,31 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
         handleOrientation();
         handleIntent();
 
+        checkPermissions();
         startBT();
     }
-    private void startBT(){
+    private void checkPermissions(){
         if(Build.VERSION.SDK_INT >= 31){
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN}, 1);
-                return;
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+                    && hasPermission(android.Manifest.permission.BLUETOOTH_SCAN);
+            if(!hasBTPermission){
+                ActivityCompat.requestPermissions(this
+                        ,new String[]{
+                                Manifest.permission.BLUETOOTH_CONNECT
+                                ,Manifest.permission.BLUETOOTH_SCAN
+                        }
+                        ,1
+                );
             }
         }else{
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, 1);
-                return;
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
+            if(!hasBTPermission){
+                ActivityCompat.requestPermissions(this
+                        ,new String[]{Manifest.permission.BLUETOOTH}
+                        ,1
+                );
             }
         }
-        commsBT = new CommsBT(this);
-        commsBT.addListener(this);
-        executorService.submit(() -> commsBT.startComms());
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
@@ -124,6 +132,31 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
             }
         }
     }
+    private boolean hasPermission(String permission){
+        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+    private void startBT(){
+        if(!hasBTPermission){
+            onBTStartDone();
+            return;
+        }
+        if(commsBT == null){
+            commsBT = new CommsBT(this);
+            commsBT.addListener(this);
+        }
+        executorService.submit(() -> commsBT.startComms());
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        handleOrientation();
+    }
+    private void handleOrientation(){
+        getWidthPixels();
+        TabReport.what_width = 0;
+    }
+
     private void handleIntent(){
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -156,16 +189,6 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
         }
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig){
-        super.onConfigurationChanged(newConfig);
-        handleOrientation();
-    }
-
-    private void handleOrientation(){
-        getWidthPixels();
-        TabReport.what_width = 0;
-    }
     void toast(int message){
         runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
@@ -196,10 +219,12 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
     }
     @Override
     public void onBTStartDone(){
-        Log.d(LOG_TAG, "Main.onBTStartDone " + commsBT.status);
-        icon.setBackgroundResource(R.drawable.icon_watch);
-        icon.setColorFilter(getColor(R.color.icon_disabled));
-        device.setText(R.string.connect);
+        Log.d(LOG_TAG, "Main.onBTStartDone");
+        runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
+            icon.setColorFilter(getColor(R.color.icon_disabled));
+            device.setText(R.string.connect);
+        });
     }
     @Override
     public void onBTConnecting(String deviceName){
