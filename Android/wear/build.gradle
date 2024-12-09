@@ -8,8 +8,8 @@ android {
         //noinspection OldTargetApi
         targetSdk 34
         compileSdk 35
-        versionCode 440
-        versionName '3.10'
+        versionCode 441
+        versionName '3.11'
     }
     buildTypes {
         release {

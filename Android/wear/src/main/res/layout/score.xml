@@ -4,8 +4,6 @@
     android:id="@+id/llScore"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
     android:orientation="vertical">
     <Spinner
         android:id="@+id/score_player"

@@ -26,11 +26,6 @@ public class ConfWatch extends LinearLayout{
         }
         isInitialized = true;
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
-        int confItemHeight = (Main.heightPixels - (Main.dp10*2)) / 4;
-        if(Main.isScreenRound){
-            llConfWatch.setPadding(Main.dp10, Main.vh10, Main.dp10, Main.vh10);
-            confItemHeight = (Main.heightPixels - (Main.vh10*2)) / 4;
-        }
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{
                 ConfItem.ConfItemType.TIMER_TYPE
                 ,ConfItem.ConfItemType.RECORD_PENS
@@ -42,12 +37,12 @@ public class ConfWatch extends LinearLayout{
             confItems.add(confItem);
             llConfWatch.addView(confItem);
             main.addOnTouch(confItem);
-            confItem.getLayoutParams().height = confItemHeight;
+            confItem.getLayoutParams().height = Main.vh25;
             confItem.updateValue();
         }
         if(Main.isScreenRound){
-            confItems.get(0).setPadding(Main.vh10, 0, Main.vh10, 0);
-            confItems.get(confItems.size()-1).setPadding(Main.vh10, 0, Main.vh10, 0);
+            confItems.get(0).setPadding(Main.vh15, Main.vh5, Main.vh15, 0);
+            confItems.get(confItems.size()-1).setPadding(Main.vh15, 0, Main.vh15, Main.vh5);
         }
         setVisibility(View.VISIBLE);
     }

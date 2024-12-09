@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="conf_item_padding">5dp</dimen>
-    <dimen name="dp10">10dp</dimen>
-    <dimen name="dp50">50dp</dimen>
-    <dimen name="minTouchSize">48dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_50dp">50dp</dimen>
 </resources>

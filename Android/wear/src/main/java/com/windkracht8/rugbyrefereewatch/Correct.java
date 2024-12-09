@@ -63,7 +63,7 @@ public class Correct extends ScrollView{
         float scale;
         for(int i = 0; i< llCorrectItems.getChildCount(); i++){
             View item = llCorrectItems.getChildAt(i);
-            top = Main.dp50 + (item.getY() - scrollY);
+            top = Main._50dp + (item.getY() - scrollY);
             scale = 1.0f;
             if(top < 0){
                 //the item is above the screen

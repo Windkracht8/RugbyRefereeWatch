@@ -18,6 +18,7 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -84,14 +85,15 @@ public class Main extends Activity{
 
     static int heightPixels;
     private static int widthPixels;
+    static int vh5;
     static int vh10;
-    private static int vh15;
+    static int vh15;
     static int vh25;
     private static int vh30;
     private static int vh40;
     static int vh75;
-    static int dp10;
-    static int dp50;
+    static int _10dp;
+    static int _50dp;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
@@ -141,8 +143,8 @@ public class Main extends Activity{
             widthPixels = displayMetrics.widthPixels;
         }
         SWIPE_THRESHOLD = (int) (widthPixels * .3);
-        dp10 = getResources().getDimensionPixelSize(R.dimen.dp10);
-        dp50 = getResources().getDimensionPixelSize(R.dimen.dp50);
+        _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
+        _50dp = getResources().getDimensionPixelSize(R.dimen._50dp);
 
         if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
@@ -225,7 +227,7 @@ public class Main extends Activity{
         extraTime.onCreateMain(this);
 
         //Resize elements for the heightPixels
-        int vh5 = (int) (heightPixels * .05);
+        vh5 = (int) (heightPixels * .05);
         vh10 = heightPixels / 10;
         vh15 = (int) (heightPixels * .15);
         int vh20 = (int) (heightPixels * .2);
@@ -349,7 +351,14 @@ public class Main extends Activity{
     }
 
     @Override
-    public void onBackPressed(){
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            onBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    private void onBack(){
         if(commsBTLog.getVisibility() == View.VISIBLE){
             commsBTLog.setVisibility(View.GONE);
             conf.requestSVFocus();
@@ -442,7 +451,7 @@ public class Main extends Activity{
                 onTouchStartY = -1;
                 if(diffX2 > SWIPE_THRESHOLD && velocity2 > SWIPE_VELOCITY_THRESHOLD){
                     draggingEnded = getCurrentTimestamp();
-                    onBackPressed();
+                    onBack();
                     return true;
                 }
         }

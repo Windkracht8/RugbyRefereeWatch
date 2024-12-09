@@ -24,7 +24,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">#fff</item>
-        <item name="android:minHeight">@dimen/minTouchSize</item>
+        <item name="android:minHeight">50dp</item>
         <item name="android:background">@drawable/conf_item_bg</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>

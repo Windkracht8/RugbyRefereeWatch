@@ -29,6 +29,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.splashscreen.SplashScreen;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -58,11 +59,14 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
     TabReport tabReport;
     private TabPrepare tabPrepare;
 
+    private boolean showSplash = true;
     private static boolean hasBTPermission = false;
     static int widthPixels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+        splashScreen.setKeepOnScreenCondition(() -> showSplash);
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.main);
@@ -92,6 +96,7 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
 
         checkPermissions();
         startBT();
+        showSplash = false;
     }
     private void checkPermissions(){
         if(Build.VERSION.SDK_INT >= 31){
@@ -220,11 +225,6 @@ public class Main extends AppCompatActivity implements CommsBT.CommsBTInterface{
     @Override
     public void onBTStartDone(){
         Log.d(LOG_TAG, "Main.onBTStartDone");
-        runOnUiThread(()->{
-            icon.setBackgroundResource(R.drawable.icon_watch);
-            icon.setColorFilter(getColor(R.color.icon_disabled));
-            device.setText(R.string.connect);
-        });
     }
     @Override
     public void onBTConnecting(String deviceName){

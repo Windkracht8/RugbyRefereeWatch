@@ -48,13 +48,8 @@ public class Score extends LinearLayout{
                 player_no = position;
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parentView){
-                player_no = 0;
-            }
+            public void onNothingSelected(AdapterView<?> parentView){player_no = 0;}
         });
-        if(!Main.isScreenRound){
-            findViewById(R.id.llScore).setPadding(0, 0, 0, 0);
-        }
     }
     void onCreateMain(Main main){
         score_try.setOnClickListener(v -> main.tryClick());
@@ -68,7 +63,7 @@ public class Score extends LinearLayout{
         score_goal.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
         score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
         if(Main.isScreenRound){
-            foul_play.setPadding(Main.vh25, 0, Main.vh25, 0);
+            foul_play.setPadding(Main.vh25, 0, Main.vh25, Main.vh5);
         }
     }
     void clear(){score_player.setSelection(0);}

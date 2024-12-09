@@ -123,7 +123,7 @@ public class ConfSpinner extends ScrollView{
         }
     }
     private TextView newConfSpinnerItem(Main main, String text){
-        TextView confSpinnerItem = new TextView(getContext(), null, 0, R.style.textView_item);
+        TextView confSpinnerItem = new TextView(main, null, 0, R.style.textView_item);
         confSpinnerItem.setText(text);
         confSpinnerItems.add(confSpinnerItem);
         main.addOnTouch(confSpinnerItem);
