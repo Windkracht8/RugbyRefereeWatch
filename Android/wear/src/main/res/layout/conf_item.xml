@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
-    android:background="@drawable/conf_item_bg"
+    android:minHeight="@dimen/si_item_height"
+    android:background="@drawable/bg_si_item"
     android:orientation="vertical">
     <TextView
         android:id="@+id/confItemName"

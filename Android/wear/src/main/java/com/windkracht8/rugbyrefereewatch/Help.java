@@ -17,5 +17,6 @@ public class Help extends ScrollView{
         if(withWelcome) findViewById(R.id.welcome).setVisibility(VISIBLE);
         setVisibility(View.VISIBLE);
         requestFocus();
+        if(Main.isScreenRound) findViewById(R.id.llHelp).setPadding(Main._10dp, Main.vh25, Main._10dp, Main.vh25);
     }
 }

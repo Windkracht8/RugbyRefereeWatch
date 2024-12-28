@@ -91,62 +91,66 @@ public class TabReport extends LinearLayout{
             ((TextView)findViewById(R.id.tvHomeTries)).setText(home.getString("tries"));
             ((TextView)findViewById(R.id.tvAwayTries)).setText(away.getString("tries"));
 
-            if(!settings.has("points_con") || settings.getInt("points_con") == 0 ||
-                    (home.getInt("cons") == 0 && away.getInt("cons") == 0)
-            ){
-                findViewById(R.id.trCons).setVisibility(View.GONE);
-            }else{
+            if(shouldShow("points_con", settings, "cons", home, away)){
                 ((TextView)findViewById(R.id.tvHomeCons)).setText(home.getString("cons"));
                 ((TextView)findViewById(R.id.tvAwayCons)).setText(away.getString("cons"));
                 findViewById(R.id.trCons).setVisibility(View.VISIBLE);
-            }
-            if(!home.has("pen_tries") || !away.has("pen_tries") ||
-                    (home.getInt("pen_tries") == 0 && away.getInt("pen_tries") == 0)
-            ){
-                findViewById(R.id.trPenTries).setVisibility(View.GONE);
             }else{
+                findViewById(R.id.trCons).setVisibility(View.GONE);
+            }
+
+            if(shouldShow("pen_tries", home, away)){
                 ((TextView)findViewById(R.id.tvHomePenTries)).setText(home.getString("pen_tries"));
                 ((TextView)findViewById(R.id.tvAwayPenTries)).setText(away.getString("pen_tries"));
                 findViewById(R.id.trPenTries).setVisibility(View.VISIBLE);
-            }
-            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
-                    !home.has("goals") || !away.has("goals") ||
-                    (home.getInt("goals") == 0 && away.getInt("goals") == 0)
-            ){
-                findViewById(R.id.trGoals).setVisibility(View.GONE);
             }else{
+                findViewById(R.id.trPenTries).setVisibility(View.GONE);
+            }
+
+            if(shouldShow("points_goal", settings, "goals", home, away)){
                 ((TextView)findViewById(R.id.tvHomeGoals)).setText(home.getString("goals"));
                 ((TextView)findViewById(R.id.tvAwayGoals)).setText(away.getString("goals"));
                 findViewById(R.id.trGoals).setVisibility(View.VISIBLE);
-            }
-            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
-                    !home.has("pen_goals") || !away.has("pen_goals") ||
-                    (home.getInt("pen_goals") == 0 && away.getInt("pen_goals") == 0)
-            ){
-                findViewById(R.id.trPenGoals).setVisibility(View.GONE);
             }else{
+                findViewById(R.id.trGoals).setVisibility(View.GONE);
+            }
+
+            if(shouldShow("points_goal", settings, "pen_goals", home, away)){
                 ((TextView)findViewById(R.id.tvHomePenGoals)).setText(home.getString("pen_goals"));
                 ((TextView)findViewById(R.id.tvAwayPenGoals)).setText(away.getString("pen_goals"));
                 findViewById(R.id.trPenGoals).setVisibility(View.VISIBLE);
-            }
-            if(!settings.has("points_goal") || settings.getInt("points_goal") == 0 ||
-                    !home.has("drop_goals") || !away.has("drop_goals") ||
-                    (home.getInt("drop_goals") == 0 && away.getInt("drop_goals") == 0)
-            ){
-                findViewById(R.id.trDropGoals).setVisibility(View.GONE);
             }else{
+                findViewById(R.id.trPenGoals).setVisibility(View.GONE);
+            }
+
+            if(shouldShow("points_goal", settings, "drop_goals", home, away)){
                 ((TextView)findViewById(R.id.tvHomeDropGoals)).setText(home.getString("drop_goals"));
                 ((TextView)findViewById(R.id.tvAwayDropGoals)).setText(away.getString("drop_goals"));
                 findViewById(R.id.trDropGoals).setVisibility(View.VISIBLE);
-            }
-            if(!home.has("pens") || !away.has("pens") ||
-                    (home.getInt("pens") == 0 && away.getInt("pens") == 0)
-            ){
-                findViewById(R.id.trPens).setVisibility(View.GONE);
             }else{
+                findViewById(R.id.trDropGoals).setVisibility(View.GONE);
+            }
+
+            if(shouldShow("yellow_cards", home, away)){
+                ((TextView)findViewById(R.id.tvHomeYellowCards)).setText(home.getString("yellow_cards"));
+                ((TextView)findViewById(R.id.tvAwayYellowCards)).setText(away.getString("yellow_cards"));
+                findViewById(R.id.trYellowCards).setVisibility(View.VISIBLE);
+            }else{
+                findViewById(R.id.trYellowCards).setVisibility(View.GONE);
+            }
+            if(shouldShow("red_cards", home, away)){
+                ((TextView)findViewById(R.id.tvHomeRedCards)).setText(home.getString("red_cards"));
+                ((TextView)findViewById(R.id.tvAwayRedCards)).setText(away.getString("red_cards"));
+                findViewById(R.id.trRedCards).setVisibility(View.VISIBLE);
+            }else{
+                findViewById(R.id.trRedCards).setVisibility(View.GONE);
+            }
+            if(shouldShow("pens", home, away)){
                 ((TextView)findViewById(R.id.tvHomePens)).setText(home.getString("pens"));
                 ((TextView)findViewById(R.id.tvAwayPens)).setText(away.getString("pens"));
                 findViewById(R.id.trPens).setVisibility(View.VISIBLE);
+            }else{
+                findViewById(R.id.trPens).setVisibility(View.GONE);
             }
 
             ((TextView)findViewById(R.id.tvHomeTot)).setText(home.getString("tot"));
@@ -199,7 +203,7 @@ public class TabReport extends LinearLayout{
         }
     }
 
-    static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
+    private static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
         switch(what){
             case "TRY":
                 score[team.equals("home") ? 0 : 1] += points_try;
@@ -280,6 +284,8 @@ public class TabReport extends LinearLayout{
             int home_goals = 0;
             int home_pen_goals = 0;
             int home_drop_goals = 0;
+            int home_yellow_cards = 0;
+            int home_red_cards = 0;
             int home_pens = 0;
             int away_tries = 0;
             int away_cons = 0;
@@ -287,6 +293,8 @@ public class TabReport extends LinearLayout{
             int away_goals = 0;
             int away_pen_goals = 0;
             int away_drop_goals = 0;
+            int away_yellow_cards = 0;
+            int away_red_cards = 0;
             int away_pens = 0;
             int score_home = 0;
             int score_away = 0;
@@ -352,6 +360,20 @@ public class TabReport extends LinearLayout{
                             score_away += points_goal;
                         }
                         break;
+                    case "YELLOW CARD":
+                        if(event.getString("team").equals("home")){
+                            home_yellow_cards++;
+                        }else{
+                            away_yellow_cards++;
+                        }
+                        break;
+                    case "RED CARD":
+                        if(event.getString("team").equals("home")){
+                            home_red_cards++;
+                        }else{
+                            away_red_cards++;
+                        }
+                        break;
                     case "PENALTY":
                         if(event.getString("team").equals("home")){
                             home_pens++;
@@ -377,6 +399,8 @@ public class TabReport extends LinearLayout{
             home.put("goals", home_goals);
             home.put("pen_goals", home_pen_goals);
             home.put("drop_goals", home_drop_goals);
+            home.put("yellow_cards", home_yellow_cards);
+            home.put("red_cards", home_red_cards);
             home.put("pens", home_pens);
             match.put("home", home);
 
@@ -390,6 +414,8 @@ public class TabReport extends LinearLayout{
             away.put("goals", away_goals);
             away.put("pen_goals", away_pen_goals);
             away.put("drop_goals", away_drop_goals);
+            away.put("yellow_cards", away_yellow_cards);
+            away.put("red_cards", away_red_cards);
             away.put("pens", away_pens);
             match.put("away", away);
 
@@ -400,7 +426,7 @@ public class TabReport extends LinearLayout{
         }
     }
     private void bShareClick(){
-        boolean[] eventTypes = {false, false, false};
+        boolean[] eventTypes = {false, false, false, true};
         View view = View.inflate(main, R.layout.dialog_share, null);
         ((CheckBox)view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
                 (v, c)-> eventTypes[0] = c
@@ -410,6 +436,9 @@ public class TabReport extends LinearLayout{
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
                 (v, c)-> eventTypes[2] = c
+        );
+        ((CheckBox)view.findViewById(R.id.dialog_share_cards)).setOnCheckedChangeListener(
+                (v, c)-> eventTypes[3] = c
         );
         new AlertDialog.Builder(main)
                 .setMessage(R.string.dialog_share_message)
@@ -489,6 +518,14 @@ public class TabReport extends LinearLayout{
                 scoreHome.append(scoreLine(R.string.drop_goals, home.getString("drop_goals")));
                 scoreAway.append(scoreLine(R.string.drop_goals, away.getString("drop_goals")));
             }
+            if(eventTypes[3] && shouldShow("yellow_cards", home, away)){
+                scoreHome.append(scoreLine(R.string.yellow_cards, home.getString("yellow_cards")));
+                scoreAway.append(scoreLine(R.string.yellow_cards, away.getString("yellow_cards")));
+            }
+            if(eventTypes[3] && shouldShow("red_cards", home, away)){
+                scoreHome.append(scoreLine(R.string.red_cards, home.getString("red_cards")));
+                scoreAway.append(scoreLine(R.string.red_cards, away.getString("red_cards")));
+            }
             if(eventTypes[1] && shouldShow("pens", home, away)){
                 scoreHome.append(scoreLine(R.string.penalties, home.getString("pens")));
                 scoreAway.append(scoreLine(R.string.penalties, away.getString("pens")));
@@ -550,10 +587,11 @@ public class TabReport extends LinearLayout{
         }
         return shareBody.toString();
     }
+    private boolean shouldShow(String setting, JSONObject settings, String what, JSONObject home, JSONObject away) throws JSONException{
+        return settings.has(setting) && settings.getInt(setting) > 0 && shouldShow(what, home, away);
+    }
     private boolean shouldShow(String what, JSONObject home, JSONObject away) throws JSONException{
-        return home.has(what) &&
-                away.has(what) &&
-                (home.getInt(what) > 0 || away.getInt(what) > 0);
+        return home.has(what) && away.has(what) && (home.getInt(what) > 0 || away.getInt(what) > 0);
     }
     private String scoreLine(int name, String value){
         return String.format("  %s: %s\n", main.getString(name), value);

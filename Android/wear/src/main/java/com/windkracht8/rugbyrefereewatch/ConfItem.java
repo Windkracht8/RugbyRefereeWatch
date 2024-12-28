@@ -9,7 +9,7 @@ import android.widget.TextView;
 class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP, COMMS_LOG
+        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP
     }
     private final ConfItemType type;
     private final TextView confItemValue;
@@ -25,7 +25,7 @@ class ConfItem extends LinearLayout{
         this.type = type;
         confItemName.setText(context.getString(getConfItemName(type)));
         confItemName.setContentDescription(context.getString(R.string.confItemName_desc) + type);
-        if(type == ConfItemType.HELP || type == ConfItemType.COMMS_LOG){
+        if(type == ConfItemType.HELP){
             confItemValue.setVisibility(View.GONE);
         }else{
             confItemValue.setContentDescription(context.getString(R.string.confItemValue_desc) + type);
@@ -47,7 +47,6 @@ class ConfItem extends LinearLayout{
             case RECORD_PLAYER -> R.string.record_player;
             case RECORD_PENS -> R.string.record_pens;
             case HELP -> R.string.help;
-            case COMMS_LOG -> R.string.commsBTLog;
         };
     }
 

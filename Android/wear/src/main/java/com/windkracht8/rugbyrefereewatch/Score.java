@@ -4,28 +4,23 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class Score extends LinearLayout{
-    static final String[] aPlayerNumbers = new String[] {
-            "0","1","2","3","4","5","6","7","8","9","10"
-            ,"11","12","13","14","15","16","17","18","19","20"
-            ,"21","22","23","24","25","26","27","28","29","30"
-            ,"31","32","33","34","35","36","37","38","39","40"
-            ,"41","42","43","44","45","46","47","48","49","50"
-    };
-    MatchData.team team;
-    int player_no;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-    private final Spinner score_player;
+public class Score extends ConstraintLayout{
+    MatchData.team team;
+    int player_no = 0;
+
+    private final TextView score_player;
     private final TextView score_try;
     private final TextView score_con;
     private final TextView score_goal;
     private final TextView foul_play;
+    final ScrollView svPlayerNo;
+    private final LinearLayout llPlayerNo;
 
     public Score(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -33,22 +28,23 @@ public class Score extends LinearLayout{
         assert inflater != null;
         inflater.inflate(R.layout.score, this, true);
 
-        score_player = findViewById(R.id.score_player);
         score_try = findViewById(R.id.score_try);
         score_con = findViewById(R.id.score_con);
         score_goal = findViewById(R.id.score_goal);
         foul_play = findViewById(R.id.foul_play);
 
-        ArrayAdapter<String> aaPlayerNumbers = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aPlayerNumbers);
-        aaPlayerNumbers.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        score_player.setAdapter(aaPlayerNumbers);
-        score_player.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
-                player_no = position;
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView){player_no = 0;}
+        llPlayerNo = findViewById(R.id.llPlayerNo);
+        for(int player_no: MatchData.player_nos){
+            TextView tmp = new TextView(context, null, 0, R.style.si_item);
+            tmp.setText(String.valueOf(player_no));
+            tmp.setOnClickListener((v)->onPlayerNoClick(player_no));
+            llPlayerNo.addView(tmp);
+        }
+        svPlayerNo = findViewById(R.id.svPlayerNo);
+        score_player = findViewById(R.id.score_player);
+        score_player.setOnClickListener((v)-> {
+            svPlayerNo.setVisibility(View.VISIBLE);
+            if(player_no == 0) svPlayerNo.fullScroll(View.FOCUS_UP);
         });
     }
     void onCreateMain(Main main){
@@ -56,15 +52,23 @@ public class Score extends LinearLayout{
         score_con.setOnClickListener(v -> main.conversionClick());
         score_goal.setOnClickListener(v -> main.goalClick());
         foul_play.setOnClickListener(v -> main.foulPlayClick());
+        for(int i = 0; i < llPlayerNo.getChildCount(); i++) main.addOnTouch(llPlayerNo.getChildAt(i));
+        if(Main.isScreenRound){
+            main.si_addLayout(svPlayerNo, llPlayerNo);
+            foul_play.setPadding(Main.vh25, 0, Main.vh25, Main.vh5);
+        }
     }
-    void update(){//Thread: Always on UI thread
+    void update(){//Thread: UI
         score_try.setVisibility(Main.match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(Main.match.points_con == 0 ? View.GONE : View.VISIBLE);
         score_goal.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
         score_player.setVisibility(Main.record_player ? View.VISIBLE : View.GONE);
-        if(Main.isScreenRound){
-            foul_play.setPadding(Main.vh25, 0, Main.vh25, Main.vh5);
-        }
     }
-    void clear(){score_player.setSelection(0);}
+    void clear(){onPlayerNoClick(0);}
+    private void onPlayerNoClick(int player_no){
+        this.player_no = player_no;
+        String tmp = "#" + player_no;
+        score_player.setText(tmp);
+        svPlayerNo.setVisibility(View.GONE);
+    }
 }

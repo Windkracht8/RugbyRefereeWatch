@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,9 +45,9 @@ public class TabHistory extends LinearLayout{
         findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
-        Main.executorService.submit(this::loadMatches);
+        main.runInBackground(this::loadMatches);
     }
-    void gotMatches(JSONArray matches_new){
+    void gotMatches(JSONArray matches_new){//Thread: BG
         try{
             for(int i = 0; i < matches_new.length(); i++){
                 JSONObject match_new = new JSONObject(matches_new.getString(i));
@@ -58,34 +57,30 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_receive_matches);
         }
-        showMatches(main);
-        Main.executorService.submit(this::storeMatches);
-        Main.executorService.submit(()-> cleanDeletedMatches(matches_new));
+        main.runOnUiThread(this::showMatches);
+        storeMatches();
+        cleanDeletedMatches(matches_new);
     }
-    private void insertMatch(JSONObject match_new){
+    private void insertMatch(JSONObject match){//Thread: BG
         try{
-            long match_new_id = match_new.getLong("matchid");
-            if(deleted_matches.contains(match_new_id)){
-                return;
-            }
+            checkFormatOfMatch(match);
+            long match_id = match.getLong("matchid");
+            if(deleted_matches.contains(match_id)) return;
             for(int i = 0; i < matches.size(); i++){
-                long match_id = matches.get(i).getLong("matchid");
-                if(match_new_id < match_id){
-                    matches.add(i, match_new);
+                long match2_id = matches.get(i).getLong("matchid");
+                if(match_id < match2_id){
+                    matches.add(i, match);
                     return;
                 }
-                if(match_new_id == match_id){
-                    return;
-                }
+                if(match_id == match2_id) return;
             }
-            matches.add(match_new);
+            matches.add(match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
             main.toast(R.string.fail_receive_matches);
         }
     }
-    //Thread: Background
-    private void cleanDeletedMatches(JSONArray matches_new){
+    private void cleanDeletedMatches(JSONArray matches_new){//Thread: BG
         ArrayList<Long> new_matches = new ArrayList<>();
         try{
             for(int i = 0; i < matches_new.length(); i++){
@@ -113,9 +108,13 @@ public class TabHistory extends LinearLayout{
         }
         return null;
     }
-    //Thread: Background
-    private void loadMatches(){
+    private void loadMatches(){//Thread: BG
         try{
+            /* Testing
+            //matches.add(new JSONObject("{\"matchid\":1734444251272,\"format\":1,\"settings\":{\"match_type\":\"15s\",\"period_time\":40,\"period_count\":2,\"sinbin\":10,\"points_try\":5,\"points_con\":2,\"points_goal\":3},\"home\":{\"id\":\"home\",\"team\":\"home\",\"color\":\"red\",\"tot\":5,\"tries\":1,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":2,\"kickoff\":false},\"away\":{\"id\":\"away\",\"team\":\"away\",\"color\":\"blue\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":1,\"kickoff\":false},\"events\":[{\"id\":1734444251275,\"time\":\"15:04:11\",\"timer\":0,\"period\":1,\"what\":\"START\"},{\"id\":1734444252883,\"time\":\"15:04:12\",\"timer\":729,\"period\":1,\"what\":\"TRY\",\"team\":\"home\"},{\"id\":1734444257714,\"time\":\"15:04:17\",\"timer\":5729,\"period\":1,\"what\":\"YELLOW CARD\",\"team\":\"away\",\"who\":5},{\"id\":1734444259441,\"time\":\"15:04:19\",\"timer\":7730,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444259652,\"time\":\"15:04:19\",\"timer\":7730,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444261119,\"time\":\"15:04:21\",\"timer\":9163,\"period\":1,\"what\":\"END\",\"score\":\"5:0\"}]}"));
+            //matches.add(new JSONObject("{\"matchid\":1734444402416,\"format\":1,\"settings\":{\"match_type\":\"15s\",\"period_time\":40,\"period_count\":2,\"sinbin\":10,\"points_try\":5,\"points_con\":2,\"points_goal\":3},\"home\":{\"id\":\"home\",\"team\":\"home\",\"color\":\"red\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":1,\"kickoff\":false},\"away\":{\"id\":\"away\",\"team\":\"away\",\"color\":\"blue\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1734444402419,\"time\":\"15:06:42\",\"timer\":0,\"period\":1,\"what\":\"START\"},{\"id\":1734444405502,\"time\":\"15:06:45\",\"timer\":2586,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444407231,\"time\":\"15:06:47\",\"timer\":4378,\"period\":1,\"what\":\"END\",\"score\":\"0:0\"}]}"));
+            //main.runOnUiThread(this::showMatches);
+             */
             FileInputStream fis = main.openFileInput(main.getString(R.string.matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
@@ -131,7 +130,9 @@ public class TabHistory extends LinearLayout{
             for(int i = 0; i < jsonMatches.length(); i++){
                 matches.add(jsonMatches.getJSONObject(i));
             }
-            main.runOnUiThread(()-> showMatches(main));
+
+            checkFormatOfMatches();
+            main.runOnUiThread(this::showMatches);
         }catch(FileNotFoundException e){
             Log.d(Main.LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
         }catch(Exception e){
@@ -161,9 +162,8 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
         }
     }
-    private void showMatches(Main main){
+    private void showMatches(){
         try{
-            upgradeFormatOfMatches();
             matches.sort((m1, m2) -> {
                 try{
                     return Long.compare(m1.getLong("matchid"), m2.getLong("matchid"));
@@ -178,12 +178,11 @@ public class TabHistory extends LinearLayout{
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_show_history, Toast.LENGTH_SHORT).show();
+            main.toast(R.string.fail_show_history);
         }
         if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(matches.size()-1));
     }
-    //Thread: Background
-    private void storeMatches(){
+    private void storeMatches(){//Thread: BG
         try{
             JSONArray jaMatches = new JSONArray(matches);
             FileOutputStream fos = main.openFileOutput(main.getString(R.string.matches_filename), Context.MODE_PRIVATE);
@@ -241,9 +240,9 @@ public class TabHistory extends LinearLayout{
                 }
             }
         }
-        showMatches(main);
+        showMatches();
         selectionChanged();
-        Main.executorService.submit(this::storeMatches);
+        main.runInBackground(this::storeMatches);
     }
     void selectionChanged(){
         bExport.setVisibility(View.GONE);
@@ -260,22 +259,21 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    //Thread: UI
-    void updateMatch(JSONObject match){
+    void updateMatch(JSONObject match){//Thread: UI
         try{
             long match_id = match.getLong("matchid");
             for(int i = 0; i < matches.size(); i++){
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
-                    showMatches(main);
-                    Main.executorService.submit(this::storeMatches);
+                    showMatches();
+                    main.runInBackground(this::storeMatches);
                     return;
                 }
             }
             if(match.has("timer")) match.remove("timer");
             matches.add(match);
-            showMatches(main);
-            Main.executorService.submit(this::storeMatches);
+            showMatches();
+            main.runInBackground(this::storeMatches);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());
         }
@@ -293,44 +291,55 @@ public class TabHistory extends LinearLayout{
         return selected.toString();
     }
 
-    private void upgradeFormatOfMatches(){
+    private void checkFormatOfMatch(JSONObject match){
+        try{
+            //Format 2; Dec 2024; added yellow/red card count
+            if(!match.has("format") || match.getInt("format") >= 2) return;
+            int home_yellow_cards = 0;
+            int away_yellow_cards = 0;
+            int home_red_cards = 0;
+            int away_red_cards = 0;
+            JSONArray events = match.getJSONArray("events");
+            for(int i = 0; i < events.length(); i++){
+                JSONObject event = events.getJSONObject(i);
+                if(event.getString("what").equals("YELLOW CARD")){
+                    if(event.getString("team").equals("home")){
+                        home_yellow_cards++;
+                    }else{
+                        away_yellow_cards++;
+                    }
+                }
+                if(event.getString("what").equals("RED CARD")){
+                    if(event.getString("team").equals("home")){
+                        home_red_cards++;
+                    }else{
+                        away_red_cards++;
+                    }
+                }
+            }
+            JSONObject home = match.getJSONObject("home");
+            home.put("yellow_cards", home_yellow_cards);
+            home.put("red_cards", home_red_cards);
+            match.put("home", home);
+            JSONObject away = match.getJSONObject("away");
+            away.put("yellow_cards", away_yellow_cards);
+            away.put("red_cards", away_red_cards);
+            match.put("away", away);
+            match.put("format", 2);
+        }catch(Exception e){
+            Log.e(Main.LOG_TAG, "TabHistory.checkFormatOfMatch Exception: " + e.getMessage());
+        }
+    }
+    private void checkFormatOfMatches(){
         try{
             for(int i = 0; i < matches.size(); i++){
                 JSONObject match = matches.get(i);
-                if(!match.has("format")){
-                    JSONArray events = match.getJSONArray("events");
-                    JSONObject settings = match.getJSONObject("settings");
-                    int points_try = settings.getInt("points_try");
-                    int points_con = settings.getInt("points_con");
-                    int points_goal = settings.getInt("points_goal");
-                    int[] score = {0, 0};
-
-                    for(int j = 0; j < events.length(); j++){
-                        JSONObject event = events.getJSONObject(j);
-                        String what = event.getString("what");
-                        //Replace Result... with END and add score (pre format 1)
-                        if(event.has("team")) TabReport.calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
-                        if(what.equals("END") || what.startsWith("Result")){
-                            String sScore = score[0] + ":" + score[1];
-                            event.put("score", sScore);
-                            event.put("what", "END");
-                        }
-                        //Replace Start... with START (pre format 1)
-                        if(what.startsWith("Start")){
-                            event.put("what", "START");
-                        }
-                        //Convert timer to long if string
-                        if(event.get("timer") instanceof String){
-                            event.put("timer", Long.parseLong(event.getString("timer"), 10));
-                        }
-                    }
-                    //Add match format version (pre format 1)
-                    match.put("format", 1);//September 2023
+                if(match.has("format") && match.getInt("format") < 2){
+                    checkFormatOfMatch(match);
                 }
             }
         }catch(Exception e){
-            Log.e(Main.LOG_TAG, "TabHistory.upgradeFormatOfMatches Exception: " + e.getMessage());
-            main.toast(R.string.fail_show_history);
+            Log.e(Main.LOG_TAG, "TabHistory.checkFormatOfMatches Exception: " + e.getMessage());
         }
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -15,17 +16,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
 public class Conf extends ConstraintLayout{
+    private Main main;
     private final ScrollView svConf;
+    private final LinearLayout llConf;
     ConfSpinner confSpinner;
-    private static ArrayList<ConfItem> confItems;
+    private ArrayList<ConfItem> confItems;
     final static JSONArray customMatchTypes = new JSONArray();
     private boolean isInitialized;
-    private static int itemHeight;
-    private static float scalePerPixel = 0;
-    private static float bottom_quarter;
-    private static float below_screen;
 
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -34,10 +32,22 @@ public class Conf extends ConstraintLayout{
         inflater.inflate(R.layout.conf, this, true);
         confSpinner = findViewById(R.id.confSpinner);
         svConf = findViewById(R.id.svConf);
+        llConf = findViewById(R.id.llConf);
+    }
+    void onCreateMain(Main main){
+        this.main = main;
+        if(Main.isScreenRound){
+            main.si_addLayout(svConf, llConf);
+            llConf.setPadding(Main._10dp, 0, Main._10dp, Main.vh25);
+            TextView label = findViewById(R.id.confLabel);
+            label.getLayoutParams().height = Main.vh30;
+            label.setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
+        }
     }
 
     void requestSVFocus(){svConf.requestFocus();}
     void show(Main main){
+        Log.d(Main.LOG_TAG, "Conf.show isInitialized:" + isInitialized);
         if(isInitialized){
             setVisibility(View.VISIBLE);
             svConf.fullScroll(View.FOCUS_UP);
@@ -45,7 +55,7 @@ public class Conf extends ConstraintLayout{
             return;
         }
         isInitialized = true;
-        LinearLayout llConf = findViewById(R.id.llConf);
+
         confItems = new ArrayList<>();
         for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
@@ -55,50 +65,10 @@ public class Conf extends ConstraintLayout{
             main.addOnTouch(confItem);
         }
 
-        if(Main.isScreenRound){
-            getViewTreeObserver().addOnGlobalLayoutListener(()->{
-                if(scalePerPixel > 0) return;
-                itemHeight = confItems.get(0).getHeight();
-                bottom_quarter = Main.vh75 - itemHeight;
-                below_screen = Main.heightPixels - itemHeight;
-                scalePerPixel = 0.2f / Main.vh25;
-                scaleItems(0);
-                svConf.setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
-            });
-        }
-
-        updateValues();
+        for(ConfItem confItem : confItems) confItem.updateValue();
         setVisibility(View.VISIBLE);
         svConf.fullScroll(View.FOCUS_UP);
         svConf.requestFocus();
-    }
-
-    private static void updateValues(){//Thread: Always on UI thread
-        for(ConfItem confItem : confItems) confItem.updateValue();
-    }
-
-    private void scaleItems(int scrollY){
-        float top;
-        float scale;
-        for(ConfItem item : confItems){
-            top = item.getY() - scrollY;
-            scale = 1.0f;
-            if(top < 0){
-                //the item is above the screen
-                scale = 0.8f;
-            }else if(top < Main.vh25){
-                //the item is in the top quarter
-                scale = 0.8f + (scalePerPixel * top);
-            }else if(top > below_screen){
-                //the item is below the screen
-                scale = 0.8f;
-            }else if(top > bottom_quarter){
-                //the item is in the bottom quarter
-                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
-            }
-            item.setScaleX(scale);
-            item.setScaleY(scale);
-        }
     }
 
     private void onConfItemClick(Main main, ConfItem confItem, ConfItem.ConfItemType type){
@@ -133,9 +103,7 @@ public class Conf extends ConstraintLayout{
                 break;
             case HELP:
                 main.showHelp();
-                break;
-            case COMMS_LOG:
-                main.showCommsLog();
+                setVisibility(View.GONE);
                 break;
         }
     }
@@ -233,13 +201,8 @@ public class Conf extends ConstraintLayout{
                 loadCustomMatchType(matchType);
         }
         Main.timer_period_time = Main.match.period_time;
-        updateValues();
-        if(Main.isScreenRound){
-            confItems.get(0).getViewTreeObserver().addOnPreDrawListener(()->{
-                scaleItems(svConf.getScrollY());
-                return true;
-            });
-        }
+        for(ConfItem confItem : confItems) confItem.updateValue();
+        main.si_scaleItemsAfterChange(llConf, svConf);
     }
     private void loadCustomMatchType(String name){//Thread: Always on UI thread
         try{

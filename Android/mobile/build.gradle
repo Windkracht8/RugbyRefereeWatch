@@ -6,8 +6,8 @@ android {
         minSdk 28
         targetSdk 35
         compileSdk 35
-        versionCode 335
-        versionName "3.11"
+        versionCode 341
+        versionName "m3.11"
     }
     buildTypes {
         release {

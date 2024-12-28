@@ -49,7 +49,6 @@
             android:inputType="number"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:textColorHint="#78909C"
             android:textSize="18sp" />
     </LinearLayout>
     <EditText

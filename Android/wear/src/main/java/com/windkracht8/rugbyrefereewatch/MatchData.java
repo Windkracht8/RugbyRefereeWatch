@@ -9,9 +9,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 class MatchData{
+    static final int[] player_nos = new int[] {
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
+            ,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50
+    };
+
     long match_id;
-    /** @noinspection FieldCanBeLocal*/
-    private final int FORMAT = 1;//September 2023
+    private final static int FORMAT = 2;//December 2024; added yellow/red card count
     final ArrayList<event> events = new ArrayList<>();
     team home;
     team away;
@@ -67,6 +71,7 @@ class MatchData{
             Log.e(Main.LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
             main.toast(R.string.fail_read_match);
         }
+        //Log.d(Main.LOG_TAG, "MatchData.toJson result: " + ret);
         return ret;
     }
     void clear(){
@@ -78,6 +83,8 @@ class MatchData{
         home.cons = 0;
         home.pen_tries = 0;
         home.goals = 0;
+        home.yellow_cards = 0;
+        home.red_cards = 0;
         home.pens = 0;
         home.sinbins.clear();
         home.kickoff = false;
@@ -87,6 +94,8 @@ class MatchData{
         away.cons = 0;
         away.pen_tries = 0;
         away.goals = 0;
+        away.yellow_cards = 0;
+        away.red_cards = 0;
         away.pens = 0;
         away.sinbins.clear();
         away.kickoff = false;
@@ -96,7 +105,11 @@ class MatchData{
         team team_edit = event_del.team.equals("home") ? home : away;
 
         switch(event_del.what){
+            case "RED CARD":
+                team_edit.red_cards--;
+                break;
             case "YELLOW CARD":
+                team_edit.yellow_cards--;
                 for(sinbin sb : team_edit.sinbins){
                     if(event_del.id == sb.id){
                         team_edit.sinbins.remove(sb);
@@ -134,6 +147,8 @@ class MatchData{
         int cons = 0;
         int pen_tries = 0;
         int goals = 0;
+        int yellow_cards = 0;
+        int red_cards = 0;
         int pens = 0;
         final ArrayList<sinbin> sinbins = new ArrayList<>();
         boolean kickoff = false;
@@ -152,6 +167,8 @@ class MatchData{
                 cons = team_js.getInt("cons");
                 pen_tries = team_js.getInt("pen_tries");
                 goals = team_js.getInt("goals");
+                if(team_js.has("yellow_cards")) yellow_cards = team_js.getInt("yellow_cards");
+                if(team_js.has("yellow_cards")) red_cards = team_js.getInt("red_cards");
                 pens = team_js.getInt("pens");
                 kickoff = team_js.getBoolean("kickoff");
             }catch(JSONException e){
@@ -182,6 +199,8 @@ class MatchData{
                 ret.put("cons", cons);
                 ret.put("pen_tries", pen_tries);
                 ret.put("goals", goals);
+                ret.put("yellow_cards", yellow_cards);
+                ret.put("red_cards", red_cards);
                 ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
@@ -208,8 +227,7 @@ class MatchData{
             this.what = what;
             this.team = team;
             this.who = who;
-            if(what.equals("END"))
-                score = Main.match.home.tot + ":" + Main.match.away.tot;
+            if(what.equals("END")) score = Main.match.home.tot + ":" + Main.match.away.tot;
         }
         private event(Main main, JSONObject event_json){
             try{

@@ -21,11 +21,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +73,8 @@ public class Main extends Activity{
     private Button bBottom;
     private ImageButton bConf;
     private ImageButton bConfWatch;
+    private LinearLayout confirm;
+    private TextView confirm_text;
     private Conf conf;
     private ConfWatch confWatch;
     private Score score;
@@ -80,20 +84,16 @@ public class Main extends Activity{
     private Report report;
     private MatchLog matchLog;
     private Help help;
-    CommsBTLog commsBTLog;
     private View touchView;
 
-    static int heightPixels;
     private static int widthPixels;
     static int vh5;
     static int vh10;
     static int vh15;
     static int vh25;
-    private static int vh30;
+    static int vh30;
     private static int vh40;
-    static int vh75;
     static int _10dp;
-    static int _50dp;
 
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
@@ -114,9 +114,9 @@ public class Main extends Activity{
     private static int battery_capacity = -1;
 
     static final MatchData match = new MatchData();
-    private Handler handler_main;
+    private Handler handler;
     private ExecutorService executorService;
-    private static Vibrator vibrator;
+    private Vibrator vibrator;
     private CommsBT commsBT;
     private BatteryManager batteryManager;
 
@@ -126,6 +126,11 @@ public class Main extends Activity{
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
     private static boolean hasBTPermission = false;
+    private float si_scale_per_pixel = 0;
+    private int si_bottom_quarter;
+    private int si_below_screen;
+    private int confirm_count;
+    private long confirm_start_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -133,6 +138,7 @@ public class Main extends Activity{
         splashScreen.setKeepOnScreenCondition(() -> showSplash);
         super.onCreate(savedInstanceState);
         isScreenRound = getResources().getConfiguration().isScreenRound();
+        int heightPixels;
         if(Build.VERSION.SDK_INT >= 30){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
             widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
@@ -143,16 +149,28 @@ public class Main extends Activity{
             widthPixels = displayMetrics.widthPixels;
         }
         SWIPE_THRESHOLD = (int) (widthPixels * .3);
+        vh5 = (int) (heightPixels * .05);
+        vh10 = heightPixels / 10;
+        vh15 = (int) (heightPixels * .15);
+        int vh20 = (int) (heightPixels * .2);
+        vh25 = (int) (heightPixels * .25);
+        vh30 = (int) (heightPixels * .3);
+        vh40 = (int) (heightPixels * .4);
+        int vh75 = (int) (heightPixels * .75);
         _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
-        _50dp = getResources().getDimensionPixelSize(R.dimen._50dp);
+
+        int si_item_height = getResources().getDimensionPixelSize(R.dimen.si_item_height);
+        si_bottom_quarter = vh75 - si_item_height;
+        si_below_screen = heightPixels - si_item_height;
+        si_scale_per_pixel = 0.2f / vh25;
 
         if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
+            Log.d(LOG_TAG, "vibrator: " + vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_CLICK));
         }else{
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
-        executorService = Executors.newFixedThreadPool(4);
-        handler_main = new Handler(Looper.getMainLooper());
+        handler = new Handler(Looper.getMainLooper());
         commsBT = new CommsBT(this);
         batteryManager = (BatteryManager)getSystemService(BATTERY_SERVICE);
         setContentView(R.layout.main);
@@ -173,7 +191,6 @@ public class Main extends Activity{
                 ,R.id.report, R.id.svReport
                 ,R.id.correct, R.id.svCorrect
                 ,R.id.help, R.id.svHelp
-                ,R.id.commsBTLog, R.id.svCommsBTLog
         };
         for(int id : ids){
             findViewById(id).setOnTouchListener(this::onTouch);
@@ -200,11 +217,16 @@ public class Main extends Activity{
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v -> bBottomClick());
         conf = findViewById(R.id.conf);
+        conf.onCreateMain(this);
+        conf.confSpinner.onCreateMain(this);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v -> conf.show(this));
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v -> confWatch.show(this));
+        confirm = findViewById(R.id.confirm);
+        confirm_text = findViewById(R.id.confirm_text);
+        findViewById(R.id.confirm_cancel).setOnClickListener(v -> confirm_cancel());
 
         score = findViewById(R.id.score);
         score.onCreateMain(this);
@@ -212,12 +234,13 @@ public class Main extends Activity{
         foulPlay.onCreateMain(this);
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v -> correctClicked());
+        correct.onCreateMain(this);
         report = findViewById(R.id.report);
         matchLog = findViewById(R.id.matchLog);
+        matchLog.onCreateMain(this);
         bMatchLog = findViewById(R.id.bMatchLog);
         bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
         help = findViewById(R.id.help);
-        commsBTLog = findViewById(R.id.commsBTLog);
         pen_label = findViewById(R.id.pen_label);
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v -> bPenHomeClick());
@@ -227,14 +250,6 @@ public class Main extends Activity{
         extraTime.onCreateMain(this);
 
         //Resize elements for the heightPixels
-        vh5 = (int) (heightPixels * .05);
-        vh10 = heightPixels / 10;
-        vh15 = (int) (heightPixels * .15);
-        int vh20 = (int) (heightPixels * .2);
-        vh25 = (int) (heightPixels * .25);
-        vh30 = (int) (heightPixels * .3);
-        vh40 = (int) (heightPixels * .4);
-        vh75 = (int) (heightPixels * .75);
         battery.setHeight(vh10);
         time.setHeight(vh15);
         score_home.setHeight(vh25);
@@ -275,15 +290,10 @@ public class Main extends Activity{
         }
 
         if(timer_status == TimerStatus.CONF){
-            if(Build.VERSION.SDK_INT >= 31){
-                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT);
-            }else{
-                hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
-            }
-            requestPermissions();
-            executorService.submit(() -> FileStore.readCustomMatchTypes(this));
-            executorService.submit(() -> FileStore.readSettings(this));
-            executorService.submit(() -> FileStore.cleanMatches(this));
+            checkPermissions();
+            runInBackground(()-> FileStore.readCustomMatchTypes(this));
+            runInBackground(()-> FileStore.readSettings(this));
+            runInBackground(()-> FileStore.cleanMatches(this));
         }else{
             updateScore();
         }
@@ -293,18 +303,19 @@ public class Main extends Activity{
         updateSinbins();
         updateButtons();
         updateAfterConfig();
-        initBT();
+        startBT();
         showSplash = false;
     }
     @Override
     public void onDestroy(){
         super.onDestroy();
-        commsBT.stopComms();
+        commsBT.stopBT();
         stopOngoingNotification();
     }
 
-    private void requestPermissions(){
+    private void checkPermissions(){
         if(Build.VERSION.SDK_INT >= 33){
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT);
             if(!hasPermission(Manifest.permission.POST_NOTIFICATIONS)
                     || !hasBTPermission
             ){
@@ -313,11 +324,13 @@ public class Main extends Activity{
                         ,Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
         }else if(Build.VERSION.SDK_INT >= 31){
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT);
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
         }else{
+            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
             if(!hasBTPermission){
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.BLUETOOTH}, 1);
@@ -335,15 +348,16 @@ public class Main extends Activity{
                     permissions[i].equals(Manifest.permission.BLUETOOTH)){
                 if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     hasBTPermission = true;
-                    commsBTLog.addToLog(getString(R.string.bt_permission_granted));
-                    initBT();
-                }else{
-                    hasBTPermission = false;
-                    commsBTLog.addToLog(getString(R.string.bt_permission_rejected));
+                    startBT();
                 }
                 return;
             }
         }
+    }
+
+    private void runInBackground(Runnable runnable){
+        if(executorService == null) executorService = Executors.newCachedThreadPool();
+        executorService.execute(runnable);
     }
 
     void toast(int message){
@@ -359,10 +373,7 @@ public class Main extends Activity{
         return super.onKeyDown(keyCode, event);
     }
     private void onBack(){
-        if(commsBTLog.getVisibility() == View.VISIBLE){
-            commsBTLog.setVisibility(View.GONE);
-            conf.requestSVFocus();
-        }else if(help.getVisibility() == View.VISIBLE){
+        if(help.getVisibility() == View.VISIBLE){
             help.setVisibility(View.GONE);
         }else if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
@@ -372,24 +383,28 @@ public class Main extends Activity{
             matchLog.setVisibility(View.GONE);
         }else if(extraTime.getVisibility() == View.VISIBLE){
             extraTime.setVisibility(View.GONE);
+        }else if(foulPlay.svPlayerNo.getVisibility() == View.VISIBLE){
+            foulPlay.svPlayerNo.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
+        }else if(score.svPlayerNo.getVisibility() == View.VISIBLE){
+            score.svPlayerNo.setVisibility(View.GONE);
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(this));
+            runInBackground(() -> FileStore.storeSettings(this));
         }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
             conf.confSpinner.setVisibility(View.GONE);
             conf.requestSVFocus();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            executorService.submit(() -> FileStore.storeSettings(this));
+            runInBackground(() -> FileStore.storeSettings(this));
         }else{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
-                System.exit(0);
+                finish();
             }else{
                 correct.show(this);
             }
@@ -427,7 +442,7 @@ public class Main extends Activity{
                     float move = event.getRawX() - onTouchStartX;
                     float scale = 1 - move/widthPixels;
                     if(isScreenRound){
-                        touchView.setBackgroundResource(R.drawable.round_bg);
+                        touchView.setBackgroundResource(R.drawable.bg_round);
                     }
                     touchView.animate().x(move)
                             .scaleX(scale).scaleY(scale)
@@ -460,9 +475,7 @@ public class Main extends Activity{
     private void onTouchInit(MotionEvent event){
         onTouchStartY = event.getRawY();
         onTouchStartX = event.getRawX();
-        if(commsBTLog.getVisibility() == View.VISIBLE){
-            touchView = commsBTLog;
-        }else if(help.getVisibility() == View.VISIBLE){
+        if(help.getVisibility() == View.VISIBLE){
             touchView = help;
         }else if(correct.getVisibility() == View.VISIBLE){
             touchView = correct;
@@ -472,8 +485,12 @@ public class Main extends Activity{
             touchView = matchLog;
         }else if(extraTime.getVisibility() == View.VISIBLE){
             touchView = extraTime;
+        }else if(foulPlay.svPlayerNo.getVisibility() == View.VISIBLE){
+            touchView = foulPlay.svPlayerNo;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             touchView = foulPlay;
+        }else if(score.svPlayerNo.getVisibility() == View.VISIBLE){
+            touchView = score.svPlayerNo;
         }else if(score.getVisibility() == View.VISIBLE){
             touchView = score;
         }else if(confWatch.getVisibility() == View.VISIBLE){
@@ -496,15 +513,55 @@ public class Main extends Activity{
     private float getBackSwipeVelocity(MotionEvent event, float diffX){
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
     }
-    private void initBT(){
-        if(timer_status != TimerStatus.CONF && timer_status != TimerStatus.FINISHED) return;
-        if(!hasBTPermission){//Thread: If it does not have BT permission it is called from UI thread
-            Log.d(LOG_TAG, "initBT !hasBTPermission");
-            commsBTLog.addToLog(getString(R.string.no_bt_permission));
-            return;
+    void si_addLayout(ScrollView sv, LinearLayout ll){
+        if(!isScreenRound) return;
+        ll.setPadding(vh5, vh25, vh5, vh25);
+        sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                if(ll.getChildCount() > 0 && ll.getChildAt(0).getHeight() > 0){
+                    sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    si_scaleItems(ll, 0);
+                    sv.setOnScrollChangeListener((v, sx, sy, osx, osy)->si_scaleItems(ll, sy));
+                }
+            }
+        });
+    }
+    void si_scaleItemsAfterChange(LinearLayout ll, ScrollView sv){
+        sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            @Override
+            public void onGlobalLayout(){
+                sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                si_scaleItems(ll, sv.getScrollY());
+            }
+        });
+    }
+    private void si_scaleItems(LinearLayout ll, int scrollY){
+        for(int i = 0; i < ll.getChildCount(); i++){
+            View item = ll.getChildAt(i);
+            float top = (ll.getY() + item.getY()) - scrollY;
+            float scale = 1.0f;
+            if(top < 0){
+                scale = 0.8f;
+            }else if(top < Main.vh25){
+                scale = 0.8f + (si_scale_per_pixel * top);
+            }else if(top > si_below_screen){
+                scale = 0.8f;
+            }else if(top > si_bottom_quarter){
+                scale = 1.0f - (si_scale_per_pixel * (top - si_bottom_quarter));
+            }
+            item.setScaleX(scale);
+            item.setScaleY(scale);
         }
+    }
 
-        executorService.submit(commsBT::startComms);
+    private void startBT(){
+        if(!hasBTPermission ||
+                timer_status == TimerStatus.RUNNING ||
+                timer_status == TimerStatus.TIME_OFF ||
+                timer_status == TimerStatus.REST ||
+                timer_status == TimerStatus.READY) return;
+        runInBackground(()-> commsBT.startBT());
     }
 
     private void timerClick(){
@@ -514,20 +571,20 @@ public class Main extends Activity{
             timer_start_time_off = getCurrentTimestamp();
             match.logEvent("TIME OFF", null, 0, 0);
             updateButtons();
-            handler_main.postDelayed(this::timeOffBuzz, 15000);
+            handler.postDelayed(this::timeOffBuzz, 15000);
         }
     }
     private void timeOffBuzz(){
         if(timer_status == TimerStatus.TIME_OFF){
             beep();
-            handler_main.postDelayed(this::timeOffBuzz, 15000);
+            handler.postDelayed(this::timeOffBuzz, 15000);
         }
     }
     private void bOverTimerClick(){
         switch(timer_status){
             case CONF:
                 match.match_id = getCurrentTimestamp();
-                executorService.submit(commsBT::stopComms);
+                runInBackground(commsBT::stopBT);
             case READY:
                 singleBeep();
                 timer_status = TimerStatus.RUNNING;
@@ -561,36 +618,7 @@ public class Main extends Activity{
     private void bBottomClick(){
         switch(timer_status){
             case TIME_OFF:
-                //How did someone get here with no events in the match?
-                if(!match.events.isEmpty() && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
-                    match.events.remove(match.events.size()-1);
-                }
-                match.logEvent("END", null, 0, 0);
-
-                timer_status = TimerStatus.REST;
-                timer_start = getCurrentTimestamp();
-                timer_period_ended = false;
-                timer_type_period = 0;
-                tTimer.setTextColor(getResources().getColor(R.color.white, getTheme()));
-
-                for(MatchData.sinbin sb : match.home.sinbins){
-                    sb.end = sb.end - timer_timer;
-                }
-                for(MatchData.sinbin sb : match.away.sinbins){
-                    sb.end = sb.end - timer_timer;
-                }
-
-                String kickoffTeam = getKickoffTeam();
-                if(kickoffTeam != null){
-                    if(kickoffTeam.equals("home")){
-                        kickoffTeam = match.home.tot + " " + getString(R.string.kick);
-                        score_home.setText(kickoffTeam);
-                    }else{
-                        kickoffTeam = match.away.tot + " " + getString(R.string.kick);
-                        score_away.setText(kickoffTeam);
-                    }
-                }
-                updateButtons();
+                confirm_start();
                 break;
             case REST:
                 timer_status = TimerStatus.FINISHED;
@@ -598,8 +626,8 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 updateScore();
 
-                executorService.submit(() -> FileStore.storeMatch(this));
-                initBT();
+                runInBackground(() -> FileStore.storeMatch(this));
+                startBT();
                 stopOngoingNotification();
                 updateButtons();
                 break;
@@ -721,6 +749,52 @@ public class Main extends Activity{
         }
         updateTimer();
     }
+    private void confirm_start(){
+        confirm_start_time = getCurrentTimestamp();
+        confirm_count = 11;
+        confirm_update();
+        confirm.setVisibility(View.VISIBLE);
+    }
+    private void confirm_cancel(){
+        confirm_count = -1;
+        confirm.setVisibility(View.GONE);
+    }
+    private void confirm_update(){
+        if(confirm_count == -1) return;
+        confirm_count--;
+        if(confirm_count > 0){
+            confirm_text.setText(getString(R.string.confirm_text).replace("10", String.valueOf(confirm_count)));
+            handler.postDelayed(this::confirm_update, 1000);
+            return;
+        }
+        //How did someone get here with no events in the match?
+        if(!match.events.isEmpty() && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
+            match.events.remove(match.events.size()-1);
+        }
+        match.logEvent("END", null, 0, confirm_start_time);
+
+        timer_status = TimerStatus.REST;
+        timer_start = confirm_start_time;
+        timer_period_ended = false;
+        timer_type_period = 0;
+        tTimer.setTextColor(getResources().getColor(R.color.white, getTheme()));
+
+        match.home.sinbins.forEach(sb-> sb.end -= timer_timer);
+        match.away.sinbins.forEach(sb-> sb.end -= timer_timer);
+
+        String kickoffTeam = getKickoffTeam();
+        if(kickoffTeam != null){
+            if(kickoffTeam.equals("home")){
+                kickoffTeam = match.home.tot + " " + getString(R.string.kick);
+                score_home.setText(kickoffTeam);
+            }else{
+                kickoffTeam = match.away.tot + " " + getString(R.string.kick);
+                score_away.setText(kickoffTeam);
+            }
+        }
+        updateButtons();
+        confirm.setVisibility(View.GONE);
+    }
     private void update(){
         long milli_secs = updateTime();
         switch(timer_status){
@@ -730,7 +804,7 @@ public class Main extends Activity{
                 updateTimer();
                 break;
         }
-        handler_main.postDelayed(this::update, 1000 - milli_secs);
+        handler.postDelayed(this::update, 1000 - milli_secs);
     }
 
     void updateAfterConfig(){//Thread: Always on UI thread
@@ -881,14 +955,14 @@ public class Main extends Activity{
         }
     }
     private void updateBattery(){
-        executorService.submit(() -> battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+        runInBackground(() -> battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
         if(battery_capacity < 0){
             battery.setText("---%");
-            handler_main.postDelayed(this::updateBattery, 100);
+            handler.postDelayed(this::updateBattery, 100);
         }else{
             String tmp = battery_capacity + "%";
             battery.setText(tmp);
-            handler_main.postDelayed(this::updateBattery, 10000);
+            handler.postDelayed(this::updateBattery, 10000);
         }
     }
     private void bPenHomeClick(){
@@ -976,7 +1050,7 @@ public class Main extends Activity{
     }
     void foulPlayClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
-        foulPlay.setPlayer(score.player_no);
+        foulPlay.onPlayerNoClick(score.player_no);
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
@@ -990,6 +1064,7 @@ public class Main extends Activity{
         updateSinbins();
         foulPlay.setVisibility(View.GONE);
         score.clear();
+        score.team.yellow_cards++;
         if(record_pens){
             score.team.pens++;
             updateScore();
@@ -1012,6 +1087,7 @@ public class Main extends Activity{
         match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
         foulPlay.setVisibility(View.GONE);
         score.clear();
+        score.team.red_cards++;
         if(record_pens){
             score.team.pens++;
             updateScore();
@@ -1127,7 +1203,7 @@ public class Main extends Activity{
 
             if(jsonSettings.has("help_version") && HELP_VERSION != jsonSettings.getInt("help_version")){
                 showHelp();
-                executorService.submit(() -> FileStore.storeSettings(this));
+                runInBackground(() -> FileStore.storeSettings(this));
             }
             runOnUiThread(this::updateAfterConfig);
         }catch(Exception e){
@@ -1135,14 +1211,11 @@ public class Main extends Activity{
             toast(R.string.fail_read_settings);
         }
     }
-    void noSettings(){//Thread: Called from background thread
+    void noSettings(){//Thread: BG
         runOnUiThread(() -> help.show(true));
     }
-    void showHelp(){
+    void showHelp(){//Thread: Mixed
         runOnUiThread(() -> help.show(false));
-    }
-    void showCommsLog(){
-        runOnUiThread(() -> commsBTLog.show(this));
     }
 
     static JSONObject getSettings(){
@@ -1187,14 +1260,8 @@ public class Main extends Activity{
 
     private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
     private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
-    static void beep(){
-        vibrator.cancel();
-        vibrator.vibrate(ve_pattern);
-    }
-    private static void singleBeep(){
-        vibrator.cancel();
-        vibrator.vibrate(ve_single);
-    }
+    void beep(){vibrator.vibrate(ve_pattern);}
+    private void singleBeep(){vibrator.vibrate(ve_single);}
 
     private void startOngoingNotification(){
         if(Build.VERSION.SDK_INT < 30){return;}

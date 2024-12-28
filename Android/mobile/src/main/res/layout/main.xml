@@ -6,8 +6,8 @@
     android:layout_height="match_parent">
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="80sp"
-        android:layout_height="80sp"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
         android:contentDescription="@string/icon_desc"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,9 +17,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:minHeight="35sp"
-        android:text="@string/connect"
         android:gravity="center_vertical"
         android:textSize="18sp"
+        android:text="@string/connect"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -28,6 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon">
         <TextView
             android:id="@+id/tabHistoryLabel"
@@ -60,28 +62,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs"
+        app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.TabReport
         android:id="@+id/tabReport"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs"
+        app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.TabPrepare
         android:id="@+id/tabPrepare"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llTabs" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llTabs"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

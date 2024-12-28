@@ -27,7 +27,6 @@
     <string name="prepare">Prepare</string>
     <string name="svMatches_desc">History of matches</string>
 
-    <string name="explainDoubleBack">Press back twice to close</string>
     <string name="home">home</string>
     <string name="away">away</string>
     <string-array name="teams">
@@ -53,6 +52,8 @@
     <string name="goals">Goals</string>
     <string name="pen_goals">Penalty goals</string>
     <string name="drop_goals">Drop goals</string>
+    <string name="yellow_cards">Yellow cards</string>
+    <string name="red_cards">Red cards</string>
     <string name="penalties">Penalties</string>
     <string name="total">Total</string>
     <string name="svEvents_desc">Events in match</string>
@@ -72,6 +73,7 @@
     <string name="match_report">Match report</string>
     <string name="dialog_share_message">What to include?</string>
     <string name="dialog_share_time">Time off/on</string>
+    <string name="dialog_share_cards">Cards</string>
     <string name="dialog_share_pens">Penalties</string>
     <string name="dialog_share_clock">Clock time</string>
 
@@ -168,8 +170,7 @@
     <string name="connected_to">Connected to</string>
     <string name="disconnected">Disconnected, tap icon to connect</string>
 
-    <string name="fail_BT_denied">No Bluetooth permission. Close app, allow nearby devices, try
-        again.</string>
+    <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
     <string name="fail_BT_off">Bluetooth turned off</string>
     <string name="fail_BT_no_devices">No bluetooth devices, pair your watch first</string>
     <string name="fail_BT">That did not work, tap icon to connect with watch</string>

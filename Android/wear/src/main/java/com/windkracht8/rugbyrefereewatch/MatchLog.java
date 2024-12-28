@@ -19,11 +19,6 @@ import java.util.Locale;
 public class MatchLog extends ScrollView{
     private final LinearLayout llMatchLogItems;
 
-    private static int itemHeight;
-    private static float scalePerPixel = 0;
-    private static float bottom_quarter;
-    private static float below_screen;
-
     public MatchLog(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,46 +42,20 @@ public class MatchLog extends ScrollView{
             main.toast(R.string.fail_show_log);
         }
 
-        if(Main.isScreenRound){
-            getViewTreeObserver().addOnGlobalLayoutListener(()->{
-                if(scalePerPixel > 0 || llMatchLogItems.getChildCount() == 0) return;
-                itemHeight = llMatchLogItems.getChildAt(0).getHeight();
-                bottom_quarter = Main.vh75 - itemHeight;
-                below_screen = Main.heightPixels - itemHeight;
-                scalePerPixel = 0.2f / Main.vh25;
-                scaleItems(0);
-                setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
-            });
-        }
-
         setVisibility(View.VISIBLE);
         fullScroll(View.FOCUS_UP);
         requestFocus();
     }
-    private void scaleItems(int scrollY){
-        float top;
-        float scale;
-        for(int i = 0; i< llMatchLogItems.getChildCount(); i++){
-            View item = llMatchLogItems.getChildAt(i);
-            top = Main._50dp + (item.getY() - scrollY);
-            scale = 1.0f;
-            if(top < 0){
-                //the item is above the screen
-                scale = 0.8f;
-            }else if(top < Main.vh25){
-                //the item is in the top quarter
-                scale = 0.8f + (scalePerPixel * top);
-            }else if(top > below_screen){
-                //the item is below the screen
-                scale = 0.8f;
-            }else if(top > bottom_quarter){
-                //the item is in the bottom quarter
-                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
-            }
-            item.setScaleX(scale);
-            item.setScaleY(scale);
+    void onCreateMain(Main main){
+        if(Main.isScreenRound){
+            main.si_addLayout(this, llMatchLogItems);
+            llMatchLogItems.setPadding(Main._10dp, 0, Main._10dp, Main.vh25);
+            TextView label = findViewById(R.id.matchLogLabel);
+            label.getLayoutParams().height = Main.vh30;
+            label.setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
         }
     }
+
     private void addNewItem(Main main, MatchData match, Report report){
         TextView item = new TextView(main, null, 0, R.style.textView_item);
         Date match_date_d = new Date(match.match_id);

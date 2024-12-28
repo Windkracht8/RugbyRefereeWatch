@@ -11,6 +11,7 @@
         android:textSize="18sp"
         android:textAlignment="center"
         android:textAllCaps="false"
+        android:textColor="@color/button"
         android:visibility="gone"/>
     <ScrollView
         android:id="@+id/svHistory"
@@ -40,6 +41,7 @@
             android:text="@string/bExport_text"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="invisible" />
         <Button
             android:id="@+id/bDelete"

@@ -5,13 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/llHelp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="10dp"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:paddingBottom="50dp" >
+        android:padding="10dp" >
         <LinearLayout
             android:id="@+id/welcome"
             android:layout_width="match_parent"

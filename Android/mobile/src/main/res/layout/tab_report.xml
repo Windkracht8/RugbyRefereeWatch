@@ -127,6 +127,38 @@
                 android:text="@string/_0" />
         </TableRow>
         <TableRow
+            android:id="@+id/trYellowCards" >
+            <TextView android:text="@string/yellow_cards" />
+            <TextView
+                android:id="@+id/tvHomeYellowCards"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/yellow_cards" />
+            <TextView
+                android:id="@+id/tvAwayYellowCards"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/trRedCards" >
+            <TextView android:text="@string/red_cards" />
+            <TextView
+                android:id="@+id/tvHomeRedCards"
+                android:layout_marginEnd="20dp"
+                android:gravity="end"
+                android:text="@string/_0" />
+            <TextView
+                android:layout_marginStart="20dp"
+                android:text="@string/red_cards" />
+            <TextView
+                android:id="@+id/tvAwayRedCards"
+                android:gravity="end"
+                android:text="@string/_0" />
+        </TableRow>
+        <TableRow
             android:id="@+id/trPens" >
             <TextView android:text="@string/penalties" />
             <TextView
@@ -246,7 +278,6 @@
             android:inputType="number"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:textColorHint="#78909C"
             android:textSize="18sp"/>
         <Spinner
             android:id="@+id/team_width_measure"
@@ -272,6 +303,7 @@
             android:text="@string/cancel"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="gone" />
         <Button
             android:id="@+id/bEdit"
@@ -282,6 +314,7 @@
             android:text="@string/edit"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="invisible" />
         <Button
             android:id="@+id/bView"
@@ -292,6 +325,7 @@
             android:text="@string/view"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="invisible" />
         <Button
             android:id="@+id/bSave"
@@ -302,6 +336,7 @@
             android:text="@string/save"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="gone" />
         <Button
             android:id="@+id/bShare"
@@ -312,6 +347,7 @@
             android:text="@string/share"
             android:textAlignment="center"
             android:textAllCaps="false"
+            android:textColor="@color/button"
             android:visibility="invisible" />
     </LinearLayout>
 </LinearLayout>

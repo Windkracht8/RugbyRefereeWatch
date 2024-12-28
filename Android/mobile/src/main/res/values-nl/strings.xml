@@ -7,7 +7,6 @@
     <string name="prepare">Voorbereiden</string>
     <string name="svMatches_desc">Geschiedenis van wedstrijden</string>
 
-    <string name="explainDoubleBack">Druk twee keer op terug om te sluiten</string>
     <string name="home">thuis</string>
     <string name="away">uit</string>
     <string-array name="teams">
@@ -33,6 +32,8 @@
     <string name="goals">Goals</string>
     <string name="pen_goals">Penalty goals</string>
     <string name="drop_goals">Drop goals</string>
+    <string name="yellow_cards">Gele kaarten</string>
+    <string name="red_cards">Rode kaarten</string>
     <string name="penalties">Penalty\'s</string>
     <string name="total">Totaal</string>
     <string name="svEvents_desc">Gebeurtenissen in de wedstrijd</string>
@@ -52,6 +53,7 @@
     <string name="match_report">Wedstrijdrapport</string>
     <string name="dialog_share_message">Wat te laten zien?</string>
     <string name="dialog_share_time">Tijd stop/hervat</string>
+    <string name="dialog_share_cards">Kaarten</string>
     <string name="dialog_share_pens">Penalties</string>
     <string name="dialog_share_clock">Klok tijd</string>
 
@@ -148,8 +150,8 @@
     <string name="connected_to">Verbonden met</string>
     <string name="disconnected">Niet verbonden, tab op het icoon om te verbinden</string>
 
-    <string name="fail_BT_denied">Geen Bluetooth toegang. Sluit en heropen de app, apparaten in de
-        buurt toestaan.</string>
+    <string name="fail_BT_denied">Geen Bluetooth toegang. Apparaten in de buurt toestaan, dan nog
+        eens proberen.</string>
     <string name="fail_BT_off">Bluetooth staat uit</string>
     <string name="fail_BT_no_devices">Er zijn geen apparaten verbonden. Om te verbinden, zorg dat
         er een Bluetooth verbinding is, hou de app op het horloge open, zonder een wedstrijd te

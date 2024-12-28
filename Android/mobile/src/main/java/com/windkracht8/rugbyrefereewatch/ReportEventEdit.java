@@ -135,7 +135,11 @@ class ReportEventEdit extends LinearLayout{
             event.put("team", team.getSelectedItemPosition() == 0 ? "home" : "away");
 
             String who = ((EditText)findViewById(R.id.who)).getText().toString();
-            if(event.has("who") || !who.isEmpty()) event.put("who", Integer.parseInt(who));
+            if(!who.isEmpty()){
+                event.put("who", Integer.parseInt(who));
+            }else if(event.has("who")){
+                event.remove("who");
+            }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "ReportEventEdit.toJson Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match, Toast.LENGTH_SHORT).show();

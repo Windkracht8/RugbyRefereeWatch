@@ -6,8 +6,10 @@ import android.widget.TextView;
 
 class Sinbin extends TextView{
     final MatchData.sinbin sinbin;
+    private final Main main;
     Sinbin(Main main, MatchData.sinbin sinbin, String color){
         super(main);
+        this.main = main;
         this.sinbin = sinbin;
 
         main.addOnTouch(this);
@@ -36,7 +38,7 @@ class Sinbin extends TextView{
             remaining = 0;
             sinbin.ended = true;
             setTextColor(Color.RED);
-            Main.beep();
+            main.beep();
         }
         String tmp = Main.prettyTimer(remaining);
         if(sinbin.who > 0){

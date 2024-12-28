@@ -9,21 +9,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class Correct extends ScrollView{
-    private LinearLayout llCorrectItems;
-
-    private static int itemHeight;
-    private static float scalePerPixel = 0;
-    private static float bottom_quarter;
-    private static float below_screen;
+    private final LinearLayout llCorrectItems;
 
     public Correct(Context context, AttributeSet attrs){
         super(context, attrs);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
         inflater.inflate(R.layout.correct, this, true);
+        llCorrectItems = findViewById(R.id.llCorrectItems);
     }
     void show(Main main){
-        llCorrectItems = findViewById(R.id.llCorrectItems);
         for(int i = llCorrectItems.getChildCount(); i > 0; i--){
             llCorrectItems.removeViewAt(i-1);
         }
@@ -42,46 +37,21 @@ public class Correct extends ScrollView{
             addNewItem(main, event_data);
         }
 
-        if(Main.isScreenRound){
-            getViewTreeObserver().addOnGlobalLayoutListener(()->{
-                if(scalePerPixel > 0 || llCorrectItems.getChildCount() == 0) return;
-                itemHeight = llCorrectItems.getChildAt(0).getHeight();
-                bottom_quarter = Main.vh75 - itemHeight;
-                below_screen = Main.heightPixels - itemHeight;
-                scalePerPixel = 0.2f / Main.vh25;
-                scaleItems(0);
-                setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
-            });
-        }
         fullScroll(View.FOCUS_UP);
         setVisibility(View.VISIBLE);
         animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
         requestFocus();
     }
-    private void scaleItems(int scrollY){
-        float top;
-        float scale;
-        for(int i = 0; i< llCorrectItems.getChildCount(); i++){
-            View item = llCorrectItems.getChildAt(i);
-            top = Main._50dp + (item.getY() - scrollY);
-            scale = 1.0f;
-            if(top < 0){
-                //the item is above the screen
-                scale = 0.8f;
-            }else if(top < Main.vh25){
-                //the item is in the top quarter
-                scale = 0.8f + (scalePerPixel * top);
-            }else if(top > below_screen){
-                //the item is below the screen
-                scale = 0.8f;
-            }else if(top > bottom_quarter){
-                //the item is in the bottom quarter
-                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
-            }
-            item.setScaleX(scale);
-            item.setScaleY(scale);
+    void onCreateMain(Main main){
+        if(Main.isScreenRound){
+            main.si_addLayout(this, llCorrectItems);
+            llCorrectItems.setPadding(Main._10dp, 0, Main._10dp, Main.vh25);
+            TextView label = findViewById(R.id.correctLabel);
+            label.getLayoutParams().height = Main.vh30;
+            label.setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
         }
     }
+
     private void addNewItem(Main main, MatchData.event event){
         TextView item = new TextView(main, null, 0, R.style.textView_item);
         String text = Main.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(main, event.what);

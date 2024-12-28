@@ -7,6 +7,7 @@
     <string name="time_placeholder" translatable="false">00:00:00</string>
     <string name="tTimer_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
+    <string name="no0" translatable="false">#0</string>
 
     <!-- main screen -->
     <string name="bConfWatch_desc">Watch configuration</string>
@@ -38,13 +39,14 @@
     <string name="pen_label_text">pen</string>
     <string name="bPenHome_desc">home penalty count</string>
     <string name="bPenAway_desc">away penalty count</string>
+    <string name="confirm_text">ending in 10 seconds</string>
+    <string name="confirm_cancel">Cancel</string>
 
     <!-- notification -->
     <string name="match_ongoing">Match ongoing</string>
     <string name="open_rrw">Open RRW</string>
 
     <!-- score screen -->
-    <string name="player_desc">player</string>
     <string name="score_try_text">try</string>
     <string name="score_con_text">conversion</string>
     <string name="score_goal_text">goal</string>
@@ -88,7 +90,6 @@
     <string name="record_player">Record player</string>
     <string name="record_pens">Record penalties</string>
     <string name="help">Help</string>
-    <string name="commsBTLog">Bluetooth log</string>
     <string name="on">on</string>
     <string name="off">off</string>
 
@@ -133,34 +134,12 @@
         <item>PENALTY</item>
     </string-array>
 
-    <!-- Bluetooth log -->
-    <string name="no_bt_permission">No Bluetooth permission</string>
-    <string name="bt_permission_rejected">Bluetooth permission rejected</string>
-    <string name="bt_permission_granted">Bluetooth permission granted</string>
-    <string name="bt_disabled">Bluetooth disabled</string>
-    <string name="start_listening">Start listening</string>
-    <string name="stop_listening">Stop listening</string>
-    <string name="onReceiveSync_failed">Problem with sync request:</string>
-    <string name="onReceivePrepare_failed">Problem with prepare request:</string>
-    <string name="sendResponse_failed">Problem with sending response:</string>
-    <string name="listening_failed">Listening failed:</string>
-    <string name="connect_failed">Connecting failed:</string>
-    <string name="input_stream_failed">Input stream failed:</string>
-    <string name="output_stream_failed">Output stream failed:</string>
-    <string name="connection_closed">Connection closed</string>
-    <string name="send_response">Send response:</string>
-    <string name="received_request">Received request:</string>
-    <string name="sendNextResponse_failed">Send response failed:</string>
-    <string name="read_failed">Received failed:</string>
-    <string name="gotRequest_failed">Problem with processing request:</string>
-
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
     <string name="help_bt_title">Bluetooth</string>
     <string name="help_bt">Connection to the Rugby Referee Watch app on your phone works via
-        Bluetooth. You do need to approve permission. The 1st time it can take a few
-        attempts.</string>
+        Bluetooth. You do need to approve permission.</string>
     <string name="help_custom_title">Custom matches</string>
     <string name="help_custom">In the settings you can select the standard match types. If you want
         to change anything, select match type \'custom\', then you can change duration and such. Do
@@ -199,7 +178,6 @@
     <string name="fail_del_matches">Failed to delete matches</string>
     <string name="fail_store_settings">Failed to store settings</string>
     <string name="fail_read_settings">Failed to read settings</string>
-    <string name="fail_request">Problem with request from phone</string>
     <string name="fail_receive_settings">Failed to receive settings</string>
     <string name="fail_store_match_types">Failed to store match types</string>
     <string name="fail_read_file">Failed to read file</string>

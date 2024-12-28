@@ -10,17 +10,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 public class ConfSpinner extends ScrollView{
     private final LinearLayout llConfSpinner;
     private final TextView confSpinnerLabel;
-    private final ArrayList<TextView> confSpinnerItems = new ArrayList<>();
     private boolean isInitialized;
-    private static int itemHeight;
-    private static float scalePerPixel = 0;
-    private static float bottom_quarter;
-    private static float below_screen;
 
     public ConfSpinner(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -31,13 +24,21 @@ public class ConfSpinner extends ScrollView{
         confSpinnerLabel = findViewById(R.id.confSpinnerLabel);
         llConfSpinner = findViewById(R.id.llConfSpinner);
     }
+    void onCreateMain(Main main){
+        if(Main.isScreenRound){
+            main.si_addLayout(this, llConfSpinner);
+            llConfSpinner.setPadding(Main._10dp, 0, Main._10dp, Main.vh25);
+            TextView label = findViewById(R.id.confSpinnerLabel);
+            label.getLayoutParams().height = Main.vh30;
+            label.setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
+        }
+    }
 
     void show(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
         if(isInitialized){
             for(int i = llConfSpinner.getChildCount(); i>1; i--){
                 llConfSpinner.removeViewAt(i-1);
             }
-            confSpinnerItems.clear();
         }
         isInitialized = true;
 
@@ -93,19 +94,10 @@ public class ConfSpinner extends ScrollView{
                 llConfSpinner.addView(confSpinnerItem);
             }
         }
-        if(Main.isScreenRound){
-            getViewTreeObserver().addOnGlobalLayoutListener(()->{
-                if(scalePerPixel > 0) return;
-                itemHeight = confSpinnerItems.get(0).getHeight();
-                bottom_quarter = Main.vh75 - itemHeight;
-                below_screen = Main.heightPixels - itemHeight;
-                scalePerPixel = 0.2f / Main.vh25;
-                scaleItems(0);
-                setOnScrollChangeListener((v, sx, sy, osx, osy)->scaleItems(sy));
-            });
-        }
+
         fullScroll(View.FOCUS_UP);
         setVisibility(View.VISIBLE);
+        main.si_scaleItemsAfterChange(llConfSpinner, this);
         requestFocus();
     }
     private void addCustomMatchTypes(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
@@ -125,31 +117,7 @@ public class ConfSpinner extends ScrollView{
     private TextView newConfSpinnerItem(Main main, String text){
         TextView confSpinnerItem = new TextView(main, null, 0, R.style.textView_item);
         confSpinnerItem.setText(text);
-        confSpinnerItems.add(confSpinnerItem);
         main.addOnTouch(confSpinnerItem);
         return confSpinnerItem;
-    }
-    private void scaleItems(int scrollY){
-        float top;
-        float scale;
-        for(TextView item : confSpinnerItems){
-            top = item.getY() - scrollY;
-            scale = 1.0f;
-            if(top < 0){
-                //the item is above the screen
-                scale = 0.8f;
-            }else if(top < Main.vh25){
-                //the item is in the top quarter
-                scale = 0.8f + (scalePerPixel * top);
-            }else if(top > below_screen){
-                //the item is below the screen
-                scale = 0.8f;
-            }else if(top > bottom_quarter){
-                //the item is in the bottom quarter
-                scale = 1.0f - (scalePerPixel * (top - bottom_quarter));
-            }
-            item.setScaleX(scale);
-            item.setScaleY(scale);
-        }
     }
 }

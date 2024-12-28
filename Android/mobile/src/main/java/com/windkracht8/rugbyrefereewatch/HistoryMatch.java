@@ -28,13 +28,13 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         this.match = match;
         this.last = last;
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        setMinHeight(getResources().getDimensionPixelSize(R.dimen.minTouchSize));
+        setMinHeight(getResources().getDimensionPixelSize(R.dimen._48dp));
         setGravity(Gravity.CENTER_VERTICAL);
         setPadding(10, 10, 10, 10);
-        int historyMatchPadding = getResources().getDimensionPixelSize(R.dimen.historyMatchPadding);
-        setPadding(historyMatchPadding, historyMatchPadding, historyMatchPadding, historyMatchPadding);
+        int _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
+        setPadding(_10dp, _10dp, _10dp, _10dp);
 
-        if(!last) setBackgroundResource(R.drawable.background_underline);
+        if(!last) setBackgroundResource(R.drawable.bg_underline);
         try{
             Date match_date_d = new Date(match.getLong("matchid"));
             String match_date_s = new SimpleDateFormat("E d MMM HH:mm", Locale.getDefault()).format(match_date_d);
@@ -100,10 +100,8 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         if(is_selected){
             unselect();
         }else{
-            TypedValue value = new TypedValue();
-            main.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent, value, true);
-            setBackgroundColor(value.data);
-            setTextColor(main.getColor(R.color.background));
+            setBackgroundColor(main.getColor(R.color.button));
+            setTextColor(main.getColor(R.color.black));
             is_selected = true;
         }
         main.tabHistory.selectionChanged();
@@ -111,8 +109,8 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
 
     boolean unselect(){
         boolean ret = is_selected;
-        setBackgroundColor(0);
-        if(!last) setBackgroundResource(R.drawable.background_underline);
+        setBackgroundColor(main.getColor(R.color.background));
+        if(!last) setBackgroundResource(R.drawable.bg_underline);
         setTextColor(main.getColor(R.color.text));
         is_selected = false;
         return ret;

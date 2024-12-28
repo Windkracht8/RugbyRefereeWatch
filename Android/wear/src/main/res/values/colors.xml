@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="w8blue">#2BD2E3</color>
-    <color name="bgConfItem">#222</color>
+    <color name="bg_partial">#A000</color>
+    <color name="bg_item">#222</color>
+    <color name="transparent">#0000</color>
 
     <color name="black">#000</color>
     <color name="blue">#00009E</color>

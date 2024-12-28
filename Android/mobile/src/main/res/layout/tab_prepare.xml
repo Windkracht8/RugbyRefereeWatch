@@ -12,6 +12,7 @@
         android:text="@string/bPrepare_text"
         android:textSize="18sp"
         android:textAllCaps="false"
+        android:textColor="@color/button"
         android:visibility="gone" />
     <ScrollView
         android:id="@+id/svPrepare"
@@ -101,6 +102,7 @@
                     android:text="@string/bSaveCustom_text"
                     android:textSize="18sp"
                     android:textAllCaps="false"
+                    android:textColor="@color/button"
                     android:layout_span="2" />
             </TableRow>
             <TableRow
@@ -114,6 +116,7 @@
                     android:text="@string/bDelCustom_text"
                     android:textSize="18sp"
                     android:textAllCaps="false"
+                    android:textColor="@color/error"
                     android:layout_span="2" />
             </TableRow>
             <TableRow
@@ -227,6 +230,7 @@
                     android:textAllCaps="false"
                     android:text="@string/watch_settings"
                     android:textSize="18sp"
+                    android:textColor="@color/button"
                     android:layout_span="2" />
             </TableRow>
             <TableRow
