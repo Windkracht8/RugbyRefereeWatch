@@ -21,16 +21,13 @@ public class MatchLog extends ScrollView{
 
     public MatchLog(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.match_log, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.match_log, this, true);
         llMatchLogItems = findViewById(R.id.llMatchLogItems);
     }
 
     void show(Main main, Report report){
-        for(int i = llMatchLogItems.getChildCount(); i > 0; i--){
-            llMatchLogItems.removeViewAt(i - 1);
-        }
+        llMatchLogItems.removeAllViews();
         JSONArray matches = FileStore.readMatches(main);
         try{
             for(int i = matches.length() - 1; i >= 0; i--){
@@ -72,7 +69,7 @@ public class MatchLog extends ScrollView{
         text += match.away.tot;
 
         item.setText(text);
-        item.setOnClickListener(v -> report.show(main, match));
+        item.setOnClickListener(v->report.show(main, match));
         llMatchLogItems.addView(item);
         main.addOnTouch(item);
     }

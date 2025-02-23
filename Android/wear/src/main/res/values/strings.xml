@@ -39,8 +39,8 @@
     <string name="pen_label_text">pen</string>
     <string name="bPenHome_desc">home penalty count</string>
     <string name="bPenAway_desc">away penalty count</string>
-    <string name="confirm_text">ending in 10 seconds</string>
-    <string name="confirm_cancel">Cancel</string>
+    <string name="delay_end_text">ending in 10 seconds</string>
+    <string name="delay_end_cancel">Cancel</string>
 
     <!-- notification -->
     <string name="match_ongoing">Match ongoing</string>
@@ -53,9 +53,9 @@
     <string name="foul_play_text">foul play</string>
 
     <!-- foul play screen -->
-    <string name="card_yellow_text">yellow</string>
-    <string name="penalty_try_text">penalty try</string>
-    <string name="card_red_text">red</string>
+    <string name="card_yellow">yellow</string>
+    <string name="penaltyTry">penalty try</string>
+    <string name="card_red">red</string>
 
     <!-- report screen -->
     <string name="report_title">Report</string>
@@ -89,6 +89,7 @@
     <string name="timer_type_up">up</string>
     <string name="record_player">Record player</string>
     <string name="record_pens">Record penalties</string>
+    <string name="delay_end">Delay end of period</string>
     <string name="help">Help</string>
     <string name="on">on</string>
     <string name="off">off</string>

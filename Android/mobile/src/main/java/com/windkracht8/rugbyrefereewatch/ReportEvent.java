@@ -12,16 +12,18 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 class ReportEvent extends LinearLayout{
+    private final TextView tvLeftTime;
+    private final TextView tvMiddle;
+    private final TextView tvRightTime;
+
     ReportEvent(Context context, JSONObject event, int period_count, int period_time, int[] score){
         super(context);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.report_event, this, true);
-
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.report_event, this, true);
         TextView tvLeft = findViewById(R.id.tvLeft);
-        TextView tvLeftTime = findViewById(R.id.tvLeftTime);
-        TextView tvMiddle = findViewById(R.id.tvMiddle);
-        TextView tvRightTime = findViewById(R.id.tvRightTime);
+        tvLeftTime = findViewById(R.id.tvLeftTime);
+        tvMiddle = findViewById(R.id.tvMiddle);
+        tvRightTime = findViewById(R.id.tvRightTime);
         TextView tvRight = findViewById(R.id.tvRight);
 
         try{
@@ -41,7 +43,6 @@ class ReportEvent extends LinearLayout{
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
             }else{
-                tvMiddle.setWidth(TabReport.score_width);
                 switch(what){
                     case "TRY":
                     case "CONVERSION":
@@ -66,16 +67,6 @@ class ReportEvent extends LinearLayout{
                             timer = String.valueOf((period_time * period_count));
                             long over = minutes - ((long) period_time * period_count);
                             timer += "+" + over;
-                            if(over > 9){
-                                tvLeftTime.setWidth((int) (TabReport.timer_width * 2.5));
-                                tvRightTime.setWidth((int) (TabReport.timer_width * 2.5));
-                            }else{
-                                tvLeftTime.setWidth(TabReport.timer_width * 2);
-                                tvRightTime.setWidth(TabReport.timer_width * 2);
-                            }
-                        }else{
-                            tvLeftTime.setWidth(TabReport.timer_width);
-                            tvRightTime.setWidth(TabReport.timer_width);
                         }
                         timer += "'";
                         if(isHome){
@@ -100,5 +91,15 @@ class ReportEvent extends LinearLayout{
             Log.e(Main.LOG_TAG, "ReportEvent.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
+    }
+    void getFieldWidths(){
+        if(TabReport.width_score < tvLeftTime.getWidth()) TabReport.width_score = tvLeftTime.getWidth();
+        if(TabReport.width_timer < tvMiddle.getWidth() && tvMiddle.getText().length() < 10) TabReport.width_timer = tvMiddle.getWidth();
+        if(TabReport.width_score < tvRightTime.getWidth()) TabReport.width_score = tvRightTime.getWidth();
+    }
+    void setFieldWidths(){
+        tvLeftTime.setWidth(TabReport.width_score);
+        if(tvMiddle.getText().length() < 10) tvMiddle.setWidth(TabReport.width_timer);
+        tvRightTime.setWidth(TabReport.width_score);
     }
 }

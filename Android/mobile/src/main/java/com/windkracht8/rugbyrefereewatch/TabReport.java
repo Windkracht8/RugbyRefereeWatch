@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -29,46 +30,25 @@ public class TabReport extends LinearLayout{
     private JSONObject match;
     private long match_id;
 
-    static int time_width;
-    static int timer_width;
-    static int score_width;
-    private static int del_width;
-    static int timer_edit_width;
-    private static int who_width;
-    static int what_width = 0;
-    static int team_width;
+    private int view_type = 0;
 
-    private int view = 0;
+    static int width_score;
+    static int width_timer;
+    static int width_time;
+    static int width_what;
+    static int width_team;
 
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.tab_report, this, true);
-
-        findViewById(R.id.time_width_measure).measure(0, 0);
-        time_width = findViewById(R.id.time_width_measure).getMeasuredWidth();
-        findViewById(R.id.timer_width_measure).measure(0, 0);
-        timer_width = findViewById(R.id.timer_width_measure).getMeasuredWidth();
-        findViewById(R.id.score_width_measure).measure(0, 0);
-        score_width = findViewById(R.id.score_width_measure).getMeasuredWidth();
-        findViewById(R.id.del_width_measure).measure(0, 0);
-        del_width = findViewById(R.id.del_width_measure).getMeasuredWidth();
-        del_width /= 2;//button measured roughly twice as large as the space it will take
-        findViewById(R.id.timer_edit_width_measure).measure(0, 0);
-        timer_edit_width = findViewById(R.id.timer_edit_width_measure).getMeasuredWidth();
-        findViewById(R.id.who_width_measure).measure(0, 0);
-        who_width = findViewById(R.id.who_width_measure).getMeasuredWidth();
-        findViewById(R.id.team_width_measure).measure(0, 0);
-        team_width = findViewById(R.id.team_width_measure).getMeasuredWidth();
-        findViewById(R.id.width_measure).setVisibility(View.GONE);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.tab_report, this, true);
         llEvents = findViewById(R.id.llEvents);
 
-        findViewById(R.id.bView).setOnClickListener(view -> bViewClick());
-        findViewById(R.id.bEdit).setOnClickListener(view -> bEditClick());
-        findViewById(R.id.bCancel).setOnClickListener(view -> bCancelClick());
-        findViewById(R.id.bSave).setOnClickListener(view -> bSaveClick());
-        findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
+        findViewById(R.id.bView).setOnClickListener(v->bViewClick());
+        findViewById(R.id.bEdit).setOnClickListener(v->bEditClick());
+        findViewById(R.id.bCancel).setOnClickListener(v->bCancelClick());
+        findViewById(R.id.bSave).setOnClickListener(v->bSaveClick());
+        findViewById(R.id.bShare).setOnClickListener(v->bShareClick());
     }
 
     void onCreateMain(Main main){
@@ -77,7 +57,7 @@ public class TabReport extends LinearLayout{
     void loadMatch(Main main, JSONObject match){
         this.main = main;
         this.match = match;
-        view = 0;
+        view_type = 0;
         try{
             match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
@@ -171,7 +151,7 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
     }
     private void showEvents(){
-        if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
+        llEvents.removeAllViews();
         try{
             JSONArray events = match.getJSONArray("events");
             JSONObject settings = match.getJSONObject("settings");
@@ -182,9 +162,9 @@ public class TabReport extends LinearLayout{
             int points_goal = settings.getInt("points_goal");
             int[] score = {0, 0};
 
-            for(int i = 0; i < events.length(); i++){
+            for(int i=0; i<events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                switch(view){
+                switch(view_type){
                     case 0:
                         if(event.has("team")) calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
                         llEvents.addView(new ReportEvent(main, event, period_count, period_time, score));
@@ -197,11 +177,63 @@ public class TabReport extends LinearLayout{
                         break;
                 }
             }
+            llEvents.getViewTreeObserver().addOnGlobalLayoutListener(resizeFields);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
             main.toast(R.string.fail_show_match);
         }
     }
+    private final ViewTreeObserver.OnGlobalLayoutListener resizeFields = new ViewTreeObserver.OnGlobalLayoutListener(){
+        @Override public void onGlobalLayout(){
+            //Resize the fields in llEvents so that it looks like a neat table
+            llEvents.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            switch(view_type){
+                case 0:
+                    width_score = 0;
+                    width_timer = 0;
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEvent.class) continue;
+                        ((ReportEvent)view).getFieldWidths();
+                    }
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEvent.class) continue;
+                        ((ReportEvent)view).setFieldWidths();
+                    }
+                    break;
+                case 1:
+                    width_time = 0;
+                    width_timer = 0;
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEventFull.class) continue;
+                        ((ReportEventFull)view).getFieldWidths();
+                    }
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEventFull.class) continue;
+                        ((ReportEventFull)view).setFieldWidths();
+                    }
+                    break;
+                case 2:
+                    width_timer = 0;
+                    width_what = 0;
+                    width_team = 0;
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEventEdit.class) continue;
+                        ((ReportEventEdit)view).getFieldWidths();
+                    }
+                    for(int i=0; i<llEvents.getChildCount(); i++){
+                        View view = llEvents.getChildAt(i);
+                        if(view.getClass() != ReportEventEdit.class) continue;
+                        ((ReportEventEdit)view).setFieldWidths();
+                    }
+                    break;
+            }
+        }
+    };
 
     private static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
         switch(what){
@@ -228,7 +260,7 @@ public class TabReport extends LinearLayout{
         bViewClick();
     }
     private void bViewClick(){
-        view = view == 0 ? 1 : 0;
+        view_type = view_type == 0 ? 1 : 0;
         findViewById(R.id.bView).setVisibility(VISIBLE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
         findViewById(R.id.bCancel).setVisibility(GONE);
@@ -239,12 +271,7 @@ public class TabReport extends LinearLayout{
         showEvents();
     }
     private void bEditClick(){
-        if(what_width == 0){
-            what_width = Main.widthPixels - del_width - timer_edit_width - team_width - who_width;
-            if(what_width > 500) what_width=1;
-        }
-
-        view = 2;
+        view_type = 2;
         findViewById(R.id.bView).setVisibility(GONE);
         findViewById(R.id.bEdit).setVisibility(GONE);
         findViewById(R.id.bCancel).setVisibility(VISIBLE);
@@ -429,22 +456,22 @@ public class TabReport extends LinearLayout{
         boolean[] eventTypes = {false, false, false, true};
         View view = View.inflate(main, R.layout.dialog_share, null);
         ((CheckBox)view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[0] = c
+                (v, c)->eventTypes[0] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[1] = c
+                (v, c)->eventTypes[1] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[2] = c
+                (v, c)->eventTypes[2] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_cards)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[3] = c
+                (v, c)->eventTypes[3] = c
         );
         new AlertDialog.Builder(main)
                 .setMessage(R.string.dialog_share_message)
                 .setView(view)
-                .setPositiveButton(R.string.share, (d, w)-> share(eventTypes))
-                .setNegativeButton(R.string.cancel, (d, w)-> d.dismiss())
+                .setPositiveButton(R.string.share, (d, w)->share(eventTypes))
+                .setNegativeButton(R.string.cancel, (d, w)->d.dismiss())
                 .create()
                 .show();
     }

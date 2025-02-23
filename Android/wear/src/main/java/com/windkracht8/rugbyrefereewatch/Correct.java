@@ -13,15 +13,12 @@ public class Correct extends ScrollView{
 
     public Correct(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.correct, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.correct, this, true);
         llCorrectItems = findViewById(R.id.llCorrectItems);
     }
     void show(Main main){
-        for(int i = llCorrectItems.getChildCount(); i > 0; i--){
-            llCorrectItems.removeViewAt(i-1);
-        }
+        llCorrectItems.removeAllViews();
         for(int i = Main.match.events.size(); i > 0; i--){
             MatchData.event event_data = Main.match.events.get(i-1);
             if(!event_data.what.equals("TRY") &&

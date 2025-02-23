@@ -20,16 +20,15 @@ public class Conf extends ConstraintLayout{
     private Main main;
     private final ScrollView svConf;
     private final LinearLayout llConf;
-    ConfSpinner confSpinner;
+    final ConfSpinner confSpinner;
     private ArrayList<ConfItem> confItems;
     final static JSONArray customMatchTypes = new JSONArray();
     private boolean isInitialized;
 
     public Conf(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.conf, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.conf, this, true);
         confSpinner = findViewById(R.id.confSpinner);
         svConf = findViewById(R.id.svConf);
         llConf = findViewById(R.id.llConf);
@@ -59,7 +58,7 @@ public class Conf extends ConstraintLayout{
         confItems = new ArrayList<>();
         for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
-            confItem.setOnClickListener(v -> onConfItemClick(main, (ConfItem)v, confItemType));
+            confItem.setOnClickListener(v->onConfItemClick(main, (ConfItem)v, confItemType));
             confItems.add(confItem);
             llConf.addView(confItem);
             main.addOnTouch(confItem);
@@ -99,6 +98,10 @@ public class Conf extends ConstraintLayout{
                 break;
             case RECORD_PENS:
                 Main.record_pens = !Main.record_pens;
+                confItem.updateValue();
+                break;
+            case DELAY_END:
+                Main.delay_end = !Main.delay_end;
                 confItem.updateValue();
                 break;
             case HELP:

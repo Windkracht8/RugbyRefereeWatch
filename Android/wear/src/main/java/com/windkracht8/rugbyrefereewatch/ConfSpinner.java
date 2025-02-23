@@ -13,21 +13,18 @@ import android.widget.Toast;
 public class ConfSpinner extends ScrollView{
     private final LinearLayout llConfSpinner;
     private final TextView confSpinnerLabel;
-    private boolean isInitialized;
 
     public ConfSpinner(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.conf_spinner, this, true);
-
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.conf_spinner, this, true);
         confSpinnerLabel = findViewById(R.id.confSpinnerLabel);
         llConfSpinner = findViewById(R.id.llConfSpinner);
     }
     void onCreateMain(Main main){
         if(Main.isScreenRound){
             main.si_addLayout(this, llConfSpinner);
-            llConfSpinner.setPadding(Main._10dp, 0, Main._10dp, Main.vh25);
+            llConfSpinner.setPadding(Main._10dp, Main.vh25, Main._10dp, Main.vh25);
             TextView label = findViewById(R.id.confSpinnerLabel);
             label.getLayoutParams().height = Main.vh30;
             label.setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
@@ -35,15 +32,8 @@ public class ConfSpinner extends ScrollView{
     }
 
     void show(Main main, Conf conf, ConfItem confItem, ConfItem.ConfItemType confItemType){
-        if(isInitialized){
-            for(int i = llConfSpinner.getChildCount(); i>1; i--){
-                llConfSpinner.removeViewAt(i-1);
-            }
-        }
-        isInitialized = true;
-
+        llConfSpinner.removeAllViews();
         confSpinnerLabel.setText(ConfItem.getConfItemName(confItemType));
-
         int intStart = 0;
         int intEnd = 0;
         switch(confItemType){
@@ -54,7 +44,7 @@ public class ConfSpinner extends ScrollView{
                 for(int i = 0; i < teamColors_system.length; i++){
                     TextView confSpinnerItem = newConfSpinnerItem(main, teamColors[i]);
                     String teamColor_system = teamColors_system[i];
-                    confSpinnerItem.setOnClickListener(v -> conf.onStringValueClick(confItem, confItemType, teamColor_system));
+                    confSpinnerItem.setOnClickListener(v->conf.onStringValueClick(confItem, confItemType, teamColor_system));
                     llConfSpinner.addView(confSpinnerItem);
                 }
                 break;
@@ -64,7 +54,7 @@ public class ConfSpinner extends ScrollView{
                 for(int i = 0; i < matchTypes_system.length; i++){
                     TextView confSpinnerItem = newConfSpinnerItem(main, matchTypes[i]);
                     String matchType_system = matchTypes_system[i];
-                    confSpinnerItem.setOnClickListener(v -> conf.onStringValueClick(confItem, confItemType, matchType_system));
+                    confSpinnerItem.setOnClickListener(v->conf.onStringValueClick(confItem, confItemType, matchType_system));
                     llConfSpinner.addView(confSpinnerItem);
                 }
                 addCustomMatchTypes(main, conf, confItem, confItemType);
@@ -90,7 +80,7 @@ public class ConfSpinner extends ScrollView{
             for(int i = intStart; i <= intEnd; i++){
                 TextView confSpinnerItem = newConfSpinnerItem(main, String.valueOf(i));
                 int value = i;
-                confSpinnerItem.setOnClickListener(v -> conf.onIntValueClick(confItem, confItemType, value));
+                confSpinnerItem.setOnClickListener(v->conf.onIntValueClick(confItem, confItemType, value));
                 llConfSpinner.addView(confSpinnerItem);
             }
         }
@@ -106,7 +96,7 @@ public class ConfSpinner extends ScrollView{
             for(int i=0; i<Conf.customMatchTypes.length(); i++){
                 String name = Conf.customMatchTypes.getJSONObject(i).getString("name");
                 TextView temp = newConfSpinnerItem(main, name);
-                temp.setOnClickListener(v -> conf.onStringValueClick(confItem, confItemType, name));
+                temp.setOnClickListener(v->conf.onStringValueClick(confItem, confItemType, name));
                 llConfSpinner.addView(temp);
             }
         }catch(Exception e){

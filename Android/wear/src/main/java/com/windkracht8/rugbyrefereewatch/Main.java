@@ -73,8 +73,8 @@ public class Main extends Activity{
     private Button bBottom;
     private ImageButton bConf;
     private ImageButton bConfWatch;
-    private LinearLayout confirm;
-    private TextView confirm_text;
+    private LinearLayout delay_end_wrapper;
+    private TextView delay_end_text;
     private Conf conf;
     private ConfWatch confWatch;
     private Score score;
@@ -110,6 +110,7 @@ public class Main extends Activity{
     static int timer_type = 1;//0:up, 1:down
     static boolean record_player = false;
     static boolean record_pens = false;
+    static boolean delay_end = true;
     private final static int HELP_VERSION = 4;
     private static int battery_capacity = -1;
 
@@ -129,13 +130,12 @@ public class Main extends Activity{
     private float si_scale_per_pixel = 0;
     private int si_bottom_quarter;
     private int si_below_screen;
-    private int confirm_count;
-    private long confirm_start_time;
+    private int delay_end_count;
+    private long delay_end_start_time;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState){
+    @Override protected void onCreate(Bundle savedInstanceState){
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
-        splashScreen.setKeepOnScreenCondition(() -> showSplash);
+        splashScreen.setKeepOnScreenCondition(()->showSplash);
         super.onCreate(savedInstanceState);
         isScreenRound = getResources().getConfiguration().isScreenRound();
         int heightPixels;
@@ -166,7 +166,6 @@ public class Main extends Activity{
 
         if(Build.VERSION.SDK_INT >= 31){
             vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
-            Log.d(LOG_TAG, "vibrator: " + vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_CLICK));
         }else{
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
@@ -184,7 +183,7 @@ public class Main extends Activity{
                 ,R.id.confWatch
                 ,R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal
                 ,R.id.foulPlay, R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow
-                ,R.id.penalty_try, R.id.card_red
+                ,R.id.penaltyTry, R.id.card_red
                 ,R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min
                 ,R.id.extra_time_10min
                 ,R.id.matchLog, R.id.svMatchLog
@@ -195,57 +194,57 @@ public class Main extends Activity{
         for(int id : ids){
             findViewById(id).setOnTouchListener(this::onTouch);
         }
-        findViewById(R.id.main).setOnClickListener(v -> onMainClick());
+        findViewById(R.id.main).setOnClickListener(v->onMainClick());
 
         battery = findViewById(R.id.battery);
         time = findViewById(R.id.time);
         home = findViewById(R.id.home);
-        home.setOnClickListener(v -> homeClick());
+        home.setOnClickListener(v->homeClick());
         away = findViewById(R.id.away);
-        away.setOnClickListener(v -> awayClick());
+        away.setOnClickListener(v->awayClick());
         score_home = findViewById(R.id.score_home);
         score_away = findViewById(R.id.score_away);
         sinbins_home = findViewById(R.id.sinbins_home);
         sinbins_away = findViewById(R.id.sinbins_away);
         tTimer = findViewById(R.id.tTimer);
-        tTimer.setOnClickListener(v -> timerClick());
+        tTimer.setOnClickListener(v->timerClick());
         buttons_back = findViewById(R.id.buttons_back);
         bOverTimer = findViewById(R.id.bOverTimer);
-        bOverTimer.setOnClickListener(v -> bOverTimerClick());
+        bOverTimer.setOnClickListener(v->bOverTimerClick());
         bStart = findViewById(R.id.bStart);
-        bStart.setOnClickListener(v -> bOverTimerClick());
+        bStart.setOnClickListener(v->bOverTimerClick());
         bBottom = findViewById(R.id.bBottom);
-        bBottom.setOnClickListener(v -> bBottomClick());
+        bBottom.setOnClickListener(v->bBottomClick());
         conf = findViewById(R.id.conf);
         conf.onCreateMain(this);
         conf.confSpinner.onCreateMain(this);
         bConf = findViewById(R.id.bConf);
-        bConf.setOnClickListener(v -> conf.show(this));
+        bConf.setOnClickListener(v->conf.show(this));
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
-        bConfWatch.setOnClickListener(v -> confWatch.show(this));
-        confirm = findViewById(R.id.confirm);
-        confirm_text = findViewById(R.id.confirm_text);
-        findViewById(R.id.confirm_cancel).setOnClickListener(v -> confirm_cancel());
+        bConfWatch.setOnClickListener(v->confWatch.show(this));
+        delay_end_wrapper = findViewById(R.id.delay_end_wrapper);
+        delay_end_text = findViewById(R.id.delay_end_text);
+        findViewById(R.id.delay_end_cancel).setOnClickListener(v->delay_end_cancel());
 
         score = findViewById(R.id.score);
         score.onCreateMain(this);
         foulPlay = findViewById(R.id.foulPlay);
         foulPlay.onCreateMain(this);
         correct = findViewById(R.id.correct);
-        correct.setOnClickListener(v -> correctClicked());
+        correct.setOnClickListener(v->correctClicked());
         correct.onCreateMain(this);
         report = findViewById(R.id.report);
         matchLog = findViewById(R.id.matchLog);
         matchLog.onCreateMain(this);
         bMatchLog = findViewById(R.id.bMatchLog);
-        bMatchLog.setOnClickListener(v -> matchLog.show(this, report));
+        bMatchLog.setOnClickListener(v->matchLog.show(this, report));
         help = findViewById(R.id.help);
         pen_label = findViewById(R.id.pen_label);
         bPenHome = findViewById(R.id.bPenHome);
-        bPenHome.setOnClickListener(v -> bPenHomeClick());
+        bPenHome.setOnClickListener(v->bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
-        bPenAway.setOnClickListener(v -> bPenAwayClick());
+        bPenAway.setOnClickListener(v->bPenAwayClick());
         extraTime = findViewById(R.id.extraTime);
         extraTime.onCreateMain(this);
 
@@ -279,7 +278,7 @@ public class Main extends Activity{
         }
 
         if(isScreenRound){
-            pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()-> {
+            pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()->{
                 if(isPenPadInitialized) return;
                 int pad_inner = (pen_label.getWidth()+20)/2;
                 int pad_outer = widthPixels/3;
@@ -291,25 +290,28 @@ public class Main extends Activity{
 
         if(timer_status == TimerStatus.CONF){
             checkPermissions();
-            runInBackground(()-> FileStore.readCustomMatchTypes(this));
-            runInBackground(()-> FileStore.readSettings(this));
-            runInBackground(()-> FileStore.cleanMatches(this));
+            runInBackground(()->FileStore.readCustomMatchTypes(this));
+            runInBackground(()->FileStore.readSettings(this));
+            runInBackground(()->FileStore.cleanMatches(this));
         }else{
             updateScore();
         }
 
-        updateBattery();
-        update();
+        updateBattery.run();
+        update.run();
         updateSinbins();
         updateButtons();
         updateAfterConfig();
         startBT();
         showSplash = false;
     }
-    @Override
-    public void onDestroy(){
+    @Override public void onDestroy(){
         super.onDestroy();
-        commsBT.stopBT();
+        handler.removeCallbacksAndMessages(null);
+        runInBackground(()->{
+            if(commsBT != null) commsBT.stopBT();
+            commsBT = null;
+        });
         stopOngoingNotification();
     }
 
@@ -340,8 +342,7 @@ public class Main extends Activity{
     private boolean hasPermission(String permission){
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for(int i=0; i<permissions.length; i++){
             if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
@@ -361,11 +362,10 @@ public class Main extends Activity{
     }
 
     void toast(int message){
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
+        runOnUiThread(()->Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK){
             onBack();
             return true;
@@ -383,25 +383,21 @@ public class Main extends Activity{
             matchLog.setVisibility(View.GONE);
         }else if(extraTime.getVisibility() == View.VISIBLE){
             extraTime.setVisibility(View.GONE);
-        }else if(foulPlay.svPlayerNo.getVisibility() == View.VISIBLE){
-            foulPlay.svPlayerNo.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
-        }else if(score.svPlayerNo.getVisibility() == View.VISIBLE){
-            score.svPlayerNo.setVisibility(View.GONE);
         }else if(score.getVisibility() == View.VISIBLE){
             score.setVisibility(View.GONE);
         }else if(confWatch.getVisibility() == View.VISIBLE){
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
-            runInBackground(() -> FileStore.storeSettings(this));
+            runInBackground(()->FileStore.storeSettings(this));
         }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
             conf.confSpinner.setVisibility(View.GONE);
             conf.requestSVFocus();
         }else if(conf.getVisibility() == View.VISIBLE){
             conf.setVisibility(View.GONE);
             updateAfterConfig();
-            runInBackground(() -> FileStore.storeSettings(this));
+            runInBackground(()->FileStore.storeSettings(this));
         }else{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 finish();
@@ -411,8 +407,7 @@ public class Main extends Activity{
         }
     }
 
-    @Override
-    public boolean dispatchGenericMotionEvent(MotionEvent ev){
+    @Override public boolean dispatchGenericMotionEvent(MotionEvent ev){
         super.dispatchGenericMotionEvent(ev);
         return true; //Just to let Google know we are listening to rotary events
     }
@@ -485,12 +480,8 @@ public class Main extends Activity{
             touchView = matchLog;
         }else if(extraTime.getVisibility() == View.VISIBLE){
             touchView = extraTime;
-        }else if(foulPlay.svPlayerNo.getVisibility() == View.VISIBLE){
-            touchView = foulPlay.svPlayerNo;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             touchView = foulPlay;
-        }else if(score.svPlayerNo.getVisibility() == View.VISIBLE){
-            touchView = score.svPlayerNo;
         }else if(score.getVisibility() == View.VISIBLE){
             touchView = score;
         }else if(confWatch.getVisibility() == View.VISIBLE){
@@ -517,8 +508,7 @@ public class Main extends Activity{
         if(!isScreenRound) return;
         ll.setPadding(vh5, vh25, vh5, vh25);
         sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-            @Override
-            public void onGlobalLayout(){
+            @Override public void onGlobalLayout(){
                 if(ll.getChildCount() > 0 && ll.getChildAt(0).getHeight() > 0){
                     sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     si_scaleItems(ll, 0);
@@ -529,8 +519,7 @@ public class Main extends Activity{
     }
     void si_scaleItemsAfterChange(LinearLayout ll, ScrollView sv){
         sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-            @Override
-            public void onGlobalLayout(){
+            @Override public void onGlobalLayout(){
                 sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 si_scaleItems(ll, sv.getScrollY());
             }
@@ -561,7 +550,7 @@ public class Main extends Activity{
                 timer_status == TimerStatus.TIME_OFF ||
                 timer_status == TimerStatus.REST ||
                 timer_status == TimerStatus.READY) return;
-        runInBackground(()-> commsBT.startBT());
+        runInBackground(commsBT::startBT);
     }
 
     private void timerClick(){
@@ -571,15 +560,15 @@ public class Main extends Activity{
             timer_start_time_off = getCurrentTimestamp();
             match.logEvent("TIME OFF", null, 0, 0);
             updateButtons();
-            handler.postDelayed(this::timeOffBuzz, 15000);
+            handler.postDelayed(timeOffBuzz, 15000);
         }
     }
-    private void timeOffBuzz(){
+    private final Runnable timeOffBuzz = new Runnable(){@Override public void run(){
         if(timer_status == TimerStatus.TIME_OFF){
             beep();
-            handler.postDelayed(this::timeOffBuzz, 15000);
+            handler.postDelayed(timeOffBuzz, 15000);
         }
-    }
+    }};
     private void bOverTimerClick(){
         switch(timer_status){
             case CONF:
@@ -618,7 +607,7 @@ public class Main extends Activity{
     private void bBottomClick(){
         switch(timer_status){
             case TIME_OFF:
-                confirm_start();
+                delay_end_start();
                 break;
             case REST:
                 timer_status = TimerStatus.FINISHED;
@@ -626,7 +615,7 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 updateScore();
 
-                runInBackground(() -> FileStore.storeMatch(this));
+                runInBackground(()->FileStore.storeMatch(this));
                 startBT();
                 stopOngoingNotification();
                 updateButtons();
@@ -749,38 +738,44 @@ public class Main extends Activity{
         }
         updateTimer();
     }
-    private void confirm_start(){
-        confirm_start_time = getCurrentTimestamp();
-        confirm_count = 11;
-        confirm_update();
-        confirm.setVisibility(View.VISIBLE);
-    }
-    private void confirm_cancel(){
-        confirm_count = -1;
-        confirm.setVisibility(View.GONE);
-    }
-    private void confirm_update(){
-        if(confirm_count == -1) return;
-        confirm_count--;
-        if(confirm_count > 0){
-            confirm_text.setText(getString(R.string.confirm_text).replace("10", String.valueOf(confirm_count)));
-            handler.postDelayed(this::confirm_update, 1000);
+    private void delay_end_start(){
+        delay_end_start_time = getCurrentTimestamp();
+        if(!delay_end){
+            endPeriod();
             return;
         }
+        delay_end_count = 11;
+        delay_end_update.run();
+        delay_end_wrapper.setVisibility(View.VISIBLE);
+    }
+    private void delay_end_cancel(){
+        delay_end_count = -1;
+        delay_end_wrapper.setVisibility(View.GONE);
+    }
+    private final Runnable delay_end_update = new Runnable(){@Override public void run(){
+        if(delay_end_count == -1) return;
+        delay_end_count--;
+        if(delay_end_count == 0){
+            endPeriod();
+        }
+        delay_end_text.setText(getString(R.string.delay_end_text).replace("10", String.valueOf(delay_end_count)));
+        handler.postDelayed(delay_end_update, 1000);
+    }};
+    private void endPeriod(){
         //How did someone get here with no events in the match?
         if(!match.events.isEmpty() && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
             match.events.remove(match.events.size()-1);
         }
-        match.logEvent("END", null, 0, confirm_start_time);
+        match.logEvent("END", null, 0, delay_end_start_time);
 
         timer_status = TimerStatus.REST;
-        timer_start = confirm_start_time;
+        timer_start = delay_end_start_time;
         timer_period_ended = false;
         timer_type_period = 0;
         tTimer.setTextColor(getResources().getColor(R.color.white, getTheme()));
 
-        match.home.sinbins.forEach(sb-> sb.end -= timer_timer);
-        match.away.sinbins.forEach(sb-> sb.end -= timer_timer);
+        match.home.sinbins.forEach(sb->sb.end -= timer_timer);
+        match.away.sinbins.forEach(sb->sb.end -= timer_timer);
 
         String kickoffTeam = getKickoffTeam();
         if(kickoffTeam != null){
@@ -793,10 +788,9 @@ public class Main extends Activity{
             }
         }
         updateButtons();
-        confirm.setVisibility(View.GONE);
+        delay_end_wrapper.setVisibility(View.GONE);
     }
-    private void update(){
-        long milli_secs = updateTime();
+    private final Runnable update = new Runnable(){@Override public void run(){
         switch(timer_status){
             case RUNNING:
                 updateSinbins();
@@ -804,8 +798,9 @@ public class Main extends Activity{
                 updateTimer();
                 break;
         }
-        handler.postDelayed(this::update, 1000 - milli_secs);
-    }
+        long milli_secs = updateTime();
+        handler.postDelayed(update, 1000 - milli_secs);
+    }};
 
     void updateAfterConfig(){//Thread: Always on UI thread
         updateTimer();
@@ -868,8 +863,7 @@ public class Main extends Activity{
         return prettyTime(date);
     }
     private static String prettyTime(Date date){
-        String strDateFormat = "HH:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat, Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         return sdf.format(date);
     }
     private void updateTimer(){
@@ -954,17 +948,17 @@ public class Main extends Activity{
             }
         }
     }
-    private void updateBattery(){
-        runInBackground(() -> battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
+    private final Runnable updateBattery = new Runnable(){@Override public void run(){
+        runInBackground(()->battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
         if(battery_capacity < 0){
             battery.setText("---%");
-            handler.postDelayed(this::updateBattery, 100);
+            handler.postDelayed(updateBattery, 100);
         }else{
             String tmp = battery_capacity + "%";
             battery.setText(tmp);
-            handler.postDelayed(this::updateBattery, 10000);
+            handler.postDelayed(updateBattery, 10000);
         }
-    }
+    }};
     private void bPenHomeClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.home.pens++;
@@ -990,6 +984,7 @@ public class Main extends Activity{
             score_away.setText("0");
         }else{
             score.team = match.home;
+            score.player_clear();
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -1006,6 +1001,7 @@ public class Main extends Activity{
             score_home.setText("0");
         }else{
             score.team = match.away;
+            score.player_clear();
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -1013,25 +1009,22 @@ public class Main extends Activity{
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.tries++;
         updateScore();
+        match.logEvent("TRY", score.team.id, score.player(), 0);
         score.setVisibility(View.GONE);
-        score.clear();
-        match.logEvent("TRY", score.team.id, score.player_no, 0);
     }
     void conversionClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.cons++;
         updateScore();
+        match.logEvent("CONVERSION", score.team.id, score.player(), 0);
         score.setVisibility(View.GONE);
-        score.clear();
-        match.logEvent("CONVERSION", score.team.id, score.player_no, 0);
     }
     void goalClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.goals++;
         updateScore();
+        match.logEvent("GOAL", score.team.id, score.player(), 0);
         score.setVisibility(View.GONE);
-        score.clear();
-        match.logEvent("GOAL", score.team.id, score.player_no, 0);
     }
     private void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -1050,48 +1043,45 @@ public class Main extends Activity{
     }
     void foulPlayClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
-        foulPlay.onPlayerNoClick(score.player_no);
+        foulPlay.player(score.player());
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
     void card_yellowClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         long time = getCurrentTimestamp();
-        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player_no, time);
+        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player(), time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
-        score.team.addSinbin(time, end, score.team.id, foulPlay.player_no);
+        score.team.addSinbin(time, end, score.team.id, foulPlay.player());
         updateSinbins();
-        foulPlay.setVisibility(View.GONE);
-        score.clear();
         score.team.yellow_cards++;
         if(record_pens){
             score.team.pens++;
             updateScore();
         }
+        foulPlay.setVisibility(View.GONE);
     }
-    void penalty_tryClick(){
+    void penaltyTryClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
         score.team.pen_tries++;
         updateScore();
-        foulPlay.setVisibility(View.GONE);
-        score.clear();
-        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player_no, 0);
+        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player(), 0);
         if(record_pens){
             score.team.pens++;
             updateScore();
         }
+        foulPlay.setVisibility(View.GONE);
     }
     void card_redClick(){
         if(draggingEnded+100 > getCurrentTimestamp()) return;
-        match.logEvent("RED CARD", score.team.id, foulPlay.player_no, 0);
-        foulPlay.setVisibility(View.GONE);
-        score.clear();
+        match.logEvent("RED CARD", score.team.id, foulPlay.player(), 0);
         score.team.red_cards++;
         if(record_pens){
             score.team.pens++;
             updateScore();
         }
+        foulPlay.setVisibility(View.GONE);
     }
 
     private void correctClicked(){
@@ -1173,6 +1163,8 @@ public class Main extends Activity{
                 record_player = settings.getBoolean("record_player");
             if(settings.has("record_pens"))
                 record_pens = settings.getBoolean("record_pens");
+            if(settings.has("delay_end"))
+                delay_end = settings.getBoolean("delay_end");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
             toast(R.string.fail_receive_settings);
@@ -1200,10 +1192,12 @@ public class Main extends Activity{
             timer_type_period = timer_type;
             record_player = jsonSettings.getBoolean("record_player");
             record_pens = jsonSettings.getBoolean("record_pens");
+            if(jsonSettings.has("delay_end"))
+                delay_end = jsonSettings.getBoolean("delay_end");
 
             if(jsonSettings.has("help_version") && HELP_VERSION != jsonSettings.getInt("help_version")){
                 showHelp();
-                runInBackground(() -> FileStore.storeSettings(this));
+                runInBackground(()->FileStore.storeSettings(this));
             }
             runOnUiThread(this::updateAfterConfig);
         }catch(Exception e){
@@ -1211,12 +1205,8 @@ public class Main extends Activity{
             toast(R.string.fail_read_settings);
         }
     }
-    void noSettings(){//Thread: BG
-        runOnUiThread(() -> help.show(true));
-    }
-    void showHelp(){//Thread: Mixed
-        runOnUiThread(() -> help.show(false));
-    }
+    void noSettings(){runOnUiThread(()->help.show(true));}//Thread: BG
+    void showHelp(){runOnUiThread(()->help.show(false));}//Thread: mixed
 
     static JSONObject getSettings(){
         JSONObject ret = new JSONObject();
@@ -1236,6 +1226,7 @@ public class Main extends Activity{
             ret.put("timer_type", timer_type);
             ret.put("record_player", record_player);
             ret.put("record_pens", record_pens);
+            ret.put("delay_end", delay_end);
             ret.put("help_version", HELP_VERSION);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "Main.getSettings Exception: " + e.getMessage());

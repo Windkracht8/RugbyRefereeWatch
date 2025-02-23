@@ -57,12 +57,9 @@ public class TabPrepare extends LinearLayout{
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.tab_prepare, this, true);
-
         customMatchTypes = new JSONArray();
-
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.tab_prepare, this, true);
         etHomeName = findViewById(R.id.etHomeName);
         sHomeColor = findViewById(R.id.sHomeColor);
         etAwayName = findViewById(R.id.etAwayName);
@@ -197,16 +194,16 @@ public class TabPrepare extends LinearLayout{
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
-        bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
-        findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
-        findViewById(R.id.bDelCustom).setOnClickListener(view -> bDelCustomClick());
+        bWatchSettings.setOnClickListener(v->bWatchSettingsClick());
+        findViewById(R.id.bSaveCustom).setOnClickListener(v->bSaveCustomClick());
+        findViewById(R.id.bDelCustom).setOnClickListener(v->bDelCustomClick());
 
         sTimerType.setSelection(1);
         loadCustomMatchTypes();
     }
 
     void onCreateMain(Main main){
-        findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
+        findViewById(R.id.bPrepare).setOnClickListener(v->main.bPrepareClick());
         sHomeColorPosition = Main.sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
         sAwayColorPosition = Main.sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
         findViewById(R.id.svPrepare).setOnTouchListener(main::onTouchEventScrollViews);
@@ -373,7 +370,7 @@ public class TabPrepare extends LinearLayout{
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.save_match_type)
                 .setView(etName)
-                .setPositiveButton(R.string.save, (dialog1, which) -> saveCustomMatch(etName.getText().toString()))
+                .setPositiveButton(R.string.save, (d, w)->saveCustomMatch(etName.getText().toString()))
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.show();

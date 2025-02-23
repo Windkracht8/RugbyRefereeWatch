@@ -30,19 +30,18 @@ public class TabHistory extends LinearLayout{
 
     public TabHistory(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.tab_history, this, true);
-
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.tab_history, this, true);
         llMatches = findViewById(R.id.llMatches);
+        findViewById(R.id.bImport).setOnClickListener(v->main.importMatches());
         bExport = findViewById(R.id.bExport);
         bDelete = findViewById(R.id.bDelete);
-        bDelete.setOnClickListener(view -> deleteSelected());
+        bDelete.setOnClickListener(v->deleteSelected());
     }
     void onCreateMain(Main main){
         this.main = main;
-        findViewById(R.id.bSync).setOnClickListener(view -> main.bSyncClick());
-        findViewById(R.id.bExport).setOnClickListener(view -> main.exportMatches());
+        findViewById(R.id.bSync).setOnClickListener(v->main.bSyncClick());
+        findViewById(R.id.bExport).setOnClickListener(v->main.exportMatches());
         findViewById(R.id.svHistory).setOnTouchListener(main::onTouchEventScrollViews);
         findViewById(R.id.llMatches).setOnTouchListener(main::onTouchEventScrollViews);
         main.runInBackground(this::loadMatches);
@@ -110,11 +109,6 @@ public class TabHistory extends LinearLayout{
     }
     private void loadMatches(){//Thread: BG
         try{
-            /* Testing
-            //matches.add(new JSONObject("{\"matchid\":1734444251272,\"format\":1,\"settings\":{\"match_type\":\"15s\",\"period_time\":40,\"period_count\":2,\"sinbin\":10,\"points_try\":5,\"points_con\":2,\"points_goal\":3},\"home\":{\"id\":\"home\",\"team\":\"home\",\"color\":\"red\",\"tot\":5,\"tries\":1,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":2,\"kickoff\":false},\"away\":{\"id\":\"away\",\"team\":\"away\",\"color\":\"blue\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":1,\"kickoff\":false},\"events\":[{\"id\":1734444251275,\"time\":\"15:04:11\",\"timer\":0,\"period\":1,\"what\":\"START\"},{\"id\":1734444252883,\"time\":\"15:04:12\",\"timer\":729,\"period\":1,\"what\":\"TRY\",\"team\":\"home\"},{\"id\":1734444257714,\"time\":\"15:04:17\",\"timer\":5729,\"period\":1,\"what\":\"YELLOW CARD\",\"team\":\"away\",\"who\":5},{\"id\":1734444259441,\"time\":\"15:04:19\",\"timer\":7730,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444259652,\"time\":\"15:04:19\",\"timer\":7730,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444261119,\"time\":\"15:04:21\",\"timer\":9163,\"period\":1,\"what\":\"END\",\"score\":\"5:0\"}]}"));
-            //matches.add(new JSONObject("{\"matchid\":1734444402416,\"format\":1,\"settings\":{\"match_type\":\"15s\",\"period_time\":40,\"period_count\":2,\"sinbin\":10,\"points_try\":5,\"points_con\":2,\"points_goal\":3},\"home\":{\"id\":\"home\",\"team\":\"home\",\"color\":\"red\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":1,\"kickoff\":false},\"away\":{\"id\":\"away\",\"team\":\"away\",\"color\":\"blue\",\"tot\":0,\"tries\":0,\"cons\":0,\"pen_tries\":0,\"goals\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1734444402419,\"time\":\"15:06:42\",\"timer\":0,\"period\":1,\"what\":\"START\"},{\"id\":1734444405502,\"time\":\"15:06:45\",\"timer\":2586,\"period\":1,\"what\":\"PENALTY\",\"team\":\"home\"},{\"id\":1734444407231,\"time\":\"15:06:47\",\"timer\":4378,\"period\":1,\"what\":\"END\",\"score\":\"0:0\"}]}"));
-            //main.runOnUiThread(this::showMatches);
-             */
             FileInputStream fis = main.openFileInput(main.getString(R.string.matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
@@ -164,7 +158,7 @@ public class TabHistory extends LinearLayout{
     }
     private void showMatches(){
         try{
-            matches.sort((m1, m2) -> {
+            matches.sort((m1, m2)->{
                 try{
                     return Long.compare(m1.getLong("matchid"), m2.getLong("matchid"));
                 }catch(Exception e){
@@ -172,7 +166,7 @@ public class TabHistory extends LinearLayout{
                 }
                 return 0;
             });
-            if(llMatches.getChildCount() > 0) llMatches.removeAllViews();
+            llMatches.removeAllViews();
             for(int i = matches.size()-1; i >= 0; i--){
                 llMatches.addView(new HistoryMatch(main, matches.get(i), i == 0));
             }

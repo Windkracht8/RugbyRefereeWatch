@@ -14,9 +14,8 @@ public class ConfWatch extends LinearLayout{
 
     public ConfWatch(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.conf_watch, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.conf_watch, this, true);
     }
     void show(Main main){
         if(isInitialized){
@@ -33,7 +32,7 @@ public class ConfWatch extends LinearLayout{
                 ,ConfItem.ConfItemType.SCREEN_ON
         }){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
-            confItem.setOnClickListener(v -> onConfItemClick((ConfItem)v, confItemType));
+            confItem.setOnClickListener(v->onConfItemClick((ConfItem)v, confItemType));
             confItems.add(confItem);
             llConfWatch.addView(confItem);
             main.addOnTouch(confItem);

@@ -11,17 +11,14 @@ import android.widget.TextView;
 public class Report extends ScrollView{
     public Report(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.report, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.report, this, true);
     }
 
     void show(Main main, MatchData match){
         LinearLayout llReportItems = findViewById(R.id.llReportItems);
         if(Main.isScreenRound) findViewById(R.id.llReport).setPadding(0, 0, 0, Main.vh25);
-        for(int i = llReportItems.getChildCount(); i > 0; i--){
-            llReportItems.removeViewAt(i-1);
-        }
+        llReportItems.removeAllViews();
         addItem(main, llReportItems, match.home.tries + " tries " + match.away.tries);
 
         if(match.home.pen_tries > 0 || match.away.pen_tries > 0)

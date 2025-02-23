@@ -7,9 +7,6 @@
     <string name="match_types_filename" translatable="false">match_types.json</string>
 
     <!-- numbers -->
-    <string name="time_width_placeholder" translatable="false">00:00:00</string>
-    <string name="timer_width_placeholder" translatable="false">00\'</string>
-    <string name="score_width_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
     <string name="_00" translatable="false">00</string>
     <string name="_2" translatable="false">2</string>
@@ -42,6 +39,7 @@
 
     <!-- history -->
     <string name="bSync_text">Synchronise with watch</string>
+    <string name="bImport_text">Import</string>
     <string name="bExport_text">Export selected</string>
     <string name="bDelete_text">Delete selected</string>
 
@@ -166,8 +164,8 @@
     </string-array>
 
     <!-- CommsBT -->
-    <string name="connecting_to">Connecting to</string>
-    <string name="connected_to">Connected to</string>
+    <string name="connecting_to">Connecting to watch</string>
+    <string name="connected_to">Connected to watch</string>
     <string name="disconnected">Disconnected, tap icon to connect</string>
 
     <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
@@ -178,7 +176,6 @@
     <string name="update_watch_app">Update app on watch to support this</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="fail_unexpected">Unexpected technical error</string>
-    <string name="problem_matches_received">Problem with matches received from watch</string>
 
     <!-- fail -->
     <string name="fail_sync">Failed to synchronise with watch</string>
@@ -187,6 +184,7 @@
     <string name="fail_show_history">Failed to show History</string>
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_response">Problem with response from watch</string>
+    <string name="fail_import">Failed to import matches</string>
     <string name="fail_export">Failed to export matches</string>
     <string name="fail_delete">Failed to delete</string>
     <string name="fail_save">Failed to save</string>

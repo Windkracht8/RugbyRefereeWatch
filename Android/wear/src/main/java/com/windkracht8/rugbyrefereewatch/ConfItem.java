@@ -9,22 +9,19 @@ import android.widget.TextView;
 class ConfItem extends LinearLayout{
     enum ConfItemType {
         COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP
+        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, DELAY_END, HELP
     }
     private final ConfItemType type;
     private final TextView confItemValue;
     ConfItem(Context context, ConfItemType type){
         super(context);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.conf_item, this, true);
-
-        TextView confItemName = findViewById(R.id.confItemName);
-        confItemValue = findViewById(R.id.confItemValue);
-
         this.type = type;
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.conf_item, this, true);
+        TextView confItemName = findViewById(R.id.confItemName);
         confItemName.setText(context.getString(getConfItemName(type)));
         confItemName.setContentDescription(context.getString(R.string.confItemName_desc) + type);
+        confItemValue = findViewById(R.id.confItemValue);
         if(type == ConfItemType.HELP){
             confItemValue.setVisibility(View.GONE);
         }else{
@@ -46,6 +43,7 @@ class ConfItem extends LinearLayout{
             case TIMER_TYPE -> R.string.timer_type;
             case RECORD_PLAYER -> R.string.record_player;
             case RECORD_PENS -> R.string.record_pens;
+            case DELAY_END -> R.string.delay_end;
             case HELP -> R.string.help;
         };
     }
@@ -106,6 +104,9 @@ class ConfItem extends LinearLayout{
                 break;
             case RECORD_PENS:
                 value = getContext().getString(Main.record_pens ? R.string.on : R.string.off);
+                break;
+            case DELAY_END:
+                value = getContext().getString(Main.delay_end ? R.string.on : R.string.off);
                 break;
             case HELP:
                 return;

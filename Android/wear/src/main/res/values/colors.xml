@@ -4,6 +4,7 @@
     <color name="bg_partial">#A000</color>
     <color name="bg_item">#222</color>
     <color name="transparent">#0000</color>
+    <color name="hint">#AAA</color>
 
     <color name="black">#000</color>
     <color name="blue">#00009E</color>

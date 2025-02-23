@@ -14,22 +14,22 @@ import org.json.JSONObject;
 class ReportEventEdit extends LinearLayout{
     private final Main main;
     private final JSONObject event;
+    private final TextView timer;
+    private final Spinner what;
+    private final Spinner team;
+
     ReportEventEdit(Main main, JSONObject event){
         super(main);
         this.main = main;
         this.event = event;
+        ((LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.report_event_edit, this, true);
+        what = findViewById(R.id.what);
+        team = findViewById(R.id.team);
 
-        LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.report_event_edit, this, true);
-
-        Spinner what = findViewById(R.id.what);
-        Spinner team = findViewById(R.id.team);
-
+        timer = findViewById(R.id.timer);
         try{
-            TextView timer = findViewById(R.id.timer);
             timer.setText(timerStampToString(event.getLong("timer")));
-
             switch(event.getString("what")){
                 case "TRY":
                     what.setSelection(0);
@@ -73,16 +73,21 @@ class ReportEventEdit extends LinearLayout{
             if(event.has("reason")){
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
             }
-            timer.setLayoutParams(new LinearLayout.LayoutParams(TabReport.timer_edit_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-            if(TabReport.what_width>10){
-                what.setLayoutParams(new LinearLayout.LayoutParams(TabReport.what_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-                team.setLayoutParams(new LinearLayout.LayoutParams(TabReport.team_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-            }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
-        findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
+        findViewById(R.id.bDel).setOnClickListener(v->bDelClick());
+    }
+    void getFieldWidths(){
+        if(TabReport.width_timer < timer.getWidth()) TabReport.width_timer = timer.getWidth();
+        if(TabReport.width_what < what.getWidth()) TabReport.width_what = what.getWidth();
+        if(TabReport.width_team < team.getWidth()) TabReport.width_team = team.getWidth();
+    }
+    void setFieldWidths(){
+        timer.setWidth(TabReport.width_timer);
+        what.setMinimumWidth(TabReport.width_what);
+        team.setMinimumWidth(TabReport.width_team);
     }
 
     private void bDelClick(){

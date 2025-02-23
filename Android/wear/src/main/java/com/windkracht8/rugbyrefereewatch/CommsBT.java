@@ -17,7 +17,6 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -248,10 +247,13 @@ class CommsBT{
         private void read(){
             try{
                 if(inputStream.available() < 5) return;
-                long read_start = (new Date()).getTime();
+                long last_read_time = System.currentTimeMillis();
                 String request = "";
-
-                while(inputStream.available() > 0){
+                while(System.currentTimeMillis() - last_read_time < 3000){
+                    if(inputStream.available() == 0){
+                        sleep100();
+                        continue;
+                    }
                     byte[] buffer = new byte[inputStream.available()];
                     int numBytes = inputStream.read(buffer);
                     if(numBytes < 0){
@@ -264,12 +266,9 @@ class CommsBT{
                         gotRequest(request);
                         return;
                     }
-                    if((new Date()).getTime() - read_start > 3000){
-                        Log.e(Main.LOG_TAG, "CommsBTConnected.read started to read, no complete message after 3 seconds: " + request);
-                        return;
-                    }
-                    sleep100();
+                    last_read_time = System.currentTimeMillis();
                 }
+                Log.e(Main.LOG_TAG, "CommsBTConnected.read no valid message and no new data after 3 sec: " + request);
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected.read: Input stream read exception: " + e.getMessage());
             }

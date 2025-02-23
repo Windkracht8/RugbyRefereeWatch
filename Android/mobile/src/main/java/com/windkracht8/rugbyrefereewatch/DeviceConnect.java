@@ -1,23 +1,23 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
-
 import org.json.JSONObject;
 
-public class DeviceConnect extends FragmentActivity implements CommsBT.BTInterface{
+public class DeviceConnect extends Activity implements CommsBT.BTInterface{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_connect);
-        Intent startDeviceConnect = getIntent();
-        String text = getString(R.string.connecting_to) + " " + startDeviceConnect.getStringExtra("name");
+        findViewById(android.R.id.content).setOnApplyWindowInsetsListener(Main.onApplyWindowInsetsListener);
+        String text = getString(R.string.connecting_to);
+        String name = getIntent().getStringExtra("name");
+        if(name != null) text = text.replace("watch", name);
         ((TextView)findViewById(R.id.device_connect_name)).setText(text);
 
         ImageView icon = findViewById(R.id.device_connect_icon);

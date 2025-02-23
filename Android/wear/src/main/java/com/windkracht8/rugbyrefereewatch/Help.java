@@ -9,9 +9,8 @@ import android.widget.ScrollView;
 public class Help extends ScrollView{
     public Help(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.help, this, true);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.help, this, true);
     }
     void show(boolean withWelcome){
         if(withWelcome) findViewById(R.id.welcome).setVisibility(VISIBLE);
