@@ -167,7 +167,7 @@ public class TabReport extends LinearLayout{
                 switch(view_type){
                     case 0:
                         if(event.has("team")) calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
-                        llEvents.addView(new ReportEvent(main, event, period_count, period_time, score));
+                        llEvents.addView(new ReportEventStandard(main, event, period_count, period_time, score));
                         break;
                     case 1:
                         llEvents.addView(new ReportEventFull(main, event, match, period_count, period_time));
@@ -186,51 +186,23 @@ public class TabReport extends LinearLayout{
     private final ViewTreeObserver.OnGlobalLayoutListener resizeFields = new ViewTreeObserver.OnGlobalLayoutListener(){
         @Override public void onGlobalLayout(){
             //Resize the fields in llEvents so that it looks like a neat table
-            llEvents.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            switch(view_type){
-                case 0:
-                    width_score = 0;
-                    width_timer = 0;
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEvent.class) continue;
-                        ((ReportEvent)view).getFieldWidths();
-                    }
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEvent.class) continue;
+            width_score = 0;
+            width_timer = 0;
+            width_time = 0;
+            width_what = 0;
+            width_team = 0;
+            for(int i=0; i<llEvents.getChildCount(); i++){
+                View view = llEvents.getChildAt(i);
+                if(view instanceof ReportEvent)
+                    ((ReportEvent)view).getFieldWidths();
+            }
+            if(width_timer > 0){
+                llEvents.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                for(int i=0; i<llEvents.getChildCount(); i++){
+                    View view = llEvents.getChildAt(i);
+                    if(view instanceof ReportEvent)
                         ((ReportEvent)view).setFieldWidths();
-                    }
-                    break;
-                case 1:
-                    width_time = 0;
-                    width_timer = 0;
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEventFull.class) continue;
-                        ((ReportEventFull)view).getFieldWidths();
-                    }
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEventFull.class) continue;
-                        ((ReportEventFull)view).setFieldWidths();
-                    }
-                    break;
-                case 2:
-                    width_timer = 0;
-                    width_what = 0;
-                    width_team = 0;
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEventEdit.class) continue;
-                        ((ReportEventEdit)view).getFieldWidths();
-                    }
-                    for(int i=0; i<llEvents.getChildCount(); i++){
-                        View view = llEvents.getChildAt(i);
-                        if(view.getClass() != ReportEventEdit.class) continue;
-                        ((ReportEventEdit)view).setFieldWidths();
-                    }
-                    break;
+                }
             }
         }
     };

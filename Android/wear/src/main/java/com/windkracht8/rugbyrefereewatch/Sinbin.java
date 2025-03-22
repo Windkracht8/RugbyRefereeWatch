@@ -2,21 +2,22 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.graphics.Color;
 import android.view.Gravity;
-import android.widget.TextView;
 
-class Sinbin extends TextView{
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.widget.TextViewCompat;
+
+class Sinbin extends AppCompatTextView{
     final MatchData.sinbin sinbin;
     private final Main main;
-    Sinbin(Main main, MatchData.sinbin sinbin, String color){
+    Sinbin(Main main, MatchData.sinbin sinbin, int color){
         super(main);
         this.main = main;
         this.sinbin = sinbin;
 
         main.addOnTouch(this);
-
         setHeight(Main.vh10);
-        setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        setTextColor(main.getColorFG(color));
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(this, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        setTextColor(color);
         setIncludeFontPadding(false);
         setPadding(Main._10dp, 0, Main._10dp, 0);
         setGravity(Gravity.CENTER);
@@ -26,7 +27,7 @@ class Sinbin extends TextView{
     void update(){
         long remaining = sinbin.end - Main.timer_timer;
         if(Main.timer_status != Main.TimerStatus.RUNNING){
-            remaining += Main.getCurrentTimestamp() - Main.timer_start_time_off;
+            remaining += System.currentTimeMillis() - Main.timer_start_time_off;
         }
         if(remaining < -60000){
             sinbin.hide = true;

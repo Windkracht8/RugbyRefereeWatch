@@ -17,7 +17,7 @@
         <activity
             android:name=".Main"
             android:taskAffinity=".Main"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:exported="true"
             android:theme="@style/rrw_splash" >
             <intent-filter>
@@ -25,5 +25,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ConfActivity"
+            android:taskAffinity=".Main"
+            android:theme="@style/rrw" />
+        <activity
+            android:name=".MatchLog"
+            android:taskAffinity=".Main"
+            android:theme="@style/rrw_sub" />
+        <activity
+            android:name=".Report"
+            android:taskAffinity=".Main"
+            android:noHistory="true"
+            android:theme="@style/rrw_sub" />
+        <activity
+            android:name=".Help"
+            android:taskAffinity=".Main"
+            android:noHistory="true"
+            android:theme="@style/rrw_sub" />
     </application>
 </manifest>

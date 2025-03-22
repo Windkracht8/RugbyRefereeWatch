@@ -14,6 +14,7 @@
     <string name="_5" translatable="false">5</string>
     <string name="_10" translatable="false">10</string>
     <string name="_40" translatable="false">40</string>
+    <string name="_60" translatable="false">60</string>
     <string name="x" translatable="false">X</string>
 
     <!-- main ui -->
@@ -89,18 +90,22 @@
     <string name="sMatchType_desc">Match type selection</string>
     <string name="bSaveCustom_text">Save match type</string>
     <string name="bDelCustom_text">Delete match type</string>
-    <string name="etTimePeriod_text">Time/period</string>
+    <string name="etPeriodTime_text">Time/period</string>
     <string name="etPeriodCount_text">Period count</string>
     <string name="etSinbin_text">Sinbin</string>
     <string name="etPointsTry_text">Points for Try</string>
     <string name="etPointsCon_text">Points for Conversion</string>
     <string name="etPointsGoal_text">Points for Goal</string>
+    <string name="etClockPK_text">PK clock</string>
+    <string name="etClockCon_text">Conversion clock</string>
+    <string name="etClockRestart_text">Restart clock</string>
     <string name="watch_settings">Watch settings</string>
     <string name="no_watch_settings">No watch settings</string>
     <string name="cbScreenOn_text">Keep screen on</string>
     <string name="sTimerType_text">Timer type</string>
     <string name="cbRecordPlayer_text">Record player #</string>
     <string name="cbRecordPens_text">Record penalties</string>
+    <string name="cbDelayEnd_text">Delay end of period</string>
 
     <string name="home_name_empty">Home name can\'t be empty</string>
     <string name="away_name_empty">Away name can\'t be empty</string>
@@ -150,12 +155,12 @@
     </string-array>
 
     <string-array name="matchTypes">
+        <item>custom</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>custom</item>
     </string-array>
 
     <string-array name="timerTypes">

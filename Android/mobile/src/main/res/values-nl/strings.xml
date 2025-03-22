@@ -72,18 +72,22 @@
     <string name="sMatchType_desc">Wedstrijdtype selectie</string>
     <string name="bSaveCustom_text">Sla wedstrijdtype op</string>
     <string name="bDelCustom_text">Verwijder wedstrijdtype</string>
-    <string name="etTimePeriod_text">Tijd/periode</string>
+    <string name="etPeriodTime_text">Tijd/periode</string>
     <string name="etPeriodCount_text">Aantal periodes</string>
     <string name="etSinbin_text">Sinbin</string>
     <string name="etPointsTry_text">Punten voor Try</string>
     <string name="etPointsCon_text">Punten voor Conversie</string>
     <string name="etPointsGoal_text">Punten voor Goal</string>
+    <string name="etClockPK_text">PK clock</string>
+    <string name="etClockCon_text">Conversie clock</string>
+    <string name="etClockRestart_text">Herstart clock</string>
     <string name="watch_settings">Horloge instellingen</string>
     <string name="no_watch_settings">Geen horloge instellingen</string>
     <string name="cbScreenOn_text">Houd scherm aan</string>
     <string name="sTimerType_text">Timertype</string>
     <string name="cbRecordPlayer_text">Registreer speler #</string>
     <string name="cbRecordPens_text">Registreer penalty\'s</string>
+    <string name="cbDelayEnd_text">Vertraag einde van periode</string>
 
     <string name="home_name_empty">Thuis naam mag niet leeg zijn</string>
     <string name="away_name_empty">Gasten naam mag niet leeg zijn</string>
@@ -133,12 +137,12 @@
     </string-array>
 
     <string-array name="matchTypes">
+        <item>aangepast</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>aangepast</item>
     </string-array>
 
     <string-array name="timerTypes">

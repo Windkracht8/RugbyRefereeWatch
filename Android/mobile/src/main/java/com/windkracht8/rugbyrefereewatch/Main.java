@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -97,6 +99,26 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             if(commsBT != null) commsBT.stopBT();
             commsBT = null;
         });
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        if(Build.VERSION.SDK_INT < 35) return;
+        WindowInsetsController wic = icon.getWindowInsetsController();
+        if(wic == null) return;
+        switch(getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+            case Configuration.UI_MODE_NIGHT_NO:
+                wic.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                wic.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+                break;
+        }
     }
 
     private void checkPermissions(){
@@ -180,15 +202,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     }
 
      private void onBack(){
-        if(tabHistory.getVisibility() == View.VISIBLE){
-            if(tabHistory.unselect()) return;
-        }else if(tabReport.getVisibility() == View.VISIBLE){
-            tabHistoryLabelClick();
-            return;
-        }else if(tabPrepare.getVisibility() == View.VISIBLE){
-            tabReportLabelClick();
-            return;
-        }
+        if(tabHistory.getVisibility() == View.VISIBLE && tabHistory.unselect()) return;
         finish();
     }
     @Override public boolean onTouchEvent(MotionEvent event){return gestureDetector.onTouchEvent(event);}
@@ -343,11 +357,18 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     }
     void bSyncClick(){
         setButtonProcessing(R.id.bSync);
+        if(cantSendRequest()){
+            device.setText(R.string.fail_BT);
+            return;
+        }
         sendSyncRequest();
     }
     void bPrepareClick(){
         setButtonProcessing(R.id.bPrepare);
-        if(cantSendRequest()) return;
+        if(cantSendRequest()){
+            device.setText(R.string.fail_BT);
+            return;
+        }
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
             onBTError(R.string.fail_prepare);
@@ -356,14 +377,12 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         commsBT.sendRequest("prepare", requestData);
     }
     private boolean cantSendRequest(){
-        if(commsBT != null && commsBT.status == CommsBT.Status.CONNECTED) return false;
-        device.setText(R.string.fail_BT);
-        return true;
+        return commsBT == null || commsBT.status != CommsBT.Status.CONNECTED;
     }
 
-    private void sendSyncRequest(){
+    void sendSyncRequest(){
         if(cantSendRequest()) return;
-        try {
+        try{
             JSONObject requestData = new JSONObject();
             requestData.put("deleted_matches", tabHistory.getDeletedMatches());
             requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());

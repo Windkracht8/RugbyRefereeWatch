@@ -21,13 +21,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +44,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,7 +51,6 @@ public class Main extends Activity{
     static final String LOG_TAG = "RugbyRefereeWatch";
     static boolean isScreenRound;
     private boolean showSplash = true;
-    private boolean isPenPadInitialized = false;
     private TextView battery;
     private TextView time;
     private RelativeLayout home;
@@ -62,12 +59,15 @@ public class Main extends Activity{
     private TextView score_away;
     private LinearLayout sinbins_home;
     private LinearLayout sinbins_away;
+    private LinearLayout kickClockHome;
+    private TextView tKickClockHome;
     private TextView tTimer;
+    private LinearLayout kickClockAway;
+    private TextView tKickClockAway;
     private View buttons_back;
     private Button bOverTimer;
     private Button bStart;
     private ImageButton bMatchLog;
-    private TextView pen_label;
     private Button bPenHome;
     private Button bPenAway;
     private Button bBottom;
@@ -75,24 +75,23 @@ public class Main extends Activity{
     private ImageButton bConfWatch;
     private LinearLayout delay_end_wrapper;
     private TextView delay_end_text;
-    private Conf conf;
+    private LinearLayout kick_clock_confirm;
+    private TextView kick_clock_confirm_label;
+    private EditText kick_player;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
     private ExtraTime extraTime;
     private Correct correct;
-    private Report report;
-    private MatchLog matchLog;
-    private Help help;
     private View touchView;
 
     private static int widthPixels;
+    static int heightPixels;
     static int vh5;
     static int vh10;
     static int vh15;
     static int vh25;
-    static int vh30;
-    private static int vh40;
+    static int vh75;
     static int _10dp;
 
     //Timer
@@ -105,18 +104,25 @@ public class Main extends Activity{
     static int timer_period = 0;
     static int timer_period_time = 40;
     static int timer_type_period = 1;//0:up, 1:down
+    //Kick clocks
+    private enum KickClockTypes {PK, CON, RESTART}
+    private KickClockTypes kickClockType_home;
+    private KickClockTypes kickClockType_away;
+    private long kick_clock_home_end = -1;
+    private long kick_clock_away_end = -1;
+
     //Settings
     static boolean screen_on = true;
     static int timer_type = 1;//0:up, 1:down
     static boolean record_player = false;
     static boolean record_pens = false;
     static boolean delay_end = true;
-    private final static int HELP_VERSION = 4;
+    private final static int HELP_VERSION = 5;
     private static int battery_capacity = -1;
 
     static final MatchData match = new MatchData();
     private Handler handler;
-    private ExecutorService executorService;
+    private static ExecutorService executorService;
     private Vibrator vibrator;
     private CommsBT commsBT;
     private BatteryManager batteryManager;
@@ -127,9 +133,6 @@ public class Main extends Activity{
     private static int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
     private static boolean hasBTPermission = false;
-    private float si_scale_per_pixel = 0;
-    private int si_bottom_quarter;
-    private int si_below_screen;
     private int delay_end_count;
     private long delay_end_start_time;
 
@@ -138,7 +141,6 @@ public class Main extends Activity{
         splashScreen.setKeepOnScreenCondition(()->showSplash);
         super.onCreate(savedInstanceState);
         isScreenRound = getResources().getConfiguration().isScreenRound();
-        int heightPixels;
         if(Build.VERSION.SDK_INT >= 30){
             heightPixels = getWindowManager().getMaximumWindowMetrics().getBounds().height();
             widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
@@ -148,26 +150,21 @@ public class Main extends Activity{
             heightPixels = displayMetrics.heightPixels;
             widthPixels = displayMetrics.widthPixels;
         }
-        SWIPE_THRESHOLD = (int) (widthPixels * .3);
-        vh5 = (int) (heightPixels * .05);
-        vh10 = heightPixels / 10;
-        vh15 = (int) (heightPixels * .15);
-        int vh20 = (int) (heightPixels * .2);
-        vh25 = (int) (heightPixels * .25);
-        vh30 = (int) (heightPixels * .3);
-        vh40 = (int) (heightPixels * .4);
-        int vh75 = (int) (heightPixels * .75);
+        SWIPE_THRESHOLD = (int) (widthPixels*.3);
+        vh5 = (int) (heightPixels*.05);
+        vh10 = heightPixels/10;
+        vh15 = (int) (heightPixels*.15);
+        vh25 = (int) (heightPixels*.25);
+        int vh50 = heightPixels/2;
+        vh75 = (int) (heightPixels*.75);
+        int vw30 = (int) (widthPixels*.3);
+        int vw50 = widthPixels/2;
         _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
 
-        int si_item_height = getResources().getDimensionPixelSize(R.dimen.si_item_height);
-        si_bottom_quarter = vh75 - si_item_height;
-        si_below_screen = heightPixels - si_item_height;
-        si_scale_per_pixel = 0.2f / vh25;
-
         if(Build.VERSION.SDK_INT >= 31){
-            vibrator = ((VibratorManager) getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
+            vibrator = ((VibratorManager)getSystemService(Context.VIBRATOR_MANAGER_SERVICE)).getDefaultVibrator();
         }else{
-            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         }
         handler = new Handler(Looper.getMainLooper());
         commsBT = new CommsBT(this);
@@ -175,25 +172,20 @@ public class Main extends Activity{
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
-        int[] ids = new int[]{
+        for(int id : new int[]{
                 R.id.main, R.id.bConfWatch, R.id.home, R.id.score_home, R.id.away, R.id.score_away
-                ,R.id.tTimer, R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer
+                ,R.id.tTimer, R.id.kickClockHome, R.id.kickClockAway
+                ,R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer
                 ,R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf
-                ,R.id.conf, R.id.svConf, R.id.svConfSpinner
+                ,R.id.kick_clock_confirm_no, R.id.kick_clock_confirm_yes
                 ,R.id.confWatch
                 ,R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal
                 ,R.id.foulPlay, R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow
                 ,R.id.penaltyTry, R.id.card_red
                 ,R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min
                 ,R.id.extra_time_10min
-                ,R.id.matchLog, R.id.svMatchLog
-                ,R.id.report, R.id.svReport
                 ,R.id.correct, R.id.svCorrect
-                ,R.id.help, R.id.svHelp
-        };
-        for(int id : ids){
-            findViewById(id).setOnTouchListener(this::onTouch);
-        }
+        })findViewById(id).setOnTouchListener(this::onTouch);
         findViewById(R.id.main).setOnClickListener(v->onMainClick());
 
         battery = findViewById(R.id.battery);
@@ -206,8 +198,14 @@ public class Main extends Activity{
         score_away = findViewById(R.id.score_away);
         sinbins_home = findViewById(R.id.sinbins_home);
         sinbins_away = findViewById(R.id.sinbins_away);
+        kickClockHome = findViewById(R.id.kickClockHome);
+        kickClockHome.setOnClickListener(v->kickClockHomeClick());
+        tKickClockHome = findViewById(R.id.tKickClockHome);
         tTimer = findViewById(R.id.tTimer);
         tTimer.setOnClickListener(v->timerClick());
+        kickClockAway = findViewById(R.id.kickClockAway);
+        kickClockAway.setOnClickListener(v->kickClockAwayClick());
+        tKickClockAway = findViewById(R.id.tKickClockAway);
         buttons_back = findViewById(R.id.buttons_back);
         bOverTimer = findViewById(R.id.bOverTimer);
         bOverTimer.setOnClickListener(v->bOverTimerClick());
@@ -215,11 +213,11 @@ public class Main extends Activity{
         bStart.setOnClickListener(v->bOverTimerClick());
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v->bBottomClick());
-        conf = findViewById(R.id.conf);
-        conf.onCreateMain(this);
-        conf.confSpinner.onCreateMain(this);
+        kick_clock_confirm = findViewById(R.id.kick_clock_confirm);
+        kick_clock_confirm_label = findViewById(R.id.kick_clock_confirm_label);
+        kick_player = findViewById(R.id.kick_player);
         bConf = findViewById(R.id.bConf);
-        bConf.setOnClickListener(v->conf.show(this));
+        bConf.setOnClickListener(v->startActivity(new Intent(this, ConfActivity.class)));
         confWatch = findViewById(R.id.confWatch);
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v->confWatch.show(this));
@@ -233,14 +231,9 @@ public class Main extends Activity{
         foulPlay.onCreateMain(this);
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v->correctClicked());
-        correct.onCreateMain(this);
-        report = findViewById(R.id.report);
-        matchLog = findViewById(R.id.matchLog);
-        matchLog.onCreateMain(this);
+        correct.onCreateMain();
         bMatchLog = findViewById(R.id.bMatchLog);
-        bMatchLog.setOnClickListener(v->matchLog.show(this, report));
-        help = findViewById(R.id.help);
-        pen_label = findViewById(R.id.pen_label);
+        bMatchLog.setOnClickListener(v->startActivity(new Intent(this, MatchLog.class)));
         bPenHome = findViewById(R.id.bPenHome);
         bPenHome.setOnClickListener(v->bPenHomeClick());
         bPenAway = findViewById(R.id.bPenAway);
@@ -251,23 +244,22 @@ public class Main extends Activity{
         //Resize elements for the heightPixels
         battery.setHeight(vh10);
         time.setHeight(vh15);
-        score_home.setHeight(vh25);
+        score_home.setHeight(vh25);//will be resized to vh15 when sinbin is shown
         score_away.setHeight(vh25);
-        tTimer.setHeight(vh30);
+        findViewById(R.id.pen_label).getLayoutParams().height = vh15;
+        buttons_back.getLayoutParams().height = vh50;
         bOverTimer.setHeight(vh25);
         bOverTimer.setPadding(0, vh5, 0, vh5);
-        findViewById(R.id.bStartMatchLog).getLayoutParams().height = vh25;
         bStart.setHeight(vh25);
         bStart.setPadding(0, vh5, 0, vh5);
+        bMatchLog.getLayoutParams().height = vh25;
         bMatchLog.setPadding(0, vh5, 0, vh5);
         bBottom.setHeight(vh25);
         bBottom.setPadding(0, vh5, 0, vh5);
         bConf.getLayoutParams().height = vh25;
-        ConstraintLayout.LayoutParams pen_label_layoutParams = (ConstraintLayout.LayoutParams) pen_label.getLayoutParams();
-        pen_label_layoutParams.height = vh10;
-        pen_label_layoutParams.bottomMargin = vh5;
-        bPenHome.setHeight(vh20);
-        bPenAway.setHeight(vh20);
+        findViewById(R.id.kick_clock_confirm_no).getLayoutParams().width = vw50;
+        findViewById(R.id.kick_clock_confirm_yes).getLayoutParams().width = vw50;
+
         if(getResources().getConfiguration().fontScale > 1.1){
             battery.setIncludeFontPadding(false);
             time.setIncludeFontPadding(false);
@@ -278,19 +270,12 @@ public class Main extends Activity{
         }
 
         if(isScreenRound){
-            pen_label.getViewTreeObserver().addOnGlobalLayoutListener(()->{
-                if(isPenPadInitialized) return;
-                int pad_inner = (pen_label.getWidth()+20)/2;
-                int pad_outer = widthPixels/3;
-                bPenHome.setPadding(pad_outer, 0, pad_inner, 0);
-                bPenAway.setPadding(pad_inner, 0, pad_outer, 0);
-                isPenPadInitialized = true;
-            });
+            bPenHome.setPadding(vw30, 0, 0, 0);
+            bPenAway.setPadding(0, 0, vw30, 0);
         }
 
         if(timer_status == TimerStatus.CONF){
             checkPermissions();
-            runInBackground(()->FileStore.readCustomMatchTypes(this));
             runInBackground(()->FileStore.readSettings(this));
             runInBackground(()->FileStore.cleanMatches(this));
         }else{
@@ -304,6 +289,10 @@ public class Main extends Activity{
         updateAfterConfig();
         startBT();
         showSplash = false;
+    }
+    @Override public void onResume(){
+        super.onResume();
+        updateAfterConfig();
     }
     @Override public void onDestroy(){
         super.onDestroy();
@@ -356,13 +345,9 @@ public class Main extends Activity{
         }
     }
 
-    private void runInBackground(Runnable runnable){
+    static void runInBackground(Runnable runnable){
         if(executorService == null) executorService = Executors.newCachedThreadPool();
         executorService.execute(runnable);
-    }
-
-    void toast(int message){
-        runOnUiThread(()->Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event){
@@ -373,14 +358,8 @@ public class Main extends Activity{
         return super.onKeyDown(keyCode, event);
     }
     private void onBack(){
-        if(help.getVisibility() == View.VISIBLE){
-            help.setVisibility(View.GONE);
-        }else if(correct.getVisibility() == View.VISIBLE){
+        if(correct.getVisibility() == View.VISIBLE){
             correct.setVisibility(View.GONE);
-        }else if(report.getVisibility() == View.VISIBLE){
-            report.setVisibility(View.GONE);
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            matchLog.setVisibility(View.GONE);
         }else if(extraTime.getVisibility() == View.VISIBLE){
             extraTime.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -391,13 +370,8 @@ public class Main extends Activity{
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
             runInBackground(()->FileStore.storeSettings(this));
-        }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
-            conf.confSpinner.setVisibility(View.GONE);
-            conf.requestSVFocus();
-        }else if(conf.getVisibility() == View.VISIBLE){
-            conf.setVisibility(View.GONE);
-            updateAfterConfig();
-            runInBackground(()->FileStore.storeSettings(this));
+        }else if(kick_clock_confirm.getVisibility() == View.VISIBLE){
+            kick_clock_confirm.setVisibility(View.GONE);
         }else{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 finish();
@@ -460,8 +434,8 @@ public class Main extends Activity{
                 float velocity2 = getBackSwipeVelocity(event, diffX2);
                 onTouchStartY = -1;
                 if(diffX2 > SWIPE_THRESHOLD && velocity2 > SWIPE_VELOCITY_THRESHOLD){
-                    draggingEnded = getCurrentTimestamp();
-                    onBack();
+                    if(draggingEnded+100 < System.currentTimeMillis()) onBack();
+                    draggingEnded = System.currentTimeMillis();
                     return true;
                 }
         }
@@ -470,14 +444,8 @@ public class Main extends Activity{
     private void onTouchInit(MotionEvent event){
         onTouchStartY = event.getRawY();
         onTouchStartX = event.getRawX();
-        if(help.getVisibility() == View.VISIBLE){
-            touchView = help;
-        }else if(correct.getVisibility() == View.VISIBLE){
+        if(correct.getVisibility() == View.VISIBLE){
             touchView = correct;
-        }else if(report.getVisibility() == View.VISIBLE){
-            touchView = report;
-        }else if(matchLog.getVisibility() == View.VISIBLE){
-            touchView = matchLog;
         }else if(extraTime.getVisibility() == View.VISIBLE){
             touchView = extraTime;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
@@ -486,10 +454,6 @@ public class Main extends Activity{
             touchView = score;
         }else if(confWatch.getVisibility() == View.VISIBLE){
             touchView = confWatch;
-        }else if(conf.confSpinner.getVisibility() == View.VISIBLE){
-            touchView = conf.confSpinner;
-        }else if(conf.getVisibility() == View.VISIBLE){
-            touchView = conf;
         }else{
             touchView = null;
         }
@@ -503,45 +467,6 @@ public class Main extends Activity{
     }
     private float getBackSwipeVelocity(MotionEvent event, float diffX){
         return (diffX / (event.getEventTime() - event.getDownTime())) * 1000;
-    }
-    void si_addLayout(ScrollView sv, LinearLayout ll){
-        if(!isScreenRound) return;
-        ll.setPadding(vh5, vh25, vh5, vh25);
-        sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-            @Override public void onGlobalLayout(){
-                if(ll.getChildCount() > 0 && ll.getChildAt(0).getHeight() > 0){
-                    sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    si_scaleItems(ll, 0);
-                    sv.setOnScrollChangeListener((v, sx, sy, osx, osy)->si_scaleItems(ll, sy));
-                }
-            }
-        });
-    }
-    void si_scaleItemsAfterChange(LinearLayout ll, ScrollView sv){
-        sv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
-            @Override public void onGlobalLayout(){
-                sv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                si_scaleItems(ll, sv.getScrollY());
-            }
-        });
-    }
-    private void si_scaleItems(LinearLayout ll, int scrollY){
-        for(int i = 0; i < ll.getChildCount(); i++){
-            View item = ll.getChildAt(i);
-            float top = (ll.getY() + item.getY()) - scrollY;
-            float scale = 1.0f;
-            if(top < 0){
-                scale = 0.8f;
-            }else if(top < Main.vh25){
-                scale = 0.8f + (si_scale_per_pixel * top);
-            }else if(top > si_below_screen){
-                scale = 0.8f;
-            }else if(top > si_bottom_quarter){
-                scale = 1.0f - (si_scale_per_pixel * (top - si_bottom_quarter));
-            }
-            item.setScaleX(scale);
-            item.setScaleY(scale);
-        }
     }
 
     private void startBT(){
@@ -557,7 +482,7 @@ public class Main extends Activity{
         if(timer_status == TimerStatus.RUNNING){
             singleBeep();
             timer_status = TimerStatus.TIME_OFF;
-            timer_start_time_off = getCurrentTimestamp();
+            timer_start_time_off = System.currentTimeMillis();
             match.logEvent("TIME OFF", null, 0, 0);
             updateButtons();
             handler.postDelayed(timeOffBuzz, 15000);
@@ -572,12 +497,12 @@ public class Main extends Activity{
     private void bOverTimerClick(){
         switch(timer_status){
             case CONF:
-                match.match_id = getCurrentTimestamp();
+                match.match_id = System.currentTimeMillis();
                 runInBackground(commsBT::stopBT);
             case READY:
                 singleBeep();
                 timer_status = TimerStatus.RUNNING;
-                timer_start = getCurrentTimestamp();
+                timer_start = System.currentTimeMillis();
                 String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
                 timer_period++;
                 match.logEvent("START", kickoffTeam, 0, 0);
@@ -588,7 +513,7 @@ public class Main extends Activity{
                 //resume running
                 singleBeep();
                 timer_status = TimerStatus.RUNNING;
-                timer_start += (getCurrentTimestamp() - timer_start_time_off);
+                timer_start += (System.currentTimeMillis() - timer_start_time_off);
                 match.logEvent("RESUME", null, 0, 0);
                 break;
             case REST:
@@ -597,7 +522,8 @@ public class Main extends Activity{
                 timer_type_period = timer_type;
                 break;
             case FINISHED:
-                report.show(this, match);
+                Report.match = match;
+                startActivity(new Intent(this, Report.class));
                 break;
             default://ignore
                 return;
@@ -734,12 +660,139 @@ public class Main extends Activity{
                 bMatchLog.setVisibility(View.GONE);
                 bBottom.setVisibility(View.GONE);
                 bConf.setVisibility(View.GONE);
-                buttons_back.setVisibility(View.GONE);
+                buttons_back.setVisibility(View.INVISIBLE);
         }
         updateTimer();
     }
+    private void kickClockHomeShow(int label_text, int secs){
+        ((TextView)findViewById(R.id.tKickClockHomeLabel)).setText(label_text);
+        kick_clock_home_end = System.currentTimeMillis() + (secs*1000L);
+        if(isScreenRound){
+            if(kick_clock_away_end<0){
+                tTimer.setPadding(0, 0, vh10, 0);
+            }else{
+                tTimer.setPadding(0, 0, 0, 0);
+            }
+        }
+        tKickClockHome.setText(String.valueOf(secs));
+        kickClockHome.setVisibility(View.VISIBLE);
+    }
+    private void kickClockAwayShow(int label_text, int secs){
+        ((TextView)findViewById(R.id.tKickClockAwayLabel)).setText(label_text);
+        kick_clock_away_end = System.currentTimeMillis() + (secs*1000L);
+        if(isScreenRound){
+            if(kick_clock_home_end<0){
+                tTimer.setPadding(vh10, 0, 0, 0);
+            }else{
+                tTimer.setPadding(0, 0, 0, 0);
+            }
+        }
+        tKickClockAway.setText(String.valueOf(secs));
+        kickClockAway.setVisibility(View.VISIBLE);
+    }
+    private void kickClockHomeClick(){
+        switch(kickClockType_home){
+            case CON:
+                kick_clock_confirm_label.setText(R.string.kc_confirm_conv);
+                break;
+            case PK:
+                kick_clock_confirm_label.setText(R.string.kc_confirm_pk);
+                break;
+            case RESTART:
+                kickClockHomeClose();
+                return;
+        }
+        kick_player.setText("");
+        kick_player.setVisibility(record_player ? View.VISIBLE : View.GONE);
+        findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
+            kickClockHomeClose();
+            kick_clock_confirm.setVisibility(View.GONE);
+        });
+        findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
+            score.team = match.home;
+            int player = 0;
+            if(kick_player.getText().length() > 0) player = Integer.parseInt(kick_player.getText().toString());
+            switch(kickClockType_home){
+                case CON:
+                    conversionClick(player);
+                    break;
+                case PK:
+                    goalClick(player);
+                    break;
+            }
+            kick_clock_confirm.setVisibility(View.GONE);
+        });
+        kick_clock_confirm.setVisibility(View.VISIBLE);
+    }
+    private void kickClockAwayClick(){
+        switch(kickClockType_away){
+            case CON:
+                kick_clock_confirm_label.setText(R.string.kc_confirm_conv);
+                break;
+            case PK:
+                kick_clock_confirm_label.setText(R.string.kc_confirm_pk);
+                break;
+            case RESTART:
+                kickClockAwayClose();
+                return;
+        }
+        kick_player.setText("");
+        kick_player.setVisibility(record_player ? View.VISIBLE : View.GONE);
+        findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
+            kickClockAwayClose();
+            kick_clock_confirm.setVisibility(View.GONE);
+        });
+        findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
+            score.team = match.away;
+            int player = 0;
+            if(kick_player.getText().length() > 0) player = Integer.parseInt(kick_player.getText().toString());
+            switch(kickClockType_away){
+                case CON:
+                    conversionClick(player);
+                    break;
+                case PK:
+                    goalClick(player);
+                    break;
+            }
+            kick_clock_confirm.setVisibility(View.GONE);
+        });
+        kick_clock_confirm.setVisibility(View.VISIBLE);
+    }
+    void kickClockHomeClose(){
+        if(kickClockType_home == KickClockTypes.CON && match.clock_restart > 0){
+            kickClockType_home = KickClockTypes.RESTART;
+            kickClockHomeShow(R.string.restart, match.clock_restart);
+            return;
+        }
+        kick_clock_home_end = -1;
+        if(isScreenRound){
+            if(kick_clock_away_end>0){
+                tTimer.setPadding(vh10, 0, 0, 0);
+            }else{
+                tTimer.setPadding(0, 0, 0, 0);
+            }
+        }
+        kickClockHome.setVisibility(View.GONE);
+    }
+    void kickClockAwayClose(){
+        if(kickClockType_away == KickClockTypes.CON && match.clock_restart > 0){
+            kickClockType_away = KickClockTypes.RESTART;
+            kickClockAwayShow(R.string.restart, match.clock_restart);
+            return;
+        }
+        kick_clock_away_end = -1;
+        if(isScreenRound){
+            if(kick_clock_home_end>0){
+                tTimer.setPadding(0, 0, vh10, 0);
+            }else{
+                tTimer.setPadding(0, 0, 0, 0);
+            }
+        }
+        kickClockAway.setVisibility(View.GONE);
+    }
+
     private void delay_end_start(){
-        delay_end_start_time = getCurrentTimestamp();
+        delay_end_start_time = System.currentTimeMillis();
         if(!delay_end){
             endPeriod();
             return;
@@ -779,7 +832,7 @@ public class Main extends Activity{
 
         String kickoffTeam = getKickoffTeam();
         if(kickoffTeam != null){
-            if(kickoffTeam.equals("home")){
+            if(kickoffTeam.equals(MatchData.HOME_ID)){
                 kickoffTeam = match.home.tot + " " + getString(R.string.kick);
                 score_home.setText(kickoffTeam);
             }else{
@@ -788,6 +841,8 @@ public class Main extends Activity{
             }
         }
         updateButtons();
+        if(kick_clock_home_end > 0) kickClockHomeClose();
+        if(kick_clock_away_end > 0) kickClockAwayClose();
         delay_end_wrapper.setVisibility(View.GONE);
     }
     private final Runnable update = new Runnable(){@Override public void run(){
@@ -817,15 +872,23 @@ public class Main extends Activity{
         }
 
         if(Main.record_pens){
-            findViewById(R.id.pen).setVisibility(View.VISIBLE);
+            findViewById(R.id.bPenHome).setVisibility(View.VISIBLE);
             findViewById(R.id.pen_label).setVisibility(View.VISIBLE);
-            tTimer.setHeight(vh30);
-            ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = 0;
+            findViewById(R.id.bPenAway).setVisibility(View.VISIBLE);
+            ((ConstraintLayout.LayoutParams)tTimer.getLayoutParams()).bottomMargin = 0;
+            if(isScreenRound){
+                kickClockHome.setPadding(vh10, 0, _10dp, vh5);
+                kickClockAway.setPadding(_10dp, 0, vh10, vh5);
+            }
         }else{
-            findViewById(R.id.pen).setVisibility(View.GONE);
+            findViewById(R.id.bPenHome).setVisibility(View.GONE);
             findViewById(R.id.pen_label).setVisibility(View.GONE);
-            tTimer.setHeight(vh40);
-            ((ConstraintLayout.LayoutParams) tTimer.getLayoutParams()).bottomMargin = vh10;
+            findViewById(R.id.bPenAway).setVisibility(View.GONE);
+            ((ConstraintLayout.LayoutParams)tTimer.getLayoutParams()).bottomMargin = vh10;
+            if(isScreenRound){
+                kickClockHome.setPadding(vh10, 0, _10dp, vh10);
+                kickClockAway.setPadding(_10dp, 0, vh10, vh10);
+            }
         }
         score.update();
     }
@@ -844,7 +907,7 @@ public class Main extends Activity{
             default -> getResources().getColor(R.color.black, null);
         };
     }
-    int getColorFG(String name){
+    private int getColorFG(String name){
         return switch(name){
             case "gold", "green", "orange", "pink", "white" ->
                     getResources().getColor(R.color.black, null);
@@ -869,7 +932,7 @@ public class Main extends Activity{
     private void updateTimer(){
         long milli_secs = 0;
         if(timer_status == TimerStatus.RUNNING || timer_status == TimerStatus.REST){
-            milli_secs = getCurrentTimestamp() - timer_start;
+            milli_secs = System.currentTimeMillis() - timer_start;
         }
         if(timer_status == TimerStatus.TIME_OFF){
             milli_secs = timer_start_time_off - timer_start;
@@ -879,6 +942,11 @@ public class Main extends Activity{
         String temp = "";
         if(timer_type_period == 1){
             milli_secs = ((long)timer_period_time * 60000) - milli_secs;
+        }else{
+            int add_periods = timer_status == TimerStatus.READY ? timer_period : timer_period-1;
+            if(timer_status != TimerStatus.REST && add_periods > 0){
+                milli_secs += ((long)add_periods*timer_period_time)*60000;
+            }
         }
         if(milli_secs < 0){
             milli_secs -= milli_secs * 2;
@@ -891,6 +959,19 @@ public class Main extends Activity{
             timer_period_ended = true;
             tTimer.setTextColor(getResources().getColor(R.color.red, getTheme()));
             beep();
+        }
+
+        if(kick_clock_home_end > 0){
+            long kick_clock = kick_clock_home_end - System.currentTimeMillis();
+            String tmp = Long.toString(kick_clock / 1000);
+            tKickClockHome.setText(tmp);
+            if(kick_clock < 0) kickClockHomeClose();
+        }
+        if(kick_clock_away_end > 0){
+            long clock = kick_clock_away_end - System.currentTimeMillis();
+            String tmp = Long.toString(clock / 1000);
+            tKickClockAway.setText(tmp);
+            if(clock < 0) kickClockAwayClose();
         }
     }
     static String prettyTimer(long milli_secs){
@@ -921,10 +1002,10 @@ public class Main extends Activity{
                 }
             }
             if(!exists){
-                Sinbin sb = new Sinbin(this, sinbin_data, team.color);
+                Sinbin sb = new Sinbin(this, sinbin_data, getColorFG(team.color));
                 llSinbins.addView(sb);
                 al_sinbins_ui.add(sb);
-                if(Objects.equals(team.id, "home")){
+                if(team.isHome()){
                     score_home.setHeight(vh15);
                 }else{
                     score_away.setHeight(vh15);
@@ -937,7 +1018,7 @@ public class Main extends Activity{
                 llSinbins.removeView(sinbin_ui);
                 al_sinbins_ui.remove(sinbin_ui);
                 if(al_sinbins_ui.isEmpty()){
-                    if(Objects.equals(team.id, "home")){
+                    if(team.isHome()){
                         score_home.setHeight(vh25);
                     }else{
                         score_away.setHeight(vh25);
@@ -963,13 +1044,17 @@ public class Main extends Activity{
         if(timer_status == TimerStatus.CONF){return;}
         match.home.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.home.id, 0, 0);
+        match.logEvent("PENALTY", MatchData.HOME_ID, 0, 0);
+        kickClockType_home = KickClockTypes.PK;
+        kickClockHomeShow(R.string.pk, match.clock_pk);
     }
     private void bPenAwayClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.away.pens++;
         updateScore();
-        match.logEvent("PENALTY", match.away.id, 0, 0);
+        match.logEvent("PENALTY", MatchData.AWAY_ID, 0, 0);
+        kickClockType_away = KickClockTypes.PK;
+        kickClockAwayShow(R.string.pk, match.clock_pk);
     }
     private void homeClick(){
         if(timer_status == TimerStatus.CONF){
@@ -1006,25 +1091,48 @@ public class Main extends Activity{
         }
     }
     void tryClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.tries++;
         updateScore();
         match.logEvent("TRY", score.team.id, score.player(), 0);
+        if(score.team.isHome()){
+            kickClockType_home = KickClockTypes.CON;
+            kickClockHomeShow(R.string.conversion, match.clock_con);
+        }else{
+            kickClockType_away = KickClockTypes.CON;
+            kickClockAwayShow(R.string.conversion, match.clock_con);
+        }
         score.setVisibility(View.GONE);
     }
     void conversionClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
-        score.team.cons++;
-        updateScore();
-        match.logEvent("CONVERSION", score.team.id, score.player(), 0);
+        conversionClick(score.player());
         score.setVisibility(View.GONE);
     }
+    private void conversionClick(int player){
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
+        score.team.cons++;
+        updateScore();
+        match.logEvent("CONVERSION", score.team.id, player, 0);
+        if(score.team.isHome()){
+            kickClockHomeClose();
+        }else{
+            kickClockAwayClose();
+        }
+    }
     void goalClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
+        goalClick(score.player());
+        score.setVisibility(View.GONE);
+    }
+    private void goalClick(int player){
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.goals++;
         updateScore();
-        match.logEvent("GOAL", score.team.id, score.player(), 0);
-        score.setVisibility(View.GONE);
+        match.logEvent("GOAL", score.team.id, player, 0);
+        if(score.team.isHome()){
+            kickClockHomeClose();
+        }else{
+            kickClockAwayClose();
+        }
     }
     private void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -1042,14 +1150,14 @@ public class Main extends Activity{
         bPenAway.setText(String.valueOf(match.away.pens));
     }
     void foulPlayClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
         foulPlay.player(score.player());
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
     }
     void card_yellowClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
-        long time = getCurrentTimestamp();
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
+        long time = System.currentTimeMillis();
         match.logEvent("YELLOW CARD", score.team.id, foulPlay.player(), time);
         long end = timer_timer + ((long)match.sinbin*60000);
         end += 1000 - (end % 1000);
@@ -1063,7 +1171,7 @@ public class Main extends Activity{
         foulPlay.setVisibility(View.GONE);
     }
     void penaltyTryClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.pen_tries++;
         updateScore();
         match.logEvent("PENALTY TRY", score.team.id, foulPlay.player(), 0);
@@ -1074,7 +1182,7 @@ public class Main extends Activity{
         foulPlay.setVisibility(View.GONE);
     }
     void card_redClick(){
-        if(draggingEnded+100 > getCurrentTimestamp()) return;
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
         match.logEvent("RED CARD", score.team.id, foulPlay.player(), 0);
         score.team.red_cards++;
         if(record_pens){
@@ -1089,10 +1197,6 @@ public class Main extends Activity{
         updateSinbins();
     }
 
-    static long getCurrentTimestamp(){
-        Date d = new Date();
-        return d.getTime();
-    }
     private String getPeriodName(int period){
         return getPeriodName(this, period, match.period_count);
     }
@@ -1122,16 +1226,16 @@ public class Main extends Activity{
     private String getKickoffTeam(){
         if(match.home.kickoff){
             if(timer_period % 2 == 0){
-                return "home";
+                return MatchData.HOME_ID;
             }else{
-                return "away";
+                return MatchData.AWAY_ID;
             }
         }
         if(match.away.kickoff){
             if(timer_period % 2 == 0){
-                return "away";
+                return MatchData.AWAY_ID;
             }else{
-                return "home";
+                return MatchData.HOME_ID;
             }
         }
         return null;
@@ -1152,6 +1256,9 @@ public class Main extends Activity{
             match.points_try = settings.getInt("points_try");
             match.points_con = settings.getInt("points_con");
             match.points_goal = settings.getInt("points_goal");
+            match.clock_pk = settings.has("clock_pk") ? settings.getInt("clock_pk") : 0;//March 2025
+            match.clock_con = settings.has("clock_con") ? settings.getInt("clock_con") : 0;//March 2025
+            match.clock_restart = settings.has("clock_restart") ? settings.getInt("clock_restart") : 0;//March 2025
 
             if(settings.has("screen_on"))
                 screen_on = settings.getBoolean("screen_on");
@@ -1167,7 +1274,7 @@ public class Main extends Activity{
                 delay_end = settings.getBoolean("delay_end");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
-            toast(R.string.fail_receive_settings);
+            runOnUiThread(()->Toast.makeText(this, R.string.fail_receive_settings, Toast.LENGTH_SHORT).show());
             return false;
         }
         return true;
@@ -1187,26 +1294,30 @@ public class Main extends Activity{
             match.points_try = jsonSettings.getInt("points_try");
             match.points_con = jsonSettings.getInt("points_con");
             match.points_goal = jsonSettings.getInt("points_goal");
+            if(jsonSettings.has("clock_pk"))//March 2025
+                match.clock_pk = jsonSettings.getInt("clock_pk");
+            if(jsonSettings.has("clock_con"))
+                match.clock_con = jsonSettings.getInt("clock_con");
+            if(jsonSettings.has("clock_restart"))
+                match.clock_restart = jsonSettings.getInt("clock_restart");
             screen_on = jsonSettings.getBoolean("screen_on");
             timer_type = jsonSettings.getInt("timer_type");
             timer_type_period = timer_type;
             record_player = jsonSettings.getBoolean("record_player");
             record_pens = jsonSettings.getBoolean("record_pens");
-            if(jsonSettings.has("delay_end"))
+            if(jsonSettings.has("delay_end"))//March 2025
                 delay_end = jsonSettings.getBoolean("delay_end");
 
             if(jsonSettings.has("help_version") && HELP_VERSION != jsonSettings.getInt("help_version")){
-                showHelp();
+                startActivity(new Intent(this, Help.class));
                 runInBackground(()->FileStore.storeSettings(this));
             }
             runOnUiThread(this::updateAfterConfig);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "Main.readSettings Exception: " + e.getMessage());
-            toast(R.string.fail_read_settings);
+            runOnUiThread(()->Toast.makeText(this, R.string.fail_read_settings, Toast.LENGTH_SHORT).show());
         }
     }
-    void noSettings(){runOnUiThread(()->help.show(true));}//Thread: BG
-    void showHelp(){runOnUiThread(()->help.show(false));}//Thread: mixed
 
     static JSONObject getSettings(){
         JSONObject ret = new JSONObject();
@@ -1222,6 +1333,9 @@ public class Main extends Activity{
             ret.put("points_try", match.points_try);
             ret.put("points_con", match.points_con);
             ret.put("points_goal", match.points_goal);
+            ret.put("clock_pk", match.clock_pk);
+            ret.put("clock_con", match.clock_con);
+            ret.put("clock_restart", match.clock_restart);
             ret.put("screen_on", screen_on);
             ret.put("timer_type", timer_type);
             ret.put("record_player", record_player);

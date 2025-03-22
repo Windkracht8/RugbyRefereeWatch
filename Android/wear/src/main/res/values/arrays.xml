@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="matchTypes_system">
+        <item>custom</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>custom</item>
     </string-array>
     <string-array name="teamColors_system">
         <item>black</item>

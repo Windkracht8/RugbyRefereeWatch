@@ -1,29 +1,31 @@
-buildscript {
-    repositories {
+buildscript{
+    repositories{
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.8.1'
+    dependencies{
+        classpath 'com.android.tools.build:gradle:8.9.0'
     }
 }
 /*
 Settings > Kotlin Compiler
     Kotlin compiler version: 2.1.10
-    Language version: 2.0
-    API version: 2.0
-    Target JVM version: 17
+    Language version: 2.1
+    API version: 2.1
+    Target JVM version: 21
 File > Project Structure > Project
-	Gradle Version: 8.12.1
+	Gradle Version: 8.13
 */
-allprojects {
-    repositories {
+allprojects{
+    repositories{
         google()
         mavenCentral()
     }
-    tasks.withType(JavaCompile).tap {
-        configureEach {
-            //options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    /*
+    tasks.withType(JavaCompile).tap{
+        configureEach{
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
         }
     }
+     */
 }

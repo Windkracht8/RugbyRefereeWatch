@@ -2,21 +2,17 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-class ReportEventFull extends LinearLayout{
+class ReportEventFull extends ReportEvent{
     private TextView tvTime;
     private TextView tvTimer;
     ReportEventFull(Context context, JSONObject event, JSONObject match, int period_count, int period_time){
-        super(context);
-        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.report_event_full, this, true);
+        super(context, R.layout.report_event_full);
         try{
             tvTime = findViewById(R.id.tvTime);
             tvTime.setText(event.getString("time"));
@@ -65,11 +61,11 @@ class ReportEventFull extends LinearLayout{
             Toast.makeText(context, R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
     }
-    void getFieldWidths(){
+    @Override void getFieldWidths(){
         if(tvTime != null && TabReport.width_time < tvTime.getWidth()) TabReport.width_time = tvTime.getWidth();
         if(tvTimer != null && TabReport.width_timer < tvTimer.getWidth()) TabReport.width_timer = tvTimer.getWidth();
     }
-    void setFieldWidths(){
+    @Override void setFieldWidths(){
         if(tvTime != null) tvTime.setWidth(TabReport.width_time);
         if(tvTimer != null) tvTimer.setWidth(TabReport.width_timer);
     }

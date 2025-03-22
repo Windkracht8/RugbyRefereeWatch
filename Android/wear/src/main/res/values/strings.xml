@@ -41,6 +41,13 @@
     <string name="bPenAway_desc">away penalty count</string>
     <string name="delay_end_text">ending in 10 seconds</string>
     <string name="delay_end_cancel">Cancel</string>
+    <string name="pk">PK</string>
+    <string name="conversion">conversion</string>
+    <string name="restart">restart</string>
+    <string name="kc_confirm_conv">conversion good?</string>
+    <string name="kc_confirm_pk">PK good?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
     <!-- notification -->
     <string name="match_ongoing">Match ongoing</string>
@@ -70,19 +77,21 @@
 
     <!-- conf screen -->
     <string name="conf_title">Config</string>
-    <string name="confItemName_desc">menu item name</string>
-    <string name="confItemValue_desc">menu item value</string>
     <string name="home">home</string>
     <string name="color_home">Color home</string>
     <string name="away">away</string>
     <string name="color_away">Color away</string>
     <string name="match_type">Match type</string>
+    <string name="custom_match">Custom match</string>
     <string name="period_time">Time/period</string>
     <string name="period_count">Period count</string>
     <string name="sinbin">Sinbin</string>
     <string name="points_try">Points try</string>
     <string name="points_con">Points conversion</string>
     <string name="points_goal">Points goal</string>
+    <string name="clock_pk">PK clock</string>
+    <string name="clock_con">Conversion clock</string>
+    <string name="clock_restart">Restart clock</string>
     <string name="screen_on">Screen on</string>
     <string name="timer_type">Timer type</string>
     <string name="timer_type_down">down</string>
@@ -102,12 +111,12 @@
     <string name="_10_min">10 min</string>
 
     <string-array name="matchTypes">
+        <item>custom</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>custom</item>
     </string-array>
 
     <string-array name="teamColors">
@@ -138,6 +147,10 @@
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
     <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
+    <string name="help_kc_title">New: Kick clock</string>
+    <string name="help_kc">When you enter a try, the conversion kick clock starts. When you add a
+        penalty, the PK clock starts. The kick clock closes automatically when the time is up. You
+        can tab the clock to confirm success or miss.</string>
     <string name="help_bt_title">Bluetooth</string>
     <string name="help_bt">Connection to the Rugby Referee Watch app on your phone works via
         Bluetooth. You do need to approve permission.</string>

@@ -317,13 +317,13 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTStartDone");
         startDone = true;
         listeners.remove(null);
-        listeners.forEach(BTInterface::onBTStartDone);
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTStartDone();
     }
     private void onBTConnecting(String deviceName){
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnecting");
         status = Status.CONNECTING;
         listeners.remove(null);
-        listeners.forEach(l->l.onBTConnecting(deviceName));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnecting(deviceName);
     }
     private void onBTConnectFailed(){
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnectFailed");
@@ -331,7 +331,7 @@ class CommsBT{
         status = Status.DISCONNECTED;
         if(startDone){
             listeners.remove(null);
-            listeners.forEach(BTInterface::onBTConnectFailed);
+            for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnectFailed();
         }else{
             onBTStartDone();
         }
@@ -340,7 +340,7 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnected");
         status = Status.CONNECTED;
         listeners.remove(null);
-        listeners.forEach(l->l.onBTConnected(device.getName()));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnected(device.getName());
         if(!startDone) onBTStartDone();
         if(!known_device_addresses.contains(device.getAddress())){
             known_device_addresses.add(device.getAddress());
@@ -352,17 +352,17 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTDisconnected");
         status = Status.DISCONNECTED;
         listeners.remove(null);
-        listeners.forEach(BTInterface::onBTDisconnected);
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTDisconnected();
     }
     private void onBTResponse(JSONObject response){
         Log.d(Main.LOG_TAG, "CommsBT.onBTResponse " + response);
         listeners.remove(null);
-        listeners.forEach(l->l.onBTResponse(response));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTResponse(response);
     }
     private void onBTError(int message){
         Log.d(Main.LOG_TAG, "CommsBT.onBTError");
         listeners.remove(null);
-        listeners.forEach(l->l.onBTError(message));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTError(message);
     }
     public interface BTInterface{
         void onBTStartDone();

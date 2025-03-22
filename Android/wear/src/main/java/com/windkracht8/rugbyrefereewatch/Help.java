@@ -1,21 +1,15 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.ScrollView;
 
-public class Help extends ScrollView{
-    public Help(Context context, AttributeSet attrs){
-        super(context, attrs);
-        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.help, this, true);
-    }
-    void show(boolean withWelcome){
-        if(withWelcome) findViewById(R.id.welcome).setVisibility(VISIBLE);
-        setVisibility(View.VISIBLE);
-        requestFocus();
-        if(Main.isScreenRound) findViewById(R.id.llHelp).setPadding(Main._10dp, Main.vh25, Main._10dp, Main.vh25);
+public class Help extends Activity{
+    @Override public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.help);
+        if(getIntent().getBooleanExtra("showWelcome", false)) findViewById(R.id.welcome).setVisibility(View.VISIBLE);
+        if(Main.isScreenRound) findViewById(R.id.llHelp).setPadding(Main._10dp, Main.vh15, Main._10dp, Main.vh25);
+        findViewById(R.id.svHelp).requestFocus();
     }
 }

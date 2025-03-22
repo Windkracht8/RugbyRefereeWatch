@@ -35,9 +35,7 @@ class CommsBT{
     private boolean disconnect = false;
     private final JSONArray responseQueue = new JSONArray();
 
-    CommsBT(Main main){
-        this.main = main;
-    }
+    CommsBT(Main main){this.main = main;}
 
     private void gotRequest(String request){
         Log.d(Main.LOG_TAG, "CommsBTConnected.gotRequest: " + request);
@@ -66,8 +64,8 @@ class CommsBT{
             JSONObject responseData = new JSONObject();
             responseData.put("matches", FileStore.deletedMatches(main, requestData));
             responseData.put("settings", settings);
-            sendResponse("sync", responseData);
-            Conf.syncCustomMatchTypes(main, requestData);
+            sendSyncResponse(responseData);
+            FileStore.syncCustomMatchTypes(main, requestData);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", main.getString(R.string.fail_unexpected));
@@ -98,11 +96,10 @@ class CommsBT{
             Log.e(Main.LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
         }
     }
-    /** @noinspection SameParameterValue*/
-    private void sendResponse(String requestType, JSONObject responseData){
+    private void sendSyncResponse(JSONObject responseData){
         try{
             JSONObject response = new JSONObject();
-            response.put("requestType", requestType);
+            response.put("requestType", "sync");
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){

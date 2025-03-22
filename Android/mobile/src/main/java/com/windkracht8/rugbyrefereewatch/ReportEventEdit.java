@@ -1,17 +1,14 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-class ReportEventEdit extends LinearLayout{
+class ReportEventEdit extends ReportEvent{
     private final Main main;
     private final JSONObject event;
     private final TextView timer;
@@ -19,11 +16,9 @@ class ReportEventEdit extends LinearLayout{
     private final Spinner team;
 
     ReportEventEdit(Main main, JSONObject event){
-        super(main);
+        super(main, R.layout.report_event_edit);
         this.main = main;
         this.event = event;
-        ((LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.report_event_edit, this, true);
         what = findViewById(R.id.what);
         team = findViewById(R.id.team);
 
@@ -79,12 +74,12 @@ class ReportEventEdit extends LinearLayout{
         }
         findViewById(R.id.bDel).setOnClickListener(v->bDelClick());
     }
-    void getFieldWidths(){
+    @Override void getFieldWidths(){
         if(TabReport.width_timer < timer.getWidth()) TabReport.width_timer = timer.getWidth();
         if(TabReport.width_what < what.getWidth()) TabReport.width_what = what.getWidth();
         if(TabReport.width_team < team.getWidth()) TabReport.width_team = team.getWidth();
     }
-    void setFieldWidths(){
+    @Override void setFieldWidths(){
         timer.setWidth(TabReport.width_timer);
         what.setMinimumWidth(TabReport.width_what);
         team.setMinimumWidth(TabReport.width_team);
