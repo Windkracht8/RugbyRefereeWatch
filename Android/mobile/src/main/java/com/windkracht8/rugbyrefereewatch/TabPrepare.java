@@ -85,8 +85,9 @@ public class TabPrepare extends LinearLayout{
         cbRecordPens = findViewById(R.id.cbRecordPens);
         cbDelayEnd = findViewById(R.id.cbDelayEnd);
 
+        sMatchType.setSelection(1);
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+            @Override public void onItemSelected(AdapterView<?> pv, View siv, int position, long id){
                 if(position == sMatchTypePosition) return;
                 sMatchTypePosition = position;
                 has_changed = true;

@@ -14,10 +14,10 @@ public class MatchData{
     static final String HOME_ID = "home";
     static final String AWAY_ID = "away";
     long match_id;
-    private final static int FORMAT = 2;//December 2024; added yellow/red card count
-    final ArrayList<event> events = new ArrayList<>();
-    team home;
-    team away;
+    private final static int FORMAT = 3;//April 2025; timer changed from ms to s
+    final ArrayList<Event> events = new ArrayList<>();
+    Team home;
+    Team away;
     String match_type = "15s";
     int period_time = 40;
     int period_count = 2;
@@ -30,16 +30,16 @@ public class MatchData{
     int clock_restart = 0;
 
     MatchData(){
-        home = new team(HOME_ID, HOME_ID, "red");
-        away = new team(AWAY_ID, AWAY_ID, "blue");
+        home = new Team(HOME_ID, HOME_ID, "red");
+        away = new Team(AWAY_ID, AWAY_ID, "blue");
     }
     MatchData(JSONObject match_json) throws JSONException{
         match_id = match_json.getLong("matchid");
-        home = new team(match_json.getJSONObject(HOME_ID));
-        away = new team(match_json.getJSONObject(AWAY_ID));
+        home = new Team(match_json.getJSONObject(HOME_ID));
+        away = new Team(match_json.getJSONObject(AWAY_ID));
         JSONArray events_json = match_json.getJSONArray("events");
         for(int i = 0; i < events_json.length(); i++){
-            events.add(new event(events_json.getJSONObject(i)));
+            events.add(new Event(events_json.getJSONObject(i)));
         }
     }
     JSONObject toJson(Context context){
@@ -62,7 +62,7 @@ public class MatchData{
             ret.put(HOME_ID, home.toJson(context));
             ret.put(AWAY_ID, away.toJson(context));
             JSONArray events_json = new JSONArray();
-            for(event evt : events){
+            for(Event evt : events){
                 events_json.put(evt.toJson(context));
             }
             ret.put("events", events_json);
@@ -99,17 +99,19 @@ public class MatchData{
         away.sinbins.clear();
         away.kickoff = false;
     }
-    void removeEvent(event event_del){
+    void removeEvent(Event event_del){
         events.remove(event_del);
-        team team_edit = event_del.team.equals(HOME_ID) ? home : away;
+        Team team_edit = event_del.team.equals(HOME_ID) ? home : away;
 
         switch(event_del.what){
             case "RED CARD":
                 team_edit.red_cards--;
+                if(team_edit.pens > 0) team_edit.pens--;
                 break;
             case "YELLOW CARD":
                 team_edit.yellow_cards--;
-                for(sinbin sb : team_edit.sinbins){
+                if(team_edit.pens > 0) team_edit.pens--;
+                for(Sinbin sb : team_edit.sinbins){
                     if(event_del.id == sb.id){
                         team_edit.sinbins.remove(sb);
                         return;
@@ -133,11 +135,12 @@ public class MatchData{
                 break;
         }
     }
-    void logEvent(String what, String team, Integer who, long id){
-        event evt = new event(what, id, team, who);
+    Event logEvent(String what, String team, long id){
+        Event evt = new Event(what, id, team);
         events.add(evt);
+        return evt;
     }
-    static class team{
+    static class Team{
         String id;
         String team;
         String color;
@@ -149,14 +152,14 @@ public class MatchData{
         int yellow_cards = 0;
         int red_cards = 0;
         int pens = 0;
-        final ArrayList<sinbin> sinbins = new ArrayList<>();
+        final ArrayList<Sinbin> sinbins = new ArrayList<>();
         boolean kickoff = false;
-        private team(String id, String team, String color){
+        private Team(String id, String team, String color){
             this.id = id;
             this.team = team;
             this.color = color;
         }
-        private team(JSONObject team_js) throws JSONException{
+        private Team(JSONObject team_js) throws JSONException{
             id = team_js.getString("id");
             team = team_js.getString("team");
             color = team_js.getString("color");
@@ -171,12 +174,13 @@ public class MatchData{
             kickoff = team_js.getBoolean("kickoff");
         }
         boolean isHome(){return id.equals(HOME_ID);}
-        void addSinbin(long id, long end, String team, int who){
-            sinbin sb = new sinbin(id, end, team, who);
+        Sinbin addSinbin(long timestamp, int end, String team){
+            Sinbin sb = new Sinbin(timestamp, end, team);
             sinbins.add(sb);
+            return sb;
         }
         boolean hasSinbin(long id){
-            for(sinbin sb : sinbins){
+            for(Sinbin sb : sinbins){
                 if(id == sb.id){
                     return true;
                 }
@@ -205,29 +209,28 @@ public class MatchData{
             return ret;
         }
     }
-    static class event{
+    static class Event{
         private final long id;
         private final String time;
-        long timer;
+        int timer;
         String what;
         int period;
         String team;
         int who;
         String score;
-        private event(String what, long id, String team, int who){
-            this.id = id > 0 ? id : System.currentTimeMillis();
-            time = Main.prettyTime(this.id);
-            timer = (Main.timer_timer + ((long)(Main.timer_period-1)* Main.match.period_time*60000));
+        private Event(String what, long timestamp, String team){
+            id = timestamp > 0 ? timestamp : System.currentTimeMillis();
+            time = Utils.prettyTime(id);
+            timer = Main.getDurationFull(id);
             period = Main.timer_period;
             this.what = what;
             this.team = team;
-            this.who = who;
             if(what.equals("END")) score = Main.match.home.tot + ":" + Main.match.away.tot;
         }
-        private event(JSONObject event_json) throws JSONException{
+        private Event(JSONObject event_json) throws JSONException{
             id = event_json.getLong("id");
             time = event_json.getString("time");
-            timer = event_json.getLong("timer");
+            timer = event_json.getInt("timer");
             what = event_json.getString("what");
             period = event_json.getInt("period");
             if(event_json.has("team")) team = event_json.getString("team");
@@ -258,18 +261,17 @@ public class MatchData{
             return evt;
         }
     }
-    static class sinbin{
+    static class Sinbin{
         final long id;
-        final int who;
+        int who;
         final boolean team_is_home;
-        long end;
+        int end;
         boolean ended = false;
         boolean hide = false;
-        sinbin(long id, long end, String team, int who){
-            this.id = id;
+        Sinbin(long timestamp, int end, String team){
+            id = timestamp;
             this.end = end;
             team_is_home = team.equals(HOME_ID);
-            this.who = who;
         }
     }
 }

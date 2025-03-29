@@ -12,19 +12,18 @@ class ReportEventEdit extends ReportEvent{
     private final Main main;
     private final JSONObject event;
     private final TextView timer;
-    private final Spinner what;
     private final Spinner team;
 
     ReportEventEdit(Main main, JSONObject event){
         super(main, R.layout.report_event_edit);
         this.main = main;
         this.event = event;
-        what = findViewById(R.id.what);
+        Spinner what = findViewById(R.id.what);
         team = findViewById(R.id.team);
 
         timer = findViewById(R.id.timer);
         try{
-            timer.setText(timerStampToString(event.getLong("timer")));
+            timer.setText(prettyTimer(event.getInt("timer")));
             switch(event.getString("what")){
                 case "TRY":
                     what.setSelection(0);
@@ -76,12 +75,10 @@ class ReportEventEdit extends ReportEvent{
     }
     @Override void getFieldWidths(){
         if(TabReport.width_timer < timer.getWidth()) TabReport.width_timer = timer.getWidth();
-        if(TabReport.width_what < what.getWidth()) TabReport.width_what = what.getWidth();
         if(TabReport.width_team < team.getWidth()) TabReport.width_team = team.getWidth();
     }
     @Override void setFieldWidths(){
         timer.setWidth(TabReport.width_timer);
-        what.setMinimumWidth(TabReport.width_what);
         team.setMinimumWidth(TabReport.width_team);
     }
 
@@ -146,13 +143,10 @@ class ReportEventEdit extends ReportEvent{
         }
         return event;
     }
-    static String timerStampToString(long timer){
-        int temp = (int) (timer / 1000);
-        int seconds = (temp % 60);
-        int minutes = (temp - seconds) / 60;
-        String sTimer = minutes + ":";
-        if(seconds < 10) sTimer += "0";
-        sTimer += seconds;
-        return sTimer;
+    static String prettyTimer(int seconds){
+        int minutes = Math.floorDiv(seconds, 60);
+        seconds %= 60;
+        if(seconds < 10) return minutes + ":0" + seconds;
+        return minutes + ":" + seconds;
     }
 }

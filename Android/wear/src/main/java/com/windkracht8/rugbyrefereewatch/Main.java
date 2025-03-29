@@ -2,12 +2,14 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.display.DisplayManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,12 +20,12 @@ import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,15 +42,18 @@ import androidx.wear.ongoing.Status;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends Activity{
     static final String LOG_TAG = "RugbyRefereeWatch";
+    private static final String NOTIFICATION_CHANNEL_ID = "RRW_Notification";
+    private static final String NOTIFICATION_CHANNEL_ID_ONGOING = "RRW_Notification_Ongoing";
+    private static final long[] ve_waveForm = new long[]{300, 500, 300, 500, 300, 500};
+    private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(ve_waveForm, -1);
+    private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
+
     static boolean isScreenRound;
     private boolean showSplash = true;
     private TextView battery;
@@ -77,10 +82,10 @@ public class Main extends Activity{
     private TextView delay_end_text;
     private LinearLayout kick_clock_confirm;
     private TextView kick_clock_confirm_label;
-    private EditText kick_player;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
+    private PlayerNo playerNo;
     private ExtraTime extraTime;
     private Correct correct;
     private View touchView;
@@ -97,27 +102,30 @@ public class Main extends Activity{
     //Timer
     enum TimerStatus{CONF, RUNNING, TIME_OFF, REST, READY, FINISHED}
     static TimerStatus timer_status = TimerStatus.CONF;
-    static long timer_timer = 0;
-    private static long timer_start = 0;
-    static long timer_start_time_off = 0;
+    private static long checkpoint_time = 0;//ms
+    private static int checkpoint_duration = 0;//sec
+    private static int checkpoint_previous = 0;//sec
     private static boolean timer_period_ended = false;
     static int timer_period = 0;
-    static int timer_period_time = 40;
-    static int timer_type_period = 1;//0:up, 1:down
+    static int timer_period_time = 2400;//sec
+    private static final int TIMER_TYPE_UP = 0;
+    static final int TIMER_TYPE_DOWN = 1;
+    static int timer_type_period = TIMER_TYPE_DOWN;
+
     //Kick clocks
     private enum KickClockTypes {PK, CON, RESTART}
     private KickClockTypes kickClockType_home;
     private KickClockTypes kickClockType_away;
-    private long kick_clock_home_end = -1;
-    private long kick_clock_away_end = -1;
+    private long kick_clock_home_end = -100;
+    private long kick_clock_away_end = -100;
 
     //Settings
     static boolean screen_on = true;
-    static int timer_type = 1;//0:up, 1:down
+    static int timer_type = TIMER_TYPE_DOWN;
     static boolean record_player = false;
     static boolean record_pens = false;
     static boolean delay_end = true;
-    private final static int HELP_VERSION = 5;
+    private final static int HELP_VERSION = 6;
     private static int battery_capacity = -1;
 
     static final MatchData match = new MatchData();
@@ -126,6 +134,8 @@ public class Main extends Activity{
     private Vibrator vibrator;
     private CommsBT commsBT;
     private BatteryManager batteryManager;
+    private NotificationManager notificationManager;
+    private DisplayManager displayManager;
 
     private static float onTouchStartY = -1;
     private static float onTouchStartX = 0;
@@ -169,6 +179,10 @@ public class Main extends Activity{
         handler = new Handler(Looper.getMainLooper());
         commsBT = new CommsBT(this);
         batteryManager = (BatteryManager)getSystemService(BATTERY_SERVICE);
+        displayManager = (DisplayManager)getSystemService(Context.DISPLAY_SERVICE);
+        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        checkNotificationChannels();
+
         setContentView(R.layout.main);
 
         // We need to listen for touch on all objects that have a click listener
@@ -179,9 +193,11 @@ public class Main extends Activity{
                 ,R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf
                 ,R.id.kick_clock_confirm_no, R.id.kick_clock_confirm_yes
                 ,R.id.confWatch
-                ,R.id.score, R.id.score_player, R.id.score_try, R.id.score_con, R.id.score_goal
-                ,R.id.foulPlay, R.id.foul_play, R.id.foulPlay_player, R.id.card_yellow
+                ,R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal
+                ,R.id.foulPlay, R.id.foul_play, R.id.card_yellow
                 ,R.id.penaltyTry, R.id.card_red
+                ,R.id.b_0, R.id.b_1, R.id.b_2, R.id.b_3, R.id.b_4, R.id.b_5, R.id.b_6, R.id.b_7
+                ,R.id.b_8, R.id.b_9, R.id.b_back, R.id.b_done
                 ,R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min
                 ,R.id.extra_time_10min
                 ,R.id.correct, R.id.svCorrect
@@ -215,7 +231,6 @@ public class Main extends Activity{
         bBottom.setOnClickListener(v->bBottomClick());
         kick_clock_confirm = findViewById(R.id.kick_clock_confirm);
         kick_clock_confirm_label = findViewById(R.id.kick_clock_confirm_label);
-        kick_player = findViewById(R.id.kick_player);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v->startActivity(new Intent(this, ConfActivity.class)));
         confWatch = findViewById(R.id.confWatch);
@@ -229,6 +244,8 @@ public class Main extends Activity{
         score.onCreateMain(this);
         foulPlay = findViewById(R.id.foulPlay);
         foulPlay.onCreateMain(this);
+        playerNo = findViewById(R.id.playerNo);
+        playerNo.onCreateMain(this);
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v->correctClicked());
         correct.onCreateMain();
@@ -272,6 +289,7 @@ public class Main extends Activity{
         if(isScreenRound){
             bPenHome.setPadding(vw30, 0, 0, 0);
             bPenAway.setPadding(0, 0, vw30, 0);
+            tTimer.setPadding(vh10, 0, vh10, 0);
         }
 
         if(timer_status == TimerStatus.CONF){
@@ -283,9 +301,8 @@ public class Main extends Activity{
         }
 
         updateBattery.run();
+        updateTime.run();
         update.run();
-        updateSinbins();
-        updateButtons();
         updateAfterConfig();
         startBT();
         showSplash = false;
@@ -362,6 +379,8 @@ public class Main extends Activity{
             correct.setVisibility(View.GONE);
         }else if(extraTime.getVisibility() == View.VISIBLE){
             extraTime.setVisibility(View.GONE);
+        }else if(playerNo.getVisibility() == View.VISIBLE){
+            playerNo.setVisibility(View.GONE);
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             foulPlay.setVisibility(View.GONE);
         }else if(score.getVisibility() == View.VISIBLE){
@@ -448,6 +467,8 @@ public class Main extends Activity{
             touchView = correct;
         }else if(extraTime.getVisibility() == View.VISIBLE){
             touchView = extraTime;
+        }else if(playerNo.getVisibility() == View.VISIBLE){
+            touchView = playerNo;
         }else if(foulPlay.getVisibility() == View.VISIBLE){
             touchView = foulPlay;
         }else if(score.getVisibility() == View.VISIBLE){
@@ -481,19 +502,15 @@ public class Main extends Activity{
     private void timerClick(){
         if(timer_status == TimerStatus.RUNNING){
             singleBeep();
+            long timestamp = System.currentTimeMillis();
+            checkpoint_duration = getDurationPeriod(timestamp);
+            checkpoint_time = timestamp;
             timer_status = TimerStatus.TIME_OFF;
-            timer_start_time_off = System.currentTimeMillis();
-            match.logEvent("TIME OFF", null, 0, 0);
+            match.logEvent("TIME OFF", null, 0);
             updateButtons();
             handler.postDelayed(timeOffBuzz, 15000);
         }
     }
-    private final Runnable timeOffBuzz = new Runnable(){@Override public void run(){
-        if(timer_status == TimerStatus.TIME_OFF){
-            beep();
-            handler.postDelayed(timeOffBuzz, 15000);
-        }
-    }};
     private void bOverTimerClick(){
         switch(timer_status){
             case CONF:
@@ -502,10 +519,11 @@ public class Main extends Activity{
             case READY:
                 singleBeep();
                 timer_status = TimerStatus.RUNNING;
-                timer_start = System.currentTimeMillis();
+                checkpoint_time = System.currentTimeMillis();
+                checkpoint_duration = 0;
                 String kickoffTeam = getKickoffTeam();//capture before increasing timer_period
                 timer_period++;
-                match.logEvent("START", kickoffTeam, 0, 0);
+                match.logEvent("START", kickoffTeam, 0);
                 updateScore();
                 startOngoingNotification();
                 break;
@@ -513,8 +531,8 @@ public class Main extends Activity{
                 //resume running
                 singleBeep();
                 timer_status = TimerStatus.RUNNING;
-                timer_start += (System.currentTimeMillis() - timer_start_time_off);
-                match.logEvent("RESUME", null, 0, 0);
+                checkpoint_time = System.currentTimeMillis();
+                match.logEvent("RESUME", null, 0);
                 break;
             case REST:
                 //get ready for next period
@@ -531,13 +549,16 @@ public class Main extends Activity{
         updateButtons();
     }
     private void bBottomClick(){
+        if(draggingEnded+1000 > System.currentTimeMillis()) return;
+        draggingEnded = System.currentTimeMillis();
+
         switch(timer_status){
             case TIME_OFF:
                 delay_end_start();
                 break;
             case REST:
                 timer_status = TimerStatus.FINISHED;
-                timer_period_time = match.period_time;
+                timer_period_time = match.period_time*60;
                 timer_type_period = timer_type;
                 updateScore();
 
@@ -548,9 +569,9 @@ public class Main extends Activity{
                 break;
             case FINISHED:
                 timer_status = TimerStatus.CONF;
-                timer_timer = 0;
-                timer_start = 0;
-                timer_start_time_off = 0;
+                checkpoint_time = 0;
+                checkpoint_duration = 0;
+                checkpoint_previous = 0;
                 timer_period_ended = false;
                 timer_period = 0;
                 match.clear();
@@ -665,30 +686,22 @@ public class Main extends Activity{
         updateTimer();
     }
     private void kickClockHomeShow(int label_text, int secs){
+        if(secs == 0) return;
+        kickClockAwayClose();
         ((TextView)findViewById(R.id.tKickClockHomeLabel)).setText(label_text);
-        kick_clock_home_end = System.currentTimeMillis() + (secs*1000L);
-        if(isScreenRound){
-            if(kick_clock_away_end<0){
-                tTimer.setPadding(0, 0, vh10, 0);
-            }else{
-                tTimer.setPadding(0, 0, 0, 0);
-            }
-        }
+        kick_clock_home_end = getDurationFull() + secs;
         tKickClockHome.setText(String.valueOf(secs));
         kickClockHome.setVisibility(View.VISIBLE);
+        if(isScreenRound) tTimer.setPadding(0, 0, vh10, 0);
     }
     private void kickClockAwayShow(int label_text, int secs){
+        if(secs == 0) return;
+        kickClockHomeClose();
         ((TextView)findViewById(R.id.tKickClockAwayLabel)).setText(label_text);
-        kick_clock_away_end = System.currentTimeMillis() + (secs*1000L);
-        if(isScreenRound){
-            if(kick_clock_home_end<0){
-                tTimer.setPadding(vh10, 0, 0, 0);
-            }else{
-                tTimer.setPadding(0, 0, 0, 0);
-            }
-        }
+        kick_clock_away_end = getDurationFull() + secs;
         tKickClockAway.setText(String.valueOf(secs));
         kickClockAway.setVisibility(View.VISIBLE);
+        if(isScreenRound) tTimer.setPadding(vh10, 0, 0, 0);
     }
     private void kickClockHomeClick(){
         switch(kickClockType_home){
@@ -702,22 +715,18 @@ public class Main extends Activity{
                 kickClockHomeClose();
                 return;
         }
-        kick_player.setText("");
-        kick_player.setVisibility(record_player ? View.VISIBLE : View.GONE);
         findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
             kickClockHomeClose();
             kick_clock_confirm.setVisibility(View.GONE);
         });
         findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
             score.team = match.home;
-            int player = 0;
-            if(kick_player.getText().length() > 0) player = Integer.parseInt(kick_player.getText().toString());
             switch(kickClockType_home){
                 case CON:
-                    conversionClick(player);
+                    conversionClick();
                     break;
                 case PK:
-                    goalClick(player);
+                    goalClick();
                     break;
             }
             kick_clock_confirm.setVisibility(View.GONE);
@@ -736,22 +745,18 @@ public class Main extends Activity{
                 kickClockAwayClose();
                 return;
         }
-        kick_player.setText("");
-        kick_player.setVisibility(record_player ? View.VISIBLE : View.GONE);
         findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
             kickClockAwayClose();
             kick_clock_confirm.setVisibility(View.GONE);
         });
         findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
             score.team = match.away;
-            int player = 0;
-            if(kick_player.getText().length() > 0) player = Integer.parseInt(kick_player.getText().toString());
             switch(kickClockType_away){
                 case CON:
-                    conversionClick(player);
+                    conversionClick();
                     break;
                 case PK:
-                    goalClick(player);
+                    goalClick();
                     break;
             }
             kick_clock_confirm.setVisibility(View.GONE);
@@ -759,36 +764,24 @@ public class Main extends Activity{
         kick_clock_confirm.setVisibility(View.VISIBLE);
     }
     void kickClockHomeClose(){
-        if(kickClockType_home == KickClockTypes.CON && match.clock_restart > 0){
+        if(timer_status == TimerStatus.RUNNING && kickClockType_home == KickClockTypes.CON && match.clock_restart > 0){
             kickClockType_home = KickClockTypes.RESTART;
             kickClockHomeShow(R.string.restart, match.clock_restart);
             return;
         }
-        kick_clock_home_end = -1;
-        if(isScreenRound){
-            if(kick_clock_away_end>0){
-                tTimer.setPadding(vh10, 0, 0, 0);
-            }else{
-                tTimer.setPadding(0, 0, 0, 0);
-            }
-        }
+        kick_clock_home_end = -100;
         kickClockHome.setVisibility(View.GONE);
+        if(isScreenRound) tTimer.setPadding(vh10, 0, vh10, 0);
     }
     void kickClockAwayClose(){
-        if(kickClockType_away == KickClockTypes.CON && match.clock_restart > 0){
+        if(timer_status == TimerStatus.RUNNING && kickClockType_away == KickClockTypes.CON && match.clock_restart > 0){
             kickClockType_away = KickClockTypes.RESTART;
             kickClockAwayShow(R.string.restart, match.clock_restart);
             return;
         }
-        kick_clock_away_end = -1;
-        if(isScreenRound){
-            if(kick_clock_home_end>0){
-                tTimer.setPadding(0, 0, vh10, 0);
-            }else{
-                tTimer.setPadding(0, 0, 0, 0);
-            }
-        }
+        kick_clock_away_end = -100;
         kickClockAway.setVisibility(View.GONE);
+        if(isScreenRound) tTimer.setPadding(vh10, 0, vh10, 0);
     }
 
     private void delay_end_start(){
@@ -811,7 +804,7 @@ public class Main extends Activity{
         if(delay_end_count == 0){
             endPeriod();
         }
-        delay_end_text.setText(getString(R.string.delay_end_text).replace("10", String.valueOf(delay_end_count)));
+        delay_end_text.setText(getString(R.string.delay_end_text, delay_end_count));
         handler.postDelayed(delay_end_update, 1000);
     }};
     private void endPeriod(){
@@ -819,16 +812,19 @@ public class Main extends Activity{
         if(!match.events.isEmpty() && match.events.get(match.events.size()-1).what.equals("TIME OFF")){
             match.events.remove(match.events.size()-1);
         }
-        match.logEvent("END", null, 0, delay_end_start_time);
+        match.logEvent("END", null, delay_end_start_time);
+
+        int correct = timer_period_time - getDurationPeriod(delay_end_start_time);
+        match.home.sinbins.forEach(sb->sb.end += correct);
+        match.away.sinbins.forEach(sb->sb.end += correct);
 
         timer_status = TimerStatus.REST;
-        timer_start = delay_end_start_time;
         timer_period_ended = false;
-        timer_type_period = 0;
+        timer_type_period = TIMER_TYPE_UP;
+        checkpoint_duration = 0;
+        checkpoint_time = delay_end_start_time;
+        checkpoint_previous += timer_period_time;
         tTimer.setTextColor(getResources().getColor(R.color.white, getTheme()));
-
-        match.home.sinbins.forEach(sb->sb.end -= timer_timer);
-        match.away.sinbins.forEach(sb->sb.end -= timer_timer);
 
         String kickoffTeam = getKickoffTeam();
         if(kickoffTeam != null){
@@ -845,18 +841,30 @@ public class Main extends Activity{
         if(kick_clock_away_end > 0) kickClockAwayClose();
         delay_end_wrapper.setVisibility(View.GONE);
     }
-    private final Runnable update = new Runnable(){@Override public void run(){
-        switch(timer_status){
-            case RUNNING:
-                updateSinbins();
-            case REST:
-                updateTimer();
-                break;
-        }
-        long milli_secs = updateTime();
-        handler.postDelayed(update, 1000 - milli_secs);
-    }};
 
+    private int getColorBG(String name){
+        return switch(name){
+            case "black" -> getResources().getColor(R.color.black, null);
+            case "blue" -> getResources().getColor(R.color.blue, null);
+            case "brown" -> getResources().getColor(R.color.brown, null);
+            case "gold" -> getResources().getColor(R.color.gold, null);
+            case "green" -> getResources().getColor(R.color.green, null);
+            case "orange" -> getResources().getColor(R.color.orange, null);
+            case "pink" -> getResources().getColor(R.color.pink, null);
+            case "purple" -> getResources().getColor(R.color.purple, null);
+            case "red" -> getResources().getColor(R.color.red, null);
+            case "white" -> getResources().getColor(R.color.white, null);
+            default -> getResources().getColor(R.color.black, null);
+        };
+    }
+    private int getColorFG(String name){
+        return switch(name){
+            case "gold", "green", "orange", "pink", "white" ->
+                    getResources().getColor(R.color.black, null);
+            default -> //black blue brown purple red
+                    getResources().getColor(R.color.white, null);
+        };
+    }
     void updateAfterConfig(){//Thread: Always on UI thread
         updateTimer();
 
@@ -892,108 +900,73 @@ public class Main extends Activity{
         }
         score.update();
     }
-    private int getColorBG(String name){
-        return switch(name){
-            case "black" -> getResources().getColor(R.color.black, null);
-            case "blue" -> getResources().getColor(R.color.blue, null);
-            case "brown" -> getResources().getColor(R.color.brown, null);
-            case "gold" -> getResources().getColor(R.color.gold, null);
-            case "green" -> getResources().getColor(R.color.green, null);
-            case "orange" -> getResources().getColor(R.color.orange, null);
-            case "pink" -> getResources().getColor(R.color.pink, null);
-            case "purple" -> getResources().getColor(R.color.purple, null);
-            case "red" -> getResources().getColor(R.color.red, null);
-            case "white" -> getResources().getColor(R.color.white, null);
-            default -> getResources().getColor(R.color.black, null);
-        };
-    }
-    private int getColorFG(String name){
-        return switch(name){
-            case "gold", "green", "orange", "pink", "white" ->
-                    getResources().getColor(R.color.black, null);
-            default -> //black blue brown purple red
-                    getResources().getColor(R.color.white, null);
-        };
-    }
-    private long updateTime(){
-        Date date = new Date();
-        long milli_secs = date.getTime() % 1000;
-        time.setText(prettyTime(date));
-        return milli_secs;
-    }
-    static String prettyTime(long timestamp){
-        Date date = new Date(timestamp);
-        return prettyTime(date);
-    }
-    private static String prettyTime(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-        return sdf.format(date);
-    }
-    private void updateTimer(){
-        long milli_secs = 0;
-        if(timer_status == TimerStatus.RUNNING || timer_status == TimerStatus.REST){
-            milli_secs = System.currentTimeMillis() - timer_start;
-        }
-        if(timer_status == TimerStatus.TIME_OFF){
-            milli_secs = timer_start_time_off - timer_start;
-        }
-        timer_timer = milli_secs;
-
-        String temp = "";
-        if(timer_type_period == 1){
-            milli_secs = ((long)timer_period_time * 60000) - milli_secs;
-        }else{
-            int add_periods = timer_status == TimerStatus.READY ? timer_period : timer_period-1;
-            if(timer_status != TimerStatus.REST && add_periods > 0){
-                milli_secs += ((long)add_periods*timer_period_time)*60000;
+    private final Runnable updateBattery = new Runnable(){@Override public void run(){
+        runInBackground(()->{
+            battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+            String text;
+            if(battery_capacity < 0){
+                text = "---%";
+                handler.postDelayed(updateBattery, 100);
+            }else{
+                text = battery_capacity + "%";
+                handler.postDelayed(updateBattery, 30000);
             }
+            runOnUiThread(()->battery.setText(text));
+        });
+    }};
+    private final Runnable updateTime = new Runnable(){@Override public void run(){
+        time.setText(Utils.prettyTime());
+        handler.postDelayed(updateTime, 1000-(System.currentTimeMillis()%1000));
+    }};
+    private final Runnable update = new Runnable(){@Override public void run(){
+        switch(timer_status){
+            case RUNNING:
+                updateKickClocks();
+                updateSinbins();
+            case REST:
+                updateTimer();
+                break;
         }
-        if(milli_secs < 0){
-            milli_secs -= milli_secs * 2;
-            temp = "-";
-        }
-        temp += prettyTimer(milli_secs);
-        tTimer.setText(temp);
+        handler.postDelayed(update, 1000-((System.currentTimeMillis()-checkpoint_time)%1000));
+    }};
 
-        if(!timer_period_ended && timer_status == TimerStatus.RUNNING && timer_timer > (long)timer_period_time * 60000){
+    private void updateTimer(){
+        int durationPeriod = getDurationPeriod();
+        if(timer_status == TimerStatus.REST){
+            tTimer.setText(Utils.prettyTimer(durationPeriod));
+        }else if(timer_type_period == TIMER_TYPE_DOWN){
+            tTimer.setText(Utils.prettyTimer(timer_period_time - durationPeriod));
+        }else{
+            tTimer.setText(Utils.prettyTimer(getDurationFull()));
+        }
+        if(!timer_period_ended && timer_status == TimerStatus.RUNNING && durationPeriod > timer_period_time){
             timer_period_ended = true;
             tTimer.setTextColor(getResources().getColor(R.color.red, getTheme()));
-            beep();
+            beep(getString(R.string.ended, getPeriodName(timer_period)));
         }
-
+    }
+    private void updateKickClocks(){
         if(kick_clock_home_end > 0){
-            long kick_clock = kick_clock_home_end - System.currentTimeMillis();
-            String tmp = Long.toString(kick_clock / 1000);
-            tKickClockHome.setText(tmp);
-            if(kick_clock < 0) kickClockHomeClose();
+            long kick_clock = kick_clock_home_end - getDurationFull();
+            tKickClockHome.setText(kick_clock < 0 ? "0" : String.valueOf(kick_clock));
+            if(kick_clock < -10 || (kick_clock < 0 && (kickClockType_home == KickClockTypes.CON && match.clock_restart > 0)))
+                kickClockHomeClose();
         }
         if(kick_clock_away_end > 0){
-            long clock = kick_clock_away_end - System.currentTimeMillis();
-            String tmp = Long.toString(clock / 1000);
-            tKickClockAway.setText(tmp);
-            if(clock < 0) kickClockAwayClose();
+            long kick_clock = kick_clock_away_end - getDurationFull();
+            tKickClockAway.setText(kick_clock < 0 ? "0" : String.valueOf(kick_clock));
+            if(kick_clock < -10 || (kick_clock < 0 && (kickClockType_away == KickClockTypes.CON && match.clock_restart > 0)))
+                kickClockAwayClose();
         }
     }
-    static String prettyTimer(long milli_secs){
-        long tmp = milli_secs % 1000;
-        long secs = (milli_secs - tmp) / 1000;
-        tmp = secs % 60;
-        long minutes = (secs - tmp) / 60;
-
-        String pretty = Long.toString(tmp);
-        if(tmp < 10){pretty = "0" + pretty;}
-        pretty = minutes + ":" + pretty;
-
-        return pretty;
-    }
-    private void updateSinbins(){
-        getSinbins(match.home, al_sinbins_ui_home, sinbins_home);
-        getSinbins(match.away, al_sinbins_ui_away, sinbins_away);
+    void updateSinbins(){
+        updateSinbins(match.home, al_sinbins_ui_home, sinbins_home);
+        updateSinbins(match.away, al_sinbins_ui_away, sinbins_away);
     }
     private final ArrayList<Sinbin> al_sinbins_ui_home = new ArrayList<>();
     private final ArrayList<Sinbin> al_sinbins_ui_away = new ArrayList<>();
-    private void getSinbins(MatchData.team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
-        for(MatchData.sinbin sinbin_data : team.sinbins){
+    private void updateSinbins(MatchData.Team team, ArrayList<Sinbin> al_sinbins_ui, LinearLayout llSinbins){
+        for(MatchData.Sinbin sinbin_data : team.sinbins){
             boolean exists = false;
             for(Sinbin sinbin_ui : al_sinbins_ui){
                 if(sinbin_data.id == sinbin_ui.sinbin.id){
@@ -1029,32 +1002,38 @@ public class Main extends Activity{
             }
         }
     }
-    private final Runnable updateBattery = new Runnable(){@Override public void run(){
-        runInBackground(()->battery_capacity = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY));
-        if(battery_capacity < 0){
-            battery.setText("---%");
-            handler.postDelayed(updateBattery, 100);
-        }else{
-            String tmp = battery_capacity + "%";
-            battery.setText(tmp);
-            handler.postDelayed(updateBattery, 10000);
-        }
-    }};
+    private static int getDurationPeriod(long timestamp){
+        if(timer_status == TimerStatus.RUNNING || timer_status == TimerStatus.REST)
+            return (int)(Math.floorDiv(timestamp - checkpoint_time, 1000) + checkpoint_duration);
+        return checkpoint_duration;
+    }
+    private static int getDurationPeriod(){
+        return getDurationPeriod(System.currentTimeMillis());
+    }
+    static int getDurationFull(long timestamp){
+        return getDurationPeriod(timestamp) + checkpoint_previous;
+    }
+    static int getDurationFull(){
+        if(timer_status == TimerStatus.RUNNING)
+            return getDurationFull(System.currentTimeMillis());
+        return checkpoint_duration + checkpoint_previous;
+    }
+
     private void bPenHomeClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.home.pens++;
         updateScore();
-        match.logEvent("PENALTY", MatchData.HOME_ID, 0, 0);
-        kickClockType_home = KickClockTypes.PK;
-        kickClockHomeShow(R.string.pk, match.clock_pk);
+        match.logEvent("PENALTY", MatchData.HOME_ID, 0);
+        kickClockType_away = KickClockTypes.PK;
+        kickClockAwayShow(R.string.pk, match.clock_pk);
     }
     private void bPenAwayClick(){
         if(timer_status == TimerStatus.CONF){return;}
         match.away.pens++;
         updateScore();
-        match.logEvent("PENALTY", MatchData.AWAY_ID, 0, 0);
-        kickClockType_away = KickClockTypes.PK;
-        kickClockAwayShow(R.string.pk, match.clock_pk);
+        match.logEvent("PENALTY", MatchData.AWAY_ID, 0);
+        kickClockType_home = KickClockTypes.PK;
+        kickClockHomeShow(R.string.pk, match.clock_pk);
     }
     private void homeClick(){
         if(timer_status == TimerStatus.CONF){
@@ -1069,7 +1048,6 @@ public class Main extends Activity{
             score_away.setText("0");
         }else{
             score.team = match.home;
-            score.player_clear();
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -1086,7 +1064,6 @@ public class Main extends Activity{
             score_home.setText("0");
         }else{
             score.team = match.away;
-            score.player_clear();
             score.setVisibility(View.VISIBLE);
         }
     }
@@ -1094,7 +1071,8 @@ public class Main extends Activity{
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.tries++;
         updateScore();
-        match.logEvent("TRY", score.team.id, score.player(), 0);
+        MatchData.Event event = match.logEvent("TRY", score.team.id, 0);
+        if(record_player) playerNo.show(event, null);
         if(score.team.isHome()){
             kickClockType_home = KickClockTypes.CON;
             kickClockHomeShow(R.string.conversion, match.clock_con);
@@ -1105,34 +1083,30 @@ public class Main extends Activity{
         score.setVisibility(View.GONE);
     }
     void conversionClick(){
-        conversionClick(score.player());
-        score.setVisibility(View.GONE);
-    }
-    private void conversionClick(int player){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.cons++;
         updateScore();
-        match.logEvent("CONVERSION", score.team.id, player, 0);
+        MatchData.Event event = match.logEvent("CONVERSION", score.team.id, 0);
+        if(record_player) playerNo.show(event, null);
         if(score.team.isHome()){
             kickClockHomeClose();
         }else{
             kickClockAwayClose();
         }
-    }
-    void goalClick(){
-        goalClick(score.player());
         score.setVisibility(View.GONE);
     }
-    private void goalClick(int player){
+    void goalClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.goals++;
         updateScore();
-        match.logEvent("GOAL", score.team.id, player, 0);
+        MatchData.Event event = match.logEvent("GOAL", score.team.id, 0);
+        if(record_player) playerNo.show(event, null);
         if(score.team.isHome()){
             kickClockHomeClose();
         }else{
             kickClockAwayClose();
         }
+        score.setVisibility(View.GONE);
     }
     private void updateScore(){
         match.home.tot = match.home.tries*match.points_try +
@@ -1151,44 +1125,39 @@ public class Main extends Activity{
     }
     void foulPlayClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
-        foulPlay.player(score.player());
         foulPlay.setVisibility(View.VISIBLE);
         score.setVisibility(View.GONE);
-    }
-    void card_yellowClick(){
-        if(draggingEnded+100 > System.currentTimeMillis()) return;
-        long time = System.currentTimeMillis();
-        match.logEvent("YELLOW CARD", score.team.id, foulPlay.player(), time);
-        long end = timer_timer + ((long)match.sinbin*60000);
-        end += 1000 - (end % 1000);
-        score.team.addSinbin(time, end, score.team.id, foulPlay.player());
-        updateSinbins();
-        score.team.yellow_cards++;
-        if(record_pens){
-            score.team.pens++;
-            updateScore();
-        }
-        foulPlay.setVisibility(View.GONE);
     }
     void penaltyTryClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         score.team.pen_tries++;
         updateScore();
-        match.logEvent("PENALTY TRY", score.team.id, foulPlay.player(), 0);
-        if(record_pens){
-            score.team.pens++;
-            updateScore();
-        }
+        match.logEvent("PENALTY TRY", score.team.id, 0);
+        foulPlay.setVisibility(View.GONE);
+    }
+    void card_yellowClick(){
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
+        long timestamp = System.currentTimeMillis();
+        MatchData.Event event = match.logEvent("YELLOW CARD", score.team.id, timestamp);
+        MatchData.Sinbin sinbin = score.team.addSinbin(
+                timestamp
+                ,getDurationFull(timestamp)+(match.sinbin*60)
+                ,score.team.id
+        );
+        updateSinbins();
+        score.team.yellow_cards++;
+        score.team.pens++;
+        updateScore();
+        playerNo.show(event, sinbin);
         foulPlay.setVisibility(View.GONE);
     }
     void card_redClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
-        match.logEvent("RED CARD", score.team.id, foulPlay.player(), 0);
+        MatchData.Event event = match.logEvent("RED CARD", score.team.id, 0);
+        playerNo.show(event, null);
         score.team.red_cards++;
-        if(record_pens){
-            score.team.pens++;
-            updateScore();
-        }
+        score.team.pens++;
+        updateScore();
         foulPlay.setVisibility(View.GONE);
     }
 
@@ -1250,7 +1219,7 @@ public class Main extends Activity{
             match.away.color = settings.getString("away_color");
             match.match_type = settings.getString("match_type");
             match.period_time = settings.getInt("period_time");
-            timer_period_time = match.period_time;
+            timer_period_time = match.period_time*60;
             match.period_count = settings.getInt("period_count");
             match.sinbin = settings.getInt("sinbin");
             match.points_try = settings.getInt("points_try");
@@ -1288,7 +1257,7 @@ public class Main extends Activity{
 
             match.match_type = jsonSettings.getString("match_type");
             match.period_time = jsonSettings.getInt("period_time");
-            timer_period_time = match.period_time;
+            timer_period_time = match.period_time*60;
             match.period_count = jsonSettings.getInt("period_count");
             match.sinbin = jsonSettings.getInt("sinbin");
             match.points_try = jsonSettings.getInt("points_try");
@@ -1352,75 +1321,117 @@ public class Main extends Activity{
     void extraTimeChange(int time){
         if(time == 0){
             bBottom.setText(R.string.count_up);
-            timer_type_period = 0;
-            timer_period_time = match.period_time;
+            timer_type_period = TIMER_TYPE_UP;
+            timer_period_time = match.period_time*60;
         }else{
             bBottom.setText(String.format("%s %s", time, getString(R.string.min)));
             timer_type_period = timer_type;
-            timer_period_time = time;
+            timer_period_time = time*60;
         }
         updateTimer();
         extraTime.setVisibility(View.GONE);
     }
 
-    private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(new long[]{300, 500, 300, 500, 300, 500}, -1);
-    private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
-    void beep(){vibrator.vibrate(ve_pattern);}
+    void beep(String notificationText){
+        for(Display display : displayManager.getDisplays()){
+            if(display.getState() != Display.STATE_OFF){
+                vibrator.vibrate(ve_pattern);
+                return;
+            }
+        }
+        notificationManager.notify(2, new Notification
+                .Builder(this, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.icon_foreground)
+                .setContentTitle(notificationText)
+                .build()
+        );
+        handler.postDelayed(()->notificationManager.cancel(2), 60000);
+    }
     private void singleBeep(){vibrator.vibrate(ve_single);}
+    private final Runnable timeOffBuzz = new Runnable(){@Override public void run(){
+        if(timer_status == TimerStatus.TIME_OFF){
+            beep(getString(R.string.time_off_reminder));
+            handler.postDelayed(timeOffBuzz, 15000);
+            handler.postDelayed(()->notificationManager.cancel(2), 5000);
+        }
+    }};
 
     private void startOngoingNotification(){
-        if(Build.VERSION.SDK_INT < 30){return;}
-
-        String RRW_Notification = "RRW_Notification";
-        int RRW_Notification_ID = 1;
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel notificationChannel = new NotificationChannel(RRW_Notification, getString(R.string.open_rrw), NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(notificationChannel);
-
+        if(Build.VERSION.SDK_INT < 30) return;
         Intent actionIntent = new Intent(this, Main.class);
         PendingIntent actionPendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            actionIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                this,
+                0,
+                actionIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-            this
-            ,RRW_Notification
-        )
-        .setSmallIcon(R.drawable.icon_foreground)
-		.setDefaults(NotificationCompat.DEFAULT_ALL)
-		.setCategory(NotificationCompat.CATEGORY_WORKOUT)
-		.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-		.addAction(
-            R.drawable.icon_foreground, getString(R.string.open_rrw),
-            actionPendingIntent
-		)
-        .setOngoing(true);
-
-        Status ongoingActivityStatus = new Status.Builder()
-        .addTemplate(getString(R.string.match_ongoing))
-        .build();
-
-        OngoingActivity ongoingActivity = new OngoingActivity.Builder(
-            this
-            ,RRW_Notification_ID
-            ,notificationBuilder
-        )
-        .setStaticIcon(R.drawable.icon_foreground)
-        .setTouchIntent(actionPendingIntent)
-        .setStatus(ongoingActivityStatus)
-        .build();
-
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat
+                .Builder(this, NOTIFICATION_CHANNEL_ID_ONGOING)
+                .setSmallIcon(R.drawable.icon_foreground)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .addAction(
+                    R.drawable.icon_foreground,
+                    getString(R.string.open_rrw),
+                    actionPendingIntent
+                )
+                .setOngoing(true);
+        Status ongoingActivityStatus = new Status
+                .Builder()
+                .addTemplate(getString(R.string.match_ongoing))
+                .build();
+        OngoingActivity ongoingActivity = new OngoingActivity
+                .Builder(
+                    this,
+                    1,
+                    notificationBuilder
+                )
+                .setStaticIcon(R.drawable.icon_foreground)
+                .setTouchIntent(actionPendingIntent)
+                .setStatus(ongoingActivityStatus)
+                .build();
         ongoingActivity.apply(this);
-
-        notificationManager.notify(RRW_Notification_ID, notificationBuilder.build());
+        notificationManager.notify(1, notificationBuilder.build());
     }
     private void stopOngoingNotification(){
-        if(Build.VERSION.SDK_INT < 30){return;}
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT < 30) return;
         notificationManager.cancelAll();
+    }
+    private void checkNotificationChannels(){
+        boolean exists = false;
+        boolean exists_ongoing = false;
+        for(NotificationChannel channel : notificationManager.getNotificationChannels()){
+            String channelId = channel.getId();
+            switch(channelId){
+                case NOTIFICATION_CHANNEL_ID:
+                    exists = true;
+                    continue;
+                case NOTIFICATION_CHANNEL_ID_ONGOING:
+                    exists_ongoing = true;
+                    continue;
+            }
+            notificationManager.deleteNotificationChannel(channelId);
+        }
+        if(!exists){
+            NotificationChannel channel =
+                    new NotificationChannel(
+                            NOTIFICATION_CHANNEL_ID
+                            , getString(R.string.time_up)
+                            , NotificationManager.IMPORTANCE_HIGH
+                    );
+            channel.enableVibration(true);
+            channel.setVibrationPattern(ve_waveForm);
+            notificationManager.createNotificationChannel(channel);
+        }
+        if(!exists_ongoing){
+            notificationManager.createNotificationChannel(
+                    new NotificationChannel(
+                            NOTIFICATION_CHANNEL_ID_ONGOING
+                            , getString(R.string.match_ongoing)
+                            , NotificationManager.IMPORTANCE_DEFAULT
+                    )
+            );
+        }
     }
 }

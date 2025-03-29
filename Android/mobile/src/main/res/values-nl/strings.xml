@@ -54,7 +54,6 @@
     <string name="match_report">Wedstrijdrapport</string>
     <string name="dialog_share_message">Wat te laten zien?</string>
     <string name="dialog_share_time">Tijd stop/hervat</string>
-    <string name="dialog_share_cards">Kaarten</string>
     <string name="dialog_share_pens">Penalties</string>
     <string name="dialog_share_clock">Klok tijd</string>
 
@@ -151,8 +150,8 @@
     </string-array>
 
     <!-- CommsBT -->
-    <string name="connecting_to">Verbinden met watch</string>
-    <string name="connected_to">Verbonden met watch</string>
+    <string name="connecting_to">Verbinden met %s</string>
+    <string name="connected_to">Verbonden met %s</string>
     <string name="disconnected">Niet verbonden, tab op het icoon om te verbinden</string>
 
     <string name="fail_BT_denied">Geen Bluetooth toegang. Apparaten in de buurt toestaan, dan nog
@@ -164,6 +163,7 @@
     <string name="fail_BT">Dat ging niet goed, tap op het icoon om te verbinden</string>
 
     <string name="update_watch_app">Update de app op het horloge</string>
+    <string name="update_mobile_app">App is verouderd, update in de store</string>
     <string name="match_ongoing">Wedstrijd bezig, kan nu niet voorbereiden</string>
     <string name="fail_unexpected">Onverwachte technische fout</string>
 
@@ -185,7 +185,7 @@
     <string name="fail_load_custom_match_type">Fout bij laden van aangepast wedstrijdtype</string>
     <string name="fail_del_match_type">Fout bij verwijderen wedstrijdtype</string>
     <string name="fail_save_match_type">Fout bij opslaan wedstrijdtype</string>
-    <string name="fail_receive_matches">Fout bij ontvangen van wedstrijden van horloge</string>
+    <string name="fail_receive_matches">Fout bij ontvangen van wedstrijden</string>
     <string name="fail_read_matches">Fout bij lezen van wedstrijden uit opslag</string>
     <string name="fail_store_matches">Fout bij opslaan van wedstrijden</string>
     <string name="fail_del_match">Fout bij verwijderen wedstrijd</string>

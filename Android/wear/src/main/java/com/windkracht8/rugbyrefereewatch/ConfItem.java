@@ -46,7 +46,7 @@ class ConfItem extends LinearLayout{
             case CLOCK_PK -> R.string.clock_pk;
             case CLOCK_CON -> R.string.clock_con;
             case CLOCK_RESTART -> R.string.clock_restart;
-            case SCREEN_ON -> R.string.screen_on;
+            case SCREEN_ON -> R.string.screen;
             case TIMER_TYPE -> R.string.timer_type;
             case RECORD_PLAYER -> R.string.record_player;
             case RECORD_PENS -> R.string.record_pens;
@@ -96,12 +96,12 @@ class ConfItem extends LinearLayout{
                 break;
             case SCREEN_ON:
                 if(Main.screen_on)
-                    confItemValue.setText(R.string.on);
+                    confItemValue.setText(R.string.keep_on);
                 else
-                    confItemValue.setText(R.string.off);
+                    confItemValue.setText(R.string.auto_off);
                 break;
             case TIMER_TYPE:
-                if(Main.timer_type_period == 1)
+                if(Main.timer_type_period == Main.TIMER_TYPE_DOWN)
                     confItemValue.setText(R.string.timer_type_down);
                 else
                     confItemValue.setText(R.string.timer_type_up);

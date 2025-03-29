@@ -7,9 +7,9 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.widget.TextViewCompat;
 
 class Sinbin extends AppCompatTextView{
-    final MatchData.sinbin sinbin;
+    final MatchData.Sinbin sinbin;
     private final Main main;
-    Sinbin(Main main, MatchData.sinbin sinbin, int color){
+    Sinbin(Main main, MatchData.Sinbin sinbin, int color){
         super(main);
         this.main = main;
         this.sinbin = sinbin;
@@ -25,11 +25,8 @@ class Sinbin extends AppCompatTextView{
     }
 
     void update(){
-        long remaining = sinbin.end - Main.timer_timer;
-        if(Main.timer_status != Main.TimerStatus.RUNNING){
-            remaining += System.currentTimeMillis() - Main.timer_start_time_off;
-        }
-        if(remaining < -60000){
+        int remaining = sinbin.end - Main.getDurationFull();
+        if(remaining < -60){
             sinbin.hide = true;
         }
         if(sinbin.ended){
@@ -39,9 +36,9 @@ class Sinbin extends AppCompatTextView{
             remaining = 0;
             sinbin.ended = true;
             setTextColor(Color.RED);
-            main.beep();
+            main.beep(main.getString(R.string.ended, main.getString(R.string.sinbin)));
         }
-        String tmp = Main.prettyTimer(remaining);
+        String tmp = Utils.prettyTimer(remaining);
         if(sinbin.who > 0){
             if(sinbin.team_is_home){
                 tmp = "(" + sinbin.who + ") " + tmp;

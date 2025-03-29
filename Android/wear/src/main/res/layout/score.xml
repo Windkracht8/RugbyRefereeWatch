@@ -5,20 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <EditText
-        style="@style/editText_player"
-        android:id="@+id/score_player"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:autofillHints="@string/no0"
-        android:hint="@string/no0"/>
     <TextView
         android:id="@+id/score_try"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
         android:text="@string/score_try_text" />
     <TextView
@@ -27,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
         android:text="@string/score_con_text" />
     <TextView
@@ -35,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
         android:text="@string/score_goal_text" />
     <TextView
@@ -43,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
         android:text="@string/foul_play_text" />
 </LinearLayout>

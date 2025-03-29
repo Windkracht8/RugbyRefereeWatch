@@ -83,7 +83,7 @@ public class ConfSpinner extends ConfScreen{
                     switch(confItemType){
                         case PERIOD_TIME:
                             Main.match.period_time = value;
-                            Main.timer_period_time = value;
+                            Main.timer_period_time = value*60;
                             break;
                         case PERIOD_COUNT:
                             Main.match.period_count = value;
@@ -180,7 +180,7 @@ public class ConfSpinner extends ConfScreen{
             default:
                 loadCustomMatchType(matchType);
         }
-        Main.timer_period_time = Main.match.period_time;
+        Main.timer_period_time = Main.match.period_time*60;
         confActivity.goBack();
     }
     private void loadCustomMatchType(String name){//Thread: UI

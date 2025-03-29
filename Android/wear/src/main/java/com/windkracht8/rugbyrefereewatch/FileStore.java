@@ -54,7 +54,7 @@ class FileStore{
             JSONArray matches = readMatches(context);
             for(int i = matches.length(); i > 0; i--){
                 JSONObject match = matches.getJSONObject(i-1);
-                if(match.getLong("matchid") < System.currentTimeMillis() - 1209600000){
+                if(match.getLong("matchid") < System.currentTimeMillis() - 2592000000L){
                     matches.remove(i-1);
                 }
             }

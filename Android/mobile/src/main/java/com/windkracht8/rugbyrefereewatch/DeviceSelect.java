@@ -52,18 +52,16 @@ public class DeviceSelect extends Activity implements CommsBT.BTInterface{
             finishAndRemoveTask();
             return;
         }
-        for(BluetoothDevice bluetoothDevice : bluetoothDevices){
-            deviceFound(bluetoothDevice);
-        }
-        runOnUiThread(()->device_select_loading.setVisibility(View.GONE));
+        runOnUiThread(()->{
+            bluetoothDevices.forEach(this::deviceFound);
+            device_select_loading.setVisibility(View.GONE);
+        });
     }
     private void deviceFound(BluetoothDevice bluetoothDevice){
-        runOnUiThread(()->{
-            TextView device = new TextView(this, null, 0, R.style.rrwDeviceStyle);
-            device.setText(bluetoothDevice.getName());
-            device_select_ll.addView(device);
-            device.setOnClickListener(v->connectDevice(bluetoothDevice));
-        });
+        TextView device = new TextView(this, null, 0, R.style.rrwDeviceStyle);
+        device.setText(bluetoothDevice.getName());
+        device_select_ll.addView(device);
+        device.setOnClickListener(v->connectDevice(bluetoothDevice));
     }
     private void connectDevice(BluetoothDevice bluetoothDevice){
         if(Main.commsBT != null) Main.commsBT.connectDevice(bluetoothDevice);

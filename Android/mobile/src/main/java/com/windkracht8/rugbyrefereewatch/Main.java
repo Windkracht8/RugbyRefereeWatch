@@ -228,7 +228,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             icon.setColorFilter(getColor(R.color.icon_disabled));
             ((AnimatedVectorDrawable) icon.getBackground()).start();
             device.setTextColor(getColor(R.color.text));
-            device.setText(getString(R.string.connecting_to).replace("watch", deviceName));
+            device.setText(getString(R.string.connecting_to, deviceName));
         });
     }
     @Override public void onBTConnectFailed(){
@@ -244,7 +244,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.text));
             device.setTextColor(getColor(R.color.text));
-            device.setText(getString(R.string.connected_to).replace("watch", deviceName));
+            device.setText(getString(R.string.connected_to, deviceName));
             sendSyncRequest();
             findViewById(R.id.bSync).setVisibility(View.VISIBLE);
             findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);

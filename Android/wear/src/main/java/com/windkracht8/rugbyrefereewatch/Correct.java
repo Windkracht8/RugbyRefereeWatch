@@ -25,7 +25,7 @@ public class Correct extends ScrollView{
     void show(Main main){
         llCorrectItems.removeAllViews();
         for(int i = Main.match.events.size(); i > 0; i--){
-            MatchData.event event_data = Main.match.events.get(i-1);
+            MatchData.Event event_data = Main.match.events.get(i-1);
             if(!event_data.what.equals("TRY") &&
                     !event_data.what.equals("CONVERSION") &&
                     !event_data.what.equals("PENALTY TRY") &&
@@ -65,9 +65,9 @@ public class Correct extends ScrollView{
         findViewById(R.id.correctLabel).setPadding(Main.vh10, Main.vh10, Main.vh10, 0);
     }
 
-    private void addItem(Main main, MatchData.event event){
+    private void addItem(Main main, MatchData.Event event){
         TextView item = new TextView(main, null, 0, R.style.textView_item_single);
-        String text = Main.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(main, event.what);
+        String text = Utils.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(main, event.what);
         if(event.team != null){
             text += " " + Translator.getTeamLocal(main, event.team);
             if(event.who > 0){

@@ -15,10 +15,9 @@ public class DeviceConnect extends Activity implements CommsBT.BTInterface{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_connect);
         findViewById(android.R.id.content).setOnApplyWindowInsetsListener(Main.onApplyWindowInsetsListener);
-        String text = getString(R.string.connecting_to);
         String name = getIntent().getStringExtra("name");
-        if(name != null) text = text.replace("watch", name);
-        ((TextView)findViewById(R.id.device_connect_name)).setText(text);
+        if(name == null) ((TextView)findViewById(R.id.device_connect_name)).setText(R.string.connecting_to);
+        else ((TextView)findViewById(R.id.device_connect_name)).setText(getString(R.string.connecting_to, name));
 
         ImageView icon = findViewById(R.id.device_connect_icon);
         ((AnimatedVectorDrawable) icon.getBackground()).start();

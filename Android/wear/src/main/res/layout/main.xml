@@ -10,6 +10,7 @@
     tools:ignore="Overdraw">
     <ImageButton
         android:id="@+id/bConfWatch"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/black"
@@ -104,10 +105,10 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/kickClockHome"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone"
         android:baselineAligned="false"
         android:paddingEnd="10dp"
         android:background="@color/bg_partial"
@@ -153,10 +154,10 @@
         app:layout_constraintBottom_toTopOf="@id/pen_label" />
     <LinearLayout
         android:id="@+id/kickClockAway"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:visibility="gone"
         android:baselineAligned="false"
         android:paddingStart="10dp"
         android:background="@color/bg_partial"
@@ -229,10 +230,10 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <Button
         android:id="@+id/bOverTimer"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingVertical="10dp"
-        android:visibility="gone"
         android:gravity="center"
         android:autoSizeTextType="uniform"
         android:textAllCaps="false"
@@ -269,10 +270,10 @@
         app:layout_constraintBottom_toTopOf="@id/bConf"/>
     <Button
         android:id="@+id/bBottom"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingVertical="10dp"
-        android:visibility="gone"
         android:autoSizeTextType="uniform"
         android:textAllCaps="false"
         android:textColor="@color/w8blue"
@@ -318,51 +319,52 @@
             android:layout_weight="1"
             android:orientation="horizontal">
             <Button
-                tools:ignore="ButtonStyle"
                 android:id="@+id/kick_clock_confirm_no"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:text="@string/no"
-                android:textColor="@color/w8blue" />
+                android:textColor="@color/w8blue"
+                tools:ignore="ButtonStyle"/>
             <Button
-                tools:ignore="ButtonStyle"
                 android:id="@+id/kick_clock_confirm_yes"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textSize="20sp"
                 android:text="@string/yes"
-                android:textColor="@color/w8blue" />
+                android:textColor="@color/w8blue"
+                tools:ignore="ButtonStyle"/>
         </LinearLayout>
-        <EditText
-            style="@style/editText_player"
-            android:id="@+id/kick_player"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="20sp"
-            android:autofillHints="@string/no0"
-            android:hint="@string/no0"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/delay_end_wrapper"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/bg_partial"
+        android:background="#000"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
         <TextView
-            android:id="@+id/delay_end_text"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:paddingTop="30dp"
+            android:paddingHorizontal="30dp"
+            android:gravity="center"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:text="@string/delay_end_info" />
+        <TextView
+            android:id="@+id/delay_end_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:maxLines="1"
             android:paddingHorizontal="30dp"
             android:gravity="center"
             android:autoSizeTextType="uniform"
@@ -381,9 +383,9 @@
     </LinearLayout>
     <com.windkracht8.rugbyrefereewatch.ConfWatch
         android:id="@+id/confWatch"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -391,9 +393,9 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.Score
         android:id="@+id/score"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -401,9 +403,19 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.FoulPlay
         android:id="@+id/foulPlay"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <com.windkracht8.rugbyrefereewatch.PlayerNo
+        android:id="@+id/playerNo"
         android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -411,9 +423,9 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.ExtraTime
         android:id="@+id/extraTime"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -421,9 +433,9 @@
         app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.Correct
         android:id="@+id/correct"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

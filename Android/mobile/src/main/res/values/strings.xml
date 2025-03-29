@@ -72,7 +72,6 @@
     <string name="match_report">Match report</string>
     <string name="dialog_share_message">What to include?</string>
     <string name="dialog_share_time">Time off/on</string>
-    <string name="dialog_share_cards">Cards</string>
     <string name="dialog_share_pens">Penalties</string>
     <string name="dialog_share_clock">Clock time</string>
 
@@ -169,8 +168,8 @@
     </string-array>
 
     <!-- CommsBT -->
-    <string name="connecting_to">Connecting to watch</string>
-    <string name="connected_to">Connected to watch</string>
+    <string name="connecting_to">Connecting to %s</string>
+    <string name="connected_to">Connected to %s</string>
     <string name="disconnected">Disconnected, tap icon to connect</string>
 
     <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
@@ -179,6 +178,7 @@
     <string name="fail_BT">That did not work, tap icon to connect with watch</string>
 
     <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="update_mobile_app">App is outdated, update in the store</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="fail_unexpected">Unexpected technical error</string>
 
@@ -200,7 +200,7 @@
     <string name="fail_load_custom_match_type">Failed to load custom match type</string>
     <string name="fail_del_match_type">Failed to delete match type</string>
     <string name="fail_save_match_type">Failed to save match type</string>
-    <string name="fail_receive_matches">Failed to receive matches from watch</string>
+    <string name="fail_receive_matches">Failed to receive matches</string>
     <string name="fail_read_matches">Failed to read matches from storage</string>
     <string name="fail_store_matches">Failed to store matches</string>
     <string name="fail_del_match">Failed to delete match</string>

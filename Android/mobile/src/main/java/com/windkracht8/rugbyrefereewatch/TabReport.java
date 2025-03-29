@@ -35,8 +35,11 @@ public class TabReport extends LinearLayout{
     static int width_score;
     static int width_timer;
     static int width_time;
-    static int width_what;
     static int width_team;
+
+    private static final int SHARE_TIME = 0;
+    private static final int SHARE_PENS = 1;
+    private static final int SHARE_CLOCK = 2;
 
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -189,7 +192,6 @@ public class TabReport extends LinearLayout{
             width_score = 0;
             width_timer = 0;
             width_time = 0;
-            width_what = 0;
             width_team = 0;
             for(int i=0; i<llEvents.getChildCount(); i++){
                 View view = llEvents.getChildAt(i);
@@ -425,19 +427,16 @@ public class TabReport extends LinearLayout{
         }
     }
     private void bShareClick(){
-        boolean[] eventTypes = {false, false, false, true};
+        boolean[] eventTypes = {false, false, false};
         View view = View.inflate(main, R.layout.dialog_share, null);
         ((CheckBox)view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
-                (v, c)->eventTypes[0] = c
+                (v, c)->eventTypes[SHARE_TIME] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
-                (v, c)->eventTypes[1] = c
+                (v, c)->eventTypes[SHARE_PENS] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
-                (v, c)->eventTypes[2] = c
-        );
-        ((CheckBox)view.findViewById(R.id.dialog_share_cards)).setOnCheckedChangeListener(
-                (v, c)->eventTypes[3] = c
+                (v, c)->eventTypes[SHARE_CLOCK] = c
         );
         new AlertDialog.Builder(main)
                 .setMessage(R.string.dialog_share_message)
@@ -517,15 +516,15 @@ public class TabReport extends LinearLayout{
                 scoreHome.append(scoreLine(R.string.drop_goals, home.getString("drop_goals")));
                 scoreAway.append(scoreLine(R.string.drop_goals, away.getString("drop_goals")));
             }
-            if(eventTypes[3] && shouldShow("yellow_cards", home, away)){
+            if(shouldShow("yellow_cards", home, away)){
                 scoreHome.append(scoreLine(R.string.yellow_cards, home.getString("yellow_cards")));
                 scoreAway.append(scoreLine(R.string.yellow_cards, away.getString("yellow_cards")));
             }
-            if(eventTypes[3] && shouldShow("red_cards", home, away)){
+            if(shouldShow("red_cards", home, away)){
                 scoreHome.append(scoreLine(R.string.red_cards, home.getString("red_cards")));
                 scoreAway.append(scoreLine(R.string.red_cards, away.getString("red_cards")));
             }
-            if(eventTypes[1] && shouldShow("pens", home, away)){
+            if(eventTypes[SHARE_PENS] && shouldShow("pens", home, away)){
                 scoreHome.append(scoreLine(R.string.penalties, home.getString("pens")));
                 scoreAway.append(scoreLine(R.string.penalties, away.getString("pens")));
             }
@@ -539,25 +538,20 @@ public class TabReport extends LinearLayout{
             int period_count = settings.getInt("period_count");
             boolean doubleDigitTime = settings.getInt("period_time") >= 10;
             JSONArray events = match.getJSONArray("events");
-            for(int i = 0; i < events.length(); i++){
+            for(int i=0; i<events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                //eventTypes[0] > time events
-                //eventTypes[1] > pens
-                //eventTypes[2] > clock time
                 String what = event.getString("what");
-                if((!eventTypes[0] && what.equals("TIME OFF")) ||
-                        (!eventTypes[0] && what.equals("RESUME")) ||
-                        (!eventTypes[1] && what.equals("PENALTY"))
+                if((!eventTypes[SHARE_TIME] && what.equals("TIME OFF")) ||
+                        (!eventTypes[SHARE_TIME] && what.equals("RESUME")) ||
+                        (!eventTypes[SHARE_PENS] && what.equals("PENALTY"))
                 ) continue;
 
-                if(eventTypes[2]){
+                if(eventTypes[SHARE_CLOCK])
                     shareBody.append(event.getString("time")).append("    ");
-                }
 
-                String timer = ReportEventEdit.timerStampToString(event.getLong("timer"));
+                String timer = ReportEventEdit.prettyTimer(event.getInt("timer"));
                 if(doubleDigitTime && timer.length() == 4) shareBody.append("0");
-                shareBody
-                        .append(timer)
+                shareBody.append(timer)
                         .append("    ")
                         .append(Translator.getEventTypeLocal(main, what, event.getInt("period"), period_count));
                 if(event.has("team")){
@@ -567,17 +561,15 @@ public class TabReport extends LinearLayout{
                         shareBody.append(" ").append(main.getTeamName(away));
                     }
                 }
-                if(event.has("who")){
-                    shareBody.append(" ")
-                            .append(event.getString("who"));
-                }
-                if(event.has("score")){
+                if(event.has("who"))
+                    shareBody.append(" ").append(event.getString("who"));
+                if(event.has("score"))
                     shareBody.append(" ").append(event.getString("score"));
-                }
-                if(event.has("reason")){
-                    shareBody.append("\n").append(event.getString("reason")).append("\n");
-                }
+                if(event.has("reason"))
+                    shareBody.append("\n      ").append(event.getString("reason"));
                 shareBody.append("\n");
+                if(what.equals("END"))
+                    shareBody.append("\n");
             }
 
         }catch(Exception e){

@@ -19,10 +19,10 @@ class ReportEventFull extends ReportEvent{
 
             tvTimer = findViewById(R.id.tvTimer);
 
-            int temp = (int) (event.getLong("timer") / 1000);
-            int seconds = (temp % 60);
-            int minutes = (temp - seconds) / 60;
-            String timer = Long.toString(minutes);
+            int seconds = event.getInt("timer");
+            int minutes = Math.floorDiv(seconds, 60);
+            seconds %= 60;
+            String timer = String.valueOf(minutes);
             if(minutes > (long) period_time * period_count){
                 timer = String.valueOf((period_time * period_count));
                 long over = minutes - ((long) period_time * period_count);

@@ -37,11 +37,11 @@ public class Report extends Activity{
             addItem(match.home.pens + " penalties " + match.away.pens);
         addItem("");
 
-        for(MatchData.event event : match.events){
+        for(MatchData.Event event : match.events){
             if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){
                 continue;
             }
-            String text = Main.prettyTimer(event.timer) + " ";
+            String text = Utils.prettyTimer(event.timer) + " ";
             switch(event.what){
                 case "START":
                     text += getString(R.string.Start) + " " + Main.getPeriodName(this, event.period, match.period_count);
