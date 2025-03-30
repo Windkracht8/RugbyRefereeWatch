@@ -48,8 +48,8 @@ import java.util.concurrent.Executors;
 
 public class Main extends Activity{
     static final String LOG_TAG = "RugbyRefereeWatch";
-    private static final String NOTIFICATION_CHANNEL_ID = "RRW_Notification";
-    private static final String NOTIFICATION_CHANNEL_ID_ONGOING = "RRW_Notification_Ongoing";
+    private static final String NOTIFICATION_CHANNEL_ID = "RugbyRefereeWatch_TimeUp";
+    private static final String NOTIFICATION_CHANNEL_ID_ONGOING = "RugbyRefereeWatch_Ongoing";
     private static final long[] ve_waveForm = new long[]{300, 500, 300, 500, 300, 500};
     private static final VibrationEffect ve_pattern = VibrationEffect.createWaveform(ve_waveForm, -1);
     private static final VibrationEffect ve_single = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE);
