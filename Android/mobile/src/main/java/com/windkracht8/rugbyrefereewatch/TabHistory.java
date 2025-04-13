@@ -57,7 +57,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.gotMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_receive_matches);
         }
-        main.runOnUiThread(this::showMatches);
+        main.runOnUiThread(()->showMatches(true));
         storeMatches();
         cleanDeletedMatches(matches_new);
     }
@@ -119,7 +119,7 @@ public class TabHistory extends LinearLayout{
             JSONArray jsonM = new JSONArray(text.toString());
             for(int i=0; i<jsonM.length(); i++) matches.add(jsonM.getJSONObject(i));
             checkFormatOfMatches();
-            main.runOnUiThread(this::showMatches);
+            main.runOnUiThread(()->showMatches(true));
         }catch(FileNotFoundException e){
             Log.d(Main.LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
         }catch(Exception e){
@@ -143,7 +143,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
         }
     }
-    private void showMatches(){
+    private void showMatches(boolean showLatest){
         try{
             matches.sort((m1, m2)->{
                 try{
@@ -161,7 +161,7 @@ public class TabHistory extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabHistory.showMatches Exception: " + e.getMessage());
             main.toast(R.string.fail_show_history);
         }
-        if(!matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(matches.size()-1));
+        if(showLatest && !matches.isEmpty()) main.tabReport.loadMatch(main, matches.get(matches.size()-1));
     }
     private void storeMatches(){//Thread: BG
         try{
@@ -221,7 +221,7 @@ public class TabHistory extends LinearLayout{
                 }
             }
         }
-        showMatches();
+        showMatches(true);
         selectionChanged();
         main.runInBackground(this::storeMatches);
     }
@@ -246,14 +246,14 @@ public class TabHistory extends LinearLayout{
             for(int i=0; i<matches.size(); i++){
                 if(matches.get(i).getLong("matchid") == match_id){
                     matches.set(i, match);
-                    showMatches();
+                    showMatches(false);
                     main.runInBackground(this::storeMatches);
                     return;
                 }
             }
             if(match.has("timer")) match.remove("timer");
             matches.add(match);
-            showMatches();
+            showMatches(false);
             main.runInBackground(this::storeMatches);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.updateMatch Exception: " + e.getMessage());

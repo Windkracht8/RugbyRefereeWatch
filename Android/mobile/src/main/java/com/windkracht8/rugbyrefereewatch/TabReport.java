@@ -425,6 +425,7 @@ public class TabReport extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             main.toast(R.string.fail_save);
         }
+        bViewClick();
     }
     private void bShareClick(){
         boolean[] eventTypes = {false, false, false};

@@ -40,6 +40,8 @@ import androidx.core.splashscreen.SplashScreen;
 import androidx.wear.ongoing.OngoingActivity;
 import androidx.wear.ongoing.Status;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -79,7 +81,7 @@ public class Main extends Activity{
     private ImageButton bConf;
     private ImageButton bConfWatch;
     private LinearLayout delay_end_wrapper;
-    private TextView delay_end_text;
+    private CircularProgressIndicator delay_end_progress;
     private LinearLayout kick_clock_confirm;
     private TextView kick_clock_confirm_label;
     private ConfWatch confWatch;
@@ -237,7 +239,7 @@ public class Main extends Activity{
         bConfWatch = findViewById(R.id.bConfWatch);
         bConfWatch.setOnClickListener(v->confWatch.show(this));
         delay_end_wrapper = findViewById(R.id.delay_end_wrapper);
-        delay_end_text = findViewById(R.id.delay_end_text);
+        delay_end_progress = findViewById(R.id.delay_end_progress);
         findViewById(R.id.delay_end_cancel).setOnClickListener(v->delay_end_cancel());
 
         score = findViewById(R.id.score);
@@ -793,10 +795,13 @@ public class Main extends Activity{
         delay_end_count = 11;
         delay_end_update.run();
         delay_end_wrapper.setVisibility(View.VISIBLE);
+        delay_end_progress.setProgress(0);
+        delay_end_progress.setVisibility(View.VISIBLE);
     }
     private void delay_end_cancel(){
         delay_end_count = -1;
         delay_end_wrapper.setVisibility(View.GONE);
+        delay_end_progress.setVisibility(View.GONE);
     }
     private final Runnable delay_end_update = new Runnable(){@Override public void run(){
         if(delay_end_count == -1) return;
@@ -804,7 +809,7 @@ public class Main extends Activity{
         if(delay_end_count == 0){
             endPeriod();
         }
-        delay_end_text.setText(getString(R.string.delay_end_text, delay_end_count));
+        delay_end_progress.setProgress((10-delay_end_count)*10);
         handler.postDelayed(delay_end_update, 1000);
     }};
     private void endPeriod(){
@@ -840,6 +845,7 @@ public class Main extends Activity{
         if(kick_clock_home_end > 0) kickClockHomeClose();
         if(kick_clock_away_end > 0) kickClockAwayClose();
         delay_end_wrapper.setVisibility(View.GONE);
+        delay_end_progress.setVisibility(View.GONE);
     }
 
     private int getColorBG(String name){
@@ -1046,6 +1052,8 @@ public class Main extends Activity{
             }
             match.away.kickoff = false;
             score_away.setText("0");
+        }else if(timer_status == TimerStatus.FINISHED){
+            Log.d(LOG_TAG, "homeClick, but in status FINISHED");
         }else{
             score.team = match.home;
             score.setVisibility(View.VISIBLE);
@@ -1062,6 +1070,8 @@ public class Main extends Activity{
             }
             match.home.kickoff = false;
             score_home.setText("0");
+        }else if(timer_status == TimerStatus.FINISHED){
+            Log.d(LOG_TAG, "awayClick, but in status FINISHED");
         }else{
             score.team = match.away;
             score.setVisibility(View.VISIBLE);

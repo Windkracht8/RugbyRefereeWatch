@@ -353,27 +353,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_margin="10dp"
             android:paddingTop="30dp"
             android:paddingHorizontal="30dp"
             android:gravity="center"
             android:autoSizeMinTextSize="8sp"
             android:autoSizeTextType="uniform"
             android:text="@string/delay_end_info" />
-        <TextView
-            android:id="@+id/delay_end_text"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:maxLines="1"
-            android:paddingHorizontal="30dp"
-            android:gravity="center"
-            android:autoSizeTextType="uniform"
-            android:text="@string/delay_end_text" />
         <Button
             android:id="@+id/delay_end_cancel"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_margin="10dp"
             android:paddingBottom="30dp"
             android:paddingHorizontal="30dp"
             android:gravity="center"
@@ -381,6 +373,19 @@
             android:text="@string/delay_end_cancel"
             android:textColor="@color/w8blue" />
     </LinearLayout>
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/delay_end_progress"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:indicatorColor="@color/w8blue"
+        app:trackColor="@color/transparent"
+        app:trackThickness="2dp"
+        app:indicatorInset="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
     <com.windkracht8.rugbyrefereewatch.ConfWatch
         android:id="@+id/confWatch"
         android:visibility="gone"
