@@ -6,7 +6,10 @@ import android.view.Gravity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.widget.TextViewCompat;
 
+import java.util.Set;
+
 class Sinbin extends AppCompatTextView{
+    private final static Set<String> colors_not_red = Set.of("brown", "orange", "red");
     final MatchData.Sinbin sinbin;
     private final Main main;
     Sinbin(Main main, MatchData.Sinbin sinbin, int color){
@@ -35,7 +38,11 @@ class Sinbin extends AppCompatTextView{
         if(remaining <= 0){
             remaining = 0;
             sinbin.ended = true;
-            setTextColor(Color.RED);
+            if((sinbin.team_is_home && !colors_not_red.contains(Main.match.home.color)) ||
+                    (!sinbin.team_is_home && !colors_not_red.contains(Main.match.away.color))
+            ){
+                setTextColor(Color.RED);
+            }
             main.beep(main.getString(R.string.ended, main.getString(R.string.sinbin)));
         }
         String tmp = Utils.prettyTimer(remaining);

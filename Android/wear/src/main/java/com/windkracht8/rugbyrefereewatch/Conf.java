@@ -34,6 +34,9 @@ public class Conf extends ConfScreen{
             case MATCH_TYPE:
                 confActivity.openConfScreen(new ConfSpinner(type));
                 break;
+            case MATCH_TYPE_DETAILS:
+                confActivity.openConfCustomScreen();
+                break;
             case SCREEN_ON:
                 Main.screen_on = !Main.screen_on;
                 confItem.updateValue();

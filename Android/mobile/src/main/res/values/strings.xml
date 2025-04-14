@@ -87,6 +87,8 @@
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_text">Match type</string>
     <string name="sMatchType_desc">Match type selection</string>
+    <string name="match_type_details_show">Show match type details</string>
+    <string name="match_type_details_hide">Hide match type details</string>
     <string name="bSaveCustom_text">Save match type</string>
     <string name="bDelCustom_text">Delete match type</string>
     <string name="etPeriodTime_text">Time/period</string>
@@ -95,13 +97,15 @@
     <string name="etPointsTry_text">Points for Try</string>
     <string name="etPointsCon_text">Points for Conversion</string>
     <string name="etPointsGoal_text">Points for Goal</string>
-    <string name="etClockPK_text">PK clock</string>
-    <string name="etClockCon_text">Conversion clock</string>
-    <string name="etClockRestart_text">Restart clock</string>
-    <string name="watch_settings">Watch settings</string>
-    <string name="no_watch_settings">No watch settings</string>
+    <string name="etClockPK_text">Penalty kick clock</string>
+    <string name="etClockCon_text">Conversion kick clock</string>
+    <string name="etClockRestart_text">Restart kick clock</string>
+    <string name="watch_settings_show">Show watch settings</string>
+    <string name="watch_settings_hide">Hide watch settings</string>
     <string name="cbScreenOn_text">Keep screen on</string>
     <string name="sTimerType_text">Timer type</string>
+    <string name="timer_type_up">count up</string>
+    <string name="timer_type_down">count down</string>
     <string name="cbRecordPlayer_text">Record player #</string>
     <string name="cbRecordPens_text">Record penalties</string>
     <string name="cbDelayEnd_text">Delay end of period</string>
@@ -113,7 +117,7 @@
     <string name="points_try_empty">Points for Try can\'t be empty</string>
 
     <!-- prepare.custom match type -->
-    <string name="custom_match_hint">Match type name</string>
+    <string name="custom_match_hint">Enter match type name</string>
     <string name="save_match_type">Save match type</string>
 
     <string-array name="eventTypes">
@@ -160,11 +164,6 @@
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-    </string-array>
-
-    <string-array name="timerTypes">
-        <item>count up</item>
-        <item>count down</item>
     </string-array>
 
     <!-- CommsBT -->

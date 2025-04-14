@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Insets;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -180,12 +181,17 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
 
     static final View.OnApplyWindowInsetsListener onApplyWindowInsetsListener = new View.OnApplyWindowInsetsListener(){
         @NonNull @Override public WindowInsets onApplyWindowInsets(@NonNull View view, @NonNull WindowInsets windowInsets){
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft()
-                    ,windowInsets.getSystemWindowInsetTop()
-                    ,windowInsets.getSystemWindowInsetRight()
-                    ,windowInsets.getSystemWindowInsetBottom()
-            );
+            if(Build.VERSION.SDK_INT >= 30){
+                Insets insets = windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+                view.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            }else{
+                view.setPadding(
+                        windowInsets.getSystemWindowInsetLeft(),
+                        windowInsets.getSystemWindowInsetTop(),
+                        windowInsets.getSystemWindowInsetRight(),
+                        windowInsets.getSystemWindowInsetBottom()
+                );
+            }
             return windowInsets;
         }
     };

@@ -15,7 +15,7 @@ public class ConfCustom extends ConfScreen{
             @Nullable Bundle savedInstanceState
     ){
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        label.setText(R.string.custom_match);
+        label.setText(R.string.match_type_details);
         for(ConfItem.ConfItemType confItemType : ConfItem.ConfItemType.values()){
             if(!ConfItem.confCustomItemTypes.contains(confItemType)) continue;
             ConfItem confItem = new ConfItem(confActivity, confItemType);

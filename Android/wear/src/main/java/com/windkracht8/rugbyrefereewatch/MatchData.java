@@ -44,10 +44,10 @@ public class MatchData{
     }
     JSONObject toJson(Context context){
         JSONObject ret = new JSONObject();
+        JSONObject settings = new JSONObject();
         try{
             ret.put("matchid", match_id);
             ret.put("format", FORMAT);
-            JSONObject settings = new JSONObject();
             settings.put("match_type", match_type);
             settings.put("period_time", period_time);
             settings.put("period_count", period_count);

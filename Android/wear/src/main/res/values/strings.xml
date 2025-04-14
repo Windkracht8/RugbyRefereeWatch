@@ -52,7 +52,6 @@
     <string name="bPenAway_desc">away penalty count</string>
     <string name="delay_end_info">Hit cancel if you ended the period by mistake.\nYou can disable
         this delay in the settings.</string>
-    <string name="delay_end_text">ending period in %d</string>
     <string name="delay_end_cancel">Cancel</string>
     <string name="pk">PK</string>
     <string name="conversion">conversion</string>
@@ -98,7 +97,7 @@
     <string name="away">away</string>
     <string name="color_away">Color away</string>
     <string name="match_type">Match type</string>
-    <string name="custom_match">Custom match</string>
+    <string name="match_type_details">Match type details</string>
     <string name="period_time">Time/period</string>
     <string name="period_count">Period count</string>
     <string name="sinbin">Sinbin</string>

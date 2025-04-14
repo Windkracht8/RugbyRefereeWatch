@@ -98,6 +98,8 @@ public class Main extends Activity{
     static int vh10;
     static int vh15;
     static int vh25;
+    private static int vh45;
+    private static int vh50;
     static int vh75;
     static int _10dp;
 
@@ -167,7 +169,8 @@ public class Main extends Activity{
         vh10 = heightPixels/10;
         vh15 = (int) (heightPixels*.15);
         vh25 = (int) (heightPixels*.25);
-        int vh50 = heightPixels/2;
+        vh45 = (int) (heightPixels*.45);
+        vh50 = heightPixels/2;
         vh75 = (int) (heightPixels*.75);
         int vw30 = (int) (widthPixels*.3);
         int vw50 = widthPixels/2;
@@ -989,6 +992,11 @@ public class Main extends Activity{
                 }else{
                     score_away.setHeight(vh15);
                 }
+                if(al_sinbins_ui_home.size() > 1 || al_sinbins_ui_away.size() > 1){
+                    buttons_back.getLayoutParams().height = vh45;
+                }else{
+                    buttons_back.getLayoutParams().height = vh50;
+                }
             }
         }
         for(int i = al_sinbins_ui.size(); i > 0; i--){
@@ -1002,6 +1010,11 @@ public class Main extends Activity{
                     }else{
                         score_away.setHeight(vh25);
                     }
+                }
+                if(al_sinbins_ui_home.size() > 1 || al_sinbins_ui_away.size() > 1){
+                    buttons_back.getLayoutParams().height = vh45;
+                }else{
+                    buttons_back.getLayoutParams().height = vh50;
                 }
             }else{
                 sinbin_ui.update();

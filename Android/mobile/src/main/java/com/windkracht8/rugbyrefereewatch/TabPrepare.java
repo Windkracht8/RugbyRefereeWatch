@@ -8,14 +8,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -37,6 +41,8 @@ public class TabPrepare extends LinearLayout{
     private final Spinner sHomeColor;
     private final Spinner sAwayColor;
     private final Spinner sMatchType;
+    private final Button bMatchTypeDetails;
+    private final TableLayout tMatchTypeDetails;
     private final EditText etPeriodTime;
     private final EditText etPeriodCount;
     private final EditText etSinbin;
@@ -50,14 +56,20 @@ public class TabPrepare extends LinearLayout{
     private final CheckBox cbRecordPens;
     private final CheckBox cbScreenOn;
     private final CheckBox cbDelayEnd;
+    private final Button bDelCustom;
+    private final Button bSaveCustom;
     private final Button bWatchSettings;
-    private final Spinner sTimerType;
+    private final TextView timerType;
+    private boolean match_type_details = false;
     private boolean watch_settings = false;
     private boolean has_changed = false;
     private final JSONArray customMatchTypes;
     private int sMatchTypePosition = 0;
     private static int sHomeColorPosition = 0;
     private static int sAwayColorPosition = 0;
+    private static final int TIMER_TYPE_UP = 0;
+    private static final int TIMER_TYPE_DOWN = 1;
+    private static int timerTypePosition = TIMER_TYPE_DOWN;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -69,18 +81,43 @@ public class TabPrepare extends LinearLayout{
         etAwayName = findViewById(R.id.etAwayName);
         sAwayColor = findViewById(R.id.sAwayColor);
         sMatchType = findViewById(R.id.sMatchType);
+        bMatchTypeDetails = findViewById(R.id.bMatchTypeDetails);
+        tMatchTypeDetails = findViewById(R.id.tMatchTypeDetails);
+        TextWatcher onMatchTypeDetailsChanged = new TextWatcher(){
+            public void afterTextChanged(Editable s){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                if(match_type_details){
+                    bSaveCustom.setVisibility(View.VISIBLE);
+                    if(sMatchType.getSelectedItemPosition() > 0 && sMatchType.getSelectedItemPosition() < 6){
+                        sMatchType.setSelection(0);
+                    }
+                }
+            }
+        };
         etPeriodTime = findViewById(R.id.etPeriodTime);
+        etPeriodTime.addTextChangedListener(onMatchTypeDetailsChanged);
         etPeriodCount = findViewById(R.id.etPeriodCount);
+        etPeriodCount.addTextChangedListener(onMatchTypeDetailsChanged);
         etSinbin = findViewById(R.id.etSinbin);
+        etSinbin.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsTry = findViewById(R.id.etPointsTry);
+        etPointsTry.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsCon = findViewById(R.id.etPointsCon);
+        etPointsCon.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsGoal = findViewById(R.id.etPointsGoal);
+        etPointsGoal.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockPK = findViewById(R.id.etClockPK);
+        etClockPK.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockCon = findViewById(R.id.etClockCon);
+        etClockCon.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockRestart = findViewById(R.id.etClockRestart);
+        etClockRestart.addTextChangedListener(onMatchTypeDetailsChanged);
+        bDelCustom = findViewById(R.id.bDelCustom);
+        bSaveCustom = findViewById(R.id.bSaveCustom);
         bWatchSettings = findViewById(R.id.bWatchSettings);
         cbScreenOn = findViewById(R.id.cbScreenOn);
-        sTimerType = findViewById(R.id.sTimerType);
+        timerType = findViewById(R.id.timerType);
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
         cbRecordPens = findViewById(R.id.cbRecordPens);
         cbDelayEnd = findViewById(R.id.cbDelayEnd);
@@ -91,7 +128,8 @@ public class TabPrepare extends LinearLayout{
                 if(position == sMatchTypePosition) return;
                 sMatchTypePosition = position;
                 has_changed = true;
-                findViewById(R.id.trDelCustom).setVisibility(View.GONE);
+                hideMatchTypeDetails();
+                bDelCustom.setVisibility(View.GONE);
                 switch(position){
                     case 0://custom
                         showMatchTypeDetails();
@@ -152,24 +190,20 @@ public class TabPrepare extends LinearLayout{
                         etClockRestart.setText("0");
                         break;
                     default:
-                        findViewById(R.id.trDelCustom).setVisibility(View.VISIBLE);
                         loadCustomMatchType(sMatchType.getSelectedItem().toString());
+                        bDelCustom.setVisibility(View.VISIBLE);
                 }
-                if(position != 0) hideMatchTypeDetails();
             }
             @Override public void onNothingSelected(AdapterView<?> parentView){}
         });
 
-        etHomeName.addTextChangedListener(new TextWatcher(){
+        TextWatcher onNameChanged = new TextWatcher(){
             public void afterTextChanged(Editable s){}
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
-        });
-        etAwayName.addTextChangedListener(new TextWatcher(){
-            public void afterTextChanged(Editable s){}
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
-        });
+        };
+        etHomeName.addTextChangedListener(onNameChanged);
+        etAwayName.addTextChangedListener(onNameChanged);
 
         String[] aTeamColors = getResources().getStringArray(R.array.teamColors);
         Arrays.sort(aTeamColors);
@@ -196,11 +230,13 @@ public class TabPrepare extends LinearLayout{
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
+        bMatchTypeDetails.setOnClickListener(v->bMatchTypeDetailsClick());
         bWatchSettings.setOnClickListener(v->bWatchSettingsClick());
-        findViewById(R.id.bSaveCustom).setOnClickListener(v->bSaveCustomClick());
-        findViewById(R.id.bDelCustom).setOnClickListener(v->bDelCustomClick());
+        bSaveCustom.setOnClickListener(v->bSaveCustomClick());
+        bDelCustom.setOnClickListener(v->bDelCustomClick());
 
-        sTimerType.setSelection(1);
+        timerType.setOnClickListener(v->timerTypeClick());
+
         loadCustomMatchTypes();
     }
 
@@ -217,50 +253,53 @@ public class TabPrepare extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabPrepare.onCreateMain: Could not set color spinner: " + e.getMessage());
         }
     }
-
+    private void bMatchTypeDetailsClick(){
+        if(match_type_details){
+            hideMatchTypeDetails();
+        }else{
+            showMatchTypeDetails();
+        }
+    }
     private void showMatchTypeDetails(){
-        findViewById(R.id.trSaveCustom).setVisibility(View.VISIBLE);
-        findViewById(R.id.trPeriodTime).setVisibility(View.VISIBLE);
-        findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
-        findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
-        findViewById(R.id.trPointsTry).setVisibility(View.VISIBLE);
-        findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
-        findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
-        findViewById(R.id.trClockPK).setVisibility(View.VISIBLE);
-        findViewById(R.id.trClockCon).setVisibility(View.VISIBLE);
-        findViewById(R.id.trClockRestart).setVisibility(View.VISIBLE);
+        tMatchTypeDetails.setVisibility(View.VISIBLE);
+        bMatchTypeDetails.setText(R.string.match_type_details_hide);
+        match_type_details = true;
     }
     private void hideMatchTypeDetails(){
-        findViewById(R.id.trSaveCustom).setVisibility(View.GONE);
-        findViewById(R.id.trPeriodTime).setVisibility(View.GONE);
-        findViewById(R.id.trPeriodCount).setVisibility(View.GONE);
-        findViewById(R.id.trSinbin).setVisibility(View.GONE);
-        findViewById(R.id.trPointsTry).setVisibility(View.GONE);
-        findViewById(R.id.trPointsCon).setVisibility(View.GONE);
-        findViewById(R.id.trPointsGoal).setVisibility(View.GONE);
-        findViewById(R.id.trClockPK).setVisibility(View.GONE);
-        findViewById(R.id.trClockCon).setVisibility(View.GONE);
-        findViewById(R.id.trClockRestart).setVisibility(View.GONE);
+        tMatchTypeDetails.setVisibility(View.GONE);
+        bMatchTypeDetails.setText(R.string.match_type_details_show);
+        bSaveCustom.setVisibility(View.GONE);
+        match_type_details = false;
     }
 
     private void bWatchSettingsClick(){
         if(watch_settings){
-            findViewById(R.id.trScreenOn).setVisibility(View.GONE);
-            findViewById(R.id.trTimerType).setVisibility(View.GONE);
-            findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
-            findViewById(R.id.trRecordPens).setVisibility(View.GONE);
-            findViewById(R.id.trDelayEnd).setVisibility(View.GONE);
-            bWatchSettings.setText(R.string.watch_settings);
+            findViewById(R.id.tWatchSettings).setVisibility(View.GONE);
+            bWatchSettings.setText(R.string.watch_settings_show);
         }else{
-            findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
-            findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
-            findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
-            findViewById(R.id.trRecordPens).setVisibility(View.VISIBLE);
-            findViewById(R.id.trDelayEnd).setVisibility(View.VISIBLE);
-            bWatchSettings.setText(R.string.no_watch_settings);
+            findViewById(R.id.tWatchSettings).setVisibility(View.VISIBLE);
+            bWatchSettings.setText(R.string.watch_settings_hide);
+            //scroll down, after tWatchSettings is actually visible
+            ScrollView svPrepare = findViewById(R.id.svPrepare);
+            svPrepare.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+                @Override public void onGlobalLayout(){
+                    svPrepare.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    svPrepare.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
         watch_settings = !watch_settings;
     }
+
+    private void timerTypeClick(){
+        if(timerTypePosition == TIMER_TYPE_DOWN){
+            timerTypePosition = TIMER_TYPE_UP;
+        }else{
+            timerTypePosition = TIMER_TYPE_DOWN;
+        }
+        timerType.setText(timerTypePosition == TIMER_TYPE_DOWN ? R.string.timer_type_down : R.string.timer_type_up);
+    }
+
     JSONObject getSettings(){
         if(checkSettings()) return null;
         JSONObject settings = new JSONObject();
@@ -281,7 +320,7 @@ public class TabPrepare extends LinearLayout{
             settings.put("clock_restart", Integer.parseInt(etClockRestart.getText().toString()));
             if(watch_settings){
                 settings.put("screen_on", cbScreenOn.isChecked());
-                settings.put("timer_type", sTimerType.getSelectedItemPosition());
+                settings.put("timer_type", timerTypePosition);
                 settings.put("record_player", cbRecordPlayer.isChecked());
                 settings.put("record_pens", cbRecordPens.isChecked());
                 settings.put("delay_end", cbDelayEnd.isChecked());
@@ -299,7 +338,10 @@ public class TabPrepare extends LinearLayout{
             //watch_settings = watch settings are visible, do overwrite watch settings if they are not visible
             if(has_changed && watch_settings){return;}
             if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getBoolean("screen_on"));
-            if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
+            if(settings.has("timer_type")){
+                timerTypePosition = settings.getInt("timer_type");
+                timerType.setText(timerTypePosition == TIMER_TYPE_DOWN ? R.string.timer_type_down : R.string.timer_type_up);
+            }
             if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getBoolean("record_player"));
             if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getBoolean("record_pens"));
             if(settings.has("delay_end")) cbDelayEnd.setChecked(settings.getBoolean("delay_end"));
@@ -315,7 +357,7 @@ public class TabPrepare extends LinearLayout{
                 if(matchTypeIndex == 0){
                     showMatchTypeDetails();
                 }else if(matchTypeIndex > 5){
-                    findViewById(R.id.trDelCustom).setVisibility(View.VISIBLE);
+                    findViewById(R.id.bDelCustom).setVisibility(View.VISIBLE);
                 }
             }
             if(settings.has("period_time")) etPeriodTime.setText(String.valueOf(settings.getInt("period_time")));
@@ -416,6 +458,8 @@ public class TabPrepare extends LinearLayout{
         EditText etName = new EditText(getContext());
         etName.setHint(R.string.custom_match_hint);
         etName.setMinHeight(getResources().getDimensionPixelSize(R.dimen._48dp));
+        if(sMatchType.getSelectedItemPosition() > 5)
+            etName.setText(sMatchType.getSelectedItem().toString());
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.save_match_type)
                 .setView(etName)

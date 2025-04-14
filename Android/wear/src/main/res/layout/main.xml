@@ -45,7 +45,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/battery" />
     <LinearLayout
-        android:id="@+id/home_away"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -69,7 +68,6 @@
                 android:autoSizeTextType="uniform"
                 android:textStyle="bold"
                 android:text="@string/_0"
-                android:textColor="@color/black"
                 android:contentDescription="@string/score_home_desc" />
             <LinearLayout
                 android:id="@+id/sinbins_home"

@@ -10,8 +10,9 @@ import java.util.List;
 
 class ConfItem extends LinearLayout{
     enum ConfItemType{
-        COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, CLOCK_PK, CLOCK_CON, CLOCK_RESTART,
+        COLOR_HOME, COLOR_AWAY, MATCH_TYPE, MATCH_TYPE_DETAILS,
+        PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY, POINTS_CON, POINTS_GOAL,
+        CLOCK_PK, CLOCK_CON, CLOCK_RESTART,
         SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, DELAY_END, HELP
     }
     static final List<ConfItemType> confCustomItemTypes = List.of(
@@ -29,7 +30,7 @@ class ConfItem extends LinearLayout{
         TextView confItemName = findViewById(R.id.confItemName);
         confItemName.setText(context.getString(getConfItemName(type)));
         confItemValue = findViewById(R.id.confItemValue);
-        if(type == ConfItemType.HELP) confItemValue.setVisibility(View.GONE);
+        if(type == ConfItemType.HELP || type == ConfItemType.MATCH_TYPE_DETAILS) confItemValue.setVisibility(View.GONE);
         updateValue();
     }
     static int getConfItemName(ConfItemType type){
@@ -37,6 +38,7 @@ class ConfItem extends LinearLayout{
             case COLOR_HOME -> R.string.color_home;
             case COLOR_AWAY -> R.string.color_away;
             case MATCH_TYPE -> R.string.match_type;
+            case MATCH_TYPE_DETAILS -> R.string.match_type_details;
             case PERIOD_TIME -> R.string.period_time;
             case PERIOD_COUNT -> R.string.period_count;
             case SINBIN -> R.string.sinbin;
@@ -69,30 +71,39 @@ class ConfItem extends LinearLayout{
                 break;
             case PERIOD_TIME:
                 confItemValue.setText(String.valueOf(Main.match.period_time));
+                Main.match.match_type = "custom";
                 break;
             case PERIOD_COUNT:
                 confItemValue.setText(String.valueOf(Main.match.period_count));
+                Main.match.match_type = "custom";
                 break;
             case SINBIN:
                 confItemValue.setText(String.valueOf(Main.match.sinbin));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_TRY:
                 confItemValue.setText(String.valueOf(Main.match.points_try));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_CON:
                 confItemValue.setText(String.valueOf(Main.match.points_con));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_GOAL:
                 confItemValue.setText(String.valueOf(Main.match.points_goal));
+                Main.match.match_type = "custom";
                 break;
             case CLOCK_PK:
                 confItemValue.setText(String.valueOf(Main.match.clock_pk));
+                Main.match.match_type = "custom";
                 break;
             case CLOCK_CON:
                 confItemValue.setText(String.valueOf(Main.match.clock_con));
+                Main.match.match_type = "custom";
                 break;
             case CLOCK_RESTART:
                 confItemValue.setText(String.valueOf(Main.match.clock_restart));
+                Main.match.match_type = "custom";
                 break;
             case SCREEN_ON:
                 if(Main.screen_on)
