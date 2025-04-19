@@ -6,8 +6,8 @@ android{
         minSdk = 28
         targetSdk = 35
         compileSdk = 35
-        versionCode = 349
-        versionName = 'm3.18'
+        versionCode = 352
+        versionName = 'm3.19'
     }
     buildTypes{
         release{

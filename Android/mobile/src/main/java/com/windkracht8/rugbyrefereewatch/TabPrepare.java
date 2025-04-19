@@ -64,7 +64,7 @@ public class TabPrepare extends LinearLayout{
     private boolean watch_settings = false;
     private boolean has_changed = false;
     private final JSONArray customMatchTypes;
-    private int sMatchTypePosition = 0;
+    private int sMatchTypePosition = 1;
     private static int sHomeColorPosition = 0;
     private static int sAwayColorPosition = 0;
     private static final int TIMER_TYPE_UP = 0;
@@ -83,36 +83,15 @@ public class TabPrepare extends LinearLayout{
         sMatchType = findViewById(R.id.sMatchType);
         bMatchTypeDetails = findViewById(R.id.bMatchTypeDetails);
         tMatchTypeDetails = findViewById(R.id.tMatchTypeDetails);
-        TextWatcher onMatchTypeDetailsChanged = new TextWatcher(){
-            public void afterTextChanged(Editable s){}
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){
-                if(match_type_details){
-                    bSaveCustom.setVisibility(View.VISIBLE);
-                    if(sMatchType.getSelectedItemPosition() > 0 && sMatchType.getSelectedItemPosition() < 6){
-                        sMatchType.setSelection(0);
-                    }
-                }
-            }
-        };
         etPeriodTime = findViewById(R.id.etPeriodTime);
-        etPeriodTime.addTextChangedListener(onMatchTypeDetailsChanged);
         etPeriodCount = findViewById(R.id.etPeriodCount);
-        etPeriodCount.addTextChangedListener(onMatchTypeDetailsChanged);
         etSinbin = findViewById(R.id.etSinbin);
-        etSinbin.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsTry = findViewById(R.id.etPointsTry);
-        etPointsTry.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsCon = findViewById(R.id.etPointsCon);
-        etPointsCon.addTextChangedListener(onMatchTypeDetailsChanged);
         etPointsGoal = findViewById(R.id.etPointsGoal);
-        etPointsGoal.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockPK = findViewById(R.id.etClockPK);
-        etClockPK.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockCon = findViewById(R.id.etClockCon);
-        etClockCon.addTextChangedListener(onMatchTypeDetailsChanged);
         etClockRestart = findViewById(R.id.etClockRestart);
-        etClockRestart.addTextChangedListener(onMatchTypeDetailsChanged);
         bDelCustom = findViewById(R.id.bDelCustom);
         bSaveCustom = findViewById(R.id.bSaveCustom);
         bWatchSettings = findViewById(R.id.bWatchSettings);
@@ -205,11 +184,32 @@ public class TabPrepare extends LinearLayout{
         etHomeName.addTextChangedListener(onNameChanged);
         etAwayName.addTextChangedListener(onNameChanged);
 
+        TextWatcher onMatchTypeDetailsChanged = new TextWatcher(){
+            public void afterTextChanged(Editable s){}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                if(match_type_details){
+                    bSaveCustom.setVisibility(View.VISIBLE);
+                    if(sMatchType.getSelectedItemPosition() > 0 && sMatchType.getSelectedItemPosition() < 6){
+                        sMatchType.setSelection(0);
+                    }
+                }
+            }
+        };
+        etPeriodTime.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPeriodCount.addTextChangedListener(onMatchTypeDetailsChanged);
+        etSinbin.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsTry.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsCon.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsGoal.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockPK.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockCon.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockRestart.addTextChangedListener(onMatchTypeDetailsChanged);
+
         String[] aTeamColors = getResources().getStringArray(R.array.teamColors);
         Arrays.sort(aTeamColors);
         ArrayAdapter<CharSequence> aaTeamColors = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTeamColors);
         aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         sHomeColor.setAdapter(aaTeamColors);
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -219,7 +219,6 @@ public class TabPrepare extends LinearLayout{
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
-
         sAwayColor.setAdapter(aaTeamColors);
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -234,7 +233,6 @@ public class TabPrepare extends LinearLayout{
         bWatchSettings.setOnClickListener(v->bWatchSettingsClick());
         bSaveCustom.setOnClickListener(v->bSaveCustomClick());
         bDelCustom.setOnClickListener(v->bDelCustomClick());
-
         timerType.setOnClickListener(v->timerTypeClick());
 
         loadCustomMatchTypes();

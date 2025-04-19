@@ -27,17 +27,16 @@ class HistoryMatch extends androidx.appcompat.widget.AppCompatTextView{
         this.main = main;
         this.match = match;
         this.last = last;
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         setMinHeight(getResources().getDimensionPixelSize(R.dimen._48dp));
         setGravity(Gravity.CENTER_VERTICAL);
-        setPadding(10, 10, 10, 10);
         int _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
         setPadding(_10dp, _10dp, _10dp, _10dp);
 
         if(!last) setBackgroundResource(R.drawable.bg_underline);
         try{
             Date match_date_d = new Date(match.getLong("matchid"));
-            String match_date_s = new SimpleDateFormat("E d MMM HH:mm", Locale.getDefault()).format(match_date_d);
+            String match_date_s = new SimpleDateFormat("dd MMM HH:mm", Locale.getDefault()).format(match_date_d);
             JSONObject home = match.getJSONObject("home");
             JSONObject away = match.getJSONObject("away");
             String name_s = match_date_s + " " + main.getTeamName(home) + " v " + Main.getTeamName(main, away);

@@ -208,7 +208,12 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     }
 
      private void onBack(){
-        if(tabHistory.getVisibility() == View.VISIBLE && tabHistory.unselect()) return;
+        if(tabHistory.getVisibility() == View.VISIBLE && tabHistory.unselect()){
+            return;
+        }else if(tabReport.getVisibility() == View.VISIBLE){
+            tabHistoryLabelClick();
+            return;
+        }
         finish();
     }
     @Override public boolean onTouchEvent(MotionEvent event){return gestureDetector.onTouchEvent(event);}
