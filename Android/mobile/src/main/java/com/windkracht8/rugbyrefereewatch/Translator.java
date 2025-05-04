@@ -12,17 +12,18 @@ class Translator{
         }
         return fallback;
     }
-    static void setMatchTypeSpin(Context context, Spinner spin, String matchType_system){
+    static int setMatchTypeSpin(Context context, Spinner spin, String matchType_system){
         //First look in the standard match types
         String[] matchTypes_system = context.getResources().getStringArray(R.array.matchTypes_system);
         for(int i=0; i<matchTypes_system.length; i++){
             if(matchTypes_system[i].equals(matchType_system)){
                 spin.setSelection(i);
-                return;
+                return i;
             }
         }
         //Not found, loop the spinner to look for custom match type
-        setSpinner(spin, matchType_system, 5);
+        setSpinner(spin, matchType_system);
+        return 0;
     }
     static String getEventTypeLocal(Context context, String eventType_system, int period, int period_count){
         String[] eventTypesLocal = context.getResources().getStringArray(R.array.eventTypes);
@@ -98,15 +99,15 @@ class Translator{
     }
 
     static void setTeamColorSpin(Context context, Spinner spin, String teamColor){
-        setSpinner(spin, getTeamColorLocal(context, teamColor), 0);
+        setSpinner(spin, getTeamColorLocal(context, teamColor));
     }
-    private static void setSpinner(Spinner spin, String str, int def){
+    private static void setSpinner(Spinner spin, String str){
         for(int i=0;i<spin.getCount();i++){
             if(spin.getItemAtPosition(i).equals(str)){
                 spin.setSelection(i);
                 return;
             }
         }
-        spin.setSelection(def);
+        spin.setSelection(0);
     }
 }

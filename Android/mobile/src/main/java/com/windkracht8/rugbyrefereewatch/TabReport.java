@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -29,46 +30,28 @@ public class TabReport extends LinearLayout{
     private JSONObject match;
     private long match_id;
 
-    static int time_width;
-    static int timer_width;
-    static int score_width;
-    private static int del_width;
-    static int timer_edit_width;
-    private static int who_width;
-    static int what_width = 0;
-    static int team_width;
+    private int view_type = 0;
 
-    private int view = 0;
+    static int width_score;
+    static int width_timer;
+    static int width_time;
+    static int width_team;
+
+    private static final int SHARE_TIME = 0;
+    private static final int SHARE_PENS = 1;
+    private static final int SHARE_CLOCK = 2;
 
     public TabReport(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.tab_report, this, true);
-
-        findViewById(R.id.time_width_measure).measure(0, 0);
-        time_width = findViewById(R.id.time_width_measure).getMeasuredWidth();
-        findViewById(R.id.timer_width_measure).measure(0, 0);
-        timer_width = findViewById(R.id.timer_width_measure).getMeasuredWidth();
-        findViewById(R.id.score_width_measure).measure(0, 0);
-        score_width = findViewById(R.id.score_width_measure).getMeasuredWidth();
-        findViewById(R.id.del_width_measure).measure(0, 0);
-        del_width = findViewById(R.id.del_width_measure).getMeasuredWidth();
-        del_width /= 2;//button measured roughly twice as large as the space it will take
-        findViewById(R.id.timer_edit_width_measure).measure(0, 0);
-        timer_edit_width = findViewById(R.id.timer_edit_width_measure).getMeasuredWidth();
-        findViewById(R.id.who_width_measure).measure(0, 0);
-        who_width = findViewById(R.id.who_width_measure).getMeasuredWidth();
-        findViewById(R.id.team_width_measure).measure(0, 0);
-        team_width = findViewById(R.id.team_width_measure).getMeasuredWidth();
-        findViewById(R.id.width_measure).setVisibility(View.GONE);
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.tab_report, this, true);
         llEvents = findViewById(R.id.llEvents);
 
-        findViewById(R.id.bView).setOnClickListener(view -> bViewClick());
-        findViewById(R.id.bEdit).setOnClickListener(view -> bEditClick());
-        findViewById(R.id.bCancel).setOnClickListener(view -> bCancelClick());
-        findViewById(R.id.bSave).setOnClickListener(view -> bSaveClick());
-        findViewById(R.id.bShare).setOnClickListener(view -> bShareClick());
+        findViewById(R.id.bView).setOnClickListener(v->bViewClick());
+        findViewById(R.id.bEdit).setOnClickListener(v->bEditClick());
+        findViewById(R.id.bCancel).setOnClickListener(v->bCancelClick());
+        findViewById(R.id.bSave).setOnClickListener(v->bSaveClick());
+        findViewById(R.id.bShare).setOnClickListener(v->bShareClick());
     }
 
     void onCreateMain(Main main){
@@ -77,12 +60,12 @@ public class TabReport extends LinearLayout{
     void loadMatch(Main main, JSONObject match){
         this.main = main;
         this.match = match;
-        view = 0;
+        view_type = 0;
         try{
             match_id = match.getLong("matchid");
             JSONObject settings = match.getJSONObject("settings");
-            JSONObject home = match.getJSONObject("home");
-            JSONObject away = match.getJSONObject("away");
+            JSONObject home = match.getJSONObject(Main.HOME_ID);
+            JSONObject away = match.getJSONObject(Main.AWAY_ID);
 
             ((TextView)findViewById(R.id.tvHomeName)).setText(main.getTeamName(home));
             ((EditText)findViewById(R.id.etHomeName)).setText(main.getTeamName(home));
@@ -171,7 +154,7 @@ public class TabReport extends LinearLayout{
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
     }
     private void showEvents(){
-        if(llEvents.getChildCount() > 0) llEvents.removeAllViews();
+        llEvents.removeAllViews();
         try{
             JSONArray events = match.getJSONArray("events");
             JSONObject settings = match.getJSONObject("settings");
@@ -182,12 +165,12 @@ public class TabReport extends LinearLayout{
             int points_goal = settings.getInt("points_goal");
             int[] score = {0, 0};
 
-            for(int i = 0; i < events.length(); i++){
+            for(int i=0; i<events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                switch(view){
+                switch(view_type){
                     case 0:
                         if(event.has("team")) calcScore(event.getString("what"), event.getString("team"), points_try, points_con, points_goal, score);
-                        llEvents.addView(new ReportEvent(main, event, period_count, period_time, score));
+                        llEvents.addView(new ReportEventStandard(main, event, period_count, period_time, score));
                         break;
                     case 1:
                         llEvents.addView(new ReportEventFull(main, event, match, period_count, period_time));
@@ -197,27 +180,50 @@ public class TabReport extends LinearLayout{
                         break;
                 }
             }
+            llEvents.getViewTreeObserver().addOnGlobalLayoutListener(resizeFields);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.showEvents Exception: " + e.getMessage());
             main.toast(R.string.fail_show_match);
         }
     }
+    private final ViewTreeObserver.OnGlobalLayoutListener resizeFields = new ViewTreeObserver.OnGlobalLayoutListener(){
+        @Override public void onGlobalLayout(){
+            //Resize the fields in llEvents so that it looks like a neat table
+            width_score = 0;
+            width_timer = 0;
+            width_time = 0;
+            width_team = 0;
+            for(int i=0; i<llEvents.getChildCount(); i++){
+                View view = llEvents.getChildAt(i);
+                if(view instanceof ReportEvent)
+                    ((ReportEvent)view).getFieldWidths();
+            }
+            if(width_timer > 0){
+                llEvents.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                for(int i=0; i<llEvents.getChildCount(); i++){
+                    View view = llEvents.getChildAt(i);
+                    if(view instanceof ReportEvent)
+                        ((ReportEvent)view).setFieldWidths();
+                }
+            }
+        }
+    };
 
     private static void calcScore(String what, String team, int points_try, int points_con, int points_goal, int[] score){
         switch(what){
             case "TRY":
-                score[team.equals("home") ? 0 : 1] += points_try;
+                score[team.equals(Main.HOME_ID) ? 0 : 1] += points_try;
                 break;
             case "CONVERSION":
-                score[team.equals("home") ? 0 : 1] += points_con;
+                score[team.equals(Main.HOME_ID) ? 0 : 1] += points_con;
                 break;
             case "PENALTY TRY":
-                score[team.equals("home") ? 0 : 1] += points_try + points_con;
+                score[team.equals(Main.HOME_ID) ? 0 : 1] += points_try + points_con;
                 break;
             case "GOAL":
             case "PENALTY GOAL":
             case "DROP GOAL":
-                score[team.equals("home") ? 0 : 1] += points_goal;
+                score[team.equals(Main.HOME_ID) ? 0 : 1] += points_goal;
                 break;
         }
     }
@@ -228,7 +234,7 @@ public class TabReport extends LinearLayout{
         bViewClick();
     }
     private void bViewClick(){
-        view = view == 0 ? 1 : 0;
+        view_type = view_type == 0 ? 1 : 0;
         findViewById(R.id.bView).setVisibility(VISIBLE);
         findViewById(R.id.bEdit).setVisibility(VISIBLE);
         findViewById(R.id.bCancel).setVisibility(GONE);
@@ -239,12 +245,7 @@ public class TabReport extends LinearLayout{
         showEvents();
     }
     private void bEditClick(){
-        if(what_width == 0){
-            what_width = Main.widthPixels - del_width - timer_edit_width - team_width - who_width;
-            if(what_width > 500) what_width=1;
-        }
-
-        view = 2;
+        view_type = 2;
         findViewById(R.id.bView).setVisibility(GONE);
         findViewById(R.id.bEdit).setVisibility(GONE);
         findViewById(R.id.bCancel).setVisibility(VISIBLE);
@@ -307,7 +308,7 @@ public class TabReport extends LinearLayout{
                 String score = score_home + ":" + score_away;
                 switch(what){
                     case "TRY":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_tries++;
                             score_home += points_try;
                         }else{
@@ -316,7 +317,7 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "CONVERSION":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_cons++;
                             score_home += points_con;
                         }else{
@@ -325,7 +326,7 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "PENALTY TRY":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_pen_tries++;
                             score_home += points_try + points_con;
                         }else{
@@ -334,7 +335,7 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "GOAL":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_goals++;
                             score_home += points_goal;
                         }else{
@@ -343,7 +344,7 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "PENALTY GOAL":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_pen_goals++;
                             score_home += points_goal;
                         }else{
@@ -352,7 +353,7 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "DROP GOAL":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_drop_goals++;
                             score_home += points_goal;
                         }else{
@@ -361,21 +362,21 @@ public class TabReport extends LinearLayout{
                         }
                         break;
                     case "YELLOW CARD":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_yellow_cards++;
                         }else{
                             away_yellow_cards++;
                         }
                         break;
                     case "RED CARD":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_red_cards++;
                         }else{
                             away_red_cards++;
                         }
                         break;
                     case "PENALTY":
-                        if(event.getString("team").equals("home")){
+                        if(event.getString("team").equals(Main.HOME_ID)){
                             home_pens++;
                         }else{
                             away_pens++;
@@ -389,7 +390,7 @@ public class TabReport extends LinearLayout{
             }
             match.put("events", events);
 
-            JSONObject home = match.getJSONObject("home");
+            JSONObject home = match.getJSONObject(Main.HOME_ID);
             String home_team = ((EditText)findViewById(R.id.etHomeName)).getText().toString();
             home.put("team", home_team);
             home.put("tot", score_home);
@@ -402,9 +403,9 @@ public class TabReport extends LinearLayout{
             home.put("yellow_cards", home_yellow_cards);
             home.put("red_cards", home_red_cards);
             home.put("pens", home_pens);
-            match.put("home", home);
+            match.put(Main.HOME_ID, home);
 
-            JSONObject away = match.getJSONObject("away");
+            JSONObject away = match.getJSONObject(Main.AWAY_ID);
             String away_team = ((EditText)findViewById(R.id.etAwayName)).getText().toString();
             away.put("team", away_team);
             away.put("tot", score_away);
@@ -417,34 +418,32 @@ public class TabReport extends LinearLayout{
             away.put("yellow_cards", away_yellow_cards);
             away.put("red_cards", away_red_cards);
             away.put("pens", away_pens);
-            match.put("away", away);
+            match.put(Main.AWAY_ID, away);
 
             main.tabHistory.updateMatch(match);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabReport.bSaveClick Exception: " + e.getMessage());
             main.toast(R.string.fail_save);
         }
+        loadMatch(main, match);
     }
     private void bShareClick(){
-        boolean[] eventTypes = {false, false, false, true};
+        boolean[] eventTypes = {false, false, false};
         View view = View.inflate(main, R.layout.dialog_share, null);
         ((CheckBox)view.findViewById(R.id.dialog_share_time)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[0] = c
+                (v, c)->eventTypes[SHARE_TIME] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_pens)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[1] = c
+                (v, c)->eventTypes[SHARE_PENS] = c
         );
         ((CheckBox)view.findViewById(R.id.dialog_share_clock)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[2] = c
-        );
-        ((CheckBox)view.findViewById(R.id.dialog_share_cards)).setOnCheckedChangeListener(
-                (v, c)-> eventTypes[3] = c
+                (v, c)->eventTypes[SHARE_CLOCK] = c
         );
         new AlertDialog.Builder(main)
                 .setMessage(R.string.dialog_share_message)
                 .setView(view)
-                .setPositiveButton(R.string.share, (d, w)-> share(eventTypes))
-                .setNegativeButton(R.string.cancel, (d, w)-> d.dismiss())
+                .setPositiveButton(R.string.share, (d, w)->share(eventTypes))
+                .setNegativeButton(R.string.cancel, (d, w)->d.dismiss())
                 .create()
                 .show();
     }
@@ -468,13 +467,13 @@ public class TabReport extends LinearLayout{
             String match_date_s = new SimpleDateFormat("E dd-MM-yyyy HH:mm", Locale.getDefault()).format(match_date_d);
             shareSubject += " " + match_date_s;
 
-            JSONObject home = match.getJSONObject("home");
+            JSONObject home = match.getJSONObject(Main.HOME_ID);
             shareSubject += " " + main.getTeamName(home);
             shareSubject += " " + home.getString("tot");
 
             shareSubject += " v";
 
-            JSONObject away = match.getJSONObject("away");
+            JSONObject away = match.getJSONObject(Main.AWAY_ID);
             shareSubject += " " + main.getTeamName(away);
             shareSubject += " " + away.getString("tot");
         }catch(Exception e){
@@ -488,12 +487,12 @@ public class TabReport extends LinearLayout{
         try{
             shareBody.append(getShareSubject()).append("\n\n");
 
-            JSONObject home = match.getJSONObject("home");
+            JSONObject home = match.getJSONObject(Main.HOME_ID);
             StringBuilder scoreHome = new StringBuilder();
             scoreHome.append(main.getTeamName(home)).append("\n")
                     .append(scoreLine(R.string.tries, home.getString("tries")));
 
-            JSONObject away = match.getJSONObject("away");
+            JSONObject away = match.getJSONObject(Main.AWAY_ID);
             StringBuilder scoreAway = new StringBuilder();
             scoreAway.append(main.getTeamName(away)).append("\n")
                     .append(scoreLine(R.string.tries, away.getString("tries")));
@@ -518,15 +517,15 @@ public class TabReport extends LinearLayout{
                 scoreHome.append(scoreLine(R.string.drop_goals, home.getString("drop_goals")));
                 scoreAway.append(scoreLine(R.string.drop_goals, away.getString("drop_goals")));
             }
-            if(eventTypes[3] && shouldShow("yellow_cards", home, away)){
+            if(shouldShow("yellow_cards", home, away)){
                 scoreHome.append(scoreLine(R.string.yellow_cards, home.getString("yellow_cards")));
                 scoreAway.append(scoreLine(R.string.yellow_cards, away.getString("yellow_cards")));
             }
-            if(eventTypes[3] && shouldShow("red_cards", home, away)){
+            if(shouldShow("red_cards", home, away)){
                 scoreHome.append(scoreLine(R.string.red_cards, home.getString("red_cards")));
                 scoreAway.append(scoreLine(R.string.red_cards, away.getString("red_cards")));
             }
-            if(eventTypes[1] && shouldShow("pens", home, away)){
+            if(eventTypes[SHARE_PENS] && shouldShow("pens", home, away)){
                 scoreHome.append(scoreLine(R.string.penalties, home.getString("pens")));
                 scoreAway.append(scoreLine(R.string.penalties, away.getString("pens")));
             }
@@ -540,45 +539,38 @@ public class TabReport extends LinearLayout{
             int period_count = settings.getInt("period_count");
             boolean doubleDigitTime = settings.getInt("period_time") >= 10;
             JSONArray events = match.getJSONArray("events");
-            for(int i = 0; i < events.length(); i++){
+            for(int i=0; i<events.length(); i++){
                 JSONObject event = events.getJSONObject(i);
-                //eventTypes[0] > time events
-                //eventTypes[1] > pens
-                //eventTypes[2] > clock time
                 String what = event.getString("what");
-                if((!eventTypes[0] && what.equals("TIME OFF")) ||
-                        (!eventTypes[0] && what.equals("RESUME")) ||
-                        (!eventTypes[1] && what.equals("PENALTY"))
+                if((!eventTypes[SHARE_TIME] && what.equals("TIME OFF")) ||
+                        (!eventTypes[SHARE_TIME] && what.equals("RESUME")) ||
+                        (!eventTypes[SHARE_PENS] && what.equals("PENALTY"))
                 ) continue;
 
-                if(eventTypes[2]){
+                if(eventTypes[SHARE_CLOCK])
                     shareBody.append(event.getString("time")).append("    ");
-                }
 
-                String timer = ReportEventEdit.timerStampToString(event.getLong("timer"));
+                String timer = ReportEventEdit.prettyTimer(event.getInt("timer"));
                 if(doubleDigitTime && timer.length() == 4) shareBody.append("0");
-                shareBody
-                        .append(timer)
+                shareBody.append(timer)
                         .append("    ")
                         .append(Translator.getEventTypeLocal(main, what, event.getInt("period"), period_count));
                 if(event.has("team")){
-                    if(event.getString("team").equals("home")){
+                    if(event.getString("team").equals(Main.HOME_ID)){
                         shareBody.append(" ").append(main.getTeamName(home));
                     }else{
                         shareBody.append(" ").append(main.getTeamName(away));
                     }
                 }
-                if(event.has("who")){
-                    shareBody.append(" ")
-                            .append(event.getString("who"));
-                }
-                if(event.has("score")){
+                if(event.has("who"))
+                    shareBody.append(" ").append(event.getString("who"));
+                if(event.has("score"))
                     shareBody.append(" ").append(event.getString("score"));
-                }
-                if(event.has("reason")){
-                    shareBody.append("\n").append(event.getString("reason")).append("\n");
-                }
+                if(event.has("reason"))
+                    shareBody.append("\n      ").append(event.getString("reason"));
                 shareBody.append("\n");
+                if(what.equals("END"))
+                    shareBody.append("\n");
             }
 
         }catch(Exception e){

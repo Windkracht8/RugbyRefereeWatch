@@ -6,111 +6,136 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 class ConfItem extends LinearLayout{
-    enum ConfItemType {
-        COLOR_HOME, COLOR_AWAY, MATCH_TYPE, PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY,
-        POINTS_CON, POINTS_GOAL, SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, HELP
+    enum ConfItemType{
+        COLOR_HOME, COLOR_AWAY, MATCH_TYPE, MATCH_TYPE_DETAILS,
+        PERIOD_TIME, PERIOD_COUNT, SINBIN, POINTS_TRY, POINTS_CON, POINTS_GOAL,
+        CLOCK_PK, CLOCK_CON, CLOCK_RESTART,
+        SCREEN_ON, TIMER_TYPE, RECORD_PLAYER, RECORD_PENS, DELAY_END, HELP
     }
+    static final List<ConfItemType> confCustomItemTypes = List.of(
+            ConfItemType.PERIOD_TIME, ConfItemType.PERIOD_COUNT, ConfItemType.SINBIN,
+            ConfItemType.POINTS_TRY, ConfItemType.POINTS_CON, ConfItemType.POINTS_GOAL,
+            ConfItemType.CLOCK_PK, ConfItemType.CLOCK_CON, ConfItemType.CLOCK_RESTART
+    );
     private final ConfItemType type;
     private final TextView confItemValue;
     ConfItem(Context context, ConfItemType type){
         super(context);
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.conf_item, this, true);
-
-        TextView confItemName = findViewById(R.id.confItemName);
-        confItemValue = findViewById(R.id.confItemValue);
-
         this.type = type;
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.conf_item, this, true);
+        TextView confItemName = findViewById(R.id.confItemName);
         confItemName.setText(context.getString(getConfItemName(type)));
-        confItemName.setContentDescription(context.getString(R.string.confItemName_desc) + type);
-        if(type == ConfItemType.HELP){
-            confItemValue.setVisibility(View.GONE);
-        }else{
-            confItemValue.setContentDescription(context.getString(R.string.confItemValue_desc) + type);
-        }
+        confItemValue = findViewById(R.id.confItemValue);
+        if(type == ConfItemType.HELP || type == ConfItemType.MATCH_TYPE_DETAILS) confItemValue.setVisibility(View.GONE);
+        updateValue();
     }
     static int getConfItemName(ConfItemType type){
         return switch(type){
             case COLOR_HOME -> R.string.color_home;
             case COLOR_AWAY -> R.string.color_away;
             case MATCH_TYPE -> R.string.match_type;
+            case MATCH_TYPE_DETAILS -> R.string.match_type_details;
             case PERIOD_TIME -> R.string.period_time;
             case PERIOD_COUNT -> R.string.period_count;
             case SINBIN -> R.string.sinbin;
             case POINTS_TRY -> R.string.points_try;
             case POINTS_CON -> R.string.points_con;
             case POINTS_GOAL -> R.string.points_goal;
-            case SCREEN_ON -> R.string.screen_on;
+            case CLOCK_PK -> R.string.clock_pk;
+            case CLOCK_CON -> R.string.clock_con;
+            case CLOCK_RESTART -> R.string.clock_restart;
+            case SCREEN_ON -> R.string.screen;
             case TIMER_TYPE -> R.string.timer_type;
             case RECORD_PLAYER -> R.string.record_player;
             case RECORD_PENS -> R.string.record_pens;
-            case HELP -> R.string.help;
+            case DELAY_END -> R.string.delay_end;
+            //case HELP -> R.string.help;
+            default -> R.string.help;//Bug in JDK 21, default must be defined
         };
     }
 
-    private boolean hideForMatchType(){//Thread: Always on UI thread
-        if(Main.match.match_type.equals("custom")){
-            setVisibility(View.VISIBLE);
-            return false;
-        }else{
-            setVisibility(View.GONE);
-            return true;
-        }
-    }
     void updateValue(){//Thread: Always on UI thread
-        String value = "";
         switch(type){
             case COLOR_HOME:
-                value = Translator.getTeamColorLocal(getContext(), Main.match.home.color);
+                confItemValue.setText(Translator.getTeamColorLocal(getContext(), Main.match.home.color));
                 break;
             case COLOR_AWAY:
-                value = Translator.getTeamColorLocal(getContext(), Main.match.away.color);
+                confItemValue.setText(Translator.getTeamColorLocal(getContext(), Main.match.away.color));
                 break;
             case MATCH_TYPE:
-                value = Main.match.match_type;
+                confItemValue.setText(Main.match.match_type);
                 break;
             case PERIOD_TIME:
-                if(hideForMatchType()) return;
-                value += Main.match.period_time;
+                confItemValue.setText(String.valueOf(Main.match.period_time));
+                Main.match.match_type = "custom";
                 break;
             case PERIOD_COUNT:
-                if(hideForMatchType()) return;
-                value += Main.match.period_count;
+                confItemValue.setText(String.valueOf(Main.match.period_count));
+                Main.match.match_type = "custom";
                 break;
             case SINBIN:
-                if(hideForMatchType()) return;
-                value += Main.match.sinbin;
+                confItemValue.setText(String.valueOf(Main.match.sinbin));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_TRY:
-                if(hideForMatchType()) return;
-                value += Main.match.points_try;
+                confItemValue.setText(String.valueOf(Main.match.points_try));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_CON:
-                if(hideForMatchType()) return;
-                value += Main.match.points_con;
+                confItemValue.setText(String.valueOf(Main.match.points_con));
+                Main.match.match_type = "custom";
                 break;
             case POINTS_GOAL:
-                if(hideForMatchType()) return;
-                value += Main.match.points_goal;
+                confItemValue.setText(String.valueOf(Main.match.points_goal));
+                Main.match.match_type = "custom";
+                break;
+            case CLOCK_PK:
+                confItemValue.setText(String.valueOf(Main.match.clock_pk));
+                Main.match.match_type = "custom";
+                break;
+            case CLOCK_CON:
+                confItemValue.setText(String.valueOf(Main.match.clock_con));
+                Main.match.match_type = "custom";
+                break;
+            case CLOCK_RESTART:
+                confItemValue.setText(String.valueOf(Main.match.clock_restart));
+                Main.match.match_type = "custom";
                 break;
             case SCREEN_ON:
-                value = getContext().getString(Main.screen_on ? R.string.on : R.string.off);
+                if(Main.screen_on)
+                    confItemValue.setText(R.string.keep_on);
+                else
+                    confItemValue.setText(R.string.auto_off);
                 break;
             case TIMER_TYPE:
-                value = getContext().getString(Main.timer_type_period == 1 ? R.string.timer_type_down : R.string.timer_type_up);
+                if(Main.timer_type_period == Main.TIMER_TYPE_DOWN)
+                    confItemValue.setText(R.string.timer_type_down);
+                else
+                    confItemValue.setText(R.string.timer_type_up);
                 break;
             case RECORD_PLAYER:
-                value = getContext().getString(Main.record_player ? R.string.on : R.string.off);
+                if(Main.record_player)
+                    confItemValue.setText(R.string.on);
+                else
+                    confItemValue.setText(R.string.off);
                 break;
             case RECORD_PENS:
-                value = getContext().getString(Main.record_pens ? R.string.on : R.string.off);
+                if(Main.record_pens)
+                    confItemValue.setText(R.string.on);
+                else
+                    confItemValue.setText(R.string.off);
                 break;
-            case HELP:
-                return;
+            case DELAY_END:
+                if(Main.delay_end)
+                    confItemValue.setText(R.string.on);
+                else
+                    confItemValue.setText(R.string.off);
+                break;
         }
-        confItemValue.setText(value);
     }
 }
 

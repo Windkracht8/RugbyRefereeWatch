@@ -26,8 +26,8 @@ class Translator{
         return "";
     }
     static String getTeamLocal(Context context, String team_system){
-        if(team_system.equals("home")) return context.getString(R.string.home);
-        if(team_system.equals("away")) return context.getString(R.string.away);
+        if(team_system.equals(MatchData.HOME_ID)) return context.getString(R.string.home);
+        if(team_system.equals(MatchData.AWAY_ID)) return context.getString(R.string.away);
         return team_system;
     }
 }

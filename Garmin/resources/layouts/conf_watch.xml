@@ -1,0 +1,58 @@
+<layout id="ConfWatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <text-area
+		x="center"
+		y="10%"
+		width="100%"
+		height="15%"
+		text="@Strings.timer_type"
+		font="Gfx.FONT_MEDIUM"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="timer_type"
+		x="center"
+		y="25%"
+		width="100%"
+		height="11%"
+		text=""
+		font="Gfx.FONT_TINY"
+		color="0x2bd2e3"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <text-area
+		x="center"
+		y="40%"
+		width="100%"
+		height="15%"
+		text="@Strings.record_pens"
+		font="Gfx.FONT_MEDIUM"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="record_pens"
+		x="center"
+		y="55%"
+		width="100%"
+		height="11%"
+		text=""
+		font="Gfx.FONT_TINY"
+		color="0x2bd2e3"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <text-area
+		x="center"
+		y="70%"
+		width="100%"
+		height="15%"
+		text="@Strings.record_player"
+		font="Gfx.FONT_MEDIUM"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="record_player"
+		x="center"
+		y="85%"
+		width="100%"
+		height="11%"
+		text=""
+		font="Gfx.FONT_TINY"
+		color="0x2bd2e3"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+</layout>

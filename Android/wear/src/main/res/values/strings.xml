@@ -6,7 +6,18 @@
     <string name="battery_placeholder" translatable="false">100%</string>
     <string name="time_placeholder" translatable="false">00:00:00</string>
     <string name="tTimer_placeholder" translatable="false">00:00</string>
+    <string name="b_back" translatable="false">↤</string>
+    <string name="b_done" translatable="false">✓</string>
     <string name="_0" translatable="false">0</string>
+    <string name="_1" translatable="false">1</string>
+    <string name="_2" translatable="false">2</string>
+    <string name="_3" translatable="false">3</string>
+    <string name="_4" translatable="false">4</string>
+    <string name="_5" translatable="false">5</string>
+    <string name="_6" translatable="false">6</string>
+    <string name="_7" translatable="false">7</string>
+    <string name="_8" translatable="false">8</string>
+    <string name="_9" translatable="false">9</string>
     <string name="no0" translatable="false">#0</string>
 
     <!-- main screen -->
@@ -39,12 +50,23 @@
     <string name="pen_label_text">pen</string>
     <string name="bPenHome_desc">home penalty count</string>
     <string name="bPenAway_desc">away penalty count</string>
-    <string name="confirm_text">ending in 10 seconds</string>
-    <string name="confirm_cancel">Cancel</string>
+    <string name="delay_end_info">Hit cancel if you ended the period by mistake.\nYou can disable
+        this delay in the settings.</string>
+    <string name="delay_end_cancel">Cancel</string>
+    <string name="pk">PK</string>
+    <string name="conversion">conversion</string>
+    <string name="restart">restart</string>
+    <string name="kc_confirm_conv">conversion good?</string>
+    <string name="kc_confirm_pk">PK good?</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
     <!-- notification -->
     <string name="match_ongoing">Match ongoing</string>
     <string name="open_rrw">Open RRW</string>
+    <string name="time_up">Time up reminder</string>
+    <string name="ended">%s ended</string>
+    <string name="time_off_reminder">time off reminder</string>
 
     <!-- score screen -->
     <string name="score_try_text">try</string>
@@ -53,9 +75,9 @@
     <string name="foul_play_text">foul play</string>
 
     <!-- foul play screen -->
-    <string name="card_yellow_text">yellow</string>
-    <string name="penalty_try_text">penalty try</string>
-    <string name="card_red_text">red</string>
+    <string name="card_yellow">yellow</string>
+    <string name="penaltyTry">penalty try</string>
+    <string name="card_red">red</string>
 
     <!-- report screen -->
     <string name="report_title">Report</string>
@@ -70,25 +92,30 @@
 
     <!-- conf screen -->
     <string name="conf_title">Config</string>
-    <string name="confItemName_desc">menu item name</string>
-    <string name="confItemValue_desc">menu item value</string>
     <string name="home">home</string>
     <string name="color_home">Color home</string>
     <string name="away">away</string>
     <string name="color_away">Color away</string>
     <string name="match_type">Match type</string>
+    <string name="match_type_details">Match type details</string>
     <string name="period_time">Time/period</string>
     <string name="period_count">Period count</string>
     <string name="sinbin">Sinbin</string>
     <string name="points_try">Points try</string>
     <string name="points_con">Points conversion</string>
     <string name="points_goal">Points goal</string>
-    <string name="screen_on">Screen on</string>
+    <string name="clock_pk">PK clock</string>
+    <string name="clock_con">Conversion clock</string>
+    <string name="clock_restart">Restart clock</string>
+    <string name="screen">Screen</string>
+    <string name="keep_on">keep on</string>
+    <string name="auto_off">auto off</string>
     <string name="timer_type">Timer type</string>
     <string name="timer_type_down">down</string>
     <string name="timer_type_up">up</string>
     <string name="record_player">Record player</string>
     <string name="record_pens">Record penalties</string>
+    <string name="delay_end">Delay end of period</string>
     <string name="help">Help</string>
     <string name="on">on</string>
     <string name="off">off</string>
@@ -101,12 +128,12 @@
     <string name="_10_min">10 min</string>
 
     <string-array name="matchTypes">
+        <item>custom</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>custom</item>
     </string-array>
 
     <string-array name="teamColors">
@@ -136,36 +163,43 @@
 
     <!-- help screen -->
     <string name="help_welcome_title">Welcome</string>
-    <string name="help_welcome">Here are a few tips to get you familiar with this app.</string>
-    <string name="help_bt_title">Bluetooth</string>
-    <string name="help_bt">Connection to the Rugby Referee Watch app on your phone works via
-        Bluetooth. You do need to approve permission.</string>
-    <string name="help_custom_title">Custom matches</string>
-    <string name="help_custom">In the settings you can select the standard match types. If you want
-        to change anything, select match type \'custom\', then you can change duration and such. Do
-        this in the phone app to store you custom match type.</string>
-    <string name="help_log_title">History</string>
-    <string name="help_log">Noticed this icon? It opens a list of all of your completed
-        matches.</string>
-    <string name="iHelpNew_desc">Help new icon</string>
-    <string name="help_pk_title">Penalty kick</string>
-    <string name="help_pk">Looking for penalty kick? Check under foul play.</string>
-    <string name="help_corrections_title">Corrections</string>
-    <string name="help_corrections">During a game, swipe back to open the correction
-        screen. On this screen you can tab the event you want to undo.</string>
-    <string name="help_kickoff_title">Kick off</string>
-    <string name="help_kickoff">Before the game starts you can set which team will kick off by
-        tapping the home or away team score.</string>
-    <string name="help_battery_title">Battery</string>
-    <string name="help_battery">Screen on is a very useful setting to keep the screen on during a
-        game, but this will use more battery. Consider switching off Wifi, GPS and Bluetooth during
-        a game, this app does not use these during the game.</string>
-    <string name="help_storage_title">Storage</string>
-    <string name="help_storage">Matches will be stored on the watch for 14 days, use the companion
-        app on your phone to download them.</string>
-    <string name="help_help_title">Get help</string>
-    <string name="help_help">From the settings you can open this screen. Find support contacts
-        in the App Store for more help.</string>
+    <string name="help_welcome_text">Here are a few tips to get you familiar with this app.</string>
+
+    <string-array name="help_topics_title">
+        <item>New: Player# step</item>
+        <item>New: Kick clock</item>
+        <item>Bluetooth</item>
+        <item>Custom matches</item>
+        <item>Penalty try</item>
+        <item>Corrections</item>
+        <item>Kick off</item>
+        <item>Battery</item>
+        <item>Storage</item>
+        <item>Get help</item>
+    </string-array>
+    <string-array name="help_topics_text">
+        <item>Entering the player number is now a separate step.</item>
+        <item>When you enter a try, the conversion kick clock starts. When you add a penalty, the
+            PK clock starts. The kick clock closes automatically when the time is up. You can tap
+            the clock to confirm success or miss.</item>
+        <item>Connection to the Rugby Referee Watch app on your phone works via Bluetooth. You do
+            need to approve permission.</item>
+        <item>In the settings you can select the standard match types. If you want to change
+            anything (like duration), tap \'Match type details\'. Do this in the phone app to store
+            your custom match type.</item>
+        <item>Looking for penalty try? Check under foul play.</item>
+        <item>During a game, swipe back to open the correction screen. On this screen you can tap
+            the event you want to undo, or redo.</item>
+        <item>Before the game starts you can set which team will kick off by tapping the home or
+            away team score.</item>
+        <item>Screen on is a very useful setting to keep the screen on during a game, but this will
+            use more battery. Consider switching off Wifi, GPS and Bluetooth during a game, this
+            app does not use these during the game.</item>
+        <item>Matches will be stored on the watch for 30 days, use the companion app on your phone
+            to download them.</item>
+        <item>From the settings you can open this screen. Find support contacts in the App Store
+            for more help.</item>
+    </string-array>
 
     <!-- fail -->
     <string name="fail_unexpected">unexpected error</string>

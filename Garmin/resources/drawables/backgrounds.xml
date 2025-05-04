@@ -1,0 +1,55 @@
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <drawable-list id="sinbin_home_bg" x="0" y="50%" width="50%" height="20%" background="0x000000" />
+    <drawable-list id="sinbin_away_bg" x="50%" y="50%" width="50%" height="20%" background="0x000000" />
+
+    <drawable-list id="match_log_bg_1" x="15%" y="18%" width="70%" height="30%">
+        <shape type="rectangle" color="0x000000" corner_radius="10" border_width="2" border_color="0xffffff" />
+    </drawable-list>
+    <drawable-list id="match_log_bg_2" x="15%" y="52%" width="70%" height="30%">
+        <shape type="rectangle" color="0x000000" corner_radius="10" border_width="2" border_color="0xffffff" />
+    </drawable-list>
+
+    <drawable-list id="home_bg_black" x="0" y="25%" width="50%" height="35%" background="0x000000" />
+    <drawable-list id="home_bg_blue" x="0" y="25%" width="50%" height="35%" background="0x0000ff" />
+    <drawable-list id="home_bg_brown" x="0" y="25%" width="50%" height="35%" background="0xaa5500" />
+    <drawable-list id="home_bg_gold" x="0" y="25%" width="50%" height="35%" background="0xffff00" />
+    <drawable-list id="home_bg_green" x="0" y="25%" width="50%" height="35%" background="0x00ff00" />
+    <drawable-list id="home_bg_orange" x="0" y="25%" width="50%" height="35%" background="0xffaa00" />
+    <drawable-list id="home_bg_pink" x="0" y="25%" width="50%" height="35%" background="0xff55ff" />
+    <drawable-list id="home_bg_purple" x="0" y="25%" width="50%" height="35%" background="0x5500aa" />
+    <drawable-list id="home_bg_red" x="0" y="25%" width="50%" height="35%" background="0xaa0000" />
+    <drawable-list id="home_bg_white" x="0" y="25%" width="50%" height="35%" background="0xffffff" />
+
+    <drawable-list id="away_bg_black" x="50%" y="25%" width="50%" height="35%" background="0x000000" />
+    <drawable-list id="away_bg_blue" x="50%" y="25%" width="50%" height="35%" background="0x0000ff" />
+    <drawable-list id="away_bg_brown" x="50%" y="25%" width="50%" height="35%" background="0xaa5500" />
+    <drawable-list id="away_bg_gold" x="50%" y="25%" width="50%" height="35%" background="0xffff00" />
+    <drawable-list id="away_bg_green" x="50%" y="25%" width="50%" height="35%" background="0x00ff00" />
+    <drawable-list id="away_bg_orange" x="50%" y="25%" width="50%" height="35%" background="0xffaa00" />
+    <drawable-list id="away_bg_pink" x="50%" y="25%" width="50%" height="35%" background="0xff55ff" />
+    <drawable-list id="away_bg_purple" x="50%" y="25%" width="50%" height="35%" background="0x5500aa" />
+    <drawable-list id="away_bg_red" x="50%" y="25%" width="50%" height="35%" background="0xaa0000" />
+    <drawable-list id="away_bg_white" x="50%" y="25%" width="50%" height="35%" background="0xffffff" />
+
+    <drawable-list id="highcolor_home_bg_black" x="0" y="25%" width="50%" height="35%" background="0x000000" />
+    <drawable-list id="highcolor_home_bg_blue" x="0" y="25%" width="50%" height="35%" background="0x00009e" />
+    <drawable-list id="highcolor_home_bg_brown" x="0" y="25%" width="50%" height="35%" background="0x623412" />
+    <drawable-list id="highcolor_home_bg_gold" x="0" y="25%" width="50%" height="35%" background="0xffd700" />
+    <drawable-list id="highcolor_home_bg_green" x="0" y="25%" width="50%" height="35%" background="0x00ff00" />
+    <drawable-list id="highcolor_home_bg_orange" x="0" y="25%" width="50%" height="35%" background="0xf98128" />
+    <drawable-list id="highcolor_home_bg_pink" x="0" y="25%" width="50%" height="35%" background="0xffc0cb" />
+    <drawable-list id="highcolor_home_bg_purple" x="0" y="25%" width="50%" height="35%" background="0x750075" />
+    <drawable-list id="highcolor_home_bg_red" x="0" y="25%" width="50%" height="35%" background="0x9e0000" />
+    <drawable-list id="highcolor_home_bg_white" x="0" y="25%" width="50%" height="35%" background="0xffffff" />
+
+    <drawable-list id="highcolor_away_bg_black" x="50%" y="25%" width="50%" height="35%" background="0x000000" />
+    <drawable-list id="highcolor_away_bg_blue" x="50%" y="25%" width="50%" height="35%" background="0x00009e" />
+    <drawable-list id="highcolor_away_bg_brown" x="50%" y="25%" width="50%" height="35%" background="0x623412" />
+    <drawable-list id="highcolor_away_bg_gold" x="50%" y="25%" width="50%" height="35%" background="0xffd700" />
+    <drawable-list id="highcolor_away_bg_green" x="50%" y="25%" width="50%" height="35%" background="0x00ff00" />
+    <drawable-list id="highcolor_away_bg_orange" x="50%" y="25%" width="50%" height="35%" background="0xf98128" />
+    <drawable-list id="highcolor_away_bg_pink" x="50%" y="25%" width="50%" height="35%" background="0xffc0cb" />
+    <drawable-list id="highcolor_away_bg_purple" x="50%" y="25%" width="50%" height="35%" background="0x750075" />
+    <drawable-list id="highcolor_away_bg_red" x="50%" y="25%" width="50%" height="35%" background="0x9e0000" />
+    <drawable-list id="highcolor_away_bg_white" x="50%" y="25%" width="50%" height="35%" background="0xffffff" />
+</resources>

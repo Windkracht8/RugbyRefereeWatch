@@ -1,0 +1,18 @@
+<drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <bitmap id="icon" filename="icon.svg" dithering="none" />
+    <bitmap id="ic_conf_watch_high" x="center" y="top" filename="icon_conf_watch-high.svg" />
+    <bitmap id="ic_match_log_high" x="50%" y="50%" filename="icon_match_log-high.svg" />
+    <bitmap id="ic_conf_high" x="center" y="bottom" filename="icon_conf-high.svg" />
+
+    <bitmap id="ic_back" filename="icon_back.svg" />
+    <bitmap id="ic_back_disable" filename="icon_back_disable.svg" />
+
+    <bitmap id="circle_1" filename="circle_1.svg" />
+    <bitmap id="circle_2" filename="circle_2.svg" />
+    <bitmap id="circle_3" filename="circle_3.svg" />
+    <bitmap id="circle_4" filename="circle_4.svg" />
+    <bitmap id="circle_5" filename="circle_5.svg" />
+    <bitmap id="circle_6" filename="circle_6.svg" />
+    <bitmap id="circle_7" filename="circle_7.svg" />
+    <bitmap id="circle_8" filename="circle_8.svg" />
+</drawables>

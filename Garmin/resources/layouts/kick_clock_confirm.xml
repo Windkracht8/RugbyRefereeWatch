@@ -1,0 +1,29 @@
+<layout id="Confirm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <text-area
+		id="confirm_label"
+		x="center"
+		y="25%"
+		width="100%"
+		height="25%"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="confirm_no"
+		x="left"
+		y="50%"
+		width="50%"
+		height="30%"
+		text="no"
+		font="Gfx.FONT_LARGE"
+		color="0x2bd2e3"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="confirm_yes"
+		x="right"
+		y="50%"
+		width="50%"
+		height="30%"
+		text="yes"
+		font="Gfx.FONT_LARGE"
+		color="0x2bd2e3"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+</layout>

@@ -2,21 +2,25 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.graphics.Color;
 import android.view.Gravity;
-import android.widget.TextView;
 
-class Sinbin extends TextView{
-    final MatchData.sinbin sinbin;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.widget.TextViewCompat;
+
+import java.util.Set;
+
+class Sinbin extends AppCompatTextView{
+    private final static Set<String> colors_not_red = Set.of("brown", "orange", "red");
+    final MatchData.Sinbin sinbin;
     private final Main main;
-    Sinbin(Main main, MatchData.sinbin sinbin, String color){
+    Sinbin(Main main, MatchData.Sinbin sinbin, int color){
         super(main);
         this.main = main;
         this.sinbin = sinbin;
 
         main.addOnTouch(this);
-
         setHeight(Main.vh10);
-        setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        setTextColor(main.getColorFG(color));
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(this, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        setTextColor(color);
         setIncludeFontPadding(false);
         setPadding(Main._10dp, 0, Main._10dp, 0);
         setGravity(Gravity.CENTER);
@@ -24,11 +28,8 @@ class Sinbin extends TextView{
     }
 
     void update(){
-        long remaining = sinbin.end - Main.timer_timer;
-        if(Main.timer_status != Main.TimerStatus.RUNNING){
-            remaining += Main.getCurrentTimestamp() - Main.timer_start_time_off;
-        }
-        if(remaining < -60000){
+        int remaining = sinbin.end - Main.getDurationFull();
+        if(remaining < -60){
             sinbin.hide = true;
         }
         if(sinbin.ended){
@@ -37,10 +38,14 @@ class Sinbin extends TextView{
         if(remaining <= 0){
             remaining = 0;
             sinbin.ended = true;
-            setTextColor(Color.RED);
-            main.beep();
+            if((sinbin.team_is_home && !colors_not_red.contains(Main.match.home.color)) ||
+                    (!sinbin.team_is_home && !colors_not_red.contains(Main.match.away.color))
+            ){
+                setTextColor(Color.RED);
+            }
+            main.beep(main.getString(R.string.ended, main.getString(R.string.sinbin)));
         }
-        String tmp = Main.prettyTimer(remaining);
+        String tmp = Utils.prettyTimer(remaining);
         if(sinbin.who > 0){
             if(sinbin.team_is_home){
                 tmp = "(" + sinbin.who + ") " + tmp;

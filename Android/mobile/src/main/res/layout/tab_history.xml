@@ -33,6 +33,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/bImport"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/bImport_text"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/button" />
+        <Button
             android:id="@+id/bExport"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
@@ -42,7 +52,7 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/button"
-            android:visibility="invisible" />
+            android:visibility="gone" />
         <Button
             android:id="@+id/bDelete"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -53,6 +63,6 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/error"
-            android:visibility="invisible" />
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

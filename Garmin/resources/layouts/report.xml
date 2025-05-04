@@ -1,0 +1,13 @@
+<layout id="Report" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <bitmap id="back" x="0" y="center" filename="../drawables/icon_left.svg" />
+    <bitmap id="up" x="center" y="top" filename="../drawables/icon_up.svg" />
+    <bitmap id="down" x="center" y="bottom" filename="../drawables/icon_down.svg" />
+
+    <text-area id="item_1" x="10%" y="15%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_2" x="10%" y="25%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_3" x="10%" y="35%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_4" x="10%" y="45%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_5" x="10%" y="55%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_6" x="10%" y="65%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_7" x="10%" y="75%" width="80%" height="11%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+</layout>

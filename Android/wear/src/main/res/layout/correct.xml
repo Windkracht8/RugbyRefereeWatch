@@ -12,11 +12,11 @@
         <TextView
             android:id="@+id/correctLabel"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/si_item_height"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/correct_title"
             android:textColor="@color/w8blue"
-            android:autoSizeTextType="uniform" />
+            android:textSize="20sp"/>
         <LinearLayout
             android:id="@+id/llCorrectItems"
             android:layout_width="match_parent"

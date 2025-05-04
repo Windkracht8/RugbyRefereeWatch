@@ -1,0 +1,33 @@
+<svg
+	width="50"
+	height="50"
+	viewBox="0 0 80 80"
+	xmlns="http://www.w3.org/2000/svg">
+<path
+	style="stroke:#2bd2e3;stroke-width:8"
+	d="m 20,20 h 55" />
+<path
+	style="stroke:#2bd2e3;stroke-width:8"
+	d="m 20,40 h 55" />
+<path
+	style="stroke:#2bd2e3;stroke-width:8"
+	d="m 20,60 h 55" />
+<ellipse
+	style="fill:#2bd2e3"
+	cx="5"
+	cy="20"
+	rx="4"
+	ry="4" />
+<ellipse
+	style="fill:#2bd2e3"
+	cx="5"
+	cy="40"
+	rx="4"
+	ry="4" />
+<ellipse
+	style="fill:#2bd2e3"
+	cx="5"
+	cy="60"
+	rx="4"
+	ry="4" />
+</svg>

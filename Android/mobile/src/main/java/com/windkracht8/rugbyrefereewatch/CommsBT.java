@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressLint("MissingPermission")//Permissions are handled in Main
 class CommsBT{
-    private static final String RRW_UUID = "8b16601b-5c76-4151-a930-2752849f4552";
+    private final UUID RRW_UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552");
     private final BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
     private CommsBTConnect commsBTConnect;
@@ -113,6 +112,10 @@ class CommsBT{
         onBTStartDone();
     }
     void restartBT(){
+        if(bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON){
+            onBTError(R.string.fail_BT_off);
+            return;
+        }
         Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
         for(BluetoothDevice device : devices){
             if(known_device_addresses.contains(device.getAddress())){
@@ -120,6 +123,7 @@ class CommsBT{
                 return;
             }
         }
+        if(devices.isEmpty()) onBTError(R.string.fail_BT_no_devices);
     }
     void stopBT(){
         disconnect = true;
@@ -134,8 +138,12 @@ class CommsBT{
     }
 
     Set<BluetoothDevice> getDevices(){
-        if(bluetoothAdapter == null || bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON){
+        if(bluetoothAdapter == null){
             onBTError(R.string.fail_BT_denied);
+            return null;
+        }
+        if(bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON){
+            onBTError(R.string.fail_BT_off);
             return null;
         }
         return bluetoothAdapter.getBondedDevices();
@@ -170,7 +178,7 @@ class CommsBT{
         private CommsBTConnect(BluetoothDevice device){
             Log.d(Main.LOG_TAG, "CommsBTConnect " + device.getName());
             try{
-                bluetoothSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(RRW_UUID));
+                bluetoothSocket = device.createRfcommSocketToServiceRecord(RRW_UUID);
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnect Exception: " + e.getMessage());
                 onBTConnectFailed();
@@ -267,10 +275,13 @@ class CommsBT{
         private void read(){
             try{
                 if(inputStream.available() < 5) return;
-                long read_start = (new Date()).getTime();
+                long last_read_time = System.currentTimeMillis();
                 String response = "";
-
-                while(inputStream.available() > 0){
+                while(System.currentTimeMillis() - last_read_time < 3000){
+                    if(inputStream.available() == 0){
+                        sleep100();
+                        continue;
+                    }
                     byte[] buffer = new byte[inputStream.available()];
                     int numBytes = inputStream.read(buffer);
                     if(numBytes < 0){
@@ -285,19 +296,13 @@ class CommsBT{
                         onBTResponse(new JSONObject(response));
                         return;
                     }
-                    if((new Date()).getTime() - read_start > 3000){
-                        Log.e(Main.LOG_TAG, "CommsBTConnected.read no valid message after 3 seconds: " + response);
-                        onBTError(R.string.fail_response);
-                        return;
-                    }
-                    sleep100();
+                    last_read_time = System.currentTimeMillis();
                 }
-                Log.e(Main.LOG_TAG, "CommsBTConnected.read nothing left to read, but no valid message: " + response);
-                onBTError(R.string.fail_response);
+                Log.e(Main.LOG_TAG, "CommsBTConnected.read no valid message and no new data after 3 sec: " + response);
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "CommsBTConnected.read: " + e.getMessage());
-                onBTError(R.string.fail_response);
             }
+            onBTError(R.string.fail_response);
         }
         private void sleep100(){
             try{
@@ -321,13 +326,13 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTStartDone");
         startDone = true;
         listeners.remove(null);
-        listeners.forEach(BTInterface::onBTStartDone);
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTStartDone();
     }
     private void onBTConnecting(String deviceName){
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnecting");
         status = Status.CONNECTING;
         listeners.remove(null);
-        listeners.forEach((l)->l.onBTConnecting(deviceName));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnecting(deviceName);
     }
     private void onBTConnectFailed(){
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnectFailed");
@@ -335,7 +340,7 @@ class CommsBT{
         status = Status.DISCONNECTED;
         if(startDone){
             listeners.remove(null);
-            listeners.forEach(BTInterface::onBTConnectFailed);
+            for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnectFailed();
         }else{
             onBTStartDone();
         }
@@ -344,7 +349,7 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTConnected");
         status = Status.CONNECTED;
         listeners.remove(null);
-        listeners.forEach((l)->l.onBTConnected(device.getName()));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTConnected(device.getName());
         if(!startDone) onBTStartDone();
         if(!known_device_addresses.contains(device.getAddress())){
             known_device_addresses.add(device.getAddress());
@@ -356,17 +361,17 @@ class CommsBT{
         Log.d(Main.LOG_TAG, "CommsBT.onBTDisconnected");
         status = Status.DISCONNECTED;
         listeners.remove(null);
-        listeners.forEach(BTInterface::onBTDisconnected);
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTDisconnected();
     }
     private void onBTResponse(JSONObject response){
         Log.d(Main.LOG_TAG, "CommsBT.onBTResponse " + response);
         listeners.remove(null);
-        listeners.forEach((l)->l.onBTResponse(response));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTResponse(response);
     }
     private void onBTError(int message){
         Log.d(Main.LOG_TAG, "CommsBT.onBTError");
         listeners.remove(null);
-        listeners.forEach((l)->l.onBTError(message));
+        for(int i=0; i<listeners.size(); i++) listeners.get(i).onBTError(message);
     }
     public interface BTInterface{
         void onBTStartDone();

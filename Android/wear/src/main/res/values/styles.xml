@@ -5,7 +5,7 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
         <item name="postSplashScreenTheme">@style/rrw</item>
     </style>
-    <style name="rrw" parent="Theme.AppCompat">
+    <style name="rrw" parent="Theme.Material3.Dark">
         <item name="android:windowSwipeToDismiss" tools:ignore="WearBackNavigation">false
         </item><!-- this is set to false so that we can show correct screen in stead -->
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
@@ -13,25 +13,36 @@
         <item name="android:colorControlActivated">@color/w8blue</item>
         <item name="android:textColor">@color/white</item>
     </style>
-    <style name="textView_log">
+    <style name="rrw_sub" parent="Theme.Material3.Dark">
+        <item name="android:background">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="textView_report">
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
     </style>
     <style name="textView_item">
         <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMaxTextSize">20sp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:minHeight">@dimen/si_item_height</item>
-        <item name="android:background">@drawable/bg_si_item</item>
+        <item name="android:minHeight">50sp</item>
+        <item name="android:background">@drawable/bg_item</item>
         <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">5dp</item>
     </style>
-    <style name="si_item">
-        <item name="android:autoSizeTextType">uniform</item>
+    <style name="textView_item_single" parent="textView_item">
+        <item name="android:lines">1</item>
+    </style>
+    <style name="textView_help_title">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/w8blue</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="textView_help_text">
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:height">@dimen/si_item_height</item>
-        <item name="android:background">@drawable/bg_si_item</item>
-        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 </resources>

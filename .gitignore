@@ -23,3 +23,8 @@ Android/wear/release
 *.apk
 *.iml
 local.properties
+
+Garmin/bin
+Garmin/.vscode
+Garmin/*developer_key
+Garmin/*.iq

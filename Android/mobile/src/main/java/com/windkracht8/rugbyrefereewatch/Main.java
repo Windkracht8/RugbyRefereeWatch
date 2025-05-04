@@ -2,24 +2,25 @@ package com.windkracht8.rugbyrefereewatch;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Insets;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,12 +42,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     static final String LOG_TAG = "RugbyRefereeWatch";
+    static final String HOME_ID = "home";
+    static final String AWAY_ID = "away";
     private GestureDetector gestureDetector;
     static SharedPreferences sharedPreferences;
     static SharedPreferences.Editor sharedPreferences_editor;
@@ -62,27 +64,26 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
 
     private boolean showSplash = true;
     private static boolean hasBTPermission = false;
-    static int widthPixels;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState){
+    @Override protected void onCreate(Bundle savedInstanceState){
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
-        splashScreen.setKeepOnScreenCondition(() -> showSplash);
+        splashScreen.setKeepOnScreenCondition(()->showSplash);
         super.onCreate(savedInstanceState);
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureListener());
         setContentView(R.layout.main);
-        getWidthPixels();
-        sharedPreferences = getSharedPreferences("com.windkracht8.rugbyrefereewatch", Context.MODE_PRIVATE);
+        findViewById(android.R.id.content).setOnApplyWindowInsetsListener(onApplyWindowInsetsListener);
+
+        sharedPreferences = getSharedPreferences("main", Context.MODE_PRIVATE);
         sharedPreferences_editor = sharedPreferences.edit();
         handler = new Handler(Looper.getMainLooper());
 
         icon = findViewById(R.id.icon);
-        icon.setOnClickListener(view -> iconClick());
+        icon.setOnClickListener(v->iconClick());
         icon.setColorFilter(getColor(R.color.icon_disabled));
         device = findViewById(R.id.device);
-        findViewById(R.id.tabHistoryLabel).setOnClickListener(view -> tabHistoryLabelClick());
-        findViewById(R.id.tabReportLabel).setOnClickListener(view -> tabReportLabelClick());
-        findViewById(R.id.tabPrepareLabel).setOnClickListener(view -> tabPrepareLabelClick());
+        findViewById(R.id.tabHistoryLabel).setOnClickListener(v->tabHistoryLabelClick());
+        findViewById(R.id.tabReportLabel).setOnClickListener(v->tabReportLabelClick());
+        findViewById(R.id.tabPrepareLabel).setOnClickListener(v->tabPrepareLabelClick());
 
         tabHistory = findViewById(R.id.tabHistory);
         tabHistory.onCreateMain(this);
@@ -91,19 +92,35 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         tabPrepare = findViewById(R.id.tabPrepare);
         tabPrepare.onCreateMain(this);
 
-        handleOrientation();
-        handleIntent();
-
         checkPermissions();
         startBT();
         showSplash = false;
     }
-    @Override
-    protected void onDestroy(){
+    @Override protected void onDestroy(){
         super.onDestroy();
-        if(commsBT != null){
-            commsBT.stopBT();
+        runInBackground(()->{
+            if(commsBT != null) commsBT.stopBT();
             commsBT = null;
+        });
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        if(Build.VERSION.SDK_INT < 35) return;
+        WindowInsetsController wic = icon.getWindowInsetsController();
+        if(wic == null) return;
+        switch(getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+            case Configuration.UI_MODE_NIGHT_NO:
+                wic.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                wic.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+                break;
         }
     }
 
@@ -130,8 +147,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             }
         }
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         for(int i=0; i<permissions.length; i++){
             if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
@@ -162,56 +178,30 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         }
         commsBT = new CommsBT(this);
         commsBT.addListener(this);
-        runInBackground(() -> commsBT.startBT());
+        runInBackground(commsBT::startBT);
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig){
-        super.onConfigurationChanged(newConfig);
-        handleOrientation();
-    }
-    private void handleOrientation(){
-        getWidthPixels();
-        TabReport.what_width = 0;
-    }
-
-    private void handleIntent(){
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        if(action == null || !action.equals(Intent.ACTION_VIEW)) return;
-
-        String scheme = intent.getScheme();
-        if(scheme == null || !scheme.equals(ContentResolver.SCHEME_CONTENT)){
-            Log.e(Main.LOG_TAG, "Main.handleIntent Non supported scheme: " + scheme);
-            return;
-        }
-        try{
-            ContentResolver cr = getContentResolver();
-
-            InputStream is = cr.openInputStream(Objects.requireNonNull(intent.getData()));
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-
-            StringBuilder text = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null){
-                text.append(line);
+    static final View.OnApplyWindowInsetsListener onApplyWindowInsetsListener = new View.OnApplyWindowInsetsListener(){
+        @NonNull @Override public WindowInsets onApplyWindowInsets(@NonNull View view, @NonNull WindowInsets windowInsets){
+            if(Build.VERSION.SDK_INT >= 30){
+                Insets insets = windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+                view.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            }else{
+                view.setPadding(
+                        windowInsets.getSystemWindowInsetLeft(),
+                        windowInsets.getSystemWindowInsetTop(),
+                        windowInsets.getSystemWindowInsetRight(),
+                        windowInsets.getSystemWindowInsetBottom()
+                );
             }
-            br.close();
-            String matches_new_s = text.toString();
-            JSONArray matches_new_ja = new JSONArray(matches_new_s);
-            tabHistory.gotMatches(matches_new_ja);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.handleIntent Exception: " + e.getMessage());
-            onBTError(R.string.problem_matches_received);
+            return windowInsets;
         }
-    }
+    };
 
     void toast(int message){
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(()->Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK){
             onBack();
             return true;
@@ -220,50 +210,41 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     }
 
      private void onBack(){
-        if(tabHistory.getVisibility() == View.VISIBLE){
-            if(tabHistory.unselect()) return;
+        if(tabHistory.getVisibility() == View.VISIBLE && tabHistory.unselect()){
+            return;
         }else if(tabReport.getVisibility() == View.VISIBLE){
             tabHistoryLabelClick();
-            return;
-        }else if(tabPrepare.getVisibility() == View.VISIBLE){
-            tabReportLabelClick();
             return;
         }
         finish();
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        return gestureDetector.onTouchEvent(event);
-    }
+    @Override public boolean onTouchEvent(MotionEvent event){return gestureDetector.onTouchEvent(event);}
     boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
-    @Override
-    public void onBTStartDone(){
+    @Override public void onBTStartDone(){
         if(commsBT == null){
             onBTError(R.string.fail_BT_denied);
             return;
         }
         if(commsBT.status == CommsBT.Status.CONNECTED) return;
-        runOnUiThread(()-> {
+        runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.icon_disabled));
             device.setTextColor(getColor(R.color.text));
             device.setText(R.string.connect);
         });
     }
-    @Override
-    public void onBTConnecting(String deviceName){
-        runOnUiThread(()-> {
+    @Override public void onBTConnecting(String deviceName){
+        runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch_connecting);
             icon.setColorFilter(getColor(R.color.icon_disabled));
             ((AnimatedVectorDrawable) icon.getBackground()).start();
             device.setTextColor(getColor(R.color.text));
-            device.setText(rps(R.string.connecting_to, deviceName));
+            device.setText(getString(R.string.connecting_to, deviceName));
         });
     }
-    @Override
-    public void onBTConnectFailed(){
+    @Override public void onBTConnectFailed(){
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.error));
@@ -271,20 +252,18 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             device.setText(R.string.fail_BT);
         });
     }
-    @Override
-    public void onBTConnected(String deviceName){
+    @Override public void onBTConnected(String deviceName){
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.text));
             device.setTextColor(getColor(R.color.text));
-            device.setText(rps(R.string.connected_to, deviceName));
+            device.setText(getString(R.string.connected_to, deviceName));
             sendSyncRequest();
             findViewById(R.id.bSync).setVisibility(View.VISIBLE);
             findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
         });
     }
-    @Override
-    public void onBTDisconnected(){
+    @Override public void onBTDisconnected(){
         runOnUiThread(()->{
             icon.setColorFilter(getColor(R.color.icon_disabled));
             device.setTextColor(getColor(R.color.text));
@@ -293,8 +272,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             findViewById(R.id.bPrepare).setVisibility(View.GONE);
         });
     }
-    @Override
-    public void onBTResponse(JSONObject response){
+    @Override public void onBTResponse(JSONObject response){
         try{
             String requestType = response.getString("requestType");
             switch(requestType){
@@ -326,8 +304,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             onBTError(R.string.fail_response);
         }
     }
-    @Override
-    public void onBTError(int message){
+    @Override public void onBTError(int message){
         Log.d(LOG_TAG, "Main.onBTError: " + getString(message));
         runOnUiThread(()->{
             icon.setColorFilter(getColor(R.color.error));
@@ -338,8 +315,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener{
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-        @Override
-        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY){
+        @Override public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY){
             try{
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
@@ -379,7 +355,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
 
     private void setButtonProcessing(int vid){
         findViewById(vid).setEnabled(false);
-        handler.postDelayed(() -> findViewById(vid).setEnabled(true), 5000);
+        handler.postDelayed(()->findViewById(vid).setEnabled(true), 5000);
     }
     private void iconClick(){
         if(commsBT == null) return;
@@ -394,11 +370,18 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     }
     void bSyncClick(){
         setButtonProcessing(R.id.bSync);
+        if(cantSendRequest()){
+            device.setText(R.string.fail_BT);
+            return;
+        }
         sendSyncRequest();
     }
     void bPrepareClick(){
         setButtonProcessing(R.id.bPrepare);
-        if(cantSendRequest()) return;
+        if(cantSendRequest()){
+            device.setText(R.string.fail_BT);
+            return;
+        }
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
             onBTError(R.string.fail_prepare);
@@ -407,14 +390,12 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         commsBT.sendRequest("prepare", requestData);
     }
     private boolean cantSendRequest(){
-        if(commsBT != null && commsBT.status == CommsBT.Status.CONNECTED) return false;
-        device.setText(R.string.fail_BT);
-        return true;
+        return commsBT == null || commsBT.status != CommsBT.Status.CONNECTED;
     }
 
-    private void sendSyncRequest(){
+    void sendSyncRequest(){
         if(cantSendRequest()) return;
-        try {
+        try{
             JSONObject requestData = new JSONObject();
             requestData.put("deleted_matches", tabHistory.getDeletedMatches());
             requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
@@ -474,43 +455,66 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         return name;
     }
 
+    void importMatches(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        importMatchesResult.launch(intent);
+    }
+    private final ActivityResultLauncher<Intent> importMatchesResult = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        result->{
+            if(result.getResultCode() != Activity.RESULT_OK) return;
+            try{
+                Intent data = result.getData();
+                if(data == null) throw new Exception("data is empty");
+                Uri uri = data.getData();
+                if(uri == null) throw new Exception("uri is empty");
+                InputStream is = getContentResolver().openInputStream(uri);
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+
+                StringBuilder text = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null){
+                    text.append(line);
+                }
+                br.close();
+                String matches_new_s = text.toString();
+                JSONArray matches_new_ja = new JSONArray(matches_new_s);
+                tabHistory.gotMatches(matches_new_ja);
+            }catch(Exception e){
+                Log.e(Main.LOG_TAG, "Main.importMatchesResult Exception: " + e.getMessage());
+                onBTError(R.string.fail_import);
+            }
+        }
+    );
+
     void exportMatches(){
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/json");
         intent.putExtra(Intent.EXTRA_TITLE, "matches.json");
-
-        exportMatchesActivityResultLauncher.launch(intent);
+        exportMatchesResult.launch(intent);
     }
-    private final ActivityResultLauncher<Intent> exportMatchesActivityResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> exportMatchesResult = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
-        result -> {
+        result->{
             if(result.getResultCode() != Activity.RESULT_OK) return;
-            Intent data = result.getData();
-            if(data == null) return;
-            Uri uri = data.getData();
-            OutputStream outputStream;
             try{
-                assert uri != null;
-                outputStream = getContentResolver().openOutputStream(uri);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream));
+                Intent data = result.getData();
+                if(data == null) throw new Exception("data is empty");
+                Uri uri = data.getData();
+                if(uri == null) throw new Exception("uri is empty");
+                OutputStream os = getContentResolver().openOutputStream(uri);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
                 bw.write(tabHistory.getSelectedMatches());
                 bw.flush();
                 bw.close();
             }catch(Exception e){
-                Log.e(Main.LOG_TAG, "Main.onActivityResult Exception: " + e.getMessage());
+                Log.e(Main.LOG_TAG, "Main.exportMatchesResult Exception: " + e.getMessage());
                 onBTError(R.string.fail_export);
             }
         }
     );
-    private void getWidthPixels(){
-        if(Build.VERSION.SDK_INT >= 30){
-            widthPixels = getWindowManager().getMaximumWindowMetrics().getBounds().width();
-        }else{
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            widthPixels = displayMetrics.widthPixels;
-        }
-    }
-    private String rps(int resource, String string){return getString(resource) + " " + string;}
 }

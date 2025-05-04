@@ -1,0 +1,23 @@
+project.manifest = manifest.xml
+
+base.excludeAnnotations = lowcolor
+enduro3.excludeAnnotations = highcolor
+fenix7.excludeAnnotations = highcolor
+fenix7pro.excludeAnnotations = highcolor
+fenix7pronowifi.excludeAnnotations = highcolor
+fenix7s.excludeAnnotations = highcolor
+fenix7spro.excludeAnnotations = highcolor
+fenix7x.excludeAnnotations = highcolor
+fenix7xpro.excludeAnnotations = highcolor
+fenix7xpronowifi.excludeAnnotations = highcolor
+fenix8solar47mm.excludeAnnotations = highcolor
+fenix8solar51mm.excludeAnnotations = highcolor
+fr955.excludeAnnotations = highcolor
+legacyherocaptainmarvel.excludeAnnotations = highcolor
+legacyherofirstavenger.excludeAnnotations = highcolor
+legacysagadarthvader.excludeAnnotations = highcolor
+legacysagarey.excludeAnnotations = highcolor
+venusq.excludeAnnotations = highcolor
+venusqm.excludeAnnotations = highcolor
+vivoactive4.excludeAnnotations = highcolor
+vivoactive4s.excludeAnnotations = highcolor

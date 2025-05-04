@@ -1,0 +1,117 @@
+<layout id="PlayerNo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <text-area
+		id="player_no"
+		x="center"
+		y="top"
+		width="100%"
+		height="20%"
+		text="0"
+		font="Gfx.FONT_LARGE"
+		color="0xaaaaaa"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+	<bitmap
+		id="b_back"
+		x="left"
+		y="0"
+		filename="../drawables/icon_back_disable.svg" />
+	<bitmap
+		id="b_done"
+		x="right"
+		y="0"
+		filename="../drawables/icon_done.svg" />
+		
+    <text-area
+		id="b_1"
+		x="20%"
+		y="20%"
+		width="20%"
+		height="20%"
+		text="1"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_2"
+		x="40%"
+		y="20%"
+		width="20%"
+		height="20%"
+		text="2"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_3"
+		x="60%"
+		y="20%"
+		width="20%"
+		height="20%"
+		text="3"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <text-area
+		id="b_4"
+		x="20%"
+		y="40%"
+		width="20%"
+		height="20%"
+		text="4"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_5"
+		x="40%"
+		y="40%"
+		width="20%"
+		height="20%"
+		text="5"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_6"
+		x="60%"
+		y="40%"
+		width="20%"
+		height="20%"
+		text="6"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <text-area
+		id="b_7"
+		x="20%"
+		y="60%"
+		width="20%"
+		height="20%"
+		text="7"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_8"
+		x="40%"
+		y="60%"
+		width="20%"
+		height="20%"
+		text="8"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area
+		id="b_9"
+		x="60%"
+		y="60%"
+		width="20%"
+		height="20%"
+		text="9"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <text-area
+		id="b_0"
+		x="center"
+		y="bottom"
+		width="60%"
+		height="20%"
+		text="0"
+		font="Gfx.FONT_LARGE"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+</layout>

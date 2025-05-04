@@ -7,9 +7,6 @@
     <string name="match_types_filename" translatable="false">match_types.json</string>
 
     <!-- numbers -->
-    <string name="time_width_placeholder" translatable="false">00:00:00</string>
-    <string name="timer_width_placeholder" translatable="false">00\'</string>
-    <string name="score_width_placeholder" translatable="false">00:00</string>
     <string name="_0" translatable="false">0</string>
     <string name="_00" translatable="false">00</string>
     <string name="_2" translatable="false">2</string>
@@ -17,6 +14,7 @@
     <string name="_5" translatable="false">5</string>
     <string name="_10" translatable="false">10</string>
     <string name="_40" translatable="false">40</string>
+    <string name="_60" translatable="false">60</string>
     <string name="x" translatable="false">X</string>
 
     <!-- main ui -->
@@ -42,6 +40,7 @@
 
     <!-- history -->
     <string name="bSync_text">Synchronise with watch</string>
+    <string name="bImport_text">Import</string>
     <string name="bExport_text">Export selected</string>
     <string name="bDelete_text">Delete selected</string>
 
@@ -73,7 +72,6 @@
     <string name="match_report">Match report</string>
     <string name="dialog_share_message">What to include?</string>
     <string name="dialog_share_time">Time off/on</string>
-    <string name="dialog_share_cards">Cards</string>
     <string name="dialog_share_pens">Penalties</string>
     <string name="dialog_share_clock">Clock time</string>
 
@@ -89,20 +87,28 @@
     <string name="sAwayColor_desc">Away color selection</string>
     <string name="sMatchType_text">Match type</string>
     <string name="sMatchType_desc">Match type selection</string>
+    <string name="match_type_details_show">Show match type details</string>
+    <string name="match_type_details_hide">Hide match type details</string>
     <string name="bSaveCustom_text">Save match type</string>
     <string name="bDelCustom_text">Delete match type</string>
-    <string name="etTimePeriod_text">Time/period</string>
+    <string name="etPeriodTime_text">Time/period</string>
     <string name="etPeriodCount_text">Period count</string>
     <string name="etSinbin_text">Sinbin</string>
     <string name="etPointsTry_text">Points for Try</string>
     <string name="etPointsCon_text">Points for Conversion</string>
     <string name="etPointsGoal_text">Points for Goal</string>
-    <string name="watch_settings">Watch settings</string>
-    <string name="no_watch_settings">No watch settings</string>
+    <string name="etClockPK_text">Penalty kick clock</string>
+    <string name="etClockCon_text">Conversion kick clock</string>
+    <string name="etClockRestart_text">Restart kick clock</string>
+    <string name="watch_settings_show">Show watch settings</string>
+    <string name="watch_settings_hide">Hide watch settings</string>
     <string name="cbScreenOn_text">Keep screen on</string>
     <string name="sTimerType_text">Timer type</string>
+    <string name="timer_type_up">count up</string>
+    <string name="timer_type_down">count down</string>
     <string name="cbRecordPlayer_text">Record player #</string>
     <string name="cbRecordPens_text">Record penalties</string>
+    <string name="cbDelayEnd_text">Delay end of period</string>
 
     <string name="home_name_empty">Home name can\'t be empty</string>
     <string name="away_name_empty">Away name can\'t be empty</string>
@@ -111,7 +117,7 @@
     <string name="points_try_empty">Points for Try can\'t be empty</string>
 
     <!-- prepare.custom match type -->
-    <string name="custom_match_hint">Match type name</string>
+    <string name="custom_match_hint">Enter match type name</string>
     <string name="save_match_type">Save match type</string>
 
     <string-array name="eventTypes">
@@ -152,22 +158,17 @@
     </string-array>
 
     <string-array name="matchTypes">
+        <item>custom</item>
         <item>15s</item>
         <item>10s</item>
         <item>7s</item>
         <item>beach 7s</item>
         <item>beach 5s</item>
-        <item>custom</item>
-    </string-array>
-
-    <string-array name="timerTypes">
-        <item>count up</item>
-        <item>count down</item>
     </string-array>
 
     <!-- CommsBT -->
-    <string name="connecting_to">Connecting to</string>
-    <string name="connected_to">Connected to</string>
+    <string name="connecting_to">Connecting to %s</string>
+    <string name="connected_to">Connected to %s</string>
     <string name="disconnected">Disconnected, tap icon to connect</string>
 
     <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
@@ -176,9 +177,9 @@
     <string name="fail_BT">That did not work, tap icon to connect with watch</string>
 
     <string name="update_watch_app">Update app on watch to support this</string>
+    <string name="update_mobile_app">App is outdated, update in the store</string>
     <string name="match_ongoing">Match ongoing, can\'t prepare</string>
     <string name="fail_unexpected">Unexpected technical error</string>
-    <string name="problem_matches_received">Problem with matches received from watch</string>
 
     <!-- fail -->
     <string name="fail_sync">Failed to synchronise with watch</string>
@@ -187,6 +188,7 @@
     <string name="fail_show_history">Failed to show History</string>
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_response">Problem with response from watch</string>
+    <string name="fail_import">Failed to import matches</string>
     <string name="fail_export">Failed to export matches</string>
     <string name="fail_delete">Failed to delete</string>
     <string name="fail_save">Failed to save</string>
@@ -197,7 +199,7 @@
     <string name="fail_load_custom_match_type">Failed to load custom match type</string>
     <string name="fail_del_match_type">Failed to delete match type</string>
     <string name="fail_save_match_type">Failed to save match type</string>
-    <string name="fail_receive_matches">Failed to receive matches from watch</string>
+    <string name="fail_receive_matches">Failed to receive matches</string>
     <string name="fail_read_matches">Failed to read matches from storage</string>
     <string name="fail_store_matches">Failed to store matches</string>
     <string name="fail_del_match">Failed to delete match</string>

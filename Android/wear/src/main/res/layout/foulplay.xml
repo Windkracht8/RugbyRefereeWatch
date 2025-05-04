@@ -1,66 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/card_yellow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <TextView
-            android:id="@+id/foulPlay_player"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autoSizeTextType="uniform"
-            android:gravity="center" />
-        <TextView
-            android:id="@+id/card_yellow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autoSizeTextType="uniform"
-            android:gravity="center"
-            android:text="@string/card_yellow_text"
-            android:textColor="#FF0" />
-        <TextView
-            android:id="@+id/penalty_try"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autoSizeTextType="uniform"
-            android:gravity="center"
-            android:text="@string/penalty_try_text" />
-        <TextView
-            android:id="@+id/card_red"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autoSizeTextType="uniform"
-            android:gravity="center"
-            android:text="@string/card_red_text"
-            android:textColor="#F00" />
-    </LinearLayout>
-    <ScrollView
-        android:id="@+id/svPlayerNo"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
+        android:gravity="center"
+        android:text="@string/card_yellow"
+        android:textColor="#FF0" />
+    <TextView
+        android:id="@+id/penaltyTry"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <LinearLayout
-            android:id="@+id/llPlayerNo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"/>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
+        android:gravity="center"
+        android:text="@string/penaltyTry" />
+    <TextView
+        android:id="@+id/card_red"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
+        android:gravity="center"
+        android:text="@string/card_red"
+        android:textColor="#F00" />
+</LinearLayout>

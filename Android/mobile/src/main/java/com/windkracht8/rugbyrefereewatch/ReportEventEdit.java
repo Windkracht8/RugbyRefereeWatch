@@ -1,35 +1,29 @@
 package com.windkracht8.rugbyrefereewatch;
 
-import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-class ReportEventEdit extends LinearLayout{
+class ReportEventEdit extends ReportEvent{
     private final Main main;
     private final JSONObject event;
+    private final TextView timer;
+    private final Spinner team;
+
     ReportEventEdit(Main main, JSONObject event){
-        super(main);
+        super(main, R.layout.report_event_edit);
         this.main = main;
         this.event = event;
-
-        LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.report_event_edit, this, true);
-
         Spinner what = findViewById(R.id.what);
-        Spinner team = findViewById(R.id.team);
+        team = findViewById(R.id.team);
 
+        timer = findViewById(R.id.timer);
         try{
-            TextView timer = findViewById(R.id.timer);
-            timer.setText(timerStampToString(event.getLong("timer")));
-
+            timer.setText(prettyTimer(event.getInt("timer")));
             switch(event.getString("what")){
                 case "TRY":
                     what.setSelection(0);
@@ -64,7 +58,7 @@ class ReportEventEdit extends LinearLayout{
                     setVisibility(GONE);
             }
 
-            if(event.has("team") && event.getString("team").equals("away")){
+            if(event.has("team") && event.getString("team").equals(Main.AWAY_ID)){
                 team.setSelection(1);
             }
             if(event.has("who")){
@@ -73,16 +67,19 @@ class ReportEventEdit extends LinearLayout{
             if(event.has("reason")){
                 ((EditText)findViewById(R.id.reason)).setText(event.getString("reason"));
             }
-            timer.setLayoutParams(new LinearLayout.LayoutParams(TabReport.timer_edit_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-            if(TabReport.what_width>10){
-                what.setLayoutParams(new LinearLayout.LayoutParams(TabReport.what_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-                team.setLayoutParams(new LinearLayout.LayoutParams(TabReport.team_width, LinearLayout.LayoutParams.WRAP_CONTENT));
-            }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "ReportEventEdit.construct Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_show_match, Toast.LENGTH_SHORT).show();
         }
-        findViewById(R.id.bDel).setOnClickListener(view -> bDelClick());
+        findViewById(R.id.bDel).setOnClickListener(v->bDelClick());
+    }
+    @Override void getFieldWidths(){
+        if(TabReport.width_timer < timer.getWidth()) TabReport.width_timer = timer.getWidth();
+        if(TabReport.width_team < team.getWidth()) TabReport.width_team = team.getWidth();
+    }
+    @Override void setFieldWidths(){
+        timer.setWidth(TabReport.width_timer);
+        team.setMinimumWidth(TabReport.width_team);
     }
 
     private void bDelClick(){
@@ -132,7 +129,7 @@ class ReportEventEdit extends LinearLayout{
             }
 
             Spinner team = findViewById(R.id.team);
-            event.put("team", team.getSelectedItemPosition() == 0 ? "home" : "away");
+            event.put("team", team.getSelectedItemPosition() == 0 ? Main.HOME_ID : Main.AWAY_ID);
 
             String who = ((EditText)findViewById(R.id.who)).getText().toString();
             if(!who.isEmpty()){
@@ -146,13 +143,10 @@ class ReportEventEdit extends LinearLayout{
         }
         return event;
     }
-    static String timerStampToString(long timer){
-        int temp = (int) (timer / 1000);
-        int seconds = (temp % 60);
-        int minutes = (temp - seconds) / 60;
-        String sTimer = minutes + ":";
-        if(seconds < 10) sTimer += "0";
-        sTimer += seconds;
-        return sTimer;
+    static String prettyTimer(int seconds){
+        int minutes = Math.floorDiv(seconds, 60);
+        seconds %= 60;
+        if(seconds < 10) return minutes + ":0" + seconds;
+        return minutes + ":" + seconds;
     }
 }

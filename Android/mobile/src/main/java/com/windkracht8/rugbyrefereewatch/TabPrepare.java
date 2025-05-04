@@ -6,17 +6,20 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,151 +35,181 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TabPrepare extends LinearLayout{
+    private Main main;
     private final EditText etHomeName;
     private final EditText etAwayName;
     private final Spinner sHomeColor;
     private final Spinner sAwayColor;
     private final Spinner sMatchType;
-    private final EditText etTimePeriod;
+    private final Button bMatchTypeDetails;
+    private final TableLayout tMatchTypeDetails;
+    private final EditText etPeriodTime;
     private final EditText etPeriodCount;
     private final EditText etSinbin;
     private final EditText etPointsTry;
     private final EditText etPointsCon;
     private final EditText etPointsGoal;
+    private final EditText etClockPK;
+    private final EditText etClockCon;
+    private final EditText etClockRestart;
     private final CheckBox cbRecordPlayer;
     private final CheckBox cbRecordPens;
     private final CheckBox cbScreenOn;
+    private final CheckBox cbDelayEnd;
+    private final Button bDelCustom;
+    private final Button bSaveCustom;
     private final Button bWatchSettings;
-    private final Spinner sTimerType;
+    private final TextView timerType;
+    private boolean match_type_details = false;
     private boolean watch_settings = false;
     private boolean has_changed = false;
     private final JSONArray customMatchTypes;
-    private int sMatchTypePosition = 0;
+    private int sMatchTypePosition = 1;
     private static int sHomeColorPosition = 0;
     private static int sAwayColorPosition = 0;
+    private static final int TIMER_TYPE_UP = 0;
+    private static final int TIMER_TYPE_DOWN = 1;
+    private static int timerTypePosition = TIMER_TYPE_DOWN;
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.inflate(R.layout.tab_prepare, this, true);
-
         customMatchTypes = new JSONArray();
-
+        ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.tab_prepare, this, true);
         etHomeName = findViewById(R.id.etHomeName);
         sHomeColor = findViewById(R.id.sHomeColor);
         etAwayName = findViewById(R.id.etAwayName);
         sAwayColor = findViewById(R.id.sAwayColor);
         sMatchType = findViewById(R.id.sMatchType);
-        etTimePeriod = findViewById(R.id.etTimePeriod);
+        bMatchTypeDetails = findViewById(R.id.bMatchTypeDetails);
+        tMatchTypeDetails = findViewById(R.id.tMatchTypeDetails);
+        etPeriodTime = findViewById(R.id.etPeriodTime);
         etPeriodCount = findViewById(R.id.etPeriodCount);
         etSinbin = findViewById(R.id.etSinbin);
         etPointsTry = findViewById(R.id.etPointsTry);
         etPointsCon = findViewById(R.id.etPointsCon);
         etPointsGoal = findViewById(R.id.etPointsGoal);
+        etClockPK = findViewById(R.id.etClockPK);
+        etClockCon = findViewById(R.id.etClockCon);
+        etClockRestart = findViewById(R.id.etClockRestart);
+        bDelCustom = findViewById(R.id.bDelCustom);
+        bSaveCustom = findViewById(R.id.bSaveCustom);
         bWatchSettings = findViewById(R.id.bWatchSettings);
         cbScreenOn = findViewById(R.id.cbScreenOn);
-        sTimerType = findViewById(R.id.sTimerType);
+        timerType = findViewById(R.id.timerType);
         cbRecordPlayer = findViewById(R.id.cbRecordPlayer);
         cbRecordPens = findViewById(R.id.cbRecordPens);
+        cbDelayEnd = findViewById(R.id.cbDelayEnd);
 
+        sMatchType.setSelection(1);
         sMatchType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+            @Override public void onItemSelected(AdapterView<?> pv, View siv, int position, long id){
                 if(position == sMatchTypePosition) return;
                 sMatchTypePosition = position;
                 has_changed = true;
-                findViewById(R.id.trDelCustom).setVisibility(View.GONE);
+                hideMatchTypeDetails();
+                bDelCustom.setVisibility(View.GONE);
                 switch(position){
-                    case 0://15s
-                        etTimePeriod.setText(String.valueOf(40));
+                    case 0://custom
+                        showMatchTypeDetails();
+                        break;
+                    case 1://15s
+                        etPeriodTime.setText(String.valueOf(40));
                         etPeriodCount.setText("2");
                         etSinbin.setText(String.valueOf(10));
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
+                        etClockPK.setText(String.valueOf(60));
+                        etClockCon.setText(String.valueOf(60));
+                        etClockRestart.setText("0");
                         break;
-                    case 1://10s
-                        etTimePeriod.setText(String.valueOf(10));
+                    case 2://10s
+                        etPeriodTime.setText(String.valueOf(10));
                         etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
+                        etClockPK.setText(String.valueOf(30));
+                        etClockCon.setText(String.valueOf(30));
+                        etClockRestart.setText("0");
                         break;
-                    case 2://7s
-                        etTimePeriod.setText("7");
+                    case 3://7s
+                        etPeriodTime.setText("7");
                         etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("5");
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
+                        etClockPK.setText(String.valueOf(30));
+                        etClockCon.setText(String.valueOf(30));
+                        etClockRestart.setText(String.valueOf(30));
                         break;
-                    case 3://beach 7s
-                        etTimePeriod.setText("7");
+                    case 4://beach 7s
+                        etPeriodTime.setText("7");
                         etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("1");
                         etPointsCon.setText("0");
                         etPointsGoal.setText("0");
+                        etClockPK.setText(String.valueOf(15));
+                        etClockCon.setText("0");
+                        etClockRestart.setText("0");
                         break;
-                    case 4://beach 5s
-                        etTimePeriod.setText("5");
+                    case 5://beach 5s
+                        etPeriodTime.setText("5");
                         etPeriodCount.setText("2");
                         etSinbin.setText("2");
                         etPointsTry.setText("1");
                         etPointsCon.setText("0");
                         etPointsGoal.setText("0");
-                        break;
-                    case 5://custom
-                        findViewById(R.id.trSaveCustom).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trTimePeriod).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsTry).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
+                        etClockPK.setText(String.valueOf(15));
+                        etClockCon.setText("0");
+                        etClockRestart.setText("0");
                         break;
                     default:
-                        findViewById(R.id.trDelCustom).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trTimePeriod).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPeriodCount).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trSinbin).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsTry).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsCon).setVisibility(View.VISIBLE);
-                        findViewById(R.id.trPointsGoal).setVisibility(View.VISIBLE);
                         loadCustomMatchType(sMatchType.getSelectedItem().toString());
-                }
-                if(position != 5){
-                    findViewById(R.id.trSaveCustom).setVisibility(View.GONE);
-                    findViewById(R.id.trTimePeriod).setVisibility(View.GONE);
-                    findViewById(R.id.trPeriodCount).setVisibility(View.GONE);
-                    findViewById(R.id.trSinbin).setVisibility(View.GONE);
-                    findViewById(R.id.trPointsTry).setVisibility(View.GONE);
-                    findViewById(R.id.trPointsCon).setVisibility(View.GONE);
-                    findViewById(R.id.trPointsGoal).setVisibility(View.GONE);
+                        bDelCustom.setVisibility(View.VISIBLE);
                 }
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView){}
+            @Override public void onNothingSelected(AdapterView<?> parentView){}
         });
 
-        etHomeName.addTextChangedListener(new TextWatcher(){
+        TextWatcher onNameChanged = new TextWatcher(){
             public void afterTextChanged(Editable s){}
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
-        });
-        etAwayName.addTextChangedListener(new TextWatcher(){
+        };
+        etHomeName.addTextChangedListener(onNameChanged);
+        etAwayName.addTextChangedListener(onNameChanged);
+
+        TextWatcher onMatchTypeDetailsChanged = new TextWatcher(){
             public void afterTextChanged(Editable s){}
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){has_changed = true;}
-        });
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                if(match_type_details){
+                    bSaveCustom.setVisibility(View.VISIBLE);
+                    if(sMatchType.getSelectedItemPosition() > 0 && sMatchType.getSelectedItemPosition() < 6){
+                        sMatchType.setSelection(0);
+                    }
+                }
+            }
+        };
+        etPeriodTime.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPeriodCount.addTextChangedListener(onMatchTypeDetailsChanged);
+        etSinbin.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsTry.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsCon.addTextChangedListener(onMatchTypeDetailsChanged);
+        etPointsGoal.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockPK.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockCon.addTextChangedListener(onMatchTypeDetailsChanged);
+        etClockRestart.addTextChangedListener(onMatchTypeDetailsChanged);
 
         String[] aTeamColors = getResources().getStringArray(R.array.teamColors);
         Arrays.sort(aTeamColors);
         ArrayAdapter<CharSequence> aaTeamColors = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, aTeamColors);
         aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         sHomeColor.setAdapter(aaTeamColors);
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -186,7 +219,6 @@ public class TabPrepare extends LinearLayout{
             }
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
-
         sAwayColor.setAdapter(aaTeamColors);
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -197,16 +229,18 @@ public class TabPrepare extends LinearLayout{
             public void onNothingSelected(AdapterView<?> adapterView){}
         });
 
-        bWatchSettings.setOnClickListener(view -> bWatchSettingsClick());
-        findViewById(R.id.bSaveCustom).setOnClickListener(view -> bSaveCustomClick());
-        findViewById(R.id.bDelCustom).setOnClickListener(view -> bDelCustomClick());
+        bMatchTypeDetails.setOnClickListener(v->bMatchTypeDetailsClick());
+        bWatchSettings.setOnClickListener(v->bWatchSettingsClick());
+        bSaveCustom.setOnClickListener(v->bSaveCustomClick());
+        bDelCustom.setOnClickListener(v->bDelCustomClick());
+        timerType.setOnClickListener(v->timerTypeClick());
 
-        sTimerType.setSelection(1);
         loadCustomMatchTypes();
     }
 
     void onCreateMain(Main main){
-        findViewById(R.id.bPrepare).setOnClickListener(view -> main.bPrepareClick());
+        this.main = main;
+        findViewById(R.id.bPrepare).setOnClickListener(v->main.bPrepareClick());
         sHomeColorPosition = Main.sharedPreferences.getInt("sHomeColorPosition", 8);//Default red
         sAwayColorPosition = Main.sharedPreferences.getInt("sAwayColorPosition", 1);//Default blue
         findViewById(R.id.svPrepare).setOnTouchListener(main::onTouchEventScrollViews);
@@ -217,23 +251,53 @@ public class TabPrepare extends LinearLayout{
             Log.e(Main.LOG_TAG, "TabPrepare.onCreateMain: Could not set color spinner: " + e.getMessage());
         }
     }
+    private void bMatchTypeDetailsClick(){
+        if(match_type_details){
+            hideMatchTypeDetails();
+        }else{
+            showMatchTypeDetails();
+        }
+    }
+    private void showMatchTypeDetails(){
+        tMatchTypeDetails.setVisibility(View.VISIBLE);
+        bMatchTypeDetails.setText(R.string.match_type_details_hide);
+        match_type_details = true;
+    }
+    private void hideMatchTypeDetails(){
+        tMatchTypeDetails.setVisibility(View.GONE);
+        bMatchTypeDetails.setText(R.string.match_type_details_show);
+        bSaveCustom.setVisibility(View.GONE);
+        match_type_details = false;
+    }
 
     private void bWatchSettingsClick(){
         if(watch_settings){
-            findViewById(R.id.trScreenOn).setVisibility(View.GONE);
-            findViewById(R.id.trTimerType).setVisibility(View.GONE);
-            findViewById(R.id.trRecordPlayer).setVisibility(View.GONE);
-            findViewById(R.id.trRecordPens).setVisibility(View.GONE);
-            bWatchSettings.setText(R.string.watch_settings);
+            findViewById(R.id.tWatchSettings).setVisibility(View.GONE);
+            bWatchSettings.setText(R.string.watch_settings_show);
         }else{
-            findViewById(R.id.trScreenOn).setVisibility(View.VISIBLE);
-            findViewById(R.id.trTimerType).setVisibility(View.VISIBLE);
-            findViewById(R.id.trRecordPlayer).setVisibility(View.VISIBLE);
-            findViewById(R.id.trRecordPens).setVisibility(View.VISIBLE);
-            bWatchSettings.setText(R.string.no_watch_settings);
+            findViewById(R.id.tWatchSettings).setVisibility(View.VISIBLE);
+            bWatchSettings.setText(R.string.watch_settings_hide);
+            //scroll down, after tWatchSettings is actually visible
+            ScrollView svPrepare = findViewById(R.id.svPrepare);
+            svPrepare.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+                @Override public void onGlobalLayout(){
+                    svPrepare.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    svPrepare.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            });
         }
         watch_settings = !watch_settings;
     }
+
+    private void timerTypeClick(){
+        if(timerTypePosition == TIMER_TYPE_DOWN){
+            timerTypePosition = TIMER_TYPE_UP;
+        }else{
+            timerTypePosition = TIMER_TYPE_DOWN;
+        }
+        timerType.setText(timerTypePosition == TIMER_TYPE_DOWN ? R.string.timer_type_down : R.string.timer_type_up);
+    }
+
     JSONObject getSettings(){
         if(checkSettings()) return null;
         JSONObject settings = new JSONObject();
@@ -243,17 +307,21 @@ public class TabPrepare extends LinearLayout{
             settings.put("away_name", etAwayName.getText());
             settings.put("away_color", Translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
             settings.put("match_type", Translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
-            settings.put("period_time", Integer.parseInt(etTimePeriod.getText().toString()));
+            settings.put("period_time", Integer.parseInt(etPeriodTime.getText().toString()));
             settings.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
             settings.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
             settings.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
             settings.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
             settings.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
+            settings.put("clock_pk", Integer.parseInt(etClockPK.getText().toString()));
+            settings.put("clock_con", Integer.parseInt(etClockCon.getText().toString()));
+            settings.put("clock_restart", Integer.parseInt(etClockRestart.getText().toString()));
             if(watch_settings){
                 settings.put("screen_on", cbScreenOn.isChecked());
-                settings.put("timer_type", sTimerType.getSelectedItemPosition());
+                settings.put("timer_type", timerTypePosition);
                 settings.put("record_player", cbRecordPlayer.isChecked());
                 settings.put("record_pens", cbRecordPens.isChecked());
+                settings.put("delay_end", cbDelayEnd.isChecked());
             }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.getSettings Exception: " + e.getMessage());
@@ -263,25 +331,48 @@ public class TabPrepare extends LinearLayout{
         return settings;
     }
     void gotSettings(JSONObject settings){
-        if(has_changed){return;}
         try{
-            if(settings.has("home_name")) etHomeName.setText(settings.getString("home_name"));
+            //has_changed = changes on the phone were made, don't overwrite these with settings from watch
+            //watch_settings = watch settings are visible, do overwrite watch settings if they are not visible
+            if(has_changed && watch_settings){return;}
+            if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getBoolean("screen_on"));
+            if(settings.has("timer_type")){
+                timerTypePosition = settings.getInt("timer_type");
+                timerType.setText(timerTypePosition == TIMER_TYPE_DOWN ? R.string.timer_type_down : R.string.timer_type_up);
+            }
+            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getBoolean("record_player"));
+            if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getBoolean("record_pens"));
+            if(settings.has("delay_end")) cbDelayEnd.setChecked(settings.getBoolean("delay_end"));
+
+            if(has_changed){return;}
+            if(settings.has("home_name")){
+                String home_name = settings.getString("home_name");
+                etHomeName.setText(home_name.equals(Main.HOME_ID) ? "" : home_name);
+            }
             if(settings.has("home_color")) Translator.setTeamColorSpin(getContext(), sHomeColor, settings.getString("home_color"));
-            if(settings.has("away_name")) etAwayName.setText(settings.getString("away_name"));
+            if(settings.has("away_name")){
+                String away_name = settings.getString("away_name");
+                etAwayName.setText(away_name.equals(Main.AWAY_ID) ? "" : away_name);
+            }
             if(settings.has("away_color")) Translator.setTeamColorSpin(getContext(), sAwayColor, settings.getString("away_color"));
 
-            if(settings.has("match_type")) Translator.setMatchTypeSpin(getContext(), sMatchType, settings.getString("match_type"));
-            if(settings.has("period_time")) etTimePeriod.setText(String.valueOf(settings.getInt("period_time")));
+            if(settings.has("match_type")){
+                int matchTypeIndex = Translator.setMatchTypeSpin(getContext(), sMatchType, settings.getString("match_type"));
+                if(matchTypeIndex == 0){
+                    showMatchTypeDetails();
+                }else if(matchTypeIndex > 5){
+                    findViewById(R.id.bDelCustom).setVisibility(View.VISIBLE);
+                }
+            }
+            if(settings.has("period_time")) etPeriodTime.setText(String.valueOf(settings.getInt("period_time")));
             if(settings.has("period_count")) etPeriodCount.setText(String.valueOf(settings.getInt("period_count")));
             if(settings.has("sinbin")) etSinbin.setText(String.valueOf(settings.getInt("sinbin")));
             if(settings.has("points_try")) etPointsTry.setText(String.valueOf(settings.getInt("points_try")));
             if(settings.has("points_con")) etPointsCon.setText(String.valueOf(settings.getInt("points_con")));
             if(settings.has("points_goal")) etPointsGoal.setText(String.valueOf(settings.getInt("points_goal")));
-
-            if(settings.has("screen_on")) cbScreenOn.setChecked(settings.getBoolean("screen_on"));
-            if(settings.has("timer_type")) sTimerType.setSelection(settings.getInt("timer_type"));
-            if(settings.has("record_player")) cbRecordPlayer.setChecked(settings.getBoolean("record_player"));
-            if(settings.has("record_pens")) cbRecordPens.setChecked(settings.getBoolean("record_pens"));
+            if(settings.has("clock_pk")) etClockPK.setText(String.valueOf(settings.getInt("clock_pk")));
+            if(settings.has("clock_con")) etClockCon.setText(String.valueOf(settings.getInt("clock_con")));
+            if(settings.has("clock_restart")) etClockRestart.setText(String.valueOf(settings.getInt("clock_restart")));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.gotSettings Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_receive_settings, Toast.LENGTH_SHORT).show();
@@ -302,9 +393,8 @@ public class TabPrepare extends LinearLayout{
             br.close();
             String sMatches = text.toString();
             JSONArray jsonMatchTypes = new JSONArray(sMatches);
-            for(int i = 0; i < jsonMatchTypes.length(); i++){
+            for(int i=0; i<jsonMatchTypes.length(); i++)
                 customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
-            }
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
             Log.d(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
@@ -316,12 +406,12 @@ public class TabPrepare extends LinearLayout{
     private void loadCustomMatchTypesSpinner(){
         try{
             ArrayList<String> alMatchTypes = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.matchTypes)));
-            for(int i = 0; i < customMatchTypes.length(); i++){
+            for(int i=0; i<customMatchTypes.length(); i++)
                 alMatchTypes.add(customMatchTypes.getJSONObject(i).getString("name"));
-            }
             ArrayAdapter<String> aaMatchTypes = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, alMatchTypes);
             aaMatchTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             sMatchType.setAdapter(aaMatchTypes);
+            sMatchType.setSelection(1);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypesSpinner Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
@@ -329,15 +419,19 @@ public class TabPrepare extends LinearLayout{
     }
     private void loadCustomMatchType(String name){
         try{
-            for(int i=0; i < customMatchTypes.length(); i++){
+            for(int i=0; i<customMatchTypes.length(); i++){
                 JSONObject matchType = customMatchTypes.getJSONObject(i);
                 if(matchType.getString("name").equals(name)){
-                    etTimePeriod.setText(matchType.getString("period_time"));
+                    etPeriodTime.setText(matchType.getString("period_time"));
                     etPeriodCount.setText(matchType.getString("period_count"));
                     etSinbin.setText(matchType.getString("sinbin"));
                     etPointsTry.setText(matchType.getString("points_try"));
                     etPointsCon.setText(matchType.getString("points_con"));
                     etPointsGoal.setText(matchType.getString("points_goal"));
+                    etClockPK.setText(matchType.getString("clock_pk"));
+                    etClockCon.setText(matchType.getString("clock_con"));
+                    etClockRestart.setText(matchType.getString("clock_restart"));
+                    break;
                 }
             }
         }catch(Exception e){
@@ -348,7 +442,7 @@ public class TabPrepare extends LinearLayout{
     private void bDelCustomClick(){
         String name = sMatchType.getSelectedItem().toString();
         try{
-            for(int i=0; i < customMatchTypes.length(); i++){
+            for(int i=0; i<customMatchTypes.length(); i++){
                 JSONObject matchType = customMatchTypes.getJSONObject(i);
                 if(matchType.getString("name").equals(name)){
                     customMatchTypes.remove(i);
@@ -357,6 +451,7 @@ public class TabPrepare extends LinearLayout{
             }
             storeCustomMatchTypes();
             loadCustomMatchTypesSpinner();
+            main.sendSyncRequest();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.bDelCustomClick Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_del_match_type, Toast.LENGTH_SHORT).show();
@@ -366,14 +461,13 @@ public class TabPrepare extends LinearLayout{
         if(checkSettings()) return;
         EditText etName = new EditText(getContext());
         etName.setHint(R.string.custom_match_hint);
-        etName.setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                                    48,
-                                    etName.getResources().getDisplayMetrics())
-        );
+        etName.setMinHeight(getResources().getDimensionPixelSize(R.dimen._48dp));
+        if(sMatchType.getSelectedItemPosition() > 5)
+            etName.setText(sMatchType.getSelectedItem().toString());
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.save_match_type)
                 .setView(etName)
-                .setPositiveButton(R.string.save, (dialog1, which) -> saveCustomMatch(etName.getText().toString()))
+                .setPositiveButton(R.string.save, (d, w)->saveCustomMatch(etName.getText().toString()))
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.show();
@@ -381,11 +475,12 @@ public class TabPrepare extends LinearLayout{
     private void saveCustomMatch(String name){
         try{
             boolean overwrite = false;
-            for(int i=0; i < customMatchTypes.length(); i++){
+            for(int i=0; i<customMatchTypes.length(); i++){
                 JSONObject matchType = customMatchTypes.getJSONObject(i);
                 if(matchType.getString("name").equals(name)){
                     overwrite = true;
                     customMatch(matchType);
+                    break;
                 }
             }
             if(!overwrite){
@@ -398,10 +493,12 @@ public class TabPrepare extends LinearLayout{
             loadCustomMatchTypesSpinner();
             SpinnerAdapter sa = sMatchType.getAdapter();
             for(int i=sa.getCount()-1; i>=0; i--){
-                if(sa.getItem(i).toString().equals(name)) {
+                if(sa.getItem(i).toString().equals(name)){
                     sMatchType.setSelection(i);
-             }
+                    break;
+                }
             }
+            main.sendSyncRequest();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.saveCustomMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
@@ -409,12 +506,15 @@ public class TabPrepare extends LinearLayout{
     }
     private void customMatch(JSONObject cm){
         try{
-            cm.put("period_time", etTimePeriod.getText().toString());
+            cm.put("period_time", etPeriodTime.getText().toString());
             cm.put("period_count", etPeriodCount.getText().toString());
             cm.put("sinbin", etSinbin.getText().toString());
             cm.put("points_try", etPointsTry.getText().toString());
             cm.put("points_con", etPointsCon.getText().toString());
             cm.put("points_goal", etPointsGoal.getText().toString());
+            cm.put("clock_pk", etClockPK.getText().toString());
+            cm.put("clock_con", etClockCon.getText().toString());
+            cm.put("clock_restart", etClockRestart.getText().toString());
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
@@ -440,7 +540,7 @@ public class TabPrepare extends LinearLayout{
             Toast.makeText(getContext(), R.string.away_name_empty, Toast.LENGTH_SHORT).show();
             return true;
         }
-        if(checkSettingsEditText(etTimePeriod, false)){
+        if(checkSettingsEditText(etPeriodTime, false)){
             Toast.makeText(getContext(), R.string.time_period_empty, Toast.LENGTH_SHORT).show();
             return true;
         }

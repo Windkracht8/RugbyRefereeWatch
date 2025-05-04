@@ -12,14 +12,6 @@
         android:text="@string/dialog_share_time"
         android:textColor="@color/text"/>
     <CheckBox
-        android:id="@+id/dialog_share_cards"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/dialog_share_cards"
-        android:textColor="@color/text"
-        android:checked="true"/>
-    <CheckBox
         android:id="@+id/dialog_share_pens"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"

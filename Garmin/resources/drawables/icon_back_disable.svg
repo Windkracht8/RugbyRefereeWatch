@@ -1,0 +1,18 @@
+<svg
+	width="32"
+	height="32"
+	viewBox="0 0 32 32"
+	xmlns="http://www.w3.org/2000/svg">
+<path
+	d="m 5,16 v 0 L 15,26 H 30 V 6 H 15 Z"
+	stroke-width="2"
+	stroke="#aaaaaa" />
+<path
+	d="M 16.49107,21.508931 27.508932,10.491069"
+	stroke-width="2"
+	stroke="#aaaaaa" />
+<path
+	d="M 27.5091,21.5091 16.491238,10.491238"
+	stroke-width="2"
+	stroke="#aaaaaa" />
+</svg>

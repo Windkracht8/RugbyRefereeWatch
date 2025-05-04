@@ -1,0 +1,15 @@
+<layout id="MatchLog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <bitmap id="back" x="0" y="center" filename="../drawables/icon_left.svg" />
+    <bitmap id="up" x="center" y="top" filename="../drawables/icon_up.svg" />
+    <bitmap id="down" x="center" y="bottom" filename="../drawables/icon_down.svg" />
+
+    <drawable id="match_log_bg_1" />
+    <text-area id="item_1_date" x="center" y="18%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_1_teams" x="center" y="28%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_1_result" x="center" y="38%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+    <drawable id="match_log_bg_2" />
+    <text-area id="item_2_date" x="center" y="52%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_2_teams" x="center" y="62%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+    <text-area id="item_2_result" x="center" y="72%" width="100%" height="10%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+</layout>
