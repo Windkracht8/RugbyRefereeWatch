@@ -269,7 +269,7 @@ public class Main extends Activity{
         score_home.setHeight(vh25);//will be resized to vh15 when sinbin is shown
         score_away.setHeight(vh25);
         findViewById(R.id.pen_label).getLayoutParams().height = vh15;
-        buttons_back.getLayoutParams().height = vh50;
+        buttons_back.getLayoutParams().height = vh45;
         bOverTimer.setHeight(vh25);
         bOverTimer.setPadding(0, vh5, 0, vh5);
         bStart.setHeight(vh25);
@@ -296,9 +296,13 @@ public class Main extends Activity{
         }
 
         if(isScreenRound){
-            bPenHome.setPadding(vw30, 0, 0, 0);
-            bPenAway.setPadding(0, 0, vw30, 0);
+            score_home.setPadding(_10dp, 0, 0, 0);
+            score_away.setPadding(0, 0, _10dp, 0);
             tTimer.setPadding(vh10, 0, vh10, 0);
+            int _5dp = getResources().getDimensionPixelSize(R.dimen._5dp);
+            bPenHome.setPadding(vw30, 0, 0, _5dp);
+            bPenAway.setPadding(0, 0, vw30, _5dp);
+            findViewById(R.id.pen_label).setPadding(0, 0, 0, _5dp);
         }
 
         if(timer_status == TimerStatus.CONF){
@@ -899,18 +903,18 @@ public class Main extends Activity{
         }
 
         if(Main.record_pens){
-            findViewById(R.id.bPenHome).setVisibility(View.VISIBLE);
+            bPenHome.setVisibility(View.VISIBLE);
             findViewById(R.id.pen_label).setVisibility(View.VISIBLE);
-            findViewById(R.id.bPenAway).setVisibility(View.VISIBLE);
+            bPenAway.setVisibility(View.VISIBLE);
             ((ConstraintLayout.LayoutParams)tTimer.getLayoutParams()).bottomMargin = 0;
             if(isScreenRound){
                 kickClockHome.setPadding(vh10, 0, _10dp, vh5);
                 kickClockAway.setPadding(_10dp, 0, vh10, vh5);
             }
         }else{
-            findViewById(R.id.bPenHome).setVisibility(View.GONE);
+            bPenHome.setVisibility(View.GONE);
             findViewById(R.id.pen_label).setVisibility(View.GONE);
-            findViewById(R.id.bPenAway).setVisibility(View.GONE);
+            bPenAway.setVisibility(View.GONE);
             ((ConstraintLayout.LayoutParams)tTimer.getLayoutParams()).bottomMargin = vh10;
             if(isScreenRound){
                 kickClockHome.setPadding(vh10, 0, _10dp, vh10);
