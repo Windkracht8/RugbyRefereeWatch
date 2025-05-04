@@ -117,7 +117,7 @@ public class Main extends Activity{
     static int timer_type_period = TIMER_TYPE_DOWN;
 
     //Kick clocks
-    private enum KickClockTypes {PK, CON, RESTART}
+    private enum KickClockTypes{PK, CON, RESTART}
     private KickClockTypes kickClockType_home;
     private KickClockTypes kickClockType_away;
     private long kick_clock_home_end = -100;
@@ -192,20 +192,20 @@ public class Main extends Activity{
 
         // We need to listen for touch on all objects that have a click listener
         for(int id : new int[]{
-                R.id.main, R.id.bConfWatch, R.id.home, R.id.score_home, R.id.away, R.id.score_away
-                ,R.id.tTimer, R.id.kickClockHome, R.id.kickClockAway
-                ,R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer
-                ,R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf
-                ,R.id.kick_clock_confirm_no, R.id.kick_clock_confirm_yes
-                ,R.id.confWatch
-                ,R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal
-                ,R.id.foulPlay, R.id.foul_play, R.id.card_yellow
-                ,R.id.penaltyTry, R.id.card_red
-                ,R.id.b_0, R.id.b_1, R.id.b_2, R.id.b_3, R.id.b_4, R.id.b_5, R.id.b_6, R.id.b_7
-                ,R.id.b_8, R.id.b_9, R.id.b_back, R.id.b_done
-                ,R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min
-                ,R.id.extra_time_10min
-                ,R.id.correct, R.id.svCorrect
+                R.id.main, R.id.bConfWatch, R.id.home, R.id.score_home, R.id.away, R.id.score_away,
+                R.id.tTimer, R.id.kickClockHome, R.id.kickClockAway,
+                R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer,
+                R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
+                R.id.kick_clock_confirm_no, R.id.kick_clock_confirm_yes,
+                R.id.confWatch,
+                R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal,
+                R.id.foulPlay, R.id.foul_play, R.id.card_yellow,
+                R.id.penaltyTry, R.id.card_red,
+                R.id.b_0, R.id.b_1, R.id.b_2, R.id.b_3, R.id.b_4, R.id.b_5, R.id.b_6, R.id.b_7,
+                R.id.b_8, R.id.b_9, R.id.b_back, R.id.b_done,
+                R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min,
+                R.id.extra_time_10min,
+                R.id.correct, R.id.svCorrect
         })findViewById(id).setOnTouchListener(this::onTouch);
         findViewById(R.id.main).setOnClickListener(v->onMainClick());
 
@@ -341,8 +341,8 @@ public class Main extends Activity{
                     || !hasBTPermission
             ){
                 ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.POST_NOTIFICATIONS
-                        ,Manifest.permission.BLUETOOTH_CONNECT}, 1);
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.BLUETOOTH_CONNECT}, 1);
             }
         }else if(Build.VERSION.SDK_INT >= 31){
             hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT);
@@ -1177,9 +1177,9 @@ public class Main extends Activity{
         long timestamp = System.currentTimeMillis();
         MatchData.Event event = match.logEvent("YELLOW CARD", score.team.id, timestamp);
         MatchData.Sinbin sinbin = score.team.addSinbin(
-                timestamp
-                ,getDurationFull(timestamp)+(match.sinbin*60)
-                ,score.team.id
+                timestamp,
+                getDurationFull(timestamp)+(match.sinbin*60),
+                score.team.id
         );
         updateSinbins();
         score.team.yellow_cards++;
@@ -1453,9 +1453,9 @@ public class Main extends Activity{
         if(!exists){
             NotificationChannel channel =
                     new NotificationChannel(
-                            NOTIFICATION_CHANNEL_ID
-                            , getString(R.string.time_up)
-                            , NotificationManager.IMPORTANCE_HIGH
+                            NOTIFICATION_CHANNEL_ID,
+                            getString(R.string.time_up),
+                            NotificationManager.IMPORTANCE_HIGH
                     );
             channel.enableVibration(true);
             channel.setVibrationPattern(ve_waveForm);
@@ -1464,9 +1464,9 @@ public class Main extends Activity{
         if(!exists_ongoing){
             notificationManager.createNotificationChannel(
                     new NotificationChannel(
-                            NOTIFICATION_CHANNEL_ID_ONGOING
-                            , getString(R.string.match_ongoing)
-                            , NotificationManager.IMPORTANCE_DEFAULT
+                            NOTIFICATION_CHANNEL_ID_ONGOING,
+                            getString(R.string.match_ongoing),
+                            NotificationManager.IMPORTANCE_DEFAULT
                     )
             );
         }

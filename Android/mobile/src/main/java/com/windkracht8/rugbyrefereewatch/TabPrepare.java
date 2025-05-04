@@ -212,7 +212,7 @@ public class TabPrepare extends LinearLayout{
         aaTeamColors.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sHomeColor.setAdapter(aaTeamColors);
         sHomeColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 if(position != sHomeColorPosition) has_changed = true;
                 Main.sharedPreferences_editor.putInt("sHomeColorPosition", position);
                 Main.sharedPreferences_editor.apply();
@@ -221,7 +221,7 @@ public class TabPrepare extends LinearLayout{
         });
         sAwayColor.setAdapter(aaTeamColors);
         sAwayColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
                 if(position != sAwayColorPosition) has_changed = true;
                 Main.sharedPreferences_editor.putInt("sAwayColorPosition", position);
                 Main.sharedPreferences_editor.apply();

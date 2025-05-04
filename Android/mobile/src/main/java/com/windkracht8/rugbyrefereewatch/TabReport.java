@@ -258,7 +258,7 @@ public class TabReport extends LinearLayout{
 
     void bDelClick(int event_id){
         try{
-            for(int i=0; i<llEvents.getChildCount(); i++) {
+            for(int i=0; i<llEvents.getChildCount(); i++){
                 ReportEventEdit ree = (ReportEventEdit) llEvents.getChildAt(i);
                 JSONObject event = ree.toJson();
                 if(event.getInt("id") == event_id){

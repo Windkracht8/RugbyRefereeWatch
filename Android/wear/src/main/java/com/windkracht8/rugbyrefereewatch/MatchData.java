@@ -281,7 +281,7 @@ public class MatchData{
                         evt.put("who", who);
                     }
                 }
-                if(score != null) {
+                if(score != null){
                     evt.put("score", score);
                 }
             }catch(JSONException e){

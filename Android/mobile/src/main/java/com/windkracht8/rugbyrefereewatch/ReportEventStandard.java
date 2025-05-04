@@ -30,7 +30,7 @@ class ReportEventStandard extends ReportEvent{
                 tvLeft.setText(String.valueOf(score[0]));
                 tvRight.setText(String.valueOf(score[1]));
                 tvMiddle.setText(what_local);
-                int width = (getWidth() - tvMiddle.getWidth()) / 2;
+                int width = (getWidth()-tvMiddle.getWidth())/2;
                 tvLeft.setWidth(width);
                 tvRight.setWidth(width);
                 findViewById(R.id.tvReason).setVisibility(View.VISIBLE);

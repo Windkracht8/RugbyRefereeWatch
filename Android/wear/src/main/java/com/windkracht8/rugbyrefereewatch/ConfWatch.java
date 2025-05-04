@@ -26,10 +26,10 @@ public class ConfWatch extends LinearLayout{
         isInitialized = true;
         LinearLayout llConfWatch = findViewById(R.id.llConfWatch);
         for(ConfItem.ConfItemType confItemType : new ConfItem.ConfItemType[]{
-                ConfItem.ConfItemType.TIMER_TYPE
-                ,ConfItem.ConfItemType.RECORD_PENS
-                ,ConfItem.ConfItemType.RECORD_PLAYER
-                ,ConfItem.ConfItemType.SCREEN_ON
+                ConfItem.ConfItemType.TIMER_TYPE,
+                ConfItem.ConfItemType.RECORD_PENS,
+                ConfItem.ConfItemType.RECORD_PLAYER,
+                ConfItem.ConfItemType.SCREEN_ON
         }){
             ConfItem confItem = new ConfItem(getContext(), confItemType);
             confItem.setOnClickListener(v->onConfItemClick((ConfItem)v, confItemType));

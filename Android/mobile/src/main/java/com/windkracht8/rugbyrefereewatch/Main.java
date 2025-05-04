@@ -129,20 +129,20 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
                     && hasPermission(android.Manifest.permission.BLUETOOTH_SCAN);
             if(!hasBTPermission){
-                ActivityCompat.requestPermissions(this
-                        ,new String[]{
-                                Manifest.permission.BLUETOOTH_CONNECT
-                                ,Manifest.permission.BLUETOOTH_SCAN
-                        }
-                        ,1
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.BLUETOOTH_CONNECT,
+                                Manifest.permission.BLUETOOTH_SCAN
+                        },
+                        1
                 );
             }
         }else{
             hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
             if(!hasBTPermission){
-                ActivityCompat.requestPermissions(this
-                        ,new String[]{Manifest.permission.BLUETOOTH}
-                        ,1
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH},
+                        1
                 );
             }
         }
@@ -361,7 +361,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         if(commsBT == null) return;
         switch(commsBT.status){
             case CONNECTING, CONNECTED -> commsBT.stopBT();
-            case DISCONNECTED -> {
+            case DISCONNECTED ->{
                 Intent startDeviceSelect = new Intent(this, DeviceSelect.class);
                 startDeviceSelect.putExtra("restartBT", true);
                 startActivity(startDeviceSelect);

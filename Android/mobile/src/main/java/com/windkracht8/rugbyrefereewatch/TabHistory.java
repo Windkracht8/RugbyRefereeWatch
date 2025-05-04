@@ -209,7 +209,7 @@ public class TabHistory extends LinearLayout{
                     long matchid = tmp.match.getLong("matchid");
                     deleted_matches.add(matchid);
                     for(int j=matches.size()-1; j>=0; j--){
-                        if(matches.get(j).getLong("matchid") == matchid) {
+                        if(matches.get(j).getLong("matchid") == matchid){
                             matches.remove(j);
                             break;
                         }
