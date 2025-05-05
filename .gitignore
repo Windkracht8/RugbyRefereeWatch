@@ -1,11 +1,3 @@
-*.diff
-
-Tizen/.settings
-Tizen/.sign
-Tizen/.project
-Tizen/.tproject
-*.wgt
-
 Android/.gradle
 Android/.idea
 Android/build
@@ -17,12 +9,8 @@ Android/mobile/release
 Android/wear/build
 Android/wear/debug
 Android/wear/release
-*.jks
-*.pepk
-*.aab
-*.apk
-*.iml
-local.properties
+Android/*.jks
+Android/local.properties
 
 Garmin/bin
 Garmin/.vscode

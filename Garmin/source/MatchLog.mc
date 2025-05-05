@@ -1,3 +1,10 @@
+/*
+ * Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+ * This file is part of RugbyRefereeWatch
+ * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import Toybox.Graphics;
 import Toybox.WatchUi;
 
@@ -35,13 +42,13 @@ class MatchLog extends View{
 	function go(Index){
 		index = Index;
 		var match = FileStore.readMatch(match_ids[index*2]);
-		v_item_1_date.setText(Utils.prettyTime(match.match_id/1000));
+		v_item_1_date.setText(Utils.prettyDate(match.match_id/1000));
 		v_item_1_teams.setText(match.home.team + " : " + match.away.team);
 		v_item_1_result.setText(match.home.tot + " : " + match.away.tot);
 
 		if(match_ids.size()>=(index*2+1)){
 			match = FileStore.readMatch(match_ids[index*2+1]);
-			v_item_2_date.setText(Utils.prettyTime(match.match_id/1000));
+			v_item_2_date.setText(Utils.prettyDate(match.match_id/1000));
 			v_item_2_teams.setText(match.home.team + " : " + match.away.team);
 			v_item_2_result.setText(match.home.tot + " : " + match.away.tot);
 		}else{

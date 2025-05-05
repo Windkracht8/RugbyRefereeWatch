@@ -1,3 +1,10 @@
+/*
+ * Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+ * This file is part of RugbyRefereeWatch
+ * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import Toybox.Lang;
 
 class MatchData{
@@ -16,7 +23,7 @@ class MatchData{
 	var points_con = 2;
 	var points_goal = 3;
 	var clock_pk = 60;
-	var clock_con = 60;
+	var clock_con = 90;
 	var clock_restart = 0;
 
 	function initialize(){
@@ -134,6 +141,7 @@ class MatchData{
 		for(var i=0; i<events.size(); i++){
 			if(event_id.toLong() == events[i].id.toLong()){
 				event = events[i];
+				if(event.what.equals("START")){return false;}
 				if(i == events.size()-1){
 					if(event.team.equals(HOME_ID)){
 						MainView.main.kickClockHomeHide();
@@ -146,7 +154,7 @@ class MatchData{
 		}
 		if(event == null){
 			System.println("Event not found: " + event_id);
-			return;
+			return true;
 		}
 		event.deleted = !event.deleted;
 		var team = event.team.equals(HOME_ID) ? MainView.main.match.home : MainView.main.match.away;
@@ -208,6 +216,7 @@ class MatchData{
 				}
 				break;
 		}
+		return true;
 	}
 
 	class Team{

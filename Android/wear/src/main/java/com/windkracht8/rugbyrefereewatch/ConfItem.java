@@ -1,3 +1,11 @@
+/*
+ * Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+ * This file is part of RugbyRefereeWatch
+ * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
@@ -71,39 +79,30 @@ class ConfItem extends LinearLayout{
                 break;
             case PERIOD_TIME:
                 confItemValue.setText(String.valueOf(Main.match.period_time));
-                Main.match.match_type = "custom";
                 break;
             case PERIOD_COUNT:
                 confItemValue.setText(String.valueOf(Main.match.period_count));
-                Main.match.match_type = "custom";
                 break;
             case SINBIN:
                 confItemValue.setText(String.valueOf(Main.match.sinbin));
-                Main.match.match_type = "custom";
                 break;
             case POINTS_TRY:
                 confItemValue.setText(String.valueOf(Main.match.points_try));
-                Main.match.match_type = "custom";
                 break;
             case POINTS_CON:
                 confItemValue.setText(String.valueOf(Main.match.points_con));
-                Main.match.match_type = "custom";
                 break;
             case POINTS_GOAL:
                 confItemValue.setText(String.valueOf(Main.match.points_goal));
-                Main.match.match_type = "custom";
                 break;
             case CLOCK_PK:
                 confItemValue.setText(String.valueOf(Main.match.clock_pk));
-                Main.match.match_type = "custom";
                 break;
             case CLOCK_CON:
                 confItemValue.setText(String.valueOf(Main.match.clock_con));
-                Main.match.match_type = "custom";
                 break;
             case CLOCK_RESTART:
                 confItemValue.setText(String.valueOf(Main.match.clock_restart));
-                Main.match.match_type = "custom";
                 break;
             case SCREEN_ON:
                 if(Main.screen_on)

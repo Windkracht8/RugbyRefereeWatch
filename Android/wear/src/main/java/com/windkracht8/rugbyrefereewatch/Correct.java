@@ -1,3 +1,11 @@
+/*
+ * Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+ * This file is part of RugbyRefereeWatch
+ * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.windkracht8.rugbyrefereewatch;
 
 import android.content.Context;
@@ -27,20 +35,25 @@ public class Correct extends ScrollView{
         llCorrectItems.removeAllViews();
         for(int i = Main.match.events.size(); i > 0; i--){
             MatchData.Event event_data = Main.match.events.get(i-1);
-            if(!event_data.what.equals("TRY") &&
-                    !event_data.what.equals("CONVERSION") &&
-                    !event_data.what.equals("PENALTY TRY") &&
-                    !event_data.what.equals("PENALTY") &&
-                    !event_data.what.equals("GOAL") &&
-                    !event_data.what.equals("YELLOW CARD") &&
-                    !event_data.what.equals("RED CARD")
+            if(event_data.what.equals("TIME OFF") ||
+                    event_data.what.equals("RESUME") ||
+                    event_data.what.equals("END")//Wouldn't it be nice (Beach boys tune)
             ){
                 continue;
             }
             addItem(main, event_data);
         }
 
-        fullScroll(View.FOCUS_UP);
+        if(!fullScroll(View.FOCUS_UP)){
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+                @Override public void onGlobalLayout(){//yes, this seems excessive, scaling only works after it is initially rendered
+                    if(llCorrectItems.getChildCount() > 0 && llCorrectItems.getChildAt(0).getHeight() > 0){
+                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        scaleItems(0);
+                    }
+                }
+            });
+        }
         setVisibility(View.VISIBLE);
         animate().x(0).scaleX(1f).scaleY(1f).setDuration(0).start();
         requestFocus();
@@ -68,6 +81,15 @@ public class Correct extends ScrollView{
 
     private void addItem(Main main, MatchData.Event event){
         TextView item = new TextView(main, null, 0, R.style.textView_item_single);
+        if(event.what.equals("START")){
+            String text = Main.getPeriodName(main, event.period, Main.match.period_count) + " " +
+                            event.time;
+            item.setText(text);
+            item.setTextColor(getContext().getColor(R.color.hint));
+            llCorrectItems.addView(item);
+            main.addOnTouch(item);
+            return;
+        }
         String text = Utils.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(main, event.what);
         if(event.team != null){
             text += " " + Translator.getTeamLocal(main, event.team);
@@ -116,5 +138,4 @@ public class Correct extends ScrollView{
             item.setScaleY(scale);
         }
     }
-
 }
