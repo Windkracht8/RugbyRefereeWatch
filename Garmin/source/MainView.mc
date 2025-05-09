@@ -670,6 +670,7 @@ class MainView extends View{
 		v_end.setVisible(false);
 		kickClockHomeHide();
 		kickClockAwayHide();
+		v_timer.setText(Utils.prettyTimer(0));
 		requestUpdate();
 	}
 	function nextPeriod(){
@@ -791,6 +792,7 @@ class MainView extends View{
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
+		kickClockHomeDone();
 	}
 	function goalAway(){
 		match.away.goals++;
@@ -799,6 +801,7 @@ class MainView extends View{
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
+		kickClockAwayDone();
 	}
 	function yellowHome(){
 		match.home.yellow_cards++;
@@ -850,7 +853,7 @@ class MainView extends View{
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_CON){
 			pushView(new KickClockConfirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_RESTART){
-			kickClockHomeDone();
+			kickClockHomeHide();
 		}
 	}
 	function kickClockAwayClick(){
@@ -858,8 +861,8 @@ class MainView extends View{
 			pushView(new KickClockConfirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
 		}else if(kickClockType_away == KICK_CLOCK_TYPE_CON){
 			pushView(new KickClockConfirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
-		}else if(kickClockType_home == KICK_CLOCK_TYPE_RESTART){
-			kickClockAwayDone();
+		}else if(kickClockType_away == KICK_CLOCK_TYPE_RESTART){
+			kickClockAwayHide();
 		}
 	}
 	function kickClockConfirm(kickClockType, isHome){

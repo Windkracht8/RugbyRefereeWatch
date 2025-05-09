@@ -34,16 +34,15 @@ class KickClockConfirmDelegate extends BehaviorDelegate{
 	}
 	function onTap(evt){
 		if(evt.getCoordinates()[1] < MainView._50vh){return false;}
+		popView(SLIDE_UP);
 		if(evt.getCoordinates()[0] > MainView._50vw){
 			MainView.main.kickClockConfirm(kickClockType, isHome);
-			popView(SLIDE_UP);
 		}else{
 			if(isHome){
 				MainView.main.kickClockHomeDone();
 			}else{
 				MainView.main.kickClockAwayDone();
 			}
-			popView(SLIDE_UP);
 		}
 		return true;
 	}

@@ -38,15 +38,13 @@ class MainDelegate extends BehaviorDelegate{
 		if(y < MainView._25vh){
 			onConfWatchTap();
 		}else if(y < MainView._50vh){
-			var x = evt.getCoordinates()[0];
-			if(x < MainView._50vw){
+			if(evt.getCoordinates()[0] < MainView._50vw){
 				onHomeTap();
 			}else{
 				onAwayTap();
 			}
 		}else if(y < MainView._75vh){
-			var x = evt.getCoordinates()[0];
-			if(x < MainView._50vw){
+			if(evt.getCoordinates()[0] < MainView._50vw){
 				onOverTimerLeftTap();
 			}else{
 				onOverTimerRightTap();
@@ -54,8 +52,7 @@ class MainDelegate extends BehaviorDelegate{
 		}else if(y < MainView._85vh){
 			onBottomTap();
 		}else{
-			var x = evt.getCoordinates()[0];
-			if(x < MainView._50vw){
+			if(evt.getCoordinates()[0] < MainView._50vw){
 				onPenHomeTap();
 			}else{
 				onPenAwayTap();
