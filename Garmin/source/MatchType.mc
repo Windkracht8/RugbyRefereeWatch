@@ -27,7 +27,7 @@ class MatchType extends Menu2{
 class MatchTypeDelegate extends Menu2InputDelegate{
 	function initialize(){Menu2InputDelegate.initialize();}
 	function onSelect(item){
-		System.println(item.getId());
+		//System.println(item.getId());
 		var match = MainView.main.match;
 		switch(item.getId()){
 			case "custom":

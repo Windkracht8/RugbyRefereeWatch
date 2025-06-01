@@ -211,19 +211,13 @@
 
     <!-- fail -->
     <string name="fail_unexpected">unexpected error</string>
-    <string name="fail_sync_match_types">Failed to sync match types</string>
     <string name="fail_read_match_types">Failed to read match types from storage</string>
     <string name="fail_load_match_type">Failed to load match type</string>
-    <string name="fail_save_matches">Failed to save matches</string>
-    <string name="fail_read_matches">Failed to read matches</string>
+    <string name="fail_store_match">Failed to store match</string>
     <string name="fail_clean_matches">Failed to cleanup matches</string>
-    <string name="fail_del_matches">Failed to delete matches</string>
     <string name="fail_store_settings">Failed to store settings</string>
     <string name="fail_read_settings">Failed to read settings</string>
     <string name="fail_receive_settings">Failed to receive settings</string>
-    <string name="fail_store_match_types">Failed to store match types</string>
-    <string name="fail_read_file">Failed to read file</string>
-    <string name="fail_store_file">Failed to store file</string>
     <string name="fail_read_match">Failed to read match</string>
     <string name="fail_show_log">Failed to show log</string>
 </resources>

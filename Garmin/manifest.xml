@@ -5,7 +5,7 @@
         Use "Monkey C: Edit Application" from the Visual Studio Code command palette
         to update the application attributes.
     -->
-    <iq:application id="a5e772cf-ce6a-4cf0-8213-3e2e8c52ffba" type="watch-app" name="@Strings.RugbyRefereeWatch" entry="MainApp" launcherIcon="@Drawables.icon" minApiLevel="3.3.0">
+    <iq:application id="A5E772CFCE6A4CF082133E2E8C52FFBA" type="watch-app" name="@Strings.RugbyRefereeWatch" entry="MainApp" launcherIcon="@Drawables.icon" minApiLevel="3.3.0">
         <!--
             Use the following from the Visual Studio Code comand palette to edit
             the build targets:
@@ -46,6 +46,8 @@
             <iq:product id="fr265s"/>
             <iq:product id="fr955"/>
             <iq:product id="fr965"/>
+            <iq:product id="instinct3amoled45mm"/>
+            <iq:product id="instinct3amoled50mm"/>
             <iq:product id="legacyherocaptainmarvel"/>
             <iq:product id="legacyherofirstavenger"/>
             <iq:product id="legacysagadarthvader"/>
@@ -72,7 +74,7 @@
             palette to update permissions.
         -->
         <iq:permissions>
-            <iq:uses-permission id="BluetoothLowEnergy"/>
+            <iq:uses-permission id="Communications"/>
         </iq:permissions>
         <!--
             Use "Monkey C: Edit Languages" from the Visual Studio Code command

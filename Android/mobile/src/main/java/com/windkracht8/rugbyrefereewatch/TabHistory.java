@@ -34,8 +34,8 @@ public class TabHistory extends LinearLayout{
     private final LinearLayout llMatches;
     private final Button bExport;
     private final Button bDelete;
-    private final ArrayList<JSONObject> matches = new ArrayList<>();
-    private final ArrayList<Long> deleted_matches = new ArrayList<>();
+    static final ArrayList<JSONObject> matches = new ArrayList<>();
+    static final ArrayList<Long> deleted_matches = new ArrayList<>();
     boolean selecting = false;
 
     public TabHistory(Context context, AttributeSet attrs){
@@ -69,7 +69,7 @@ public class TabHistory extends LinearLayout{
         storeMatches();
         cleanDeletedMatches(matches_new);
     }
-    private void insertMatch(JSONObject match){//Thread: BG
+    void insertMatch(JSONObject match){//Thread: BG
         try{
             long match_id = match.getLong("matchid");
             if(deleted_matches.contains(match_id)) return;
@@ -83,6 +83,7 @@ public class TabHistory extends LinearLayout{
                 if(match_id == match2_id) return;
             }
             matches.add(match);
+            storeMatches();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.insertMatch Exception: " + e.getMessage());
             main.toast(R.string.fail_receive_matches);
@@ -104,19 +105,9 @@ public class TabHistory extends LinearLayout{
             }
         }
     }
-    JSONArray getDeletedMatches(){
-        try{
-            JSONArray jaDeletedMatches = new JSONArray();
-            for(int i=0; i<deleted_matches.size(); i++)
-                jaDeletedMatches.put(deleted_matches.get(i));
-            return jaDeletedMatches;
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "TabHistory.getDeletedMatches Exception: " + e.getMessage());
-        }
-        return null;
-    }
     private void loadMatches(){//Thread: BG
         try{
+            matches.clear();
             FileInputStream fis = main.openFileInput(main.getString(R.string.matches_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
@@ -129,7 +120,7 @@ public class TabHistory extends LinearLayout{
             checkFormatOfMatches();
             main.runOnUiThread(()->showMatches(true));
         }catch(FileNotFoundException e){
-            Log.d(Main.LOG_TAG, "TabHistory.loadMatches Matches file does not exists yet");
+            storeMatches();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches matches Exception: " + e.getMessage());
             main.toast(R.string.fail_read_matches);
@@ -146,12 +137,12 @@ public class TabHistory extends LinearLayout{
             JSONArray jsonDM = new JSONArray(text.toString());
             for(int i=0; i<jsonDM.length(); i++) deleted_matches.add(jsonDM.getLong(i));
         }catch(FileNotFoundException e){
-            Log.d(Main.LOG_TAG, "TabHistory.loadMatches Deleted matches file does not exists yet");
+            storeMatches();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabHistory.loadMatches deleted_matches Exception: " + e.getMessage());
         }
     }
-    private void showMatches(boolean showLatest){
+    void showMatches(boolean showLatest){
         try{
             matches.sort((m1, m2)->{
                 try{
@@ -231,7 +222,10 @@ public class TabHistory extends LinearLayout{
         }
         showMatches(true);
         selectionChanged();
-        main.runInBackground(this::storeMatches);
+        main.runInBackground(()->{
+            storeMatches();
+            main.sendSyncRequest();
+        });
     }
     void selectionChanged(){
         bExport.setVisibility(View.GONE);

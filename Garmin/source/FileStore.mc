@@ -15,10 +15,10 @@ class FileStore{
 	static function read(){
 		match_ids = Storage.getValue("match_ids") as Array<Long>;
 		if(match_ids == null){match_ids = [] as Array<Long>;}
-		System.println("FileStore.read match_ids: " + match_ids);
+		//System.println("FileStore.read match_ids: " + match_ids);
 		customMatchTypes = Storage.getValue("customMatchTypes") as Array<String>;
 		if(customMatchTypes == null){customMatchTypes = [] as Array<String>;}
-		System.println("FileStore.read customMatchTypes: " + customMatchTypes);
+		//System.println("FileStore.read customMatchTypes: " + customMatchTypes);
 	}
 	static function readMatch(match_id as Long) as MatchData{
 		var match = new MatchData();
@@ -27,14 +27,14 @@ class FileStore{
 	}
 	(:typecheck(false))//Check fails on match_ids
 	static function storeMatch(match as MatchData){
-		System.println("FileStore.storeMatch " + match.match_id);
+		//System.println("FileStore.storeMatch " + match.match_id);
 		if(match_ids.size() >= 10){delMatch(match_ids[0]);}
 		Storage.setValue(match.match_id, match.toDictionary());
 		match_ids.add(match.match_id);
 		Storage.setValue("match_ids", match_ids);
 	}
 	static function delMatch(match_id as Long){
-		System.println("FileStore.delMatch " + match_id);
+		//System.println("FileStore.delMatch " + match_id);
 		Storage.deleteValue(match_id);
 		match_ids.remove(match_id);
 		Storage.setValue("match_ids", match_ids);
@@ -43,7 +43,7 @@ class FileStore{
 		return Storage.getValue(name);
 	}
 	static function storeCustomMatchType(customMatchType){
-		System.println("FileStore.storeCustomMatchType " + customMatchType.name);
+		//System.println("FileStore.storeCustomMatchType " + customMatchType.name);
 		Storage.setValue(customMatchType.name, customMatchType.toDictionary());
 		if(customMatchTypes.indexOf(customMatchType.name) == -1){
 			customMatchTypes.add(customMatchType.name);
@@ -51,7 +51,7 @@ class FileStore{
 		Storage.setValue("customMatchTypes", customMatchTypes);
 	}
 	static function delCustomMatchType(customMatchType_name){
-		System.println("FileStore.delCustomMatchType " + customMatchType_name);
+		//System.println("FileStore.delCustomMatchType " + customMatchType_name);
 		Storage.deleteValue(customMatchType_name);
 		customMatchTypes.remove(customMatchType_name);
 		Storage.setValue("customMatchTypes", customMatchTypes);

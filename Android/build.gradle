@@ -15,16 +15,6 @@ buildscript{
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-Settings > Kotlin Compiler
-    Kotlin compiler version: 2.1.20
-    Language version: 2.1
-    API version: 2.1
-    Target JVM version: 21
-File > Project Structure > Project
-	Gradle Plugin Version: 8.10.0
-	Gradle Version: 8.14
-*/
 allprojects{
     repositories{
         google()

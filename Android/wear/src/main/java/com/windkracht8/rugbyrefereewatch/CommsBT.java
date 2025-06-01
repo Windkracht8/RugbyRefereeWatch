@@ -52,40 +52,77 @@ class CommsBT{
             String requestType = requestMessage.getString("requestType");
             switch(requestType){
                 case "sync":
-                    onReceiveSync(requestMessage.getString("requestData"));
+                    //pre 2025 {"requestType":"sync","requestData":{"deleted_matches":[],"custom_match_types":[]}}
+                    //jun 2025 {"version":2,"requestType":"sync","requestData":{"deleted_matches":[],"custom_match_types":[]}}
+                    //2026 {"requestType":"sync","requestData":{"custom_match_types":[]}}
+                    onReceiveSync(requestMessage);
+                    break;
+                case "getMatch":
+                    //{"requestType":"getMatch","requestData":123456789}
+                    onReceiveGetMatch(requestMessage.getLong("requestData"));
+                    break;
+                case "delMatch":
+                    //{"requestType":"delMatch","requestData":123456789}
+                    onReceiveDelMatch(requestMessage.getLong("requestData"));
                     break;
                 case "prepare":
-                    onReceivePrepare(requestMessage.getString("requestData"));
+                    //{"requestType":"prepare","requestData":{}}
+                    onReceivePrepare(requestMessage.getJSONObject("requestData"));
                     break;
                 default:
                     Log.e(Main.LOG_TAG, "CommsBTConnected.gotRequest Unknown requestType: " + requestType);
+                    sendResponse(requestType, main.getString(R.string.fail_unexpected));
             }
-
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBTConnected.gotRequest Exception: " + e.getMessage());
         }
     }
-    private void onReceiveSync(String requestData){
+    private void onReceiveSync(JSONObject requestMessage){
         try{
-            JSONObject settings = Main.getSettings();
-            if(settings == null) return;
+            JSONObject requestData = requestMessage.getJSONObject("requestData");
             JSONObject responseData = new JSONObject();
-            responseData.put("matches", FileStore.deletedMatches(main, requestData));
-            responseData.put("settings", settings);
-            sendSyncResponse(responseData);
-            FileStore.syncCustomMatchTypes(main, requestData);
+            if(requestMessage.has("version") || !requestMessage.has("deleted_matches")){//we can respond with match_ids
+                responseData.put("match_ids", FileStore.readMatchIds(main));
+            }else{
+                responseData.put("matches", FileStore.deletedMatches(main, requestData.getJSONArray("deleted_matches")));
+            }
+            responseData.put("settings", Main.getSettings());
+            FileStore.syncCustomMatchTypes(main, requestData.getJSONArray("custom_match_types"));
+            sendResponse("sync", responseData);
+            //pre 2025 {"requestType":"sync","responseData":{"matches":[],"settings":{}}}
+            //jun 2025 {"requestType":"sync","responseData":{"match_ids":[],"settings":{}}}
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", main.getString(R.string.fail_unexpected));
         }
     }
-    private void onReceivePrepare(String requestData){
+    private void onReceiveGetMatch(long match_id){
         try{
-            JSONObject requestData_json = new JSONObject(requestData);
-            if(main.incomingSettings(requestData_json)){
+            //{"requestType":"getMatch","responseData":{ match object }}
+            sendResponse("getMatch", FileStore.readMatch(main, match_id));
+        }catch(Exception e){
+            Log.e(Main.LOG_TAG, "CommsBT.onReceiveGetMatch Exception: " + e.getMessage());
+            sendResponse("getMatch", main.getString(R.string.fail_unexpected));
+        }
+    }
+    private void onReceiveDelMatch(long match_id){
+        try{
+            FileStore.delMatch(main, match_id);
+            //{"requestType":"delMatch","responseData":"okilly dokilly"}
+            sendResponse("delMatch","okilly dokilly");
+        }catch(Exception e){
+            Log.e(Main.LOG_TAG, "CommsBT.onReceiveGetMatch Exception: " + e.getMessage());
+            sendResponse("delMatch", main.getString(R.string.fail_unexpected));
+        }
+    }
+    private void onReceivePrepare(JSONObject requestData){
+        try{
+            if(main.incomingSettings(requestData)){
+                //{"requestType":"prepare","responseData":"okilly dokilly"}
                 sendResponse("prepare", "okilly dokilly");
                 FileStore.storeSettings(main);
             }else{
+                //{"requestType":"prepare","responseData":"match ongoing"}
                 sendResponse("prepare", "match ongoing");
             }
             main.runOnUiThread(main::updateAfterConfig);
@@ -94,24 +131,14 @@ class CommsBT{
             sendResponse("prepare", main.getString(R.string.fail_unexpected));
         }
     }
-    private void sendResponse(String requestType, String responseData){
+    private void sendResponse(String requestType, Object responseData){
         try{
             JSONObject response = new JSONObject();
             response.put("requestType", requestType);
             response.put("responseData", responseData);
             responseQueue.put(response);
         }catch(Exception e){
-            Log.e(Main.LOG_TAG, "CommsBT.sendResponse String Exception: " + e.getMessage());
-        }
-    }
-    private void sendSyncResponse(JSONObject responseData){
-        try{
-            JSONObject response = new JSONObject();
-            response.put("requestType", "sync");
-            response.put("responseData", responseData);
-            responseQueue.put(response);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "CommsBT.sendResponse JSONObject Exception: " + e.getMessage());
+            Log.e(Main.LOG_TAG, "CommsBT.sendResponse Exception: " + e.getMessage());
         }
     }
 

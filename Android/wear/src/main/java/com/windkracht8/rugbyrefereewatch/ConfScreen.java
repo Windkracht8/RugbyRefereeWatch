@@ -36,6 +36,7 @@ public abstract class ConfScreen extends Fragment{
     private static float bottom_quarter;
     private static float below_screen;
 
+    public ConfScreen(){}//Crash can happen if this is not there
     @Override public void onAttach(@NonNull Context context){
         super.onAttach(context);
         try{

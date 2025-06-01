@@ -8,12 +8,11 @@
 
 package com.windkracht8.rugbyrefereewatch;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Insets;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -30,6 +29,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +38,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.splashscreen.SplashScreen;
 
 import org.json.JSONArray;
@@ -53,7 +52,7 @@ import java.io.OutputStreamWriter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Main extends AppCompatActivity implements CommsBT.BTInterface{
+public class Main extends AppCompatActivity implements Comms.Interface{
     static final String LOG_TAG = "RugbyRefereeWatch";
     static final String HOME_ID = "home";
     static final String AWAY_ID = "away";
@@ -62,17 +61,19 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     static SharedPreferences.Editor sharedPreferences_editor;
     private ExecutorService executorService;
     private Handler handler;
-    static CommsBT commsBT;
+    static Comms comms;
 
     private ImageView icon;
     private TextView device;
     TabHistory tabHistory;
     TabReport tabReport;
     private TabPrepare tabPrepare;
+    private Button bSync;
+    private Button bPrepare;
 
     private boolean showSplash = true;
-    private static boolean hasBTPermission = false;
 
+    @SuppressLint("MissingInflatedId")//bSync and bPrepare
     @Override protected void onCreate(Bundle savedInstanceState){
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         splashScreen.setKeepOnScreenCondition(()->showSplash);
@@ -100,15 +101,21 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         tabPrepare = findViewById(R.id.tabPrepare);
         tabPrepare.onCreateMain(this);
 
-        checkPermissions();
-        startBT();
+        bSync = findViewById(R.id.bSync);
+        bPrepare = findViewById(R.id.bPrepare);
+
         showSplash = false;
+        Permissions.checkPermissions(this);
+        if(comms == null || comms.status == Comms.Status.DISCONNECTED) startComms();
     }
     @Override protected void onDestroy(){
         super.onDestroy();
         runInBackground(()->{
-            if(commsBT != null) commsBT.stopBT();
-            commsBT = null;
+            if(comms != null){
+                comms.stop();
+                comms.onDestroy(this);
+            }
+            comms = null;
         });
     }
     @Override protected void onResume(){
@@ -132,61 +139,21 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         }
     }
 
-    private void checkPermissions(){
-        if(Build.VERSION.SDK_INT >= 31){
-            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
-                    && hasPermission(android.Manifest.permission.BLUETOOTH_SCAN);
-            if(!hasBTPermission){
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.BLUETOOTH_CONNECT,
-                                Manifest.permission.BLUETOOTH_SCAN
-                        },
-                        1
-                );
-            }
-        }else{
-            hasBTPermission = hasPermission(Manifest.permission.BLUETOOTH);
-            if(!hasBTPermission){
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH},
-                        1
-                );
-            }
-        }
-    }
-    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for(int i=0; i<permissions.length; i++){
-            if(permissions[i].equals(Manifest.permission.BLUETOOTH_CONNECT) ||
-                permissions[i].equals(Manifest.permission.BLUETOOTH_SCAN) ||
-                permissions[i].equals(Manifest.permission.BLUETOOTH)){
-                if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
-                    hasBTPermission = true;
-                    startBT();
-                }else{
-                    onBTError(R.string.fail_BT_denied);
-                }
-                return;
-            }
-        }
-    }
-    private boolean hasPermission(String permission){
-        return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
-    }
     void runInBackground(Runnable runnable){
         if(executorService == null) executorService = Executors.newCachedThreadPool();
         executorService.execute(runnable);
     }
 
-    private void startBT(){
-        if(!hasBTPermission){
-            onBTStartDone();
+    private void startComms(){
+        if(!Permissions.hasBTPermission){
+            onCommsStartDone();
             return;
         }
-        commsBT = new CommsBT(this);
-        commsBT.addListener(this);
-        runInBackground(commsBT::startBT);
+        icon.setBackgroundResource(R.drawable.icon_watch_connecting);
+        icon.setColorFilter(getColor(R.color.icon_disabled));
+        ((AnimatedVectorDrawable) icon.getBackground()).start();
+        comms = new Comms(this);
+        runInBackground(comms::start);
     }
 
     static final View.OnApplyWindowInsetsListener onApplyWindowInsetsListener = new View.OnApplyWindowInsetsListener(){
@@ -230,12 +197,11 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
     boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);
     }
-    @Override public void onBTStartDone(){
-        if(commsBT == null){
-            onBTError(R.string.fail_BT_denied);
-            return;
-        }
-        if(commsBT.status == CommsBT.Status.CONNECTED) return;
+    @Override public void onCommsStartDone(){
+        if(comms == null ||
+                comms.status == Comms.Status.CONNECTED_BT ||
+                comms.status == Comms.Status.CONNECTED_IQ
+        ) return;
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.icon_disabled));
@@ -243,7 +209,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             device.setText(R.string.connect);
         });
     }
-    @Override public void onBTConnecting(String deviceName){
+    @Override public void onCommsConnecting(String deviceName){
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch_connecting);
             icon.setColorFilter(getColor(R.color.icon_disabled));
@@ -252,7 +218,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             device.setText(getString(R.string.connecting_to, deviceName));
         });
     }
-    @Override public void onBTConnectFailed(){
+    @Override public void onCommsConnectFailed(){
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.error));
@@ -260,61 +226,75 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
             device.setText(R.string.fail_BT);
         });
     }
-    @Override public void onBTConnected(String deviceName){
+    @Override public void onCommsConnected(String deviceName){
         runOnUiThread(()->{
             icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.text));
             device.setTextColor(getColor(R.color.text));
             device.setText(getString(R.string.connected_to, deviceName));
-            sendSyncRequest();
-            findViewById(R.id.bSync).setVisibility(View.VISIBLE);
-            findViewById(R.id.bPrepare).setVisibility(View.VISIBLE);
+            bSync.setVisibility(View.VISIBLE);
+            bPrepare.setVisibility(View.VISIBLE);
         });
     }
-    @Override public void onBTDisconnected(){
+    @Override public void onCommsSending(){
         runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch_connecting);
+            ((AnimatedVectorDrawable) icon.getBackground()).start();
+            bSync.setEnabled(false);
+            bSync.setTextColor(getColor(R.color.icon_disabled));
+            bPrepare.setEnabled(false);
+            bPrepare.setTextColor(getColor(R.color.icon_disabled));
+        });
+    }
+    @Override public void onCommsSendingFinished(){
+        runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
+            bSync.setEnabled(true);
+            bSync.setTextColor(getColor(R.color.button));
+            bPrepare.setEnabled(true);
+            bPrepare.setTextColor(getColor(R.color.button));
+        });
+    }
+    @Override public void onCommsDisconnected(){
+        runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.icon_disabled));
             device.setTextColor(getColor(R.color.text));
             device.setText(R.string.disconnected);
-            findViewById(R.id.bSync).setVisibility(View.GONE);
-            findViewById(R.id.bPrepare).setVisibility(View.GONE);
+            bSync.setVisibility(View.GONE);
+            bPrepare.setVisibility(View.GONE);
         });
     }
-    @Override public void onBTResponse(JSONObject response){
+    @Override public void onCommsResponse(Comms.Request.Type requestType, JSONObject responseData){
         try{
-            String requestType = response.getString("requestType");
             switch(requestType){
-                case "sync":
-                    JSONObject syncResponseData = response.getJSONObject("responseData");
-                    if(!syncResponseData.has("matches") || !syncResponseData.has("settings")){
-                        Log.e(Main.LOG_TAG, "Main.onBTResponse sync: Incomplete response");
+                case SYNC:
+                    if(responseData.has("matches")){//DEPRECATED
+                        JSONArray matches = responseData.getJSONArray("matches");
+                        tabHistory.gotMatches(matches);
                     }
-                    JSONArray matches = syncResponseData.getJSONArray("matches");
-                    JSONObject settings = syncResponseData.getJSONObject("settings");
-                    tabHistory.gotMatches(matches);
-                    runOnUiThread(()->{
-                        findViewById(R.id.bSync).setEnabled(true);
-                        tabPrepare.gotSettings(settings);
-                    });
+                    if(responseData.has("settings")){
+                        JSONObject settings = responseData.getJSONObject("settings");
+                        runOnUiThread(()->tabPrepare.gotSettings(settings));
+                    }
                     break;
-                case "prepare":
-                    runOnUiThread(()->findViewById(R.id.bPrepare).setEnabled(true));
-                    String prepareResponseData = response.getString("responseData");
-                    switch(prepareResponseData){
-                        case "unknown requestType"-> onBTError(R.string.update_watch_app);
-                        case "match ongoing"-> onBTError(R.string.match_ongoing);
-                        case "unexpected error"-> onBTError(R.string.fail_unexpected);
-                    }
+                case GET_MATCH:
+                    tabHistory.insertMatch(responseData);
+                    runOnUiThread(()->tabHistory.showMatches(true));
+                    break;
+                case PREP:
+                    runOnUiThread(()->bPrepare.setEnabled(true));
                     break;
             }
         }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.onBTResponse: " + e.getMessage());
-            onBTError(R.string.fail_response);
+            Log.e(Main.LOG_TAG, "Main.onCommsResponse: " + e.getMessage());
+            onCommsError(R.string.fail_response);
         }
     }
-    @Override public void onBTError(int message){
-        Log.d(LOG_TAG, "Main.onBTError: " + getString(message));
+    @Override public void onCommsError(int message){
+        Log.d(LOG_TAG, "Main.onCommsError: " + getString(message));
         runOnUiThread(()->{
+            icon.setBackgroundResource(R.drawable.icon_watch);
             icon.setColorFilter(getColor(R.color.error));
             device.setTextColor(getColor(R.color.error));
             device.setText(message);
@@ -366,14 +346,13 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         handler.postDelayed(()->findViewById(vid).setEnabled(true), 5000);
     }
     private void iconClick(){
-        if(commsBT == null) return;
-        switch(commsBT.status){
-            case CONNECTING, CONNECTED -> commsBT.stopBT();
-            case DISCONNECTED ->{
-                Intent startDeviceSelect = new Intent(this, DeviceSelect.class);
-                startDeviceSelect.putExtra("restartBT", true);
-                startActivity(startDeviceSelect);
-            }
+        if(!Permissions.hasBTPermission){
+            startActivity(new Intent(this, Permissions.class));
+        }else if(comms == null || comms.status == Comms.Status.DISCONNECTED){
+            startComms();
+            startActivity(new Intent(this, DeviceSelect.class));
+        }else{
+            comms.stop();
         }
     }
     void bSyncClick(){
@@ -392,26 +371,18 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
         }
         JSONObject requestData = tabPrepare.getSettings();
         if(requestData == null){
-            onBTError(R.string.fail_prepare);
+            onCommsError(R.string.fail_prepare);
             return;
         }
-        commsBT.sendRequest("prepare", requestData);
+        comms.prep(requestData);
     }
     private boolean cantSendRequest(){
-        return commsBT == null || commsBT.status != CommsBT.Status.CONNECTED;
+        return comms == null || comms.status == Comms.Status.DISCONNECTED || comms.status == Comms.Status.CONNECTING;
     }
 
     void sendSyncRequest(){
         if(cantSendRequest()) return;
-        try{
-            JSONObject requestData = new JSONObject();
-            requestData.put("deleted_matches", tabHistory.getDeletedMatches());
-            requestData.put("custom_match_types", tabPrepare.getCustomMatchTypes());
-            commsBT.sendRequest("sync", requestData);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.sendSyncRequest Exception: " + e.getMessage());
-            onBTError(R.string.fail_sync);
-        }
+        comms.sync();
     }
 
     private void tabHistoryLabelClick(){
@@ -484,16 +455,14 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
 
                 StringBuilder text = new StringBuilder();
                 String line;
-                while ((line = br.readLine()) != null){
-                    text.append(line);
-                }
+                while((line = br.readLine()) != null) text.append(line);
                 br.close();
                 String matches_new_s = text.toString();
                 JSONArray matches_new_ja = new JSONArray(matches_new_s);
                 tabHistory.gotMatches(matches_new_ja);
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "Main.importMatchesResult Exception: " + e.getMessage());
-                onBTError(R.string.fail_import);
+                onCommsError(R.string.fail_import);
             }
         }
     );
@@ -521,7 +490,7 @@ public class Main extends AppCompatActivity implements CommsBT.BTInterface{
                 bw.close();
             }catch(Exception e){
                 Log.e(Main.LOG_TAG, "Main.exportMatchesResult Exception: " + e.getMessage());
-                onBTError(R.string.fail_export);
+                onCommsError(R.string.fail_export);
             }
         }
     );

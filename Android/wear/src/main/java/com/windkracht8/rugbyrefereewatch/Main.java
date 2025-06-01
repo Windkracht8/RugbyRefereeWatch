@@ -50,6 +50,7 @@ import androidx.wear.ongoing.Status;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -1333,34 +1334,29 @@ public class Main extends Activity{
         }
     }
 
-    static JSONObject getSettings(){
-        JSONObject ret = new JSONObject();
-        try{
-            ret.put("home_name", match.home.team);
-            ret.put("home_color", match.home.color);
-            ret.put("away_name", match.away.team);
-            ret.put("away_color", match.away.color);
-            ret.put("match_type", match.match_type);
-            ret.put("period_time", match.period_time);
-            ret.put("period_count", match.period_count);
-            ret.put("sinbin", match.sinbin);
-            ret.put("points_try", match.points_try);
-            ret.put("points_con", match.points_con);
-            ret.put("points_goal", match.points_goal);
-            ret.put("clock_pk", match.clock_pk);
-            ret.put("clock_con", match.clock_con);
-            ret.put("clock_restart", match.clock_restart);
-            ret.put("screen_on", screen_on);
-            ret.put("timer_type", timer_type);
-            ret.put("record_player", record_player);
-            ret.put("record_pens", record_pens);
-            ret.put("delay_end", delay_end);
-            ret.put("help_version", HELP_VERSION);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "Main.getSettings Exception: " + e.getMessage());
-            return null;
-        }
-        return ret;
+    static JSONObject getSettings() throws JSONException{
+        JSONObject settings = new JSONObject();
+        settings.put("home_name", match.home.team);
+        settings.put("home_color", match.home.color);
+        settings.put("away_name", match.away.team);
+        settings.put("away_color", match.away.color);
+        settings.put("match_type", match.match_type);
+        settings.put("period_time", match.period_time);
+        settings.put("period_count", match.period_count);
+        settings.put("sinbin", match.sinbin);
+        settings.put("points_try", match.points_try);
+        settings.put("points_con", match.points_con);
+        settings.put("points_goal", match.points_goal);
+        settings.put("clock_pk", match.clock_pk);
+        settings.put("clock_con", match.clock_con);
+        settings.put("clock_restart", match.clock_restart);
+        settings.put("screen_on", screen_on);
+        settings.put("timer_type", timer_type);
+        settings.put("record_player", record_player);
+        settings.put("record_pens", record_pens);
+        settings.put("delay_end", delay_end);
+        settings.put("help_version", HELP_VERSION);
+        return settings;
     }
 
     void extraTimeChange(int time){

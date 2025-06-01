@@ -24,6 +24,7 @@
         android:id="@+id/device"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingEnd="5dp"
         android:minHeight="35sp"
         android:gravity="center_vertical"
         android:textSize="18sp"

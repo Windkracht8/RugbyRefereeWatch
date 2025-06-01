@@ -34,6 +34,7 @@ class MainView extends View{
 	static var _60vw;
 	static var _80vw;
 
+	var comms;
 	var match;
 
 	var v_conf_watch;
@@ -142,7 +143,6 @@ class MainView extends View{
 			if(settings.hasKey("record_player")){record_player = settings.get("record_player");}
 			if(settings.hasKey("record_pens")){record_pens = settings.get("record_pens");}
 			if(settings.hasKey("delay_end")){delay_end = settings.get("delay_end");}
-			if(delay_end == null){delay_end = true;}//delay_end was not stored correctly in version 0.1, fix in version 2, remove in version 3
 		}
 		Help.showWelcome = settings == null || !settings.hasKey("help_version") || settings.get("help_version") as Number < HELP_VERSION;
 	}
@@ -233,7 +233,8 @@ class MainView extends View{
 		timer_update = new Timer.Timer();
 		timer_time_off_buzz = new Timer.Timer();
 		update();
-		startBT();
+		comms = new Comms();
+		comms.start();
 		if(Help.showWelcome){
 			var help = new Help();
 			pushView(help, new HelpDelegate(help), SLIDE_UP);
@@ -549,7 +550,7 @@ class MainView extends View{
 	}
 	
 	function start(){
-		System.println("MainView.start");
+		//System.println("MainView.start");
 		singleBuzz();
 		timer_status = STATUS_RUNNING;
 		checkpoint_time = Utils.getTimestamp();
@@ -580,10 +581,10 @@ class MainView extends View{
 		v_next.setVisible(false);
 		v_finish.setVisible(false);
 		requestUpdate();
-		stopBT();
+		comms.stop();
 	}
 	function timeOff(){
-		System.println("MainView.timeOff");
+		//System.println("MainView.timeOff");
 		singleBuzz();
 		checkpoint_duration = getDurationPeriod();
 		checkpoint_time = Utils.getTimestamp();
@@ -598,7 +599,7 @@ class MainView extends View{
 		requestUpdate();
 	}
 	function resume(){
-		System.println("MainView.resume");
+		//System.println("MainView.resume");
 		singleBuzz();
 		timer_status = STATUS_RUNNING;
 		checkpoint_time = Utils.getTimestamp();
@@ -625,7 +626,7 @@ class MainView extends View{
 	}
 	(:typecheck(false))//Check fails on match.events
 	function endPeriod(delay_end_start_time){
-		System.println("MainView.endPeriod");
+		//System.println("MainView.endPeriod");
 		if(match.events.size()>0 && match.events.slice(-1, null)[0].what.equals("TIME OFF")){
 			match.events = match.events.slice(0, -1);
 		}
@@ -674,7 +675,7 @@ class MainView extends View{
 		requestUpdate();
 	}
 	function nextPeriod(){
-		System.println("MainView.nextPeriod");
+		//System.println("MainView.nextPeriod");
 		timer_status = STATUS_READY;
 		timer_type_period = timer_type;
 
@@ -687,7 +688,7 @@ class MainView extends View{
 		requestUpdate();
 	}
 	function finish(){
-		System.println("MainView.finish");
+		//System.println("MainView.finish");
 		if(checkpoint_time+500 > Utils.getTimestamp()){return;}//sticky fingers
 		timer_status = STATUS_FINISHED;
 		timer_period_time = match.period_time*60;
@@ -701,10 +702,10 @@ class MainView extends View{
 		requestUpdate();
 
 		FileStore.storeMatch(match);
-		startBT();
+		comms.start();
 	}
 	function clear(){
-		System.println("MainView.clear");
+		//System.println("MainView.clear");
 		timer_status = STATUS_CONF;
 		checkpoint_time = 0;
 		checkpoint_duration = 0;
@@ -918,26 +919,4 @@ class MainView extends View{
 	}
 	function buzz(){if(Attention has :vibrate){Attention.vibrate(VIBE_PROFILE_3);}}
 	function singleBuzz(){if(Attention has :vibrate){Attention.vibrate(VIBE_PROFILE_1);}}
-
-	function startBT(){
-		/*
-		System.println("startBT");
-		var commsBTDelegate = new CommsBTDelegate();
-		Ble.setDelegate(commsBTDelegate);
-		Ble.registerProfile({
-			:uuid => CommsBTDelegate.RRW_UUID,
-			:characteristics =>[{
-				:uuid => CommsBTDelegate.RRW_UUID_CHAR,
-				:descriptors => [Ble.cccdUuid()]
-			}]
-		});
-		//System.println(commsBTDelegate.buildSyncResponse());
-		//System.println(commsBTDelegate.buildPrepareResponse());
-		//commsBTDelegate.gotRequest("{\"requestType\":\"sync\",\"requestData\":{\"deleted_matches\":[1744635282625,1744635299029],\"custom_match_types\":[{\"name\":\"25 min\",\"period_time\":25,\"period_count\":2,\"sinbin\":7,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"clock_pk\":60,\"clock_con\":60,\"clock_restart\":0}]}}");
-		//commsBTDelegate.gotRequest("{\"requestType\":\"prepare\",\"requestData\":{\"home_name\":\"home\",\"home_color\":\"orange\",\"away_name\":\"away\",\"away_color\":\"blue\",\"match_type\":\"17s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"clock_pk\":30,\"clock_con\":30,\"clock_restart\":30}}");
-		*/
-	}
-	function stopBT(){
-		//System.println("stopBT");
-	}
 }

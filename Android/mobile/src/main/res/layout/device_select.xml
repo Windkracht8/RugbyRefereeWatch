@@ -19,27 +19,53 @@
         android:padding="10dp"
         android:gravity="center"
         android:text="@string/device_select_title"
-        android:textColor="@color/button"
         android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/device_select_known"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/device_select_title" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/device_select_title"
+        app:layout_constraintTop_toBottomOf="@id/device_select_known"
         app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
             android:id="@+id/device_select_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/device_select_new"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:padding="10dp"
+                android:gravity="center"
+                android:text="@string/device_select_new"
+                android:textColor="@color/button"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/device_select_garmin_new"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:padding="10dp"
+                android:gravity="center"
+                android:text="@string/device_select_garmin_new"
+                android:textColor="@color/button"
+                android:textSize="20sp" />
+        </LinearLayout>
     </ScrollView>
     <ImageView
         android:id="@+id/device_select_loading"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/icon_watch_connecting"
