@@ -71,7 +71,7 @@ public class TabPrepare extends LinearLayout{
     private boolean match_type_details = false;
     private boolean watch_settings = false;
     private boolean has_changed = false;
-    private final JSONArray customMatchTypes;
+    static final JSONArray customMatchTypes = new JSONArray();
     private int sMatchTypePosition = 1;
     private static int sHomeColorPosition = 0;
     private static int sAwayColorPosition = 0;
@@ -81,7 +81,6 @@ public class TabPrepare extends LinearLayout{
 
     public TabPrepare(Context context, AttributeSet attrs){
         super(context, attrs);
-        customMatchTypes = new JSONArray();
         ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.tab_prepare, this, true);
         etHomeName = findViewById(R.id.etHomeName);
@@ -283,6 +282,10 @@ public class TabPrepare extends LinearLayout{
             findViewById(R.id.tWatchSettings).setVisibility(View.GONE);
             bWatchSettings.setText(R.string.watch_settings_show);
         }else{
+            if(Main.comms != null && Main.comms.status == Comms.Status.CONNECTED_IQ){
+                cbScreenOn.setVisibility(View.GONE);
+                findViewById(R.id.cbScreenOn_text).setVisibility(View.GONE);
+            }
             findViewById(R.id.tWatchSettings).setVisibility(View.VISIBLE);
             bWatchSettings.setText(R.string.watch_settings_hide);
             //scroll down, after tWatchSettings is actually visible
@@ -310,9 +313,11 @@ public class TabPrepare extends LinearLayout{
         if(checkSettings()) return null;
         JSONObject settings = new JSONObject();
         try{
-            settings.put("home_name", etHomeName.getText());
+            String home_name = String.valueOf(etHomeName.getText());
+            settings.put("home_name", home_name.isEmpty() ? Main.HOME_ID : home_name);
             settings.put("home_color", Translator.getTeamColorSystem(getContext(), sHomeColor.getSelectedItem().toString()));
-            settings.put("away_name", etAwayName.getText());
+            String away_name = String.valueOf(etAwayName.getText());
+            settings.put("away_name", away_name.isEmpty() ? Main.AWAY_ID : away_name);
             settings.put("away_color", Translator.getTeamColorSystem(getContext(), sAwayColor.getSelectedItem().toString()));
             settings.put("match_type", Translator.getMatchTypeSystem(getContext(), sMatchType.getSelectedItemPosition(), sMatchType.getSelectedItem().toString()));
             settings.put("period_time", Integer.parseInt(etPeriodTime.getText().toString()));
@@ -405,7 +410,7 @@ public class TabPrepare extends LinearLayout{
                 customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
             loadCustomMatchTypesSpinner();
         }catch(FileNotFoundException e){
-            Log.d(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypes Match types file does not exists yet");
+            storeCustomMatchTypes();
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.loadCustomMatchTypes Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_read_custom_match_types, Toast.LENGTH_SHORT).show();
@@ -514,15 +519,15 @@ public class TabPrepare extends LinearLayout{
     }
     private void customMatch(JSONObject cm){
         try{
-            cm.put("period_time", etPeriodTime.getText().toString());
-            cm.put("period_count", etPeriodCount.getText().toString());
-            cm.put("sinbin", etSinbin.getText().toString());
-            cm.put("points_try", etPointsTry.getText().toString());
-            cm.put("points_con", etPointsCon.getText().toString());
-            cm.put("points_goal", etPointsGoal.getText().toString());
-            cm.put("clock_pk", etClockPK.getText().toString());
-            cm.put("clock_con", etClockCon.getText().toString());
-            cm.put("clock_restart", etClockRestart.getText().toString());
+            cm.put("period_time", Integer.parseInt(etPeriodTime.getText().toString()));
+            cm.put("period_count", Integer.parseInt(etPeriodCount.getText().toString()));
+            cm.put("sinbin", Integer.parseInt(etSinbin.getText().toString()));
+            cm.put("points_try", Integer.parseInt(etPointsTry.getText().toString()));
+            cm.put("points_con", Integer.parseInt(etPointsCon.getText().toString()));
+            cm.put("points_goal", Integer.parseInt(etPointsGoal.getText().toString()));
+            cm.put("clock_pk", Integer.parseInt(etClockPK.getText().toString()));
+            cm.put("clock_con", Integer.parseInt(etClockCon.getText().toString()));
+            cm.put("clock_restart", Integer.parseInt(etClockRestart.getText().toString()));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "TabPrepare.customMatch Exception: " + e.getMessage());
             Toast.makeText(getContext(), R.string.fail_save_match_type, Toast.LENGTH_SHORT).show();
@@ -540,14 +545,6 @@ public class TabPrepare extends LinearLayout{
         }
     }
     private boolean checkSettings(){
-        if(checkSettingsEditText(etHomeName, false)){
-            Toast.makeText(getContext(), R.string.home_name_empty, Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if(checkSettingsEditText(etAwayName, false)){
-            Toast.makeText(getContext(), R.string.away_name_empty, Toast.LENGTH_SHORT).show();
-            return true;
-        }
         if(checkSettingsEditText(etPeriodTime, false)){
             Toast.makeText(getContext(), R.string.time_period_empty, Toast.LENGTH_SHORT).show();
             return true;
@@ -575,5 +572,4 @@ public class TabPrepare extends LinearLayout{
         }
         return false;
     }
-    JSONArray getCustomMatchTypes(){return customMatchTypes;}
 }

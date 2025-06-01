@@ -8,6 +8,7 @@
 
 package com.windkracht8.rugbyrefereewatch;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -20,93 +21,92 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 //Thread: All of FileStore runs on a background thread
 class FileStore{
-    static final JSONArray customMatchTypes = new JSONArray();
+    static JSONArray customMatchTypes = new JSONArray();
 
-    //Append a new match
-    static void storeMatch(Context context){
-        JSONArray matches = readMatches(context);
-        matches.put(Main.match.toJson(context));
-        storeMatches(context, matches);
-    }
-
-    //Store all matches
-    private static void storeMatches(Context context, JSONArray matches){
+    static void storeMatch(Activity activity){
         try{
-            storeFile(context, R.string.matches_filename, matches.toString());
+            JSONArray matches = readMatches(activity);
+            matches.put(Main.match.toJson(activity));
+            storeFile(activity, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "FileStore.storeMatches Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_save_matches, Toast.LENGTH_SHORT).show();
+            toast(activity, R.string.fail_store_match);
         }
-    }
-    //Return an array of stored matches
-    static JSONArray readMatches(Context context){
-        try{
-            String sMatches = getFileAsString(context, R.string.matches_filename);
-            if(sMatches.length() < 3){return new JSONArray();}
-            return new JSONArray(sMatches);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.readMatches Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_read_matches, Toast.LENGTH_SHORT).show();
-        }
-        return new JSONArray();
     }
 
+    static JSONArray readMatches(Context context) throws Exception{
+        String sMatches = getFileAsString(context, R.string.matches_filename);
+        if(sMatches.length() < 3){return new JSONArray();}
+        return new JSONArray(sMatches);
+    }
+    static JSONArray readMatchIds(Context context) throws Exception{
+        JSONArray matchIds = new JSONArray();
+        JSONArray matches = readMatches(context);
+        for(int i=0; i<matches.length(); i++)
+            matchIds.put(matches.getJSONObject(i).getLong("matchid"));
+        return matchIds;
+    }
+    static JSONObject readMatch(Context context, long match_id) throws Exception{
+        JSONArray matches = readMatches(context);
+        for(int i=0; i<matches.length(); i++){
+            if(matches.getJSONObject(i).getLong("matchid") == match_id){
+                return matches.getJSONObject(i);
+            }
+        }
+        throw new Exception("Match not found");
+    }
+    static void delMatch(Context context, long match_id) throws Exception{
+        JSONArray matches = readMatches(context);
+        for(int i=0; i<matches.length(); i++){
+            if(matches.getJSONObject(i).getLong("matchid") == match_id){
+                matches.remove(i);
+                storeFile(context, R.string.matches_filename, matches.toString());
+                return;
+            }
+        }
+        throw new Exception("Match not found");
+    }
     //Go through stored matches and remove old ones
-    static void cleanMatches(Context context){
+    static void cleanMatches(Activity activity){
         try{
-            JSONArray matches = readMatches(context);
-            for(int i = matches.length(); i > 0; i--){
-                JSONObject match = matches.getJSONObject(i-1);
-                if(match.getLong("matchid") < System.currentTimeMillis() - 2592000000L){
-                    matches.remove(i-1);
+            JSONArray matches = readMatches(activity);
+            for(int i=matches.length()-1; i>=0; i--){
+                if(matches.getJSONObject(i).getLong("matchid") < System.currentTimeMillis() - 2592000000L){
+                    matches.remove(i);
                 }
             }
-            storeMatches(context, matches);
+            storeFile(activity, R.string.matches_filename, matches.toString());
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "FileStore.cleanMatches Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_clean_matches, Toast.LENGTH_SHORT).show();
+            toast(activity, R.string.fail_clean_matches);
         }
     }
     //The phone sends a list of matches that can be deleted
-    static JSONArray deletedMatches(Context context, String request_data){
-        try{
-            JSONObject request_data_jo = new JSONObject(request_data);
-            JSONArray deleted_matches = request_data_jo.getJSONArray("deleted_matches");
-
-            JSONArray matches = readMatches(context);
-            for(int d = 0; d < deleted_matches.length(); d++){
-                for(int m = matches.length()-1; m >= 0; m--){
-                    JSONObject match = matches.getJSONObject(m);
-                    if(match.getLong("matchid") == deleted_matches.getLong(d)){
-                        matches.remove(m);
-                    }
+    static JSONArray deletedMatches(Context context, JSONArray deleted_matches) throws Exception{
+        JSONArray matches = readMatches(context);
+        for(int d=0; d<deleted_matches.length(); d++){
+            for(int m=matches.length()-1; m>=0; m--){
+                if(matches.getJSONObject(m).getLong("matchid") == deleted_matches.getLong(d)){
+                    matches.remove(m);
+                    break;
                 }
             }
-            storeMatches(context, matches);
-            return matches;
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.deletedMatches Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_del_matches, Toast.LENGTH_SHORT).show();
         }
-        return new JSONArray();
+        storeFile(context, R.string.matches_filename, matches.toString());
+        return matches;
     }
-    static void storeSettings(Context context){
+    static void storeSettings(Activity activity){
         try{
-            JSONObject settings = Main.getSettings();
-            if(settings == null){
-                Log.e(Main.LOG_TAG, "FileStore.storeSettings: Main.getSettings == null");
-                Toast.makeText(context, R.string.fail_store_settings, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            storeFile(context, R.string.settings_filename, settings.toString());
+            storeFile(activity, R.string.settings_filename, Main.getSettings().toString());
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "FileStore.storeSettings Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_store_settings, Toast.LENGTH_SHORT).show();
+            toast(activity, R.string.fail_store_settings);
         }
     }
     static void readSettings(Main main){
@@ -123,59 +123,37 @@ class FileStore{
             main.startActivity((new Intent(main, Help.class)).putExtra("showWelcome", true));
             storeSettings(main);
             Log.e(Main.LOG_TAG, "FileStore.readSettings Exception: " + e.getMessage());
-            Toast.makeText(main, R.string.fail_read_settings, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private static void storeCustomMatchTypes(Context context){
-        try{
-            FileOutputStream fos = context.openFileOutput(context.getString(R.string.match_types_filename), Context.MODE_PRIVATE);
-            OutputStreamWriter osr = new OutputStreamWriter(fos);
-            osr.write(customMatchTypes.toString());
-            osr.close();
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.storeCustomMatchTypes Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_store_match_types, Toast.LENGTH_SHORT).show();
-        }
+    private static void storeCustomMatchTypes(Context context) throws IOException{
+        FileOutputStream fos = context.openFileOutput(context.getString(R.string.match_types_filename), Context.MODE_PRIVATE);
+        OutputStreamWriter osr = new OutputStreamWriter(fos);
+        osr.write(customMatchTypes.toString());
+        osr.close();
     }
-    static void readCustomMatchTypes(Context context){
+    static void readCustomMatchTypes(Activity activity){
         try{
-            FileInputStream fis = context.openFileInput(context.getString(R.string.match_types_filename));
+            FileInputStream fis = activity.openFileInput(activity.getString(R.string.match_types_filename));
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
             StringBuilder text = new StringBuilder();
             String line;
             while((line = br.readLine()) != null) text.append(line);
             br.close();
-            String sMatches = text.toString();
-            JSONArray jsonMatchTypes = new JSONArray(sMatches);
-            for(int i=customMatchTypes.length()-1; i>=0; i--)
-                customMatchTypes.remove(i);
-            for(int i=0; i<jsonMatchTypes.length(); i++)
-                customMatchTypes.put(jsonMatchTypes.getJSONObject(i));
+            customMatchTypes = new JSONArray(text.toString());
         }catch(FileNotFoundException e){
             Log.d(Main.LOG_TAG, "FileStore.readCustomMatchTypes Match types file does not exists yet");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "FileStore.readCustomMatchTypes Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_read_match_types, Toast.LENGTH_SHORT).show();
+            toast(activity, R.string.fail_read_match_types);
         }
     }
-    static void syncCustomMatchTypes(Context context, String request_data){//Thread: Always on background thread
-        try{
-            JSONObject request_data_jo = new JSONObject(request_data);
-            if(!request_data_jo.has("custom_match_types")) return;
-            JSONArray customMatchTypes_phone = request_data_jo.getJSONArray("custom_match_types");
-            for(int i=customMatchTypes.length()-1; i>=0; i--)
-                customMatchTypes.remove(i);
-            for(int i=0; i<customMatchTypes_phone.length(); i++)
-                customMatchTypes.put(customMatchTypes_phone.getJSONObject(i));
-            storeCustomMatchTypes(context);
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.syncCustomMatchTypes Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_sync_match_types, Toast.LENGTH_SHORT).show();
-        }
+    static void syncCustomMatchTypes(Context context, JSONArray custom_match_types) throws Exception{
+        customMatchTypes = custom_match_types;
+        storeCustomMatchTypes(context);
     }
-    private static String getFileAsString(Context context, int file){
+    private static String getFileAsString(Context context, int file) throws IOException{
         try{
             FileInputStream fis = context.openFileInput(context.getString(file));
             InputStreamReader isr = new InputStreamReader(fis);
@@ -187,22 +165,16 @@ class FileStore{
             return text.toString();
         }catch(FileNotFoundException e){
             Log.i(Main.LOG_TAG, "FileStore.getFileAsString File does not exist yet");
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.getFileAsString Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_read_file, Toast.LENGTH_SHORT).show();
         }
         return "";
     }
-    private static void storeFile(Context context, int file, String content){
-        try{
-            FileOutputStream fos = context.openFileOutput(context.getString(file), Context.MODE_PRIVATE);
-            OutputStreamWriter osr = new OutputStreamWriter(fos);
-            osr.write(content);
-            osr.close();
-        }catch(Exception e){
-            Log.e(Main.LOG_TAG, "FileStore.storeFile Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_store_file, Toast.LENGTH_SHORT).show();
-        }
+    private static void storeFile(Context context, int file, String content) throws IOException{
+        FileOutputStream fos = context.openFileOutput(context.getString(file), Context.MODE_PRIVATE);
+        OutputStreamWriter osr = new OutputStreamWriter(fos);
+        osr.write(content);
+        osr.close();
     }
-
+    private static void toast(Activity activity, int message){
+        activity.runOnUiThread(()->Toast.makeText(activity, message, Toast.LENGTH_SHORT).show());
+    }
 }

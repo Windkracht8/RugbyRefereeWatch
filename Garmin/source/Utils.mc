@@ -125,7 +125,32 @@ class Utils{
 		var end = item.find(",");
 		return item.substring(item.find(":")+1, end==null?item.length():end).toNumber();
 	}
+	static function getJsonNumberWithFallback(name, json, fallback) as Number{
+		var start = json.find(name);
+		if(start == null){return fallback;}
+		var item = json.substring(start, json.length());
+		var end = item.find(",");
+		if(end == null){return fallback;}
+		return item.substring(item.find(":")+1, end==null?item.length():end).toNumber();
+	}
+	static function getJsonLong(name, json) as Long{
+		var start = json.find(name);
+		if(start == null){return 0l;}
+		var item = json.substring(start, json.length());
+		var end = item.find("}");
+		return item.substring(item.find(":")+1, end==null?item.length():end).toLong();
+	}
+	static function getJsonBoolean(name, json, fallback) as Boolean{
+		var start = json.find(name);
+		if(start == null){return fallback;}
+		var item = json.substring(start, json.length());
+		var end = item.find(",");
+		if(end == null){end = item.find("}");}
+		if(end == null){return fallback;}
+		return item.substring(item.find(":")+1, end).equals("true");
+	}
 	static function getJsonString(name, json, fallback) as String{
+		if(json == null || !(json instanceof String)){return "";}
 		var start = json.find(name);
 		if(start == null){return fallback;}
 		var item = json.substring(start+name.length()+3, json.length());

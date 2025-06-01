@@ -76,7 +76,6 @@ class ScoreDelegate extends BehaviorDelegate{
 		}
 	}
 	function onBack(){
-		System.println("ScoreDelegate.onBack");
 		popView(SLIDE_UP);
 		return true;
 	}

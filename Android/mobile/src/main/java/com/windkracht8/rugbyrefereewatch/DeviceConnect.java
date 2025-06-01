@@ -17,38 +17,36 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
-public class DeviceConnect extends Activity implements CommsBT.BTInterface{
-    @Override
-    public void onCreate(Bundle savedInstanceState){
+public class DeviceConnect extends Activity implements Comms.Interface{
+    @Override public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_connect);
         findViewById(android.R.id.content).setOnApplyWindowInsetsListener(Main.onApplyWindowInsetsListener);
         String name = getIntent().getStringExtra("name");
         if(name == null) ((TextView)findViewById(R.id.device_connect_name)).setText(R.string.connecting_to);
-        else ((TextView)findViewById(R.id.device_connect_name)).setText(getString(R.string.connecting_to, name));
+        ((TextView)findViewById(R.id.device_connect_name)).setText(getString(R.string.connecting_to, name));
 
         ImageView icon = findViewById(R.id.device_connect_icon);
         ((AnimatedVectorDrawable) icon.getBackground()).start();
 
+        if(Main.comms == null || Main.comms.status != Comms.Status.CONNECTING) finishAndRemoveTask();
         try{
-            Main.commsBT.addListener(this);
+            Main.comms.addListener(this);
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "DeviceConnect.onCreate Failed to add as a listener: " + e.getMessage());
         }
     }
-    @Override
-    public void onBTStartDone(){finishAndRemoveTask();}
-    @Override
-    public void onBTConnecting(String x){}
-    @Override
-    public void onBTConnectFailed(){finishAndRemoveTask();}
-    @Override
-    public void onBTConnected(String x){finishAndRemoveTask();}
-    @Override
-    public void onBTDisconnected(){}
-    @Override
-    public void onBTResponse(JSONObject x){}
-    @Override
-    public void onBTError(int x){}
-
+    @Override public void onDestroy(){
+        super.onDestroy();
+        if(Main.comms != null) Main.comms.removeListener(this);
+    }
+    @Override public void onCommsStartDone(){finishAndRemoveTask();}
+    @Override public void onCommsConnecting(String x){}
+    @Override public void onCommsConnectFailed(){finishAndRemoveTask();}
+    @Override public void onCommsConnected(String x){finishAndRemoveTask();}
+    @Override public void onCommsSending(){}
+    @Override public void onCommsSendingFinished(){}
+    @Override public void onCommsDisconnected(){finishAndRemoveTask();}
+    @Override public void onCommsResponse(Comms.Request.Type t, JSONObject r){}
+    @Override public void onCommsError(int e){}
 }

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +30,7 @@ public class MatchLog extends ScrollScreen{
                 MatchData match = new MatchData(matches.getJSONObject(i));
                 addItem(match);
             }
-        }catch(JSONException e){
+        }catch(Exception e){
             Log.e(Main.LOG_TAG, "MatchLog.show Exception: " + e.getMessage());
             Toast.makeText(this, R.string.fail_show_log, Toast.LENGTH_SHORT).show();
         }

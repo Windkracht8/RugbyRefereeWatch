@@ -290,6 +290,7 @@
                 android:stretchColumns="*">
                 <TableRow>
                     <TextView
+                        android:id="@+id/cbScreenOn_text"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:labelFor="@id/cbScreenOn"
