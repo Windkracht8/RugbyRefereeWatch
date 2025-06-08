@@ -25,8 +25,8 @@ import java.util.List;
 
 public class ConfActivity extends FragmentActivity{
     private GestureDetector gestureDetector;
-    @Override public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+    @Override public void onCreate(Bundle ignore){
+        super.onCreate(null);
         gestureDetector = new GestureDetector(this, simpleOnGestureListener, new Handler(Looper.getMainLooper()));
         setContentView(R.layout.fragment_container);
         FragmentManager fragmentManager = getSupportFragmentManager();
