@@ -16,8 +16,8 @@ android{
         //noinspection OldTargetApi
         targetSdk = 34
         compileSdk = 35
-        versionCode = 465
-        versionName = 'w3.22'
+        versionCode = 466
+        versionName = 'w3.23'
     }
     buildTypes{
         release{

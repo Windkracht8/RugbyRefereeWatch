@@ -48,7 +48,6 @@ public class DeviceSelect extends Activity implements Comms.Interface{
         });
 
         LinearLayout device_select_known = findViewById(R.id.device_select_known);
-        Main.comms.knownBTDevices.forEach(d->deviceFound(device_select_known, d));
 
         findViewById(R.id.device_select_garmin_new).setOnClickListener(v->{
             device_select_loading = findViewById(R.id.device_select_loading);
@@ -57,6 +56,8 @@ public class DeviceSelect extends Activity implements Comms.Interface{
             Executors.newCachedThreadPool().execute(this::loadIQDevices);
         });
 
+        if(Main.comms == null) return;
+        Main.comms.knownBTDevices.forEach(d->deviceFound(device_select_known, d));
         Main.comms.knownIQDevices.forEach(d->deviceFound(device_select_known, d));
 
         try{
