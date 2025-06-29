@@ -16,7 +16,7 @@ class Score extends View{
 		hide_con = MainView.main.match.points_con == 0;
 		hide_goal = MainView.main.match.points_goal == 0;
 	}
-	
+
 	function onLayout(dc as Dc) as Void{
 		setLayout(Rez.Layouts.Score(dc));
 		if(hide_con && hide_goal){
@@ -54,7 +54,7 @@ class ScoreDelegate extends BehaviorDelegate{
 	var itemHeight;
 	var end_y_con;
 	var end_y_goal;
-	
+
 	function initialize(){
 		BehaviorDelegate.initialize();
 		itemHeight = MainView._25vh;

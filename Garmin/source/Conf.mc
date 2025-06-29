@@ -11,7 +11,7 @@ class Conf extends Menu2{
 	var home_color;
 	var away_color;
 	var match_type;
-	
+
 	function initialize(){
 		Menu2.initialize({:title=>Rez.Strings.conf});
 		home_color = new MenuItem(Rez.Strings.home_color, null, "home_color", {});

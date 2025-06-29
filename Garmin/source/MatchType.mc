@@ -42,7 +42,7 @@ class MatchTypeDelegate extends Menu2InputDelegate{
 				match.points_con = 2;
 				match.points_goal = 3;
 				match.clock_pk = 60;
-				match.clock_con = 90;
+				match.clock_con = 60;
 				match.clock_restart = 0;
 				break;
 			case "_10s":

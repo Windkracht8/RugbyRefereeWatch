@@ -139,7 +139,7 @@ public class ConfSpinner extends ConfScreen{
                 Main.match.points_con = 2;
                 Main.match.points_goal = 3;
                 Main.match.clock_pk = 60;
-                Main.match.clock_con = 90;
+                Main.match.clock_con = 60;
                 Main.match.clock_restart = 0;
                 break;
             case "10s":

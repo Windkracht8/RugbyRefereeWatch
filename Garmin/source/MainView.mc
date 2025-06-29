@@ -67,7 +67,7 @@ class MainView extends View{
 	var v_finish;
 	var v_report;
 	var v_clear;
-	
+
 	var score;
 	var score_delegate;
 	var foul_play;
@@ -93,7 +93,7 @@ class MainView extends View{
 
 	//Kick clocks
 	var kickClockType_home = KICK_CLOCK_TYPE_NONE;
-	var kickClockType_away = KICK_CLOCK_TYPE_NONE;	
+	var kickClockType_away = KICK_CLOCK_TYPE_NONE;
 	var kickClockEnd_home = 0;
 	var kickClockEnd_away = 0;
 
@@ -380,7 +380,7 @@ class MainView extends View{
 		kickClockAwayHide();
 	}
 	function kickClockAwayHide(){
-		kickClockType_away = KICK_CLOCK_TYPE_NONE;	
+		kickClockType_away = KICK_CLOCK_TYPE_NONE;
 		kickClockEnd_away = 0;
 		v_kick_clock_away_label.setVisible(false);
 		v_kick_clock_away.setVisible(false);
@@ -548,7 +548,7 @@ class MainView extends View{
 	function getTeamBg(isHome) as Drawable{
 		return findDrawableById(isHome ? "home_bg_" + match.home.color : "away_bg_" + match.away.color);
 	}
-	
+
 	function start(){
 		//System.println("MainView.start");
 		singleBuzz();
@@ -571,7 +571,7 @@ class MainView extends View{
 		match.logEvent("START", kickoffTeam);
 		updateScore();
 		update();
-		
+
 		v_conf_watch.setVisible(false);
 		fakeButtonBg(false);
 
@@ -591,7 +591,7 @@ class MainView extends View{
 		timer_time_off_buzz.start(method(:buzzTimeOff), 15000, false);
 		timer_status = STATUS_TIME_OFF;
 		match.logEvent("TIME OFF", null);
-		
+
 		fakeButtonBg(true);
 		v_resume.setVisible(true);
 		v_end.setVisible(true);
@@ -631,7 +631,7 @@ class MainView extends View{
 			match.events = match.events.slice(0, -1);
 		}
 		match.logEvent("END", null);
-		
+
 		var correct = timer_period_time - checkpoint_duration + checkpoint_previous;
 		for(var i=0; i<match.home.sinbins.size(); i++){
 			var sinbin = match.home.sinbins[i];
@@ -850,18 +850,18 @@ class MainView extends View{
 	}
 	function kickClockHomeClick(){
 		if(kickClockType_home == KICK_CLOCK_TYPE_PK){
-			pushView(new KickClockConfirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
+			pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_CON){
-			pushView(new KickClockConfirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
+			pushView(new Confirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_RESTART){
 			kickClockHomeHide();
 		}
 	}
 	function kickClockAwayClick(){
 		if(kickClockType_away == KICK_CLOCK_TYPE_PK){
-			pushView(new KickClockConfirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
+			pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
 		}else if(kickClockType_away == KICK_CLOCK_TYPE_CON){
-			pushView(new KickClockConfirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
+			pushView(new Confirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
 		}else if(kickClockType_away == KICK_CLOCK_TYPE_RESTART){
 			kickClockAwayHide();
 		}
@@ -881,7 +881,7 @@ class MainView extends View{
 			}
 		}
 	}
-	
+
 	function getDurationPeriod(){
 		if(timer_status == STATUS_RUNNING || timer_status == STATUS_REST){
 			return Math.floor((Utils.getTimestamp() - checkpoint_time) / 1000) + checkpoint_duration;

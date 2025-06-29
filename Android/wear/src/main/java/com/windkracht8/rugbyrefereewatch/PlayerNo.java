@@ -48,6 +48,17 @@ public class PlayerNo extends ConstraintLayout{
     void onCreateMain(Main main){
         findViewById(R.id.b_done).setOnClickListener(v->{
             event.who = player_no_int;
+            if(event.what.equals("YELLOW CARD") && Main.match.alreadyHasYellow(event)){
+                main.confirm_label.setText(R.string.confirm_second_yellow);
+                main.confirm_label.setLines(2);
+                main.confirm_no.setOnClickListener(n->main.confirm.setVisibility(View.GONE));
+                main.confirm_yes.setOnClickListener(y->{
+                    Main.match.convertYellowToRed(event);
+                    main.updateSinbins();
+                    main.confirm.setVisibility(View.GONE);
+                });
+                main.confirm.setVisibility(View.VISIBLE);
+            }
             if(sinbin != null){
                 sinbin.who = player_no_int;
                 main.updateSinbins();

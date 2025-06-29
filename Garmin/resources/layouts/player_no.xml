@@ -6,7 +6,7 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <layout id="PlayerNo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <text-area
+	<text-area
 		id="player_no"
 		x="center"
 		y="top"
@@ -27,8 +27,8 @@
 		x="right"
 		y="0"
 		filename="../drawables/icon_done.svg" />
-		
-    <text-area
+
+	<text-area
 		id="b_1"
 		x="20%"
 		y="20%"
@@ -37,7 +37,7 @@
 		text="1"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_2"
 		x="40%"
 		y="20%"
@@ -46,7 +46,7 @@
 		text="2"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_3"
 		x="60%"
 		y="20%"
@@ -56,7 +56,7 @@
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area
+	<text-area
 		id="b_4"
 		x="20%"
 		y="40%"
@@ -65,7 +65,7 @@
 		text="4"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_5"
 		x="40%"
 		y="40%"
@@ -74,7 +74,7 @@
 		text="5"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_6"
 		x="60%"
 		y="40%"
@@ -84,7 +84,7 @@
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area
+	<text-area
 		id="b_7"
 		x="20%"
 		y="60%"
@@ -93,7 +93,7 @@
 		text="7"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_8"
 		x="40%"
 		y="60%"
@@ -102,7 +102,7 @@
 		text="8"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="b_9"
 		x="60%"
 		y="60%"
@@ -112,7 +112,7 @@
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area
+	<text-area
 		id="b_0"
 		x="center"
 		y="bottom"

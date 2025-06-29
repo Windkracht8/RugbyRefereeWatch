@@ -63,8 +63,14 @@ class PlayerNoDelegate extends BehaviorDelegate{
 				return true;
 			}
 			event.who = value;
-			if(sinbin != null){sinbin.who = value;}
-			MainView.main.updateSinbins();
+			if(sinbin != null){
+				sinbin.who = value;
+				if(MainView.main.match.alreadyHasYellow(event)){
+					switchToView(new Confirm(Rez.Strings.second_yellow), new SecondYellowConfirmDelegate(event), SLIDE_UP);
+					return true;
+				}
+				MainView.main.updateSinbins();
+			}
 			popView(SLIDE_UP);
 			return true;
 		}else if(y < MainView._20vh*2){//1 2 3

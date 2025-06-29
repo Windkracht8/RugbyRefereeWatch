@@ -6,83 +6,83 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <layout id="Main" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <bitmap id="conf_watch" visible="false" x="0" y="top" filename="../drawables/icon_conf_watch.svg" />
-    <text-area id="battery" x="center" y="top" width="100%" height="11%" text="100%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="time" x="center" y="10%" width="100%" height="15%" text="00:00:00" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    
-    <drawable id="home_bg_black" visible="false" />
-    <drawable id="home_bg_blue" visible="false" />
-    <drawable id="home_bg_brown" visible="false" />
-    <drawable id="home_bg_gold" visible="false" />
-    <drawable id="home_bg_green" visible="false" />
-    <drawable id="home_bg_orange" visible="false" />
-    <drawable id="home_bg_pink" visible="false" />
-    <drawable id="home_bg_purple" visible="false" />
-    <drawable id="home_bg_red" visible="false" />
-    <drawable id="home_bg_white" visible="false" />
-    <drawable id="highcolor_home_bg_black" visible="false" />
-    <drawable id="highcolor_home_bg_blue" visible="false" />
-    <drawable id="highcolor_home_bg_brown" visible="false" />
-    <drawable id="highcolor_home_bg_gold" visible="false" />
-    <drawable id="highcolor_home_bg_green" visible="false" />
-    <drawable id="highcolor_home_bg_orange" visible="false" />
-    <drawable id="highcolor_home_bg_pink" visible="false" />
-    <drawable id="highcolor_home_bg_purple" visible="false" />
-    <drawable id="highcolor_home_bg_red" visible="false" />
-    <drawable id="highcolor_home_bg_white" visible="false" />
-    <text-area id="score_home" x="left" y="25%" width="50%" height="25%" text="0" font="Gfx.FONT_LARGE" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="sinbin_home_1" visible="false" x="left" y="40%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="sinbin_home_2" visible="false" x="left" y="50%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <drawable id="sinbin_home_bg" />
+	<bitmap id="conf_watch" visible="false" x="0" y="top" filename="../drawables/icon_conf_watch.svg" />
+	<text-area id="battery" x="center" y="top" width="100%" height="11%" text="100%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="time" x="center" y="10%" width="100%" height="15%" text="00:00:00" font="Gfx.FONT_SMALL" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <drawable id="away_bg_black" visible="false" />
-    <drawable id="away_bg_blue" visible="false" />
-    <drawable id="away_bg_brown" visible="false" />
-    <drawable id="away_bg_gold" visible="false" />
-    <drawable id="away_bg_green" visible="false" />
-    <drawable id="away_bg_orange" visible="false" />
-    <drawable id="away_bg_pink" visible="false" />
-    <drawable id="away_bg_purple" visible="false" />
-    <drawable id="away_bg_red" visible="false" />
-    <drawable id="away_bg_white" visible="false" />
-    <drawable id="highcolor_away_bg_black" visible="false" />
-    <drawable id="highcolor_away_bg_blue" visible="false" />
-    <drawable id="highcolor_away_bg_brown" visible="false" />
-    <drawable id="highcolor_away_bg_gold" visible="false" />
-    <drawable id="highcolor_away_bg_green" visible="false" />
-    <drawable id="highcolor_away_bg_orange" visible="false" />
-    <drawable id="highcolor_away_bg_pink" visible="false" />
-    <drawable id="highcolor_away_bg_purple" visible="false" />
-    <drawable id="highcolor_away_bg_red" visible="false" />
-    <drawable id="highcolor_away_bg_white" visible="false" />
-    <text-area id="score_away" x="right" y="25%" width="50%" height="25%" text="0" font="Gfx.FONT_LARGE" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="sinbin_away_1" visible="false" x="right" y="40%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="sinbin_away_2" visible="false" x="right" y="50%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <drawable id="sinbin_away_bg" />
+	<drawable id="home_bg_black" visible="false" />
+	<drawable id="home_bg_blue" visible="false" />
+	<drawable id="home_bg_brown" visible="false" />
+	<drawable id="home_bg_gold" visible="false" />
+	<drawable id="home_bg_green" visible="false" />
+	<drawable id="home_bg_orange" visible="false" />
+	<drawable id="home_bg_pink" visible="false" />
+	<drawable id="home_bg_purple" visible="false" />
+	<drawable id="home_bg_red" visible="false" />
+	<drawable id="home_bg_white" visible="false" />
+	<drawable id="highcolor_home_bg_black" visible="false" />
+	<drawable id="highcolor_home_bg_blue" visible="false" />
+	<drawable id="highcolor_home_bg_brown" visible="false" />
+	<drawable id="highcolor_home_bg_gold" visible="false" />
+	<drawable id="highcolor_home_bg_green" visible="false" />
+	<drawable id="highcolor_home_bg_orange" visible="false" />
+	<drawable id="highcolor_home_bg_pink" visible="false" />
+	<drawable id="highcolor_home_bg_purple" visible="false" />
+	<drawable id="highcolor_home_bg_red" visible="false" />
+	<drawable id="highcolor_home_bg_white" visible="false" />
+	<text-area id="score_home" x="left" y="25%" width="50%" height="25%" text="0" font="Gfx.FONT_LARGE" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="sinbin_home_1" visible="false" x="left" y="40%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="sinbin_home_2" visible="false" x="left" y="50%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<drawable id="sinbin_home_bg" />
 
-    <text-area id="timer" x="center" y="50%" width="100%" height="50%" text="40:00" font="Gfx.FONT_NUMBER_HOT" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
- 
-    <text-area id="kick_clock_home_label" visible="false" x="5%" y="55%" width="40%" height="15%" text="conv" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="kick_clock_home" visible="false" x="5%" y="62%" width="40%" height="25%" text="00" font="Gfx.FONT_NUMBER_MILD" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-   
-    <text-area id="kick_clock_away_label" visible="false" x="50%" y="55%" width="40%" height="15%" text="conv" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="kick_clock_away" visible="false" x="50%" y="62%" width="40%" height="25%" text="00" font="Gfx.FONT_NUMBER_MILD" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<drawable id="away_bg_black" visible="false" />
+	<drawable id="away_bg_blue" visible="false" />
+	<drawable id="away_bg_brown" visible="false" />
+	<drawable id="away_bg_gold" visible="false" />
+	<drawable id="away_bg_green" visible="false" />
+	<drawable id="away_bg_orange" visible="false" />
+	<drawable id="away_bg_pink" visible="false" />
+	<drawable id="away_bg_purple" visible="false" />
+	<drawable id="away_bg_red" visible="false" />
+	<drawable id="away_bg_white" visible="false" />
+	<drawable id="highcolor_away_bg_black" visible="false" />
+	<drawable id="highcolor_away_bg_blue" visible="false" />
+	<drawable id="highcolor_away_bg_brown" visible="false" />
+	<drawable id="highcolor_away_bg_gold" visible="false" />
+	<drawable id="highcolor_away_bg_green" visible="false" />
+	<drawable id="highcolor_away_bg_orange" visible="false" />
+	<drawable id="highcolor_away_bg_pink" visible="false" />
+	<drawable id="highcolor_away_bg_purple" visible="false" />
+	<drawable id="highcolor_away_bg_red" visible="false" />
+	<drawable id="highcolor_away_bg_white" visible="false" />
+	<text-area id="score_away" x="right" y="25%" width="50%" height="25%" text="0" font="Gfx.FONT_LARGE" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="sinbin_away_1" visible="false" x="right" y="40%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="sinbin_away_2" visible="false" x="right" y="50%" width="50%" height="11%" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<drawable id="sinbin_away_bg" />
 
-    <text-area id="pen_home" x="left" y="bottom" width="40%" height="15%" text="0" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_RIGHT" />
-    <text-area id="pen" x="center" y="bottom" width="20%" height="15%" text="pen" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER" />
-    <text-area id="pen_away" x="right" y="bottom" width="40%" height="15%" text="0" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_LEFT" />
+	<text-area id="timer" x="center" y="50%" width="100%" height="50%" text="40:00" font="Gfx.FONT_NUMBER_HOT" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area id="start" x="left" y="50%" width="50%" height="25%" text="start" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <bitmap id="match_log" x="50%" y="50%" filename="../drawables/icon_match_log.svg" />
-    <bitmap id="conf" x="0" y="bottom" filename="../drawables/icon_conf.svg" />
+	<text-area id="kick_clock_home_label" visible="false" x="5%" y="55%" width="40%" height="15%" text="conv" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="kick_clock_home" visible="false" x="5%" y="62%" width="40%" height="25%" text="00" font="Gfx.FONT_NUMBER_MILD" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area id="resume" visible="false" x="center" y="50%" width="100%" height="25%" text="resume" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="end" visible="false" x="center" y="bottom" width="100%" height="25%" text="end" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="kick_clock_away_label" visible="false" x="50%" y="55%" width="40%" height="15%" text="conv" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="kick_clock_away" visible="false" x="50%" y="62%" width="40%" height="25%" text="00" font="Gfx.FONT_NUMBER_MILD" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
-    <text-area id="next" visible="false" x="center" y="50%" width="100%" height="25%" text="next" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="finish" visible="false" x="center" y="bottom" width="100%" height="25%" text="finish" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="pen_home" x="left" y="bottom" width="40%" height="15%" text="0" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_RIGHT" />
+	<text-area id="pen" x="center" y="bottom" width="20%" height="15%" text="pen" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_CENTER" />
+	<text-area id="pen_away" x="right" y="bottom" width="40%" height="15%" text="0" font="Gfx.FONT_SMALL" color="0xaaaaaa" justification="Gfx.TEXT_JUSTIFY_LEFT" />
 
-    <text-area id="report" visible="false" x="center" y="50%" width="100%" height="25%" text="report" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="clear" visible="false" x="center" y="bottom" width="100%" height="25%" text="clear" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="start" x="left" y="50%" width="50%" height="25%" text="start" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<bitmap id="match_log" x="50%" y="50%" filename="../drawables/icon_match_log.svg" />
+	<bitmap id="conf" x="0" y="bottom" filename="../drawables/icon_conf.svg" />
+
+	<text-area id="resume" visible="false" x="center" y="50%" width="100%" height="25%" text="resume" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="end" visible="false" x="center" y="bottom" width="100%" height="25%" text="end" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+	<text-area id="next" visible="false" x="center" y="50%" width="100%" height="25%" text="next" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="finish" visible="false" x="center" y="bottom" width="100%" height="25%" text="finish" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+
+	<text-area id="report" visible="false" x="center" y="50%" width="100%" height="25%" text="report" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="clear" visible="false" x="center" y="bottom" width="100%" height="25%" text="clear" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 
 </layout>

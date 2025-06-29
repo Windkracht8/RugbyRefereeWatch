@@ -23,7 +23,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -176,23 +175,7 @@ public class Main extends AppCompatActivity implements Comms.Interface{
     void toast(int message){
         runOnUiThread(()->Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event){
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            onBack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
 
-     private void onBack(){
-        if(tabHistory.getVisibility() == View.VISIBLE && tabHistory.unselect()){
-            return;
-        }else if(tabReport.getVisibility() == View.VISIBLE){
-            tabHistoryLabelClick();
-            return;
-        }
-        finish();
-    }
     @Override public boolean onTouchEvent(MotionEvent event){return gestureDetector.onTouchEvent(event);}
     boolean onTouchEventScrollViews(View ignoredV, MotionEvent event){
         return gestureDetector.onTouchEvent(event);

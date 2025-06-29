@@ -128,7 +128,7 @@ public class TabPrepare extends LinearLayout{
                         etPointsCon.setText("2");
                         etPointsGoal.setText("3");
                         etClockPK.setText(String.valueOf(60));
-                        etClockCon.setText(String.valueOf(90));
+                        etClockCon.setText(String.valueOf(60));
                         etClockRestart.setText("0");
                         break;
                     case 2://10s

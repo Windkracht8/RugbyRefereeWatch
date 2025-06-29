@@ -12,10 +12,10 @@ android{
     defaultConfig{
         applicationId = 'com.windkracht8.rugbyrefereewatch'
         minSdk = 26
-        targetSdk = 35
-        compileSdk = 35
-        versionCode = 364
-        versionName = 'm3.25'
+        targetSdk = 36
+        compileSdk = 36
+        versionCode = 366
+        versionName = 'm3.27'
     }
     buildTypes{
         release{
@@ -35,5 +35,5 @@ dependencies{
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'com.garmin.connectiq:ciq-companion-app-sdk:2.2.0@aar'
-    implementation platform('org.jetbrains.kotlin:kotlin-bom:2.1.21')
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:2.2.0')
 }

@@ -34,7 +34,7 @@ public class MatchData{
     int points_con = 2;
     int points_goal = 3;
     int clock_pk = 60;
-    int clock_con = 90;
+    int clock_con = 60;
     int clock_restart = 0;
 
     MatchData(){
@@ -170,6 +170,28 @@ public class MatchData{
             case "GOAL":
                 team_edit.goals++;
                 break;
+        }
+    }
+    boolean alreadyHasYellow(Event event){
+        if(event.who == 0) return false;
+        int count = 0;
+        for(Event e : events){
+            if(e.what.equals("YELLOW CARD") && e.team.equals(event.team) && e.who == event.who){
+                count++;
+            }
+        }
+        return count > 1;
+    }
+    void convertYellowToRed(Event event){
+        event.what = "RED CARD";
+        Team team = event.team.equals(HOME_ID) ? home : away;
+        team.yellow_cards--;
+        team.red_cards++;
+        for(int i=team.sinbins.size()-1; i>=0; i--){
+            if(team.sinbins.get(i).id == event.id){
+                team.sinbins.remove(i);
+                break;
+            }
         }
     }
     Event logEvent(String what, String team, long id){

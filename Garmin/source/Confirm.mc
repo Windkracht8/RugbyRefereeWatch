@@ -8,7 +8,7 @@
 import Toybox.Graphics;
 import Toybox.WatchUi;
 
-class KickClockConfirm extends View{
+class Confirm extends View{
 	var label;
 	function initialize(label){
 		self.label = label;
@@ -44,6 +44,27 @@ class KickClockConfirmDelegate extends BehaviorDelegate{
 				MainView.main.kickClockAwayDone();
 			}
 		}
+		return true;
+	}
+}
+
+class SecondYellowConfirmDelegate extends BehaviorDelegate{
+	var event;
+	function initialize(event){
+		self.event = event;
+		BehaviorDelegate.initialize();
+	}
+	function onBack(){
+		popView(SLIDE_UP);
+		return true;
+	}
+	function onTap(evt){
+		if(evt.getCoordinates()[1] < MainView._50vh){return false;}
+		if(evt.getCoordinates()[0] > MainView._50vw){
+			MainView.main.match.convertYellowToRed(event);
+			MainView.main.updateSinbins();
+		}
+		popView(SLIDE_UP);
 		return true;
 	}
 }

@@ -6,12 +6,12 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <svg
-   width="36"
-   height="36"
-   viewBox="0 0 36 36"
-   xmlns="http://www.w3.org/2000/svg">
-  <path
-     d="m 8,18 v 0 L 26,36 V 0 Z"
-     stroke-width="2"
-     stroke="#FFFFFF" />
+	width="36"
+	height="36"
+	viewBox="0 0 36 36"
+	xmlns="http://www.w3.org/2000/svg">
+	<path
+		d="m 8,18 v 0 L 26,36 V 0 Z"
+		stroke-width="2"
+		stroke="#FFFFFF" />
 </svg>

@@ -6,7 +6,7 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <string id="RugbyRefereeWatch">RugbyRefereeWatch</string>
+	<string id="RugbyRefereeWatch">RugbyRefereeWatch</string>
 
 	<string id="start">start</string>
 	<string id="_1st">1st</string>
@@ -19,53 +19,53 @@
 	<string id="extra">extra</string>
 	<string id="extra_time">extra time</string>
 
-    <!-- Conf -->
-    <string id="conf">Conf</string>
-    <string id="home_color">Home color</string>
-    <string id="away_color">Away color</string>
-    <string id="match_type">Match type</string>
-    <string id="match_type_details">Match type details</string>
-    <string id="details">Details</string>
-    <string id="period_time">Time/period</string>
-    <string id="period_count">Period count</string>
-    <string id="sinbin">Sinbin</string>
-    <string id="points_try">Points try</string>
-    <string id="points_con">Points conversion</string>
-    <string id="points_goal">Points goal</string>
-    <string id="clock_pk">PK clock</string>
-    <string id="clock_con">Conversion clock</string>
-    <string id="clock_restart">Restart clock</string>
-    <string id="timer_type">Timer type</string>
-    <string id="record_player">Record player</string>
-    <string id="record_pens">Record penalties</string>
-    <string id="delay_end">Delay end</string>
-    <string id="help">Help</string>
-    <string id="off">off</string>
-    <string id="on">on</string>
-    <string id="down">down</string>
-    <string id="up">up</string>
-    <string id="custom">custom</string>
-    <string id="_15s">15s</string>
-    <string id="_10s">10s</string>
-    <string id="_7s">7s</string>
-    <string id="beach_7s">beach 7s</string>
-    <string id="beach_5s">beach 5s</string>
+	<!-- Conf -->
+	<string id="conf">Conf</string>
+	<string id="home_color">Home color</string>
+	<string id="away_color">Away color</string>
+	<string id="match_type">Match type</string>
+	<string id="match_type_details">Match type details</string>
+	<string id="details">Details</string>
+	<string id="period_time">Time/period</string>
+	<string id="period_count">Period count</string>
+	<string id="sinbin">Sinbin</string>
+	<string id="points_try">Points try</string>
+	<string id="points_con">Points conversion</string>
+	<string id="points_goal">Points goal</string>
+	<string id="clock_pk">PK clock</string>
+	<string id="clock_con">Conversion clock</string>
+	<string id="clock_restart">Restart clock</string>
+	<string id="timer_type">Timer type</string>
+	<string id="record_player">Record player</string>
+	<string id="record_pens">Record penalties</string>
+	<string id="delay_end">Delay end</string>
+	<string id="help">Help</string>
+	<string id="off">off</string>
+	<string id="on">on</string>
+	<string id="down">down</string>
+	<string id="up">up</string>
+	<string id="custom">custom</string>
+	<string id="_15s">15s</string>
+	<string id="_10s">10s</string>
+	<string id="_7s">7s</string>
+	<string id="beach_7s">beach 7s</string>
+	<string id="beach_5s">beach 5s</string>
 
-    <!-- Score -->    
-    <string id="pk">PK</string>
-    <string id="conv">conv</string>
-    <string id="restart">restart</string>
+	<!-- Score -->
+	<string id="pk">PK</string>
+	<string id="conv">conv</string>
+	<string id="restart">restart</string>
 
-    <!-- Score -->    
-    <string id="_try">Try</string>
-    <string id="con">Conversion</string>
-    <string id="goal">Goal</string>
-    <string id="foul_play">Foul play</string>
+	<!-- Score -->
+	<string id="_try">Try</string>
+	<string id="con">Conversion</string>
+	<string id="goal">Goal</string>
+	<string id="foul_play">Foul play</string>
 
-    <!-- Foul play -->    
-    <string id="card_yellow">Yellow</string>
-    <string id="penalty_try">Penalty try</string>
-    <string id="card_red">Red</string>
+	<!-- Foul play -->
+	<string id="card_yellow">Yellow</string>
+	<string id="penalty_try">Penalty try</string>
+	<string id="card_red">Red</string>
 
 	<!-- Correct -->
 	<string id="correct">Tap to remove</string>
@@ -74,5 +74,7 @@
 	<!-- Kick clocks -->
 	<string id="kick_clock_pk">PK good?</string>
 	<string id="kick_clock_con">Conversion good?</string>
+
+	<string id="second_yellow">2nd yellow for player, convert to red?</string>
 
 </strings>

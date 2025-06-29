@@ -66,6 +66,7 @@
     <string name="restart">restart</string>
     <string name="kc_confirm_conv">conversion good?</string>
     <string name="kc_confirm_pk">PK good?</string>
+    <string name="confirm_second_yellow">2nd yellow for this player, convert to red?</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
 

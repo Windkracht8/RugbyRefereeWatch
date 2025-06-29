@@ -17,7 +17,7 @@ class MatchTypeDetails extends Menu2{
 	var clock_pk;
 	var clock_con;
 	var clock_restart;
-	
+
 	function initialize(){
 		Menu2.initialize({:title=>Rez.Strings.details});
 		period_time = new MenuItem(Rez.Strings.period_time, null, "period_time", {});

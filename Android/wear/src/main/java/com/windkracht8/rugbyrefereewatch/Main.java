@@ -91,8 +91,10 @@ public class Main extends Activity{
     private ImageButton bConfWatch;
     private LinearLayout delay_end_wrapper;
     private CircularProgressIndicator delay_end_progress;
-    private LinearLayout kick_clock_confirm;
-    private TextView kick_clock_confirm_label;
+    LinearLayout confirm;
+    TextView confirm_label;
+    Button confirm_no;
+    Button confirm_yes;
     private ConfWatch confWatch;
     private Score score;
     private FoulPlay foulPlay;
@@ -205,7 +207,7 @@ public class Main extends Activity{
                 R.id.tTimer, R.id.kickClockHome, R.id.kickClockAway,
                 R.id.bPenHome, R.id.bPenAway, R.id.buttons_back, R.id.bOverTimer,
                 R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
-                R.id.kick_clock_confirm_no, R.id.kick_clock_confirm_yes,
+                R.id.confirm_no, R.id.confirm_yes,
                 R.id.confWatch,
                 R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal,
                 R.id.foulPlay, R.id.foul_play, R.id.card_yellow,
@@ -243,8 +245,8 @@ public class Main extends Activity{
         bStart.setOnClickListener(v->bOverTimerClick());
         bBottom = findViewById(R.id.bBottom);
         bBottom.setOnClickListener(v->bBottomClick());
-        kick_clock_confirm = findViewById(R.id.kick_clock_confirm);
-        kick_clock_confirm_label = findViewById(R.id.kick_clock_confirm_label);
+        confirm = findViewById(R.id.confirm);
+        confirm_label = findViewById(R.id.confirm_label);
         bConf = findViewById(R.id.bConf);
         bConf.setOnClickListener(v->startActivity(new Intent(this, ConfActivity.class)));
         confWatch = findViewById(R.id.confWatch);
@@ -288,12 +290,12 @@ public class Main extends Activity{
         bBottom.setHeight(vh25);
         bBottom.setPadding(0, vh5, 0, vh5);
         bConf.getLayoutParams().height = vh25;
-        Button kick_clock_confirm_no = findViewById(R.id.kick_clock_confirm_no);
-        kick_clock_confirm_no.getLayoutParams().width = vw50;
-        kick_clock_confirm_no.setPadding(0, 0, 0, vh25);
-        Button kick_clock_confirm_yes = findViewById(R.id.kick_clock_confirm_yes);
-        kick_clock_confirm_yes.getLayoutParams().width = vw50;
-        kick_clock_confirm_yes.setPadding(0, 0, 0, vh25);
+        confirm_no = findViewById(R.id.confirm_no);
+        confirm_no.getLayoutParams().width = vw50;
+        confirm_no.setPadding(0, 0, 0, vh25);
+        confirm_yes = findViewById(R.id.confirm_yes);
+        confirm_yes.getLayoutParams().width = vw50;
+        confirm_yes.setPadding(0, 0, 0, vh25);
 
         if(getResources().getConfiguration().fontScale > 1.1){
             battery.setIncludeFontPadding(false);
@@ -411,8 +413,8 @@ public class Main extends Activity{
             confWatch.setVisibility(View.GONE);
             updateAfterConfig();
             runInBackground(()->FileStore.storeSettings(this));
-        }else if(kick_clock_confirm.getVisibility() == View.VISIBLE){
-            kick_clock_confirm.setVisibility(View.GONE);
+        }else if(confirm.getVisibility() == View.VISIBLE){
+            confirm.setVisibility(View.GONE);
         }else{
             if(timer_status == TimerStatus.CONF || timer_status == TimerStatus.FINISHED){
                 finish();
@@ -726,22 +728,23 @@ public class Main extends Activity{
         if(isScreenRound) tTimer.setPadding(vh10, 0, 0, 0);
     }
     private void kickClockHomeClick(){
+        confirm_label.setLines(1);
         switch(kickClockType_home){
             case CON:
-                kick_clock_confirm_label.setText(R.string.kc_confirm_conv);
+                confirm_label.setText(R.string.kc_confirm_conv);
                 break;
             case PK:
-                kick_clock_confirm_label.setText(R.string.kc_confirm_pk);
+                confirm_label.setText(R.string.kc_confirm_pk);
                 break;
             case RESTART:
                 kickClockHomeDone();
                 return;
         }
-        findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
+        confirm_no.setOnClickListener(v->{
             kickClockHomeDone();
-            kick_clock_confirm.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
         });
-        findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
+        confirm_yes.setOnClickListener(v->{
             score.team = match.home;
             switch(kickClockType_home){
                 case CON:
@@ -751,27 +754,28 @@ public class Main extends Activity{
                     goalClick();
                     break;
             }
-            kick_clock_confirm.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
         });
-        kick_clock_confirm.setVisibility(View.VISIBLE);
+        confirm.setVisibility(View.VISIBLE);
     }
     private void kickClockAwayClick(){
+        confirm_label.setLines(1);
         switch(kickClockType_away){
             case CON:
-                kick_clock_confirm_label.setText(R.string.kc_confirm_conv);
+                confirm_label.setText(R.string.kc_confirm_conv);
                 break;
             case PK:
-                kick_clock_confirm_label.setText(R.string.kc_confirm_pk);
+                confirm_label.setText(R.string.kc_confirm_pk);
                 break;
             case RESTART:
                 kickClockAwayDone();
                 return;
         }
-        findViewById(R.id.kick_clock_confirm_no).setOnClickListener(v->{
+        confirm_no.setOnClickListener(v->{
             kickClockAwayDone();
-            kick_clock_confirm.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
         });
-        findViewById(R.id.kick_clock_confirm_yes).setOnClickListener(v->{
+        confirm_yes.setOnClickListener(v->{
             score.team = match.away;
             switch(kickClockType_away){
                 case CON:
@@ -781,9 +785,9 @@ public class Main extends Activity{
                     goalClick();
                     break;
             }
-            kick_clock_confirm.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
         });
-        kick_clock_confirm.setVisibility(View.VISIBLE);
+        confirm.setVisibility(View.VISIBLE);
     }
     private void kickClockHomeDone(){
         if(timer_status == TimerStatus.RUNNING && kickClockType_home == KickClockTypes.CON && match.clock_restart > 0){

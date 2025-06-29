@@ -6,12 +6,12 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <drawables xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <bitmap id="circle_1" filename="circle_1.svg" />
-    <bitmap id="circle_2" filename="circle_2.svg" />
-    <bitmap id="circle_3" filename="circle_3.svg" />
-    <bitmap id="circle_4" filename="circle_4.svg" />
-    <bitmap id="circle_5" filename="circle_5.svg" />
-    <bitmap id="circle_6" filename="circle_6.svg" />
-    <bitmap id="circle_7" filename="circle_7.svg" />
-    <bitmap id="circle_8" filename="circle_8.svg" />
+	<bitmap id="circle_1" filename="circle_1.svg" />
+	<bitmap id="circle_2" filename="circle_2.svg" />
+	<bitmap id="circle_3" filename="circle_3.svg" />
+	<bitmap id="circle_4" filename="circle_4.svg" />
+	<bitmap id="circle_5" filename="circle_5.svg" />
+	<bitmap id="circle_6" filename="circle_6.svg" />
+	<bitmap id="circle_7" filename="circle_7.svg" />
+	<bitmap id="circle_8" filename="circle_8.svg" />
 </drawables>

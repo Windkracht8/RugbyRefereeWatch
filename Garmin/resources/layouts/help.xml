@@ -6,10 +6,10 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <layout id="Help" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <bitmap id="back" x="0" y="center" filename="../drawables/icon_left.svg" />
-    <bitmap id="up" visible="false" x="center" y="top" filename="../drawables/icon_up.svg" />
-    <bitmap id="down" x="center" y="bottom" filename="../drawables/icon_down.svg" />
+	<bitmap id="back" x="0" y="center" filename="../drawables/icon_left.svg" />
+	<bitmap id="up" visible="false" x="center" y="top" filename="../drawables/icon_up.svg" />
+	<bitmap id="down" x="center" y="bottom" filename="../drawables/icon_down.svg" />
 
-    <text-area id="title" x="10%" y="12%" width="80%" height="15%" font="Gfx.FONT_TINY" color="0x2bd2e3" justification="Gfx.TEXT_JUSTIFY_CENTER" />
-    <text-area id="content" x="12%" y="25%" width="76%" height="65%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER" />
+	<text-area id="title" x="10%" y="12%" width="80%" height="15%" font="Gfx.FONT_TINY" color="0x2bd2e3" justification="Gfx.TEXT_JUSTIFY_CENTER" />
+	<text-area id="content" x="12%" y="25%" width="76%" height="65%" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER" />
 </layout>

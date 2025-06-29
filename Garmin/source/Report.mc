@@ -42,7 +42,7 @@ class Report extends View{
 
 		for(var i=0; i<match.events.size(); i++){
 			var event = match.events[i] as MatchData.Event;
-			if(event.what.equals("RESUME") || event.what.equals("TIME OFF")){continue;}
+			if(event.what.equals("RESUME") || event.what.equals("TIME OFF") || event.deleted){continue;}
 
 			var text = Utils.prettyTimer(event.timer) + " ";
 			switch(event.what){

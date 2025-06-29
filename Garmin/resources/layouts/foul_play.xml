@@ -6,7 +6,7 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <layout id="FoulPlay" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <text-area
+	<text-area
 		id="card_yellow"
 		x="center"
 		y="top"
@@ -16,7 +16,7 @@
 		font="Gfx.FONT_LARGE"
 		color="0xffff00"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="penalty_try"
 		x="center"
 		y="33%"
@@ -25,7 +25,7 @@
 		text="@Strings.penalty_try"
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area
+	<text-area
 		id="card_red"
 		x="center"
 		y="bottom"

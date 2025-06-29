@@ -23,7 +23,7 @@ class MatchData{
 	var points_con = 2;
 	var points_goal = 3;
 	var clock_pk = 60;
-	var clock_con = 90;
+	var clock_con = 60;
 	var clock_restart = 0;
 
 	function initialize(){
@@ -82,6 +82,7 @@ class MatchData{
 	function toDictionary() as Dictionary{
 		var events_dict = [];
 		for(var i=0; i<events.size(); i++){
+			if(events[i].deleted){continue;}
 			events_dict.add(events[i].toDictionary());
 		}
 		return {
@@ -125,11 +126,30 @@ class MatchData{
 
 		json += ",\"events\":[";
 		for(var i=0; i<events.size(); i++){
+			if(events[i].deleted){continue;}
 			if(i>0){json += ",";}
 			json += events[i].toJson();
 		}
 		json += "]}";
 		return json;
+	}
+	function alreadyHasYellow(event) as Boolean{
+		if(event.who == 0){return false;}
+		var count = 0;
+		for(var i=0; i<events.size(); i++){
+			var e = events[i];
+			if(e.what.equals("YELLOW CARD") && e.team.equals(event.team) && e.who == event.who){
+				count++;
+			}
+		}
+		return count > 1;
+	}
+	function convertYellowToRed(event){
+		event.what = "RED CARD";
+		var team = event.team.equals(HOME_ID) ? MainView.main.match.home : MainView.main.match.away;
+		team.yellow_cards--;
+		team.red_cards++;
+		team.delSinbin(event.id);
 	}
 	function logEvent(what, team) as Event{
 		var event = new Event(what, team);

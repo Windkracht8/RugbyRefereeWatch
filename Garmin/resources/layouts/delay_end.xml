@@ -6,9 +6,9 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <layout id="DelayEnd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <bitmap id="progress" x="0" y="0" filename="../drawables/circle.svg" />
+	<bitmap id="progress" x="0" y="0" filename="../drawables/circle.svg" />
 
-    <text-area id="label" x="17%" y="5%" width="66%" height="40%" text="Cancel to resume" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="sublabel" x="10%" y="30%" width="80%" height="40%" text="You can disable this delay in the settings" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-    <text-area id="cancel" x="10%" y="60%" width="80%" height="25%" text="cancel" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="label" x="17%" y="5%" width="66%" height="40%" text="Cancel to resume" font="Gfx.FONT_TINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="sublabel" x="10%" y="30%" width="80%" height="40%" text="You can disable this delay in the settings" font="Gfx.FONT_XTINY" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area id="cancel" x="10%" y="60%" width="80%" height="25%" text="cancel" font="Gfx.FONT_LARGE" color="0x55ffff" justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 </layout>

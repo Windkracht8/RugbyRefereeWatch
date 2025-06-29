@@ -10,9 +10,6 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class Comms{
-	function initialize(){
-		//System.println("Comms.initialize");
-	}
 	function start(){
 		//System.println("Comms.start");
 		Communications.registerForPhoneAppMessages(method(:gotRequest));
@@ -75,7 +72,7 @@ class Comms{
 			FileStore.storeCustomMatchType(custom_match_types_array[i]);
 		}
 		sendResponse(buildSyncResponse());
-	}	
+	}
 	function delCustomMatchTypeIf(name, custom_match_types_array as Array<CustomMatchType>){
 		for(var ip=0; ip<custom_match_types_array.size(); ip++){
 			if(name.hashCode() == custom_match_types_array[ip].name.hashCode()){
@@ -165,12 +162,6 @@ class Comms{
 	}
 	function sendResponse(response as String){
 		//System.println("Comms.sendResponse: " + response);
-		Communications.transmit(response, null, new CommListener());
+		Communications.transmit(response, null, new Communications.ConnectionListener());
 	}
-}
-
-class CommListener extends Communications.ConnectionListener{
-    function initialize(){Communications.ConnectionListener.initialize();}
-    function onComplete(){//System.println("CommListener.onComplete");}
-    function onError(){//System.println("CommListener.onError");}
 }
