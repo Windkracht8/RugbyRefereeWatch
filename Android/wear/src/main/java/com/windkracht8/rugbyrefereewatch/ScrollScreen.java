@@ -24,8 +24,8 @@ public class ScrollScreen extends Activity{
     private static float bottom_quarter;
     private static float below_screen;
 
-    @Override public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+    @Override public void onCreate(Bundle ignored){
+        super.onCreate(null);
         setContentView(R.layout.scroll_screen);
         list = findViewById(R.id.list);
         ScrollView scrollView = findViewById(R.id.scrollView);

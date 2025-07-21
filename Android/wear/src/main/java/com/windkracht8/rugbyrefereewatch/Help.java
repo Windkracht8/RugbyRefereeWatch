@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 public class Help extends Activity{
     private LinearLayout list;
-    @Override public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+    @Override public void onCreate(Bundle ignored){
+        super.onCreate(null);
         setContentView(R.layout.scroll_screen);
         list = findViewById(R.id.list);
         if(Main.isScreenRound) list.setPadding(Main.vh10, Main.vh15, Main.vh10, Main.vh25);

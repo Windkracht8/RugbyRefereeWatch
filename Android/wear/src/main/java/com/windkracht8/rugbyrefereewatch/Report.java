@@ -16,17 +16,18 @@ import android.widget.TextView;
 public class Report extends Activity{
     private LinearLayout list;
     public static MatchData match;
-    @Override public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        if(match == null){finishAndRemoveTask();}
+    @Override public void onCreate(Bundle ignored){
+        super.onCreate(null);
         setContentView(R.layout.scroll_screen);
         ((TextView) findViewById(R.id.label)).setText(R.string.report_title);
         list = findViewById(R.id.list);
-        if(Main.isScreenRound){
-            list.setPadding(Main._10dp, Main._10dp, Main._10dp, Main.vh25);
-        }
+        if(Main.isScreenRound) list.setPadding(Main._10dp, Main._10dp, Main._10dp, Main.vh25);
         findViewById(R.id.scrollView).requestFocus();
 
+        if(match == null){
+            finishAndRemoveTask();
+            return;
+        }
         addItem(match.home.tries + " tries " + match.away.tries);
 
         if(match.home.pen_tries > 0 || match.away.pen_tries > 0)
