@@ -328,7 +328,7 @@ class MatchData{
 			if(what == null){return;}
 			id = Utils.getTimestamp();
 			self.what = what;
-			self.team = team;
+			self.team = team == "" ? null : team;
 			timer = MainView.main.getDurationFull();
 			period = MainView.main.timer_period;
 			if(what.equals("END")){score = MainView.main.match.home.tot + ":" + MainView.main.match.away.tot;}

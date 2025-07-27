@@ -27,10 +27,12 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SuppressLint("MissingPermission")//Handled by Permissions.hasXPermission
 public class DeviceSelect extends Activity implements Comms.Interface{
+    private ExecutorService executorService;
     private ImageView device_select_loading;
     private LinearLayout device_select_ll;
 
@@ -44,7 +46,7 @@ public class DeviceSelect extends Activity implements Comms.Interface{
             device_select_loading = findViewById(R.id.device_select_loading);
             ((AnimatedVectorDrawable) device_select_loading.getBackground()).start();
             device_select_loading.setVisibility(View.VISIBLE);
-            Executors.newCachedThreadPool().execute(this::loadBTDevices);
+            runInBackground(this::loadBTDevices);
         });
 
         LinearLayout device_select_known = findViewById(R.id.device_select_known);
@@ -53,7 +55,7 @@ public class DeviceSelect extends Activity implements Comms.Interface{
             device_select_loading = findViewById(R.id.device_select_loading);
             ((AnimatedVectorDrawable) device_select_loading.getBackground()).start();
             device_select_loading.setVisibility(View.VISIBLE);
-            Executors.newCachedThreadPool().execute(this::loadIQDevices);
+            runInBackground(this::loadIQDevices);
         });
 
         if(Main.comms == null) return;
@@ -150,6 +152,11 @@ public class DeviceSelect extends Activity implements Comms.Interface{
                 .create()
                 .show();
         return device != null;
+    }
+
+    private void runInBackground(Runnable runnable){
+        if(executorService == null) executorService = Executors.newCachedThreadPool();
+        executorService.execute(runnable);
     }
 
     @Override public void onCommsStartDone(){}

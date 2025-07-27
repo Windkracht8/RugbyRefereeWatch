@@ -12,9 +12,12 @@ class DelayEnd extends View{
 	var v_progress;
 	var value = 0;
 	var start_time;
-	function initialize(start_time){
+	enum DELAY_TYPE{DELAY_END, DELAY_FINISH}
+	var delay_type;
+	function initialize(start_time, delay_type){
 		View.initialize();
 		self.start_time = start_time;
+		self.delay_type = delay_type;
 	}
 	function onLayout(dc as Dc) as Void{
 		setLayout(Rez.Layouts.DelayEnd(dc));
@@ -22,7 +25,11 @@ class DelayEnd extends View{
 	}
 	function progress(){
 		if(value == 8){
-			MainView.main.delay_end_finish(start_time);
+			if(delay_type == DELAY_END){
+				MainView.main.delay_end_finish(start_time);
+			}else{
+				MainView.main.delay_finish_finish(start_time);
+			}
 			popView(SLIDE_UP);
 		}
 		value++;

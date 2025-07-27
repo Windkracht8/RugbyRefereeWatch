@@ -31,8 +31,8 @@ class Help extends View{
 		"Looking for penalty try? Check under foul play.",
 		"During a game, swipe back to open the correction screen. On this screen you can tap the event you want to undo.",
 		"Before the game starts you can set which team will kick off by tapping the home or away team score.",
-		"The last 10 matches will be stored on the watch.",
-		"Sorry, this is not implemented yet.",//When implemented, update the other help items to include the features
+		"The last 10 matches will be stored on the watch. To keep more, sync them with the phone app.",
+		"To connect with the phone, open the app on the phone, and don't start a match on the watch.",
 		"From the settings you can open this screen. Find support contacts in the App Store for more help."
 	];
 	var size = -1;

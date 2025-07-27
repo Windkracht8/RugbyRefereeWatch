@@ -243,7 +243,9 @@ class MainView extends View{
 
 	function onShow() as Void{
 		updateAfterConfig();
-		updateScore();
+		if(timer_status != STATUS_CONF){
+			updateScore();
+		}
 	}
 	function updateTime() as Void{
 		var time_info = Gregorian.info(Time.now(), Time.FORMAT_LONG);
@@ -262,14 +264,17 @@ class MainView extends View{
 			case STATUS_REST:
 				updateTimer();
 				requestUpdate();
-				break;
 			case STATUS_TIME_OFF:
 				if(v_delay_end != null){v_delay_end.progress();}
 				break;
 		}
 		requestUpdate();
 		if(timer_status == STATUS_RUNNING || timer_status == STATUS_REST || timer_status == STATUS_TIME_OFF){
-			timer_update.start(method(:update), 1000-((Utils.getTimestamp()-checkpoint_time)%1000), false);
+			var delay = 1000-((Utils.getTimestamp()-checkpoint_time)%1000);
+			if(delay < 100){
+				delay = 500;
+			}
+			timer_update.start(method(:update), delay, false);
 		}
 	}
 	function updateTimer(){
@@ -613,11 +618,7 @@ class MainView extends View{
 		requestUpdate();
 	}
 	function delay_end_start(){
-		if(!delay_end){
-			endPeriod(Utils.getTimestamp());
-			return;
-		}
-		v_delay_end = new DelayEnd(Utils.getTimestamp());
+		v_delay_end = new DelayEnd(Utils.getTimestamp(), DelayEnd.DELAY_END);
 		pushView(v_delay_end, new DelayEndDelegate(), SLIDE_UP);
 	}
 	function delay_end_finish(delay_end_start_time){
@@ -651,15 +652,13 @@ class MainView extends View{
 		checkpoint_time = delay_end_start_time;
 		checkpoint_previous += timer_period_time;
 
-		var kickoffTeam = getKickoffTeam();
-		if(kickoffTeam != null){
-			if(kickoffTeam.equals(MatchData.HOME_ID)){
-				kickoffTeam = match.home.tot + " KICK";
-				v_score_home.setText(kickoffTeam);
-			}else{
-				kickoffTeam = match.away.tot + " KICK";
-				v_score_away.setText(kickoffTeam);
-			}
+		switch(getKickoffTeam()){
+			case MatchData.HOME_ID:
+				v_score_home.setText(match.home.tot + " KICK");
+				break;
+			case MatchData.AWAY_ID:
+				v_score_away.setText(match.away.tot + " KICK");
+				break;
 		}
 		if(kickClockEnd_home > 0){kickClockHomeDone();}
 		if(kickClockEnd_away > 0){kickClockAwayDone();}
@@ -687,7 +686,15 @@ class MainView extends View{
 		updateTimer();
 		requestUpdate();
 	}
-	function finish(){
+	function delay_finish_start(){
+		v_delay_end = new DelayEnd(Utils.getTimestamp(), DelayEnd.DELAY_FINISH);
+		pushView(v_delay_end, new DelayEndDelegate(), SLIDE_UP);
+	}
+	function delay_finish_finish(delay_finish_start_time){
+		v_delay_end = null;
+		finish(delay_finish_start_time);
+	}
+	function finish(delay_finish_start_time){
 		//System.println("MainView.finish");
 		if(checkpoint_time+500 > Utils.getTimestamp()){return;}//sticky fingers
 		timer_status = STATUS_FINISHED;
@@ -757,7 +764,9 @@ class MainView extends View{
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
-		kickClockHomeShow(KICK_CLOCK_TYPE_CON);
+		if(match.points_con > 0 && match.clock_con > 0){
+			kickClockHomeShow(KICK_CLOCK_TYPE_CON);
+		}
 	}
 	function tryAway(){
 		match.away.tries++;
@@ -766,7 +775,9 @@ class MainView extends View{
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
-		kickClockAwayShow(KICK_CLOCK_TYPE_CON);
+		if(match.points_con > 0 && match.clock_con > 0){
+			kickClockAwayShow(KICK_CLOCK_TYPE_CON);
+		}
 	}
 	function conHome(){
 		match.home.cons++;
@@ -840,17 +851,25 @@ class MainView extends View{
 		match.home.pens++;
 		updateScore();
 		match.logEvent("PENALTY", MatchData.HOME_ID);
-		kickClockAwayShow(KICK_CLOCK_TYPE_PK);
+		if(match.clock_pk > 0){
+			kickClockAwayShow(KICK_CLOCK_TYPE_PK);
+		}
 	}
 	function penAway(){
 		match.away.pens++;
 		updateScore();
 		match.logEvent("PENALTY", MatchData.AWAY_ID);
-		kickClockHomeShow(KICK_CLOCK_TYPE_PK);
+		if(match.clock_pk > 0){
+			kickClockHomeShow(KICK_CLOCK_TYPE_PK);
+		}
 	}
 	function kickClockHomeClick(){
 		if(kickClockType_home == KICK_CLOCK_TYPE_PK){
-			pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
+			if(match.points_goal > 0){
+				pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
+			}else{
+				kickClockHomeHide();
+			}
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_CON){
 			pushView(new Confirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_home, true), SLIDE_UP);
 		}else if(kickClockType_home == KICK_CLOCK_TYPE_RESTART){
@@ -859,7 +878,11 @@ class MainView extends View{
 	}
 	function kickClockAwayClick(){
 		if(kickClockType_away == KICK_CLOCK_TYPE_PK){
-			pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
+			if(match.points_goal > 0){
+				pushView(new Confirm(Rez.Strings.kick_clock_pk), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
+			}else{
+				kickClockAwayHide();
+			}
 		}else if(kickClockType_away == KICK_CLOCK_TYPE_CON){
 			pushView(new Confirm(Rez.Strings.kick_clock_con), new KickClockConfirmDelegate(kickClockType_away, false), SLIDE_UP);
 		}else if(kickClockType_away == KICK_CLOCK_TYPE_RESTART){
@@ -909,7 +932,7 @@ class MainView extends View{
 				return MatchData.HOME_ID;
 			}
 		}
-		return null;
+		return "";
 	}
 
 	function buzzTimeOff(){

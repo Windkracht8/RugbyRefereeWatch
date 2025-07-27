@@ -575,21 +575,12 @@ public class Main extends Activity{
     private void bBottomClick(){
         if(draggingEnded+1000 > System.currentTimeMillis()) return;
         draggingEnded = System.currentTimeMillis();
-
         switch(timer_status){
             case TIME_OFF:
                 delay_end_start();
                 break;
             case REST:
-                timer_status = TimerStatus.FINISHED;
-                timer_period_time = match.period_time*60;
-                timer_type_period = timer_type;
-                updateScore();
-
-                runInBackground(()->FileStore.storeMatch(this));
-                startBT();
-                stopOngoingNotification();
-                updateButtons();
+                delay_finish_start();
                 break;
             case FINISHED:
                 timer_status = TimerStatus.CONF;
@@ -790,7 +781,7 @@ public class Main extends Activity{
         confirm.setVisibility(View.VISIBLE);
     }
     private void kickClockHomeDone(){
-        if(timer_status == TimerStatus.RUNNING && kickClockType_home == KickClockTypes.CON && match.clock_restart > 0){
+        if(timer_status == TimerStatus.RUNNING && kickClockType_home == KickClockTypes.CON){
             kickClockType_home = KickClockTypes.RESTART;
             kickClockHomeShow(R.string.restart, match.clock_restart);
             return;
@@ -803,7 +794,7 @@ public class Main extends Activity{
         if(isScreenRound) tTimer.setPadding(vh10, 0, vh10, 0);
     }
     private void kickClockAwayDone(){
-        if(timer_status == TimerStatus.RUNNING && kickClockType_away == KickClockTypes.CON && match.clock_restart > 0){
+        if(timer_status == TimerStatus.RUNNING && kickClockType_away == KickClockTypes.CON){
             kickClockType_away = KickClockTypes.RESTART;
             kickClockAwayShow(R.string.restart, match.clock_restart);
             return;
@@ -824,8 +815,8 @@ public class Main extends Activity{
         }
         delay_end_count = 11;
         delay_end_update.run();
-        delay_end_wrapper.setVisibility(View.VISIBLE);
         delay_end_progress.setProgress(0);
+        delay_end_wrapper.setVisibility(View.VISIBLE);
         delay_end_progress.setVisibility(View.VISIBLE);
     }
     private void delay_end_cancel(){
@@ -874,6 +865,40 @@ public class Main extends Activity{
         updateButtons();
         if(kick_clock_home_end > 0) kickClockHomeDone();
         if(kick_clock_away_end > 0) kickClockAwayDone();
+        delay_end_wrapper.setVisibility(View.GONE);
+        delay_end_progress.setVisibility(View.GONE);
+    }
+
+    private void delay_finish_start(){
+        if(!delay_end){
+            finish_game();
+            return;
+        }
+        delay_end_count = 11;
+        delay_finish_update.run();
+        delay_end_progress.setProgress(0);
+        delay_end_wrapper.setVisibility(View.VISIBLE);
+        delay_end_progress.setVisibility(View.VISIBLE);
+    }
+    private final Runnable delay_finish_update = new Runnable(){@Override public void run(){
+        if(delay_end_count == -1) return;
+        delay_end_count--;
+        if(delay_end_count == 0){
+            finish_game();
+        }
+        delay_end_progress.setProgress((10-delay_end_count)*10);
+        handler.postDelayed(delay_finish_update, 1000);
+    }};
+    private void finish_game(){
+        timer_status = TimerStatus.FINISHED;
+        timer_period_time = match.period_time * 60;
+        timer_type_period = timer_type;
+        updateScore();
+
+        runInBackground(()->FileStore.storeMatch(this));
+        startBT();
+        stopOngoingNotification();
+        updateButtons();
         delay_end_wrapper.setVisibility(View.GONE);
         delay_end_progress.setVisibility(View.GONE);
     }

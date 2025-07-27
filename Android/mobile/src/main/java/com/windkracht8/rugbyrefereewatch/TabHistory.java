@@ -187,18 +187,16 @@ public class TabHistory extends LinearLayout{
         }
     }
 
-    boolean unselect(){
-        boolean ret = false;
+    private void unselect(){
         selecting = false;
         bExport.setVisibility(View.GONE);
         bDelete.setVisibility(View.GONE);
         for(int i=0; i<llMatches.getChildCount(); i++){
             View child = llMatches.getChildAt(i);
             if(child instanceof HistoryMatch){
-                if(((HistoryMatch)child).unselect()) ret = true;
+                ((HistoryMatch)child).unselect();
             }
         }
-        return ret;
     }
     private void deleteSelected(){
         for(int i=llMatches.getChildCount()-1; i >=0; i--){

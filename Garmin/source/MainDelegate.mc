@@ -143,10 +143,18 @@ class MainDelegate extends BehaviorDelegate{
 				onTimerTap();
 				break;
 			case STATUS_TIME_OFF:
-				main.delay_end_start();
+				if(main.delay_end){
+					main.delay_end_start();
+				}else{
+					main.endPeriod(Utils.getTimestamp());
+				}
 				break;
 			case STATUS_REST:
-				main.finish();
+				if(main.delay_end){
+					main.delay_finish_start();
+				}else{
+					main.finish(Utils.getTimestamp());
+				}
 				break;
 			case STATUS_FINISHED:
 				main.clear();
