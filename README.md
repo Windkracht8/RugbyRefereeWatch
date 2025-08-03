@@ -5,9 +5,9 @@ The app for the watch works stand-alone, with the companion phone app you can pu
 
 ## Wear OS watches
 
-Install from the Play Store (all Wear OS watches are supported):
+Install from the Play Store:
 https://play.google.com/store/apps/details?id=com.windkracht8.rugbyrefereewatch
-
+All Wear OS watches are supported, checkout Wikipedia for a list of Wear OS devices: https://en.wikipedia.org/wiki/List_of_Wear_OS_devices
 
 ## Garmin watches
 
