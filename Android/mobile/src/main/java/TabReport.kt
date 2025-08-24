@@ -414,7 +414,7 @@ fun ReportEventFull(event: MatchData.Event, timeWidth: Dp, timerWidth: Dp) {
 
 @Composable
 fun ReportEventEdit(event: MatchData.Event, eventTypes: Array<String>, topPadding: Dp) {
-	Row(modifier = Modifier.fillMaxWidth()) {
+	Row(modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
 		IconButton(onClick = { event.delete() }) {
 			Icon(
 				imageVector = Icons.Default.Delete,
@@ -429,7 +429,8 @@ fun ReportEventEdit(event: MatchData.Event, eventTypes: Array<String>, topPaddin
 		)
 		Text(
 			modifier = Modifier
-				.width(60.dp)
+				.width(64.dp)
+				.padding(horizontal = 4.dp)
 				.border(1.dp, colorScheme.outline, MaterialTheme.shapes.small)
 				.padding(vertical = topPadding)
 				.clickable { event.isHome = !(event.isHome ?: true) },
@@ -468,7 +469,7 @@ fun Spinner(
 		onExpandedChange = { expanded = !expanded }
 	) {
 		OutlinedTextField(
-			modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+			modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
 			value = value,
 			onValueChange = {},
 			readOnly = true,
@@ -490,7 +491,7 @@ fun Spinner(
 fun IntField(modifier: Modifier = Modifier, value: Int, onValueChange: (Int) -> Unit, canBe0: Boolean){
 	var isError by remember { mutableStateOf(false) }
 	TextField(
-		modifier = modifier.padding(0.dp),
+		modifier = modifier,
 		value = if(value == 0) "" else value.toString(),
 		onValueChange = {
 			try {

@@ -25,6 +25,7 @@ object MatchStore {
 	val matches: SnapshotStateList<MatchData> = mutableStateListOf()
 	val deletedMatches = emptySet<Long>().toMutableSet()
 	val customMatchTypes: SnapshotStateList<MatchType> = mutableStateListOf()
+	val customMatchTypeNames: SnapshotStateList<String> = mutableStateListOf()
 
 	suspend fun read(activity: Activity) {
 		try {
@@ -32,7 +33,11 @@ object MatchStore {
 			val matchesJson = JSONArray(text)
 			activity.runOnUiThread {
 				for (i in 0..<matchesJson.length()) {
-					matches.add(MatchData(matchesJson.getJSONObject(i)))
+					val matchJson = matchesJson.optJSONObject(i)
+					matchJson?.let {
+						val match = MatchData(it)
+						if(matches.none { it2 -> it2.matchId == match.matchId }) matches.add(match)
+					}
 				}
 				matches.sort()
 			}
@@ -56,8 +61,14 @@ object MatchStore {
 		try {
 			val text = activity.openFileInput(MTF).bufferedReader().use { it.readText() }
 			val jsonArray = JSONArray(text)
-			for (i in 0..<jsonArray.length())
-				customMatchTypes.add(MatchType(jsonArray.getJSONObject(i)))
+			activity.runOnUiThread {
+				for(i in 0..<jsonArray.length()) {
+					val customMatchTypesJson = jsonArray.optJSONObject(i)
+					customMatchTypesJson?.let { customMatchTypes.add(MatchType(it)) }
+				}
+				customMatchTypes.forEach { customMatchTypeNames.add(it.name) }
+				customMatchTypeNames.sort()
+			}
 		} catch (_: FileNotFoundException) {
 			storeCustomMatchTypes(activity)
 		} catch (e: Exception) {
@@ -73,7 +84,7 @@ object MatchStore {
 			store(activity, MF, matchesJson)
 		} catch (e: Exception) {
 			logE("MatchStore.storeMatches Exception: " + e.message)
-			error.emit(R.string.fail_store_matches)
+			error.emit(R.string.fail_save_matches)
 		}
 	}
 	suspend fun storeDeletedMatches(activity: Activity) {
@@ -84,7 +95,7 @@ object MatchStore {
 			store(activity, DMF, deletedMatchesJson)
 		} catch (e: Exception) {
 			logE("MatchStore.storeDeletedMatches Exception: " + e.message)
-			error.emit(R.string.fail_store_matches)
+			error.emit(R.string.fail_save_matches)
 		}
 	}
 	suspend fun storeCustomMatchTypes(activity: Activity) {
@@ -95,7 +106,7 @@ object MatchStore {
 			store(activity, MTF, customMatchTypesJson)
 		} catch (e: Exception) {
 			logE("MatchStore.storeCustomMatchTypes Exception: " + e.message)
-			error.emit(R.string.fail_store_matches)
+			error.emit(R.string.fail_save_match_type)
 		}
 	}
 	fun store(activity: Activity, filename: String, content: JSONArray) {

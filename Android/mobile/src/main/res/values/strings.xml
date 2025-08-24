@@ -6,7 +6,6 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<!-- TODO clean and restructure -->
 <resources>
     <string name="app_name" translatable="false">Rugby Referee Watch</string>
 
@@ -153,34 +152,23 @@
 
     <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
     <string name="fail_BT_off">Bluetooth turned off</string>
-    <string name="fail_BT">That did not work, tap icon to connect with watch</string>
+    <string name="fail_connect">That did not work, you might need to restart the watch app, tap the
+        icon to try again</string>
 
     <string name="update_mobile_app">App is outdated, update in the store</string>
     <string name="match_ongoing">Match already started, can\'t prepare anymore</string>
     <string name="fail_unexpected">Unexpected technical error</string>
 
-    <!-- fail TODO: should some of these be used? -->
-    <string name="fail_prepare">Problem with sending settings</string>
-    <string name="fail_show_match">Failed to show match</string>
+    <!-- fail -->
     <string name="fail_send_message">Failed to send message to watch</string>
     <string name="fail_response">Problem with response from watch</string>
     <string name="fail_import">Failed to import matches</string>
     <string name="fail_export">Failed to export matches</string>
-    <string name="fail_delete">Failed to delete</string>
-    <string name="fail_save">Failed to save</string>
     <string name="fail_share">Failed to share</string>
-    <string name="fail_show_match_history">Failed to show a match in the history</string>
-    <string name="fail_receive_settings">Problem with settings from watch</string>
     <string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
-    <string name="fail_load_custom_match_type">Failed to load custom match type</string>
-    <string name="fail_del_match_type">Failed to delete match type</string>
-    <string name="fail_save_match_type">Failed to save match type</string>
-    <string name="fail_receive_matches">Failed to receive matches</string>
     <string name="fail_read_matches">Failed to read matches from storage</string>
-    <string name="fail_store_matches">Failed to store matches</string>
-    <string name="fail_del_match">Failed to delete match</string>
-    <string name="fail_del_event">Failed to delete event</string>
-    <string name="fail_save_match">Failed to save match</string>
+    <string name="fail_save_matches">Failed to save matches</string>
+    <string name="fail_save_match_type">Failed to save match type</string>
     <string name="fail_app_not_installed">RugbyRefereeWatch is not installed on the watch, go install it</string>
 
 </resources>

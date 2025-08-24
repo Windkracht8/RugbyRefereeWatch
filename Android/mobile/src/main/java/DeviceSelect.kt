@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -42,26 +43,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.garmin.android.connectiq.IQDevice
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission") //Handled by Permissions
 class DeviceSelect : ComponentActivity() {
-	var showNewDevices by mutableStateOf(false)
-	var bondedDevices: Set<BluetoothDevice>? = null
+	var showNewBTDevices by mutableStateOf(false)
+	var showNewIQDevices by mutableStateOf(false)
+	var bondedBTDevices: Set<BluetoothDevice>? = null
+	var bondedIQDevices: List<IQDevice>? = null
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		if (!Permissions.hasBT) finishAndRemoveTask()
 
 		lifecycleScope.launch {
-			CommsBT.status.collect { status ->
+			Comms.status.collect { status ->
 				when (status) {
-					CommsBT.Status.CONNECTING -> {
+					Comms.Status.CONNECTING ->
 						startActivity(Intent(this@DeviceSelect, DeviceConnect::class.java))
-					}
-					CommsBT.Status.CONNECTED, CommsBT.Status.ERROR -> finishAndRemoveTask()
-					CommsBT.Status.STARTING, CommsBT.Status.DISCONNECTED, null -> {}
+					Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ, Comms.Status.ERROR ->
+						finishAndRemoveTask()
+					Comms.Status.STARTING, Comms.Status.DISCONNECTED, null -> {}
 				}
 			}
 		}
@@ -71,40 +75,57 @@ class DeviceSelect : ComponentActivity() {
 			W8Theme {
 				Surface {
 					DeviceSelectScreen(
-						onDeviceClick = this::onDeviceClick,
-						onNewDeviceClick = this::onNewDeviceClick,
-						showNewDevices = showNewDevices,
-						bondedDevices = bondedDevices
+						onBTDeviceClick = this::onBTDeviceClick,
+						onIQDeviceClick = this::onIQDeviceClick,
+						onNewBTDeviceClick = this::onNewBTDeviceClick,
+						onNewIQDeviceClick = this::onNewIQDeviceClick,
+						showNewBTDevices = showNewBTDevices,
+						showNewIQDevices = showNewIQDevices,
+						bondedBTDevices = bondedBTDevices,
+						bondedIQDevices = bondedIQDevices
 					)
 				}
 			}
 		}
 	}
-	fun onDeviceClick(device: BluetoothDevice) {
-		logD("onDeviceClick: " + device.name)
-		runInBackground { CommsBT.connectDevice(device) }
+	fun onBTDeviceClick(device: BluetoothDevice) {
+		logD("onBTDeviceClick: " + device.name)
+		runInBackground { Comms.connectBTDevice(device) }
 	}
-	fun onNewDeviceClick() {
-		logD("onNewDeviceClick")
+	fun onIQDeviceClick(device: IQDevice) {
+		logD("onIQDeviceClick: " + device.friendlyName)
+		runInBackground { Comms.connectIQDevice(device) }
+	}
+	fun onNewBTDeviceClick() {
+		logD("onNewBTDeviceClick")
 		runInBackground {
-			bondedDevices = CommsBT.getBondedDevices()
-			showNewDevices = true
+			bondedBTDevices = Comms.getBondedBTDevices()
+			showNewBTDevices = true
 		}
+	}
+	fun onNewIQDeviceClick() {
+		logD("onNewIQDeviceClick")
+		bondedIQDevices = Comms.getBondedIQDevices()
+		showNewIQDevices = true
 	}
 }
 
 @SuppressLint("MissingPermission") //Handled by Permissions
 @Composable
 fun DeviceSelectScreen(
-	onDeviceClick: (BluetoothDevice) -> Unit,
-	onNewDeviceClick: () -> Unit,
-	showNewDevices: Boolean,
-	bondedDevices: Set<BluetoothDevice>?
+	onBTDeviceClick: (BluetoothDevice) -> Unit,
+	onIQDeviceClick: (IQDevice) -> Unit,
+	onNewBTDeviceClick: () -> Unit,
+	onNewIQDeviceClick: () -> Unit,
+	showNewBTDevices: Boolean,
+	showNewIQDevices: Boolean,
+	bondedBTDevices: Set<BluetoothDevice>?,
+	bondedIQDevices: List<IQDevice>?
 ) {
 	val longPressTimeoutMillis = LocalViewConfiguration.current.longPressTimeoutMillis
-	var confirmDelDevice by remember { mutableStateOf("") }
+	var confirmDelDevice by remember { mutableStateOf(null as Any?) }
 	var showNewWatch by remember { mutableStateOf(true) }
-	LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)) {
+	LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
 		item {
 			Text(
 				modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
@@ -113,7 +134,7 @@ fun DeviceSelectScreen(
 				textAlign = TextAlign.Center
 			)
 		}
-		CommsBT.knownDevices.forEach { device ->
+		Comms.knownBTDevices.forEach { device ->
 			item {
 				var isShort = true
 				val interactionSource = remember { MutableInteractionSource() }
@@ -126,7 +147,7 @@ fun DeviceSelectScreen(
 								isShort = false
 								confirmDelDevice = device.address
 							}
-							is PressInteraction.Release -> if (isShort) onDeviceClick(device)
+							is PressInteraction.Release -> if (isShort) onBTDeviceClick(device)
 						}
 					}
 				}
@@ -137,47 +158,97 @@ fun DeviceSelectScreen(
 				) { Text(device.name ?: "<no name>") }
 			}
 		}
+		Comms.knownIQDevices.forEach { device ->
+			item {
+				var isShort = true
+				val interactionSource = remember { MutableInteractionSource() }
+				LaunchedEffect(interactionSource) {
+					interactionSource.interactions.collectLatest { interaction ->
+						when (interaction) {
+							is PressInteraction.Press -> {
+								isShort = true
+								delay(longPressTimeoutMillis)
+								isShort = false
+								confirmDelDevice = device.deviceIdentifier
+							}
+							is PressInteraction.Release -> if (isShort) onIQDeviceClick(device)
+						}
+					}
+				}
+				OutlinedButton(
+					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
+					interactionSource = interactionSource,
+					onClick = {}
+				) { Text(device.friendlyName ?: "<no name>") }
+			}
+		}
 		if (showNewWatch) {
 			item {
 				Button(
 					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
 					onClick = {
 						showNewWatch = false
-						onNewDeviceClick()
+						onNewBTDeviceClick()
 					}
 				) { Text(R.string.device_select_new) }
 			}
+			item {
+				Button(
+					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
+					onClick = {
+						showNewWatch = false
+						onNewIQDeviceClick()
+					}
+				) { Text(R.string.device_select_garmin_new) }
+			}
 		}
-		if (showNewDevices) {
-			if (bondedDevices?.isEmpty() ?: true) {
+		if (showNewBTDevices) {
+			if (bondedBTDevices?.isEmpty() ?: true) {
 				item { Text(R.string.device_select_none) }
 			}
-			bondedDevices?.forEach { device ->
+			bondedBTDevices?.forEach { device ->
 				item {
 					OutlinedButton(
 						modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
-						onClick = { onDeviceClick(device) }
+						onClick = { onBTDeviceClick(device) }
 					) { Text(device.name ?: "<no name>") }
 				}
 			}
 		}
-		//TODO add Garmin
-		if (confirmDelDevice.isNotEmpty()) {
+		if (showNewIQDevices) {
+			if (bondedIQDevices?.isEmpty() ?: true) {
+				item { Text(when(Comms.iQSdkStatus) {
+						Comms.IQSdkStatus.GCM_NOT_INSTALLED -> R.string.device_select_garmin_not
+						Comms.IQSdkStatus.GCM_UPGRADE_NEEDED -> R.string.device_select_garmin_update
+						else -> R.string.device_select_garmin_none
+				} ) }
+			}
+			bondedIQDevices?.forEach { device ->
+				item {
+					OutlinedButton(
+						modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
+						onClick = { onIQDeviceClick(device) }
+					) { Text(device.friendlyName ?: "<no name>") }
+				}
+			}
+		}
+		if (confirmDelDevice != null) {
 			item {
 				AlertDialog(
 					title = { Text(R.string.delete_device) },
-					onDismissRequest = { confirmDelDevice = "" },
+					onDismissRequest = { confirmDelDevice = null },
 					confirmButton = {
 						TextButton(
 							onClick = {
-								CommsBT.delKnownAddress(confirmDelDevice)
-								confirmDelDevice = ""
+								if(confirmDelDevice is Long) Comms.delKnownIQId(confirmDelDevice as Long)
+								else Comms.delKnownBTAddress(confirmDelDevice as String)
+								confirmDelDevice = null
 							}
 						) { Text(R.string.delete) }
 					},
 					dismissButton = {
 						TextButton(
-							onClick = { confirmDelDevice = "" }
+							onClick = { confirmDelDevice = null }
 						) { Text(R.string.cancel) }
 					}
 				)
@@ -189,15 +260,17 @@ fun DeviceSelectScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
 fun PreviewDeviceSelect() {
-	CommsBT
+	Comms
 	W8Theme { Surface { DeviceSelectScreen(
-		{}, {}, false, null
+		{}, {}, {}, {},
+		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }
 }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
 fun PreviewDeviceSelectDay() {
 	W8Theme { Surface { DeviceSelectScreen(
-		{}, {}, false, null
+		{}, {}, {}, {},
+		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }
 }

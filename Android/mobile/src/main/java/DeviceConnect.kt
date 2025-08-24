@@ -19,7 +19,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -41,9 +40,9 @@ import kotlinx.coroutines.launch
 class DeviceConnect : ComponentActivity() {
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		if (CommsBT.status.value != CommsBT.Status.CONNECTING) finishAndRemoveTask()
-		lifecycleScope.launch { CommsBT.status.collect {
-			if (it != CommsBT.Status.CONNECTING) finishAndRemoveTask()
+		if (Comms.status.value != Comms.Status.CONNECTING) finishAndRemoveTask()
+		lifecycleScope.launch { Comms.status.collect {
+			if (it != Comms.Status.CONNECTING) finishAndRemoveTask()
 		} }
 		enableEdgeToEdge()
 		setContent { W8Theme { Surface { DeviceConnectScreen() } } }
@@ -55,10 +54,10 @@ fun DeviceConnectScreen() {
 	val iconWatchConnecting =
 		AnimatedImageVector.animatedVectorResource(R.drawable.icon_watch_connecting)
 	var iconWatchConnectingAtEnd by remember { mutableStateOf(false) }
-	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(10.dp)) {
+	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth(),
-			text = stringResource(R.string.connecting_to, CommsBT.deviceName),
+			text = stringResource(R.string.connecting_to, Comms.deviceName),
 			textAlign = TextAlign.Center,
 			color = colorScheme.primary,
 			fontSize = 20.sp,
@@ -86,7 +85,7 @@ fun DeviceConnectScreen() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
 fun PreviewDeviceConnect() {
-	CommsBT
+	Comms
 	W8Theme { Surface { DeviceConnectScreen() } }
 }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)

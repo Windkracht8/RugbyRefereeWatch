@@ -33,8 +33,6 @@ fun JSONObject.getJSONObjectOrEmpty(key: String): JSONObject =
 	try { getJSONObject(key) } catch (_: Exception) { JSONObject() }
 fun JSONArray.getJSONObjectOrEmpty(key: Int): JSONObject =
 	try { getJSONObject(key) } catch (_: Exception) { JSONObject() }
-operator fun JSONArray.iterator(): Iterator<JSONObject>
-		= (0 until length()).asSequence().map { get(it) as JSONObject }.iterator()
 
 fun tryIgnore(block: () -> Unit) = try { block() } catch (_: Exception) {}
 fun runInBackground(block: suspend () -> Unit) = CoroutineScope(Dispatchers.Default).launch { block() }

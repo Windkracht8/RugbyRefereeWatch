@@ -55,7 +55,7 @@ const val TAB_INDEX_PREPARE = 2
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
-	commsBTStatus: CommsBT.Status?,
+	commsBTStatus: Comms.Status?,
 	onIconClick: () -> Unit,
 	onImportClick: () -> Unit,
 	deleteMatches: (Set<Long>) -> Unit,
@@ -82,107 +82,105 @@ fun Home(
 			}
 		}
 	}
-	W8Theme {
-		Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
-			Row(modifier = Modifier.fillMaxWidth().height(70.dp)) {
-				Box(
-					modifier = Modifier.size(70.dp),
-					contentAlignment = Alignment.Center
-				) {
-					if (commsBTStatus in listOf(CommsBT.Status.CONNECTING, CommsBT.Status.STARTING)) {
-						Image(
-							modifier = Modifier.size(70.dp).clickable { onIconClick() },
-							painter = rememberAnimatedVectorPainter(
-								iconWatchConnecting,
-								iconWatchConnectingAtEnd
-							),
-							contentDescription = "watch icon"
-						)
-						iconWatchConnectingAtEnd = true
-					} else {
-						Icon(
-							modifier = Modifier.size(70.dp).clickable { onIconClick() },
-							imageVector = ImageVector.vectorResource(R.drawable.icon_watch),
-							tint = when (commsBTStatus) {
-								CommsBT.Status.DISCONNECTED, null -> colorScheme.onBackground.copy(alpha = 0.38f)
-								CommsBT.Status.ERROR -> colorScheme.error
-								else -> colorScheme.onBackground
-							},
-							contentDescription = "watch icon"
-						)
-					}
-				}
-				Column(modifier = Modifier.fillMaxWidth()) {
-					Text(
-						modifier = Modifier.fillMaxWidth(),
-						text = when (commsBTStatus) {
-							CommsBT.Status.DISCONNECTED ->
-								stringResource(R.string.disconnected)
-							CommsBT.Status.CONNECTING ->
-								stringResource(R.string.connecting_to, CommsBT.deviceName)
-							CommsBT.Status.CONNECTED ->
-								stringResource(R.string.connected_to, CommsBT.deviceName)
-							CommsBT.Status.STARTING, null ->
-								if (Permissions.hasBT) stringResource(R.string.starting)
-								else stringResource(R.string.no_permission)
-							CommsBT.Status.ERROR -> stringResource(CommsBT.error)
+	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
+		Row(modifier = Modifier.fillMaxWidth().height(70.dp)) {
+			Box(
+				modifier = Modifier.size(70.dp),
+				contentAlignment = Alignment.Center
+			) {
+				if (commsBTStatus in listOf(Comms.Status.CONNECTING, Comms.Status.STARTING)) {
+					Image(
+						modifier = Modifier.size(70.dp).clickable { onIconClick() },
+						painter = rememberAnimatedVectorPainter(
+							iconWatchConnecting,
+							iconWatchConnectingAtEnd
+						),
+						contentDescription = "watch icon"
+					)
+					iconWatchConnectingAtEnd = true
+				} else {
+					Icon(
+						modifier = Modifier.size(70.dp).clickable { onIconClick() },
+						imageVector = ImageVector.vectorResource(R.drawable.icon_watch),
+						tint = when (commsBTStatus) {
+							Comms.Status.DISCONNECTED, null -> colorScheme.onBackground.copy(alpha = 0.38f)
+							Comms.Status.ERROR -> colorScheme.error
+							else -> colorScheme.onBackground
 						},
-						fontSize = 18.sp
-					)
-					Text(
-						modifier = Modifier.fillMaxWidth(),
-						text = if (CommsBT.messageStatus <= 0) ""
-							else stringResource(CommsBT.messageStatus),
-						fontSize = 14.sp
+						contentDescription = "watch icon"
 					)
 				}
 			}
-			PrimaryTabRow(selectedTabIndex = selectedTabIndex) {
-				Tab(
-					selected = selectedTabIndex == TAB_INDEX_HISTORY,
-					onClick = { navController.navigate("history") },
-					text = { Text(R.string.history) }
+			Column(modifier = Modifier.fillMaxWidth()) {
+				Text(
+					modifier = Modifier.fillMaxWidth(),
+					text = when (commsBTStatus) {
+						Comms.Status.DISCONNECTED ->
+							stringResource(R.string.disconnected)
+						Comms.Status.CONNECTING ->
+							stringResource(R.string.connecting_to, Comms.deviceName)
+						Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ ->
+							stringResource(R.string.connected_to, Comms.deviceName)
+						Comms.Status.STARTING, null ->
+							if (Permissions.hasBT) stringResource(R.string.starting)
+							else stringResource(R.string.no_permission)
+						Comms.Status.ERROR -> stringResource(Comms.error)
+					},
+					fontSize = 18.sp
 				)
-				Tab(
-					selected = selectedTabIndex == TAB_INDEX_REPORT,
-					onClick = { navController.navigate("report/null") },
-					text = { Text(R.string.report) }
-				)
-				Tab(
-					selected = selectedTabIndex == TAB_INDEX_PREPARE,
-					onClick = { navController.navigate("prepare") },
-					text = { Text(R.string.prepare) }
+				Text(
+					modifier = Modifier.fillMaxWidth(),
+					text = if (Comms.messageStatus <= 0) ""
+						else stringResource(Comms.messageStatus),
+					fontSize = 14.sp
 				)
 			}
-			NavHost(
-				navController = navController,
-				startDestination = "history"
-			){
-				composable("history") {
-					TabHistory(
-						onMatchClick = { navController.navigate("report/$it") },
-						onImportClick = onImportClick,
-						deleteMatches = deleteMatches,
-						exportMatches = exportMatches
-					)
-				}
-				composable("report/{matchId}") {
-					TabReport(
-						matchId = it.arguments?.getString("matchId")?.toLongOrNull(),
-						shareMatch = shareMatch,
-						saveMatch = saveMatch
-					)
-				}
-				composable("prepare") {
-					TabPrepare(
-						commsBTStatus = commsBTStatus,
-						matchType = matchType,
-						prepData = prepData,
-						onPrepareClicked = onPrepareClicked,
-						onSaveMatchType = onSaveMatchType,
-						onDeleteMatchType = onDeleteMatchType
-					)
-				}
+		}
+		PrimaryTabRow(selectedTabIndex = selectedTabIndex) {
+			Tab(
+				selected = selectedTabIndex == TAB_INDEX_HISTORY,
+				onClick = { navController.navigate("history") },
+				text = { Text(R.string.history) }
+			)
+			Tab(
+				selected = selectedTabIndex == TAB_INDEX_REPORT,
+				onClick = { navController.navigate("report/null") },
+				text = { Text(R.string.report) }
+			)
+			Tab(
+				selected = selectedTabIndex == TAB_INDEX_PREPARE,
+				onClick = { navController.navigate("prepare") },
+				text = { Text(R.string.prepare) }
+			)
+		}
+		NavHost(
+			navController = navController,
+			startDestination = "history"
+		){
+			composable("history") {
+				TabHistory(
+					onMatchClick = { navController.navigate("report/$it") },
+					onImportClick = onImportClick,
+					deleteMatches = deleteMatches,
+					exportMatches = exportMatches
+				)
+			}
+			composable("report/{matchId}") {
+				TabReport(
+					matchId = it.arguments?.getString("matchId")?.toLongOrNull(),
+					shareMatch = shareMatch,
+					saveMatch = saveMatch
+				)
+			}
+			composable("prepare") {
+				TabPrepare(
+					commsBTStatus = commsBTStatus,
+					matchType = matchType,
+					prepData = prepData,
+					onPrepareClicked = onPrepareClicked,
+					onSaveMatchType = onSaveMatchType,
+					onDeleteMatchType = onDeleteMatchType
+				)
 			}
 		}
 	}
@@ -194,10 +192,10 @@ fun Text(text: Int) = Text(stringResource(text))
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
 fun PreviewHome() {
-	CommsBT.deviceName = "Test"
+	Comms.deviceName = "Test"
 	W8Theme { Surface {
 		Home(
-			commsBTStatus = CommsBT.Status.CONNECTING,
+			commsBTStatus = Comms.Status.CONNECTING,
 			{}, {}, {}, {},
 			shareMatch = {_: Long, _: List<Boolean> ->}, {},
 			MatchType("15s"), PrepData(),
@@ -210,7 +208,7 @@ fun PreviewHome() {
 fun PreviewHomeDay() {
 	W8Theme { Surface {
 		Home(
-			commsBTStatus = CommsBT.Status.CONNECTING,
+			commsBTStatus = Comms.Status.CONNECTING,
 			{}, {}, {}, {},
 			shareMatch = {_: Long, _: List<Boolean> ->}, {},
 			MatchType("15s"), PrepData(),

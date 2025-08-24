@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -81,7 +82,7 @@ fun Context.hasPermission(permission: String): Boolean =
 
 @Composable
 fun PermissionsScreen(onNearbyClick: () -> Unit) {
-	Column(modifier = Modifier.fillMaxWidth().padding(5.dp, 10.dp)) {
+	Column(modifier = Modifier.fillMaxWidth().safeContentPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
 			text = stringResource(R.string.permission_title),

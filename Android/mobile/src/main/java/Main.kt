@@ -23,6 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.windkracht8.rugbyrefereewatch.MatchData.Companion.AWAY_ID
+import com.windkracht8.rugbyrefereewatch.MatchData.Companion.HOME_ID
 import com.windkracht8.rugbyrefereewatch.MatchData.EventWhat
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -33,7 +35,7 @@ import java.util.Locale
 
 val error = MutableSharedFlow<Int>()
 class Main : ComponentActivity() {
-	var commsBTStatus by mutableStateOf(CommsBT.status.value)
+	var commsBTStatus by mutableStateOf(Comms.status.value)
 	lateinit var matchType: MatchType
 	lateinit var prepData: PrepData
 
@@ -63,19 +65,20 @@ class Main : ComponentActivity() {
 		}
 
 		lifecycleScope.launch {
-			CommsBT.status.collect { status ->
+			Comms.status.collect { status ->
 				logD("Main: CommsBT status change: $status")
-				commsBTStatus = CommsBT.status.value
-				if (commsBTStatus == CommsBT.Status.CONNECTING) {
+				commsBTStatus = Comms.status.value
+				if (commsBTStatus == Comms.Status.CONNECTING) {
 					startActivity(Intent(this@Main, DeviceConnect::class.java))
 				}
 			}
 		}
-		lifecycleScope.launch { CommsBT.watchMatch.collect {
+		lifecycleScope.launch { Comms.watchMatch.collect {
+			if(MatchStore.matches.any { it2 -> it2.matchId == it.matchId }) return@collect
 			MatchStore.matches.add(it)
 			runInBackground { MatchStore.storeMatches(this@Main) }
 		} }
-		lifecycleScope.launch { CommsBT.watchSettings.collect {
+		lifecycleScope.launch { Comms.watchSettings.collect {
 			prepData.gotWatchSettings(it)
 			if(!prepData.manualUpdate) matchType.gotWatchSettings(it)
 		} }
@@ -94,7 +97,7 @@ class Main : ComponentActivity() {
 				btBroadcastReceiver,
 				IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
 			)
-			if (CommsBT.status.value == null) runInBackground { CommsBT.start(this@Main) }
+			if (Comms.status.value == null) runInBackground { Comms.start(this@Main) }
 		}
 	}
 	override fun onPause() {
@@ -107,7 +110,8 @@ class Main : ComponentActivity() {
 			val spe = getPreferences(MODE_PRIVATE).edit()
 			matchType.store(spe)
 			prepData.store(spe)
-			tryIgnore { CommsBT.stop() }
+			Comms.stop()
+			Comms.onDestroy(this)
 		}
 	}
 	val btBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -115,23 +119,23 @@ class Main : ComponentActivity() {
 			if (BluetoothAdapter.ACTION_STATE_CHANGED == intent.action) {
 				val btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)
 				if (btState == BluetoothAdapter.STATE_TURNING_OFF) {
-					CommsBT.onError(R.string.fail_BT_off)
-					CommsBT.stop()
+					Comms.onError(R.string.fail_BT_off)
+					Comms.stop()
 				} else if (btState == BluetoothAdapter.STATE_ON) {
-					runInBackground { CommsBT.start(this@Main) }
+					runInBackground { Comms.start(this@Main) }
 				}
 			}
 		}
 	}
 
 	fun onIconClick() {
-		logD("onIconClick: " + CommsBT.status.value)
+		logD("onIconClick: " + Comms.status.value)
 		if (!Permissions.hasBT) {
 			startActivity(Intent(this, Permissions::class.java))
-		} else if (CommsBT.status.value == CommsBT.Status.DISCONNECTED) {
+		} else if (Comms.status.value == Comms.Status.DISCONNECTED) {
 			startActivity(Intent(this, DeviceSelect::class.java))
 		} else {
-			CommsBT.stop()
+			Comms.stop()
 		}
 	}
 	fun onImportClick() { importMatchesResult.launch(arrayOf("application/json")) }
@@ -148,6 +152,7 @@ class Main : ComponentActivity() {
 		logD("Main.deleteMatches: $matchIds")
 		//run on UI, because it will update matches, and this need to happen on the UI thread
 		MatchStore.deleteMatches(this, matchIds)
+		Comms.syncIfConnected()
 	}
 	fun exportMatches(matchIds: Set<Long>) {
 		logD("Main.exportMatches: $matchIds")
@@ -209,7 +214,7 @@ class Main : ComponentActivity() {
 		fun scoreLine(home: Int, away: Int, label: Int) {
 			if (home > 0 || away > 0) {
 				scoreHome.append("  " + getString(label) + ": $home\n")
-				scoreHome.append("  " + getString(label) + ": $away\n")
+				scoreAway.append("  " + getString(label) + ": $away\n")
 			}
 		}
 		scoreLine(match.home.cons, match.away.cons, R.string.conversions)
@@ -232,17 +237,17 @@ class Main : ComponentActivity() {
 				(!eventTypes[2] && event.what == EventWhat.PENALTY)
 			) return@forEach
 
-			if (eventTypes[1]) shareBody.append("${event.time}    ")
+			if (eventTypes[1]) shareBody.append("${event.time}  ")
+
+			val timer = event.prettyTimerFull()
+			if (doubleDigitTime && timer.length == 4) shareBody.append("0")
+			shareBody.append("$timer  ")
 
 			if (event.what in setOf(EventWhat.START, EventWhat.END)) {
 				shareBody.append(event.prettyPeriod())
 			} else {
-				shareBody.append(event.what)
+				shareBody.append(event.what.pretty())
 			}
-
-			val timer = event.prettyTimer()
-			if (doubleDigitTime && timer.length == 4) shareBody.append("0")
-			shareBody.append("$timer    ${event.prettyPeriod()}")
 
 			event.teamName?.let { shareBody.append(" $it") }
 			event.who?.let { shareBody.append(" $it") }
@@ -250,6 +255,7 @@ class Main : ComponentActivity() {
 			if(event.what == EventWhat.END) shareBody.append(" ${event.score}\n")
 			shareBody.append("\n")
 		}
+		//logD(shareBody.toString())
 		return shareBody.toString()
 	}
 	fun saveMatch(matchData: MatchData) {
@@ -260,9 +266,9 @@ class Main : ComponentActivity() {
 	fun onPrepareClicked() {
 		logD("onPrepareClicked")
 		val settings = JSONObject()
-		settings.put("home_name", prepData.homeName)
+		settings.put("home_name", if(prepData.homeName == "") HOME_ID else prepData.homeName)
 		settings.put("home_color", prepData.homeColor)
-		settings.put("away_name", prepData.awayName)
+		settings.put("away_name", if(prepData.awayName == "") AWAY_ID else prepData.awayName)
 		settings.put("away_color", prepData.awayColor)
 		settings.put("match_type", matchType.name)
 		settings.put("period_time", matchType.periodTime)
@@ -281,19 +287,31 @@ class Main : ComponentActivity() {
 		if(sendWatchSettings) settings.put("record_pens", prepData.recordPens)
 		if(sendWatchSettings) settings.put("delay_end", prepData.delayEnd)
 
-		CommsBT.sendRequestPrep(settings)
+		Comms.sendRequestPrep(settings)
 	}
 	fun onSaveMatchType(name: String) {
-		logD("onSaveMatchType($name)")
-		matchType.name = name
+		logD("onSaveMatchType($name) " + matchType.toJson())
+		if(!MatchStore.customMatchTypeNames.contains(name)) {
+			MatchStore.customMatchTypeNames.add(name)
+			MatchStore.customMatchTypeNames.sort()
+		}
 		MatchStore.customMatchTypes.removeIf { it.name == name }
-		MatchStore.customMatchTypes.add(matchType)
-		runInBackground { MatchStore.storeCustomMatchTypes(this@Main) }
+		matchType.name = name
+		MatchStore.customMatchTypes.add(MatchType(matchType))
+		runInBackground {
+			MatchStore.storeCustomMatchTypes(this@Main)
+			Comms.syncIfConnected()
+		}
 	}
 	fun onDeleteMatchType() {
 		logD("onDeleteMatchType")
+		MatchStore.customMatchTypeNames.remove(matchType.name)
 		MatchStore.customMatchTypes.removeIf { it.name == matchType.name }
-		matchType = MatchType("15s")
-		runInBackground { MatchStore.storeCustomMatchTypes(this@Main) }
+		matchType.name = "15s"
+		matchType.updateFields()
+		runInBackground {
+			MatchStore.storeCustomMatchTypes(this@Main)
+			Comms.syncIfConnected()
+		}
 	}
 }

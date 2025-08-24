@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.windkracht8.rugbyrefereewatch.MatchData.Companion.HOME_ID
+import com.windkracht8.rugbyrefereewatch.MatchData.Companion.AWAY_ID
 import com.windkracht8.rugbyrefereewatch.MatchData.EventWhat
 import org.json.JSONArray
 import org.json.JSONException
@@ -183,20 +184,19 @@ class MatchData: Comparable<MatchData> {
 	}
 	suspend fun toJson(): JSONObject {
 		val ret = JSONObject()
-		val settings = JSONObject()
 		try {
 			ret.put("matchid", matchId)
 			ret.put("format", FORMAT)
-			settings.put("match_type", matchType)
-			settings.put("period_time", periodTime)
-			settings.put("period_count", periodCount)
-			settings.put("sinbin", sinbin)
-			settings.put("points_try", pointsTry)
-			settings.put("points_con", pointsCon)
-			settings.put("points_goal", pointsGoal)
-			settings.put("clock_pk", clockPk)
-			settings.put("clock_con", clockCon)
-			settings.put("clock_restart", clockRestart)
+			val settings = JSONObject().put("match_type", matchType)
+				.put("period_time", periodTime)
+				.put("period_count", periodCount)
+				.put("sinbin", sinbin)
+				.put("points_try", pointsTry)
+				.put("points_con", pointsCon)
+				.put("points_goal", pointsGoal)
+				.put("clock_pk", clockPk)
+				.put("clock_con", clockCon)
+				.put("clock_restart", clockRestart)
 			ret.put("settings", settings)
 			ret.put(HOME_ID, home.toJson())
 			ret.put(AWAY_ID, away.toJson())
@@ -244,7 +244,7 @@ class MatchData: Comparable<MatchData> {
 			kickoff = teamJson.optBoolean("kickoff", true)
 
 			var name = teamJson.optString("team", id)
-			team = if(checkName && name == id) "$id($color)" else name
+			team = if(checkName && name.equals(id)) color else name
 		}
 		constructor(original: Team) {
 			id = original.id
@@ -300,7 +300,6 @@ class MatchData: Comparable<MatchData> {
 		var reason: String? by mutableStateOf(null)
 
 		constructor (eventJson: JSONObject) {
-			logD(eventJson.toString())
 			id = eventJson.optLong("id", 0)
 			time = eventJson.optString("time", "00:00:00")
 			timer = eventJson.optInt("timer", 0)
@@ -321,7 +320,7 @@ class MatchData: Comparable<MatchData> {
 					if(isHome == true) calcScoreHome += pointsCon
 					else calcScoreAway += pointsCon
 				}
-				"PENALTY TRY", "PENALTY_TRY" -> {
+				"PENALTY TRY" -> {
 					what = EventWhat.PENALTY_TRY
 					if(isHome == true) calcScoreHome += pointsTry + pointsCon
 					else calcScoreAway += pointsTry + pointsCon
@@ -331,26 +330,25 @@ class MatchData: Comparable<MatchData> {
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
-				"PENALTY GOAL", "PENALTY_GOAL" -> {
+				"PENALTY GOAL" -> {
 					what = EventWhat.PENALTY_GOAL
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
-				"DROP GOAL", "DROP_GOAL" -> {
+				"DROP GOAL" -> {
 					what = EventWhat.DROP_GOAL
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
 				"END" -> what = EventWhat.END
 				"START" -> what = EventWhat.START
-				"YELLOW CARD", "YELLOW_CARD" -> what = EventWhat.YELLOW_CARD
-				"RED CARD", "RED_CARD" -> what = EventWhat.RED_CARD
+				"YELLOW CARD" -> what = EventWhat.YELLOW_CARD
+				"RED CARD" -> what = EventWhat.RED_CARD
 				"PENALTY" -> what = EventWhat.PENALTY
-				"TIME OFF", "TIME_OFF" -> what = EventWhat.TIME_OFF
+				"TIME OFF" -> what = EventWhat.TIME_OFF
 				"RESUME" -> what = EventWhat.RESUME
 				else -> what = EventWhat.START
 			}
-			logD(what.toString())
 			score = eventJson.getStringOrNull("score") ?: "$calcScoreHome:$calcScoreAway"
 		}
 		constructor (original: Event) {
@@ -417,10 +415,10 @@ class MatchData: Comparable<MatchData> {
 			val evt = JSONObject()
 			try {
 				evt.put("id", id)
-				evt.put("time", time)
-				evt.put("timer", timer)
-				evt.put("period", period)
-				evt.put("what", what)
+					.put("time", time)
+					.put("timer", timer)
+					.put("period", period)
+					.put("what", what.name.replace("_", " "))
 				if (isHome != null) {
 					evt.put("team", if(isHome == true) HOME_ID else AWAY_ID)
 					if (who != null) { evt.put("who", who) }
@@ -559,20 +557,32 @@ class MatchType {
 		this.name = name
 		updateFields()
 	}
+	constructor (original: MatchType) {
+		name = original.name
+		periodTime = original.periodTime
+		periodCount = original.periodCount
+		sinbin = original.sinbin
+		pointsTry = original.pointsTry
+		pointsCon = original.pointsCon
+		pointsGoal = original.pointsGoal
+		clockPK = original.clockPK
+		clockCon = original.clockCon
+		clockRestart = original.clockRestart
+	}
 	constructor (matchTypeJson: JSONObject) {
 		name = matchTypeJson.optString("name", "15s")
-		periodTime = matchTypeJson.optInt("periodTime", 40)
-		periodCount = matchTypeJson.optInt("periodCount", 2)
+		periodTime = matchTypeJson.optInt("period_time", 40)
+		periodCount = matchTypeJson.optInt("period_count", 2)
 		sinbin = matchTypeJson.optInt("sinbin", 10)
-		pointsTry = matchTypeJson.optInt("pointsTry", 5)
-		pointsCon = matchTypeJson.optInt("pointsCon", 2)
-		pointsGoal = matchTypeJson.optInt("pointsGoal", 3)
-		clockPK = matchTypeJson.optInt("clockPk", 60)
-		clockCon = matchTypeJson.optInt("clockCon", 60)
-		clockRestart = matchTypeJson.optInt("clockRestart", 0)
+		pointsTry = matchTypeJson.optInt("points_try", 5)
+		pointsCon = matchTypeJson.optInt("points_con", 2)
+		pointsGoal = matchTypeJson.optInt("points_goal", 3)
+		clockPK = matchTypeJson.optInt("clock_pk", 60)
+		clockCon = matchTypeJson.optInt("clock_con", 60)
+		clockRestart = matchTypeJson.optInt("clock_restart", 0)
 	}
 	constructor (sp: SharedPreferences) {
-		name = sp.getString("matchType", null) ?: name
+		name = sp.getString("name", null) ?: name
 		periodTime = sp.getInt("periodTime", periodTime)
 		periodCount = sp.getInt("periodCount", periodCount)
 		sinbin = sp.getInt("sinbin", sinbin)
@@ -584,36 +594,32 @@ class MatchType {
 		clockRestart = sp.getInt("clockRestart", clockRestart)
 	}
 	fun store(spe: SharedPreferences.Editor) {
-		spe.putString("matchType", name)
-		spe.putInt("periodTime", periodTime)
-		spe.putInt("periodCount", periodCount)
-		spe.putInt("sinbin", sinbin)
-		spe.putInt("pointsTry", pointsTry)
-		spe.putInt("pointsCon", pointsCon)
-		spe.putInt("pointsGoal", pointsGoal)
-		spe.putInt("clockPK", clockPK)
-		spe.putInt("clockCon", clockCon)
-		spe.putInt("clockRestart", clockRestart)
-		spe.apply()
+		spe.putString("name", name)
+			.putInt("periodTime", periodTime)
+			.putInt("periodCount", periodCount)
+			.putInt("sinbin", sinbin)
+			.putInt("pointsTry", pointsTry)
+			.putInt("pointsCon", pointsCon)
+			.putInt("pointsGoal", pointsGoal)
+			.putInt("clockPK", clockPK)
+			.putInt("clockCon", clockCon)
+			.putInt("clockRestart", clockRestart)
+			.apply()
 	}
 	fun toJson(): JSONObject {
-		val ret = JSONObject()
 		try {
-			ret.put("name", name)
-			ret.put("periodTime", periodTime)
-			ret.put("periodCount", periodCount)
-			ret.put("sinbin", sinbin)
-			ret.put("pointsTry", pointsTry)
-			ret.put("pointsCon", pointsCon)
-			ret.put("pointsGoal", pointsGoal)
-			ret.put("clockPK", clockPK)
-			ret.put("clockCon", clockCon)
-			ret.put("clockRestart", clockRestart)
-		} catch (e: Exception) {
-			logE("MatchType.toJson Exception: " + e.message)
-		}
-		logD("MatchType.toJson result: $ret")
-		return ret
+			return JSONObject().put("name", name)
+				.put("period_time", periodTime)
+				.put("period_count", periodCount)
+				.put("sinbin", sinbin)
+				.put("points_try", pointsTry)
+				.put("points_con", pointsCon)
+				.put("points_goal", pointsGoal)
+				.put("clock_pk", clockPK)
+				.put("clock_con", clockCon)
+				.put("clock_restart", clockRestart)
+		} catch (e: Exception) { logE("MatchType.toJson Exception: " + e.message) }
+		return JSONObject()
 	}
 	fun gotWatchSettings(settings: JSONObject) {
 		name = settings.optString("match_type", name)
@@ -693,22 +699,24 @@ class PrepData {
 	}
 	fun store(spe: SharedPreferences.Editor) {
 		spe.putString("homeName", homeName)
-		spe.putString("homeColor", homeColor)
-		spe.putString("awayName", awayName)
-		spe.putString("awayColor", awayColor)
-		spe.putBoolean("keepScreenOn", keepScreenOn)
-		spe.putBoolean("timerType", timerType)
-		spe.putBoolean("recordPlayer", recordPlayer)
-		spe.putBoolean("recordPens", recordPens)
-		spe.putBoolean("delayEnd", delayEnd)
-		spe.apply()
+			.putString("homeColor", homeColor)
+			.putString("awayName", awayName)
+			.putString("awayColor", awayColor)
+			.putBoolean("keepScreenOn", keepScreenOn)
+			.putBoolean("timerType", timerType)
+			.putBoolean("recordPlayer", recordPlayer)
+			.putBoolean("recordPens", recordPens)
+			.putBoolean("delayEnd", delayEnd)
+			.apply()
 	}
 
 	fun gotWatchSettings(settings: JSONObject) {
 		if(!manualUpdate) {
 			homeName = settings.optString("home_name", homeName)
+			if(homeName == HOME_ID) homeName = ""
 			homeColor = settings.optString("home_color", homeColor)
 			awayName = settings.optString("away_name", awayName)
+			if(awayName == AWAY_ID) awayName = ""
 			awayColor = settings.optString("away_color", awayColor)
 		}
 		if(!manualUpdateWatch) {

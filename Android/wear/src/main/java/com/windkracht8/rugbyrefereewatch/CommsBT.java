@@ -52,21 +52,21 @@ class CommsBT{
             String requestType = requestMessage.getString("requestType");
             switch(requestType){
                 case "sync":
-                    //pre 2025 {"requestType":"sync","requestData":{"deleted_matches":[],"custom_match_types":[]}}
-                    //jun 2025 {"version":2,"requestType":"sync","requestData":{"deleted_matches":[],"custom_match_types":[]}}
-                    //2026 {"requestType":"sync","requestData":{"custom_match_types":[]}}
+                    //{"version":2,"requestType":"sync","requestData":{"custom_match_types":[]}}
+                    //custom_match_type: {"name":"U18","period_time":30,"period_count":2,"sinbin":8,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0}
                     onReceiveSync(requestMessage);
                     break;
                 case "getMatch":
-                    //{"requestType":"getMatch","requestData":123456789}
+                    //{"version":2,"requestType":"getMatch","requestData":123456789}
                     onReceiveGetMatch(requestMessage.getLong("requestData"));
                     break;
                 case "delMatch":
-                    //{"requestType":"delMatch","requestData":123456789}
+                    //{"version":2,"requestType":"delMatch","requestData":123456789}
                     onReceiveDelMatch(requestMessage.getLong("requestData"));
                     break;
                 case "prepare":
-                    //{"requestType":"prepare","requestData":{}}
+                    //{"version":2,"requestType":"prepare","requestData":{ settings }}
+                    //settings: {"home_name":"home","home_color":"white","away_name":"away","away_color":"orange","match_type":"15s","period_time":40,"period_count":2,"sinbin":10,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0,"screen_on":true,"timer_type":1,"record_player":false,"record_pens":false,"delay_end":false}
                     onReceivePrepare(requestMessage.getJSONObject("requestData"));
                     break;
                 default:
@@ -89,8 +89,9 @@ class CommsBT{
             responseData.put("settings", Main.getSettings());
             FileStore.syncCustomMatchTypes(main, requestData.getJSONArray("custom_match_types"));
             sendResponse("sync", responseData);
-            //pre 2025 {"requestType":"sync","responseData":{"matches":[],"settings":{}}}
-            //jun 2025 {"requestType":"sync","responseData":{"match_ids":[],"settings":{}}}
+            //pre 2025 {"requestType":"sync","responseData":{"matches":[],"settings":{ settings }}}
+            //jun 2025 {"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
+            //next release {"version":2,"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", main.getString(R.string.fail_unexpected));
@@ -98,7 +99,7 @@ class CommsBT{
     }
     private void onReceiveGetMatch(long match_id){
         try{
-            //{"requestType":"getMatch","responseData":{ match object }}
+            //{"version":2,"requestType":"getMatch","responseData":{ match }}
             sendResponse("getMatch", FileStore.readMatch(main, match_id));
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveGetMatch Exception: " + e.getMessage());
@@ -108,7 +109,7 @@ class CommsBT{
     private void onReceiveDelMatch(long match_id){
         try{
             FileStore.delMatch(main, match_id);
-            //{"requestType":"delMatch","responseData":"okilly dokilly"}
+            //{"version":2,"requestType":"delMatch","responseData":"okilly dokilly"}
             sendResponse("delMatch","okilly dokilly");
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveGetMatch Exception: " + e.getMessage());
@@ -118,11 +119,11 @@ class CommsBT{
     private void onReceivePrepare(JSONObject requestData){
         try{
             if(main.incomingSettings(requestData)){
-                //{"requestType":"prepare","responseData":"okilly dokilly"}
+                //{"version":2,"requestType":"prepare","responseData":"okilly dokilly"}
                 sendResponse("prepare", "okilly dokilly");
                 FileStore.storeSettings(main);
             }else{
-                //{"requestType":"prepare","responseData":"match ongoing"}
+                //{"version":2,"requestType":"prepare","responseData":"match ongoing"}
                 sendResponse("prepare", "match ongoing");
             }
             main.runOnUiThread(main::updateAfterConfig);
@@ -134,6 +135,7 @@ class CommsBT{
     private void sendResponse(String requestType, Object responseData){
         try{
             JSONObject response = new JSONObject();
+            response.put("version", 2);
             response.put("requestType", requestType);
             response.put("responseData", responseData);
             responseQueue.put(response);
