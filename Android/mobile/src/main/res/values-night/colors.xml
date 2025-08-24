@@ -8,9 +8,5 @@
   -->
 
 <resources>
-    <color name="background">@android:color/background_dark</color>
-    <color name="bg_item">#222</color>
-    <color name="text">#FFF</color>
-    <color name="button">#2BD2E3</color>
-    <color name="error">@android:color/holo_red_light</color>
+    <color name="onBackground">#fff</color>
 </resources>

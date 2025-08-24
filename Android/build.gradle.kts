@@ -1,12 +1,3 @@
-buildscript{
-    repositories{
-        google()
-        mavenCentral()
-    }
-    dependencies{
-        classpath 'com.android.tools.build:gradle:8.11.1'
-    }
-}
 /*
  * Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
@@ -15,10 +6,21 @@ buildscript{
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-allprojects{
-    repositories{
+buildscript {
+    repositories {
         google()
         mavenCentral()
     }
-    //tasks.withType(JavaCompile).tap{configureEach{options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"}}
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.11.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0")
+        classpath("org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.2.0")
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
