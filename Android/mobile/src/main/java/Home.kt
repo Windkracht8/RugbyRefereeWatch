@@ -16,7 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeContentPadding
@@ -82,8 +82,8 @@ fun Home(
 			}
 		}
 	}
-	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
-		Row(modifier = Modifier.fillMaxWidth().height(70.dp)) {
+	Column(Modifier.fillMaxSize().safeContentPadding()) {
+		Row(Modifier.fillMaxWidth().height(70.dp)) {
 			Box(
 				modifier = Modifier.size(70.dp),
 				contentAlignment = Alignment.Center
@@ -111,7 +111,7 @@ fun Home(
 					)
 				}
 			}
-			Column(modifier = Modifier.fillMaxWidth()) {
+			Column(Modifier.fillMaxWidth()) {
 				Text(
 					modifier = Modifier.fillMaxWidth(),
 					text = when (commsBTStatus) {

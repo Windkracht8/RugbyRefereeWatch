@@ -50,17 +50,17 @@ class Main : ComponentActivity() {
 		setContent {
 			W8Theme { Surface { Home(
 				commsBTStatus,
-				this::onIconClick,
-				this::onImportClick,
-				this::deleteMatches,
-				this::exportMatches,
-				this::shareMatch,
-				this::saveMatch,
+				::onIconClick,
+				::onImportClick,
+				::deleteMatches,
+				::exportMatches,
+				::shareMatch,
+				::saveMatch,
 				matchType,
 				prepData,
-				this::onPrepareClicked,
-				this::onSaveMatchType,
-				this::onDeleteMatchType
+				::onPrepareClicked,
+				::onSaveMatchType,
+				::onDeleteMatchType
 			) } }
 		}
 

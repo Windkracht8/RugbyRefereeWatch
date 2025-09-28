@@ -17,7 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -125,7 +125,7 @@ fun DeviceSelectScreen(
 	val longPressTimeoutMillis = LocalViewConfiguration.current.longPressTimeoutMillis
 	var confirmDelDevice by remember { mutableStateOf(null as Any?) }
 	var showNewWatch by remember { mutableStateOf(true) }
-	LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
+	LazyColumn(Modifier.fillMaxSize().safeContentPadding()) {
 		item {
 			Text(
 				modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),

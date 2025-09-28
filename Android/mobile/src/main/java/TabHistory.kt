@@ -12,7 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,9 +49,9 @@ fun TabHistory(
 	val matches = remember(MatchStore.matches) { MatchStore.matches }
 	var selected by remember { mutableStateOf(setOf<Long>()) }
 	var confirmDel by remember { mutableStateOf(false) }
-	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-		LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
-			matches.forEach { match ->
+	Column(Modifier.fillMaxSize()) {
+		LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
+			matches.reversed().forEach { match ->
 				item {
 					HorizontalDivider()
 					Text(
@@ -95,7 +95,7 @@ fun TabHistory(
 		Row {
 			TextButton(
 				modifier = Modifier.weight(1f),
-				onClick = { onImportClick() }
+				onClick = onImportClick
 			) { Text(R.string._import) }
 			TextButton(
 				modifier = Modifier.weight(1f),

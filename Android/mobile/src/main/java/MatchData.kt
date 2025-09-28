@@ -136,9 +136,11 @@ class MatchData: Comparable<MatchData> {
 		//Format 3; April 2025; change timer from ms to s
 		val events = match.getJSONArray("events")
 		for (i in 0..<events.length()) {
-			val event = events.getJSONObject(i)
-			val timer = event.getLong("timer")
-			event.put("timer", Math.floorDiv(timer, 1000))
+			tryIgnore {
+				val event = events.getJSONObject(i)
+				val timer = event.getLong("timer")
+				event.put("timer", Math.floorDiv(timer, 1000))
+			}
 		}
 		match.put("format", 3)
 	}

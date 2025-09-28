@@ -13,7 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -91,8 +91,8 @@ fun TabReport(
 
 	var shareDialog by remember { mutableStateOf(false) }
 
-	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
-		Row(modifier = Modifier.fillMaxWidth()) {
+	Column(Modifier.fillMaxSize()) {
+		Row(Modifier.fillMaxWidth()) {
 			if(viewType == VIEW_TYPE_EDIT) {
 				TextField(
 					modifier = Modifier.weight(1f).padding(end = 2.dp),
@@ -122,10 +122,8 @@ fun TabReport(
 			}
 		}
 		if(viewType != VIEW_TYPE_EDIT) {
-			Row(modifier = Modifier
-				.fillMaxWidth()
-				.padding(horizontal = 10.dp)) {
-				Column(modifier = Modifier.weight(2f)) {
+			Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
+				Column(Modifier.weight(2f)) {
 					Text(R.string.tries)
 					if(showCons) Text(R.string.conversions)
 					if(showPenTries) Text(R.string.pen_tries)
@@ -137,9 +135,7 @@ fun TabReport(
 					if(showPens) Text(R.string.penalties)
 				}
 				Column(
-					modifier = Modifier
-						.weight(1f)
-						.padding(end = 10.dp),
+					modifier = Modifier.weight(1f).padding(end = 10.dp),
 					horizontalAlignment = Alignment.End
 				) {
 					Text(match.home.tries.toString())
@@ -157,9 +153,7 @@ fun TabReport(
 						fontWeight = FontWeight.Bold
 					)
 				}
-				Column(modifier = Modifier
-					.weight(2f)
-					.padding(start = 10.dp)) {
+				Column(Modifier.weight(2f).padding(start = 10.dp)) {
 					Text(R.string.tries)
 					if(showCons) Text(R.string.conversions)
 					if(showPenTries) Text(R.string.pen_tries)
@@ -195,7 +189,7 @@ fun TabReport(
 			VIEW_TYPE_STANDARD -> {
 				val scoreWidth = getMaxWidth(match.events) { it.score }
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimer() } + 14.dp
-				LazyColumn (modifier = Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
 					match.events.forEach {
 						item { ReportEventStandard(it, scoreWidth, timerWidth) }
 					}
@@ -204,7 +198,7 @@ fun TabReport(
 			VIEW_TYPE_FULL -> {
 				val timeWidth = getMaxWidth(match.events) { it.time } + 5.dp
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimerFull() } + 5.dp
-				LazyColumn (modifier = Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
 					match.events.forEach {
 						item { ReportEventFull(it, timeWidth, timerWidth) }
 					}
@@ -215,7 +209,7 @@ fun TabReport(
 					EventWhat.entries[it+2].pretty()
 				}
 				val topPadding = TextFieldDefaults.contentPaddingWithoutLabel().calculateTopPadding()
-				LazyColumn (modifier = Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
 					matchEdit.events.forEach {
 						if(it.what in setOf(EventWhat.TIME_OFF, EventWhat.RESUME, EventWhat.START, EventWhat.END)) return@forEach
 						item { ReportEventEdit(it, eventTypes, topPadding) }
@@ -314,7 +308,7 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 			)
 		}
 		EventWhat.END -> {
-			Row(modifier = Modifier.fillMaxWidth()) {
+			Row(Modifier.fillMaxWidth()) {
 				Text(
 					modifier = Modifier.weight(1f),
 					text = event.score.substringBefore(":"),
@@ -331,12 +325,12 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 					text = event.score.substringAfter(":")
 				)
 			}
-			Spacer(modifier = Modifier.height(12.dp))
+			Spacer(Modifier.height(12.dp))
 		}
 		else -> {
 			val whatWithWho = if (event.who == null) event.what.pretty()
 								else event.what.pretty() + " ${event.who}"
-			Row(modifier = Modifier.fillMaxWidth()) {
+			Row(Modifier.fillMaxWidth()) {
 				Text(
 					modifier = Modifier.weight(1f),
 					text = if (event.isHome == true) whatWithWho else "",
@@ -365,9 +359,7 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 			val reason = event.reason
 			if (reason != null) {
 				Text(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(bottom = 5.dp),
+					modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
 					text = reason,
 					textAlign = TextAlign.Center
 				)
@@ -386,15 +378,13 @@ fun ReportEventFull(event: MatchData.Event, timeWidth: Dp, timerWidth: Dp) {
 	event.teamName?.let { what += " $it" }
 	event.who?.let { what += " $it" }
 
-	Row(modifier = Modifier.fillMaxWidth()){
+	Row(Modifier.fillMaxWidth()){
 		Text(
 			modifier = Modifier.width(timeWidth),
 			text = event.time
 		)
 		Text(
-			modifier = Modifier
-				.width(timerWidth)
-				.padding(end = 5.dp),
+			modifier = Modifier.width(timerWidth).padding(end = 5.dp),
 			text = event.prettyTimerFull(),
 			textAlign = TextAlign.End
 		)
@@ -414,8 +404,8 @@ fun ReportEventFull(event: MatchData.Event, timeWidth: Dp, timerWidth: Dp) {
 
 @Composable
 fun ReportEventEdit(event: MatchData.Event, eventTypes: Array<String>, topPadding: Dp) {
-	Row(modifier = Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
-		IconButton(onClick = { event.delete() }) {
+	Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
+		IconButton(onClick = event::delete) {
 			Icon(
 				imageVector = Icons.Default.Delete,
 				contentDescription = "delete event"

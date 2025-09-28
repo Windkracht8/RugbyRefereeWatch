@@ -17,7 +17,7 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -54,7 +54,7 @@ fun DeviceConnectScreen() {
 	val iconWatchConnecting =
 		AnimatedImageVector.animatedVectorResource(R.drawable.icon_watch_connecting)
 	var iconWatchConnectingAtEnd by remember { mutableStateOf(false) }
-	Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().safeContentPadding()) {
+	Column(Modifier.fillMaxSize().safeContentPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth(),
 			text = stringResource(R.string.connecting_to, Comms.deviceName),
@@ -71,7 +71,7 @@ fun DeviceConnectScreen() {
 			fontWeight = FontWeight.Bold
 		)
 		Image(
-			modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+			modifier = Modifier.fillMaxSize(),
 			painter = rememberAnimatedVectorPainter(
 				iconWatchConnecting,
 				iconWatchConnectingAtEnd

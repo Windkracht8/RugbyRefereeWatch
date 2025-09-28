@@ -10,7 +10,7 @@ package com.windkracht8.rugbyrefereewatch
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -62,7 +62,7 @@ fun TabPrepare(
 	val labelWidthMatchType = measureWidth(R.string.clock_con) + 10.dp
 	val labelWidthWatch = measureWidth(R.string.clock_con) + 10.dp
 
-	LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+	LazyColumn(Modifier.fillMaxSize()) {
 		item { OutlinedButton(
 			modifier = Modifier.fillMaxWidth(),
 			onClick = {
@@ -126,7 +126,7 @@ fun TabPrepare(
 		if (!standardMatchTypes.contains(matchType.name)) {
 			item { OutlinedButton(
 				modifier = Modifier.fillMaxWidth(),
-				onClick = { onDeleteMatchType() }
+				onClick = onDeleteMatchType
 			) { Text(stringResource(R.string.del_match_type), color = colorScheme.error) } }
 		}
 		item { TextButton(
@@ -248,7 +248,7 @@ fun TabPrepare(
 
 		if(prepData.showWatchSettings) {
 			rowLabelContent(R.string.screen, labelWidthWatch, {
-				TextButton(onClick = { prepData.toggleKeepScreenOn() }) {
+				TextButton(onClick = prepData::toggleKeepScreenOn) {
 					Text(
 						text = if (prepData.keepScreenOn) stringResource(R.string.keep_on)
 						else stringResource(R.string.auto_off),
@@ -257,7 +257,7 @@ fun TabPrepare(
 				}
 			})
 			rowLabelContent(R.string.timer_type, labelWidthWatch, {
-				TextButton(onClick = { prepData.toggleTimerType() }) {
+				TextButton(onClick = prepData::toggleTimerType) {
 					Text(//TIMER_TYPE_UP = 0
 						text =
 							if (prepData.timerType) stringResource(R.string.timer_type_down)

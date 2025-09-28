@@ -53,27 +53,19 @@ class Permissions : ComponentActivity() {
 	}
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		if (hasBT) finishAndRemoveTask()
+		if(hasBT) finishAndRemoveTask()
 		enableEdgeToEdge()
 		setContent { W8Theme { Surface { PermissionsScreen(this::onNearbyClick) } } }
 	}
 	fun onNearbyClick() {
-		if (hasBT) return
-		if (Build.VERSION.SDK_INT >= 31) {
-			requestMultiplePermissions.launch(arrayOf(BLUETOOTH_CONNECT))
-		} else {
-			requestMultiplePermissions.launch(arrayOf(BLUETOOTH))
-		}
+		if(hasBT) return
+		if(Build.VERSION.SDK_INT >= 31) { requestPermissionBT.launch(BLUETOOTH_CONNECT)}
+		else { requestPermissionBT.launch(BLUETOOTH) }
 	}
-	val requestMultiplePermissions = registerForActivityResult(
-		ActivityResultContracts.RequestMultiplePermissions()
-	) { permissions ->
-		permissions.entries.forEach {
-			if (it.value && it.key in listOf(BLUETOOTH_CONNECT, BLUETOOTH)) {
-				hasBT = true
-				finishAndRemoveTask()
-			}
-		}
+	val requestPermissionBT = registerForActivityResult(
+		ActivityResultContracts.RequestPermission()){
+		hasBT = it
+		if(hasBT) finishAndRemoveTask()
 	}
 }
 
@@ -82,7 +74,7 @@ fun Context.hasPermission(permission: String): Boolean =
 
 @Composable
 fun PermissionsScreen(onNearbyClick: () -> Unit) {
-	Column(modifier = Modifier.fillMaxWidth().safeContentPadding()) {
+	Column(Modifier.fillMaxWidth().safeContentPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
 			text = stringResource(R.string.permission_title),

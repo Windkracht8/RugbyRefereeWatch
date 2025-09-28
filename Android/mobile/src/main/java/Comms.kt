@@ -76,15 +76,15 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	val requestQueue: MutableSet<Request> = mutableSetOf()
 	var lastRequest: Request? = null
 
-	fun start(activity: Activity) {
+	fun start(context: Context) {
 		if (!Permissions.hasBT) return onError(R.string.fail_BT_denied)
 		status.value = Status.STARTING
 
-		val bm = activity.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+		val bm = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 		bluetoothAdapter = bm.adapter
 		if (!(bluetoothAdapter?.isEnabled ?: false)) return onError(R.string.fail_BT_off)
 
-		sharedPreferences = activity.applicationContext.getSharedPreferences("Comms", MODE_PRIVATE)
+		sharedPreferences = context.getSharedPreferences("Comms", MODE_PRIVATE)
 		knownBTAddresses = sharedPreferences?.getStringSet("knownBTAddresses", null) ?: mutableSetOf()
 		logD("Comms.start " + knownBTAddresses.size + " known addresses")
 		val bondedBTDevices = bluetoothAdapter?.bondedDevices ?: emptySet()
@@ -97,7 +97,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		}
 		//Check if Garmin connect app is installed
 		try {
-			activity.packageManager.getPackageInfo("com.garmin.android.apps.connectmobile", 0)
+			context.packageManager.getPackageInfo("com.garmin.android.apps.connectmobile", 0)
 		} catch(_: PackageManager.NameNotFoundException) {
 			iQSdkStatus = IQSdkStatus.GCM_NOT_INSTALLED
 			status.value = Status.DISCONNECTED
@@ -109,11 +109,11 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 
 		if(connectIQ == null) {
 			connectIQ = ConnectIQ.getInstance(
-				activity,
+				context,
 				if(EMULATOR_MODE) ConnectIQ.IQConnectType.TETHERED else ConnectIQ.IQConnectType.WIRELESS
 			)
 			tryIgnore { Looper.prepare() } //connectIQ needs this
-			connectIQ?.initialize(activity, false, this)
+			connectIQ?.initialize(context, false, this)
 			//The rest of start will be done in onSdkReady
 		} else {
 			status.value = Status.DISCONNECTED
