@@ -19,8 +19,8 @@ android {
         applicationId = "com.windkracht8.rugbyrefereewatch"
         minSdk = 26
         targetSdk = 36
-        versionCode = 368
-        versionName = "m4.1"
+        versionCode = 370
+        versionName = "m4.2"
     }
     buildTypes {
         debug {
@@ -48,13 +48,14 @@ android {
 dependencies {
     implementation("androidx.activity:activity-compose:1.11.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.compose.animation:animation-graphics-android:1.9.1")
-    implementation("androidx.compose.runtime:runtime-android:1.9.1")
-    implementation("androidx.compose.material3:material3-android:1.3.2")
-    implementation("androidx.navigation:navigation-compose:2.9.4")
+    implementation("androidx.compose.animation:animation-graphics-android:1.9.2")
+    implementation("androidx.compose.runtime:runtime-android:1.9.2")
+    implementation("androidx.compose.material:material-icons-core:1.7.8")
+    implementation("androidx.compose.material3:material3-android:1.4.0")
+    implementation("androidx.navigation:navigation-compose:2.9.5")
     implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.3.0@aar")
 
     //actually only for debug, but release won't compile without it
-    implementation("androidx.compose.ui:ui-tooling-preview:1.9.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.9.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.9.2")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.9.2")
 }

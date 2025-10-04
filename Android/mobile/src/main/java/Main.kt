@@ -41,12 +41,12 @@ class Main : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		installSplashScreen()
+		enableEdgeToEdge()
 		super.onCreate(savedInstanceState)
 		val sharedPreferences = getPreferences(MODE_PRIVATE)
 		matchType = MatchType(sharedPreferences)
 		prepData = PrepData(sharedPreferences)
 
-		enableEdgeToEdge()
 		setContent {
 			W8Theme { Surface { Home(
 				commsBTStatus,

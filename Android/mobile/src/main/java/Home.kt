@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -82,7 +82,7 @@ fun Home(
 			}
 		}
 	}
-	Column(Modifier.fillMaxSize().safeContentPadding()) {
+	Column(Modifier.fillMaxSize().safeDrawingPadding()) {
 		Row(Modifier.fillMaxWidth().height(70.dp)) {
 			Box(
 				modifier = Modifier.size(70.dp),

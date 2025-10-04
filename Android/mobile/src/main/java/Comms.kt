@@ -8,7 +8,6 @@
 package com.windkracht8.rugbyrefereewatch
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -506,7 +505,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			logD("Comms.sendNextIQMessage: $lastRequest")
 			connectIQ!!.sendMessage(iQDevice, iQApp, lastRequest.toString()) {
 				d: IQDevice?, a: IQApp?, messageStatus: ConnectIQ.IQMessageStatus? ->
-				logD("Comms.sendNextIQMessage.onMessageStatus status: " + messageStatus!!.name + " " + iQApp!!.applicationId)
+				logD("Comms.sendNextIQMessage.onMessageStatus status: " + messageStatus?.name)
 				if(messageStatus != ConnectIQ.IQMessageStatus.SUCCESS)
 					onMessageError(R.string.fail_send_message)
 			}
@@ -598,10 +597,10 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		lastRequest = null
 		try {
 			if(status != ConnectIQ.IQMessageStatus.SUCCESS) throw Exception()
-			data!!.forEach(Consumer { message: Any? ->
+			for(message in data!!){
 				val messageJson = JSONObject(message as String)
 				runInBackground { gotResponse(messageJson) }
-			})
+			}
 		} catch(e: Exception) {
 			logE("Comms.onMessageReceived exception: $e")
 			logE("Comms.onMessageReceived exception: " + e.message)

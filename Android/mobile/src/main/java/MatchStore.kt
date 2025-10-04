@@ -12,6 +12,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import java.io.BufferedWriter
 import java.io.FileNotFoundException
@@ -31,12 +34,11 @@ object MatchStore {
 		try {
 			val text = activity.openFileInput(MF).bufferedReader().use { it.readText() }
 			val matchesJson = JSONArray(text)
-			activity.runOnUiThread {
+			CoroutineScope(Dispatchers.Main).launch {
 				for (i in 0..<matchesJson.length()) {
-					val matchJson = matchesJson.optJSONObject(i)
-					matchJson?.let {
-						val match = MatchData(it)
-						if(matches.none { it2 -> it2.matchId == match.matchId }) matches.add(match)
+					matchesJson.optJSONObject(i)?.let { matchJson ->
+						val match = MatchData(matchJson)
+						if(matches.none { it.matchId == match.matchId }) matches.add(match)
 					}
 				}
 				matches.sort()
@@ -61,10 +63,11 @@ object MatchStore {
 		try {
 			val text = activity.openFileInput(MTF).bufferedReader().use { it.readText() }
 			val jsonArray = JSONArray(text)
-			activity.runOnUiThread {
+			CoroutineScope(Dispatchers.Main).launch {
 				for(i in 0..<jsonArray.length()) {
-					val customMatchTypesJson = jsonArray.optJSONObject(i)
-					customMatchTypesJson?.let { customMatchTypes.add(MatchType(it)) }
+					jsonArray.optJSONObject(i)?.let { matchTypeJson ->
+						customMatchTypes.add(MatchType(matchTypeJson))
+					}
 				}
 				customMatchTypes.forEach { customMatchTypeNames.add(it.name) }
 				customMatchTypeNames.sort()
@@ -120,7 +123,7 @@ object MatchStore {
 			activity.contentResolver.openInputStream(uri)?.use { inputStream ->
 				val text = inputStream.bufferedReader().use { it.readText() }
 				val matchesJson = JSONArray(text)
-				activity.runOnUiThread {
+				CoroutineScope(Dispatchers.Main).launch {
 					for (i in 0..<matchesJson.length()) {
 						//logD("match: " + matchesJson.getJSONObject(i).toString())
 						val match = MatchData(

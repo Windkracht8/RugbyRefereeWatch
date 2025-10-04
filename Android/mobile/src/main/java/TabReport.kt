@@ -26,6 +26,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,7 +34,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -72,7 +72,7 @@ fun TabReport(
 	saveMatch: (MatchData) -> Unit
 ) {
 	var viewType by remember { mutableIntStateOf(VIEW_TYPE_STANDARD) }
-	val match = MatchStore.matches.firstOrNull { it.matchId == ( matchId ?: it.matchId) }
+	val match = MatchStore.matches.lastOrNull { it.matchId == ( matchId ?: it.matchId) }
 
 	if(match == null){
 		Text(R.string.no_match)
@@ -459,7 +459,7 @@ fun Spinner(
 		onExpandedChange = { expanded = !expanded }
 	) {
 		OutlinedTextField(
-			modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+			modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
 			value = value,
 			onValueChange = {},
 			readOnly = true,

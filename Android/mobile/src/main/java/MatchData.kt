@@ -203,7 +203,7 @@ class MatchData: Comparable<MatchData> {
 			ret.put(HOME_ID, home.toJson())
 			ret.put(AWAY_ID, away.toJson())
 			val eventsJson = JSONArray()
-			events.forEach { eventsJson.put(it.toJson()) }
+			for(event in events) eventsJson.put(event.toJson())
 			ret.put("events", eventsJson)
 		} catch (e: JSONException) {
 			logE("MatchData.toJson Exception: " + e.message)
