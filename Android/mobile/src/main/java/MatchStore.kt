@@ -46,7 +46,7 @@ object MatchStore {
 		} catch (_: FileNotFoundException) {
 			storeMatches(activity)
 		} catch (e: Exception) {
-			logE("MatchStore.read matches Exception: " + e.message)
+			logE("MatchStore.read matches Exception: ${e.message}")
 			error.emit(R.string.fail_read_matches)
 			return
 		}
@@ -58,7 +58,7 @@ object MatchStore {
 		} catch (_: FileNotFoundException) {
 			storeDeletedMatches(activity)
 		} catch (e: Exception) {
-			logE("MatchStore.read deletedMatches Exception: " + e.message)
+			logE("MatchStore.read deletedMatches Exception: ${e.message}")
 		}
 		try {
 			val text = activity.openFileInput(MTF).bufferedReader().use { it.readText() }
@@ -75,40 +75,40 @@ object MatchStore {
 		} catch (_: FileNotFoundException) {
 			storeCustomMatchTypes(activity)
 		} catch (e: Exception) {
-			logE("MatchStore.read customMatchTypes Exception: " + e.message)
+			logE("MatchStore.read customMatchTypes Exception: ${e.message}")
 			error.emit(R.string.fail_read_custom_match_types)
 		}
 	}
 	suspend fun storeMatches(activity: Activity) {
-		logD("MatchStore.storeMatches")
+		logD{"MatchStore.storeMatches"}
 		try {
 			val matchesJson = JSONArray()
 			matches.forEach { matchesJson.put(it.toJson()) }
 			store(activity, MF, matchesJson)
 		} catch (e: Exception) {
-			logE("MatchStore.storeMatches Exception: " + e.message)
+			logE("MatchStore.storeMatches Exception: ${e.message}")
 			error.emit(R.string.fail_save_matches)
 		}
 	}
 	suspend fun storeDeletedMatches(activity: Activity) {
-		logD("MatchStore.storeDeletedMatches")
+		logD{"MatchStore.storeDeletedMatches"}
 		try {
 			val deletedMatchesJson = JSONArray()
 			deletedMatches.forEach { deletedMatchesJson.put(it) }
 			store(activity, DMF, deletedMatchesJson)
 		} catch (e: Exception) {
-			logE("MatchStore.storeDeletedMatches Exception: " + e.message)
+			logE("MatchStore.storeDeletedMatches Exception: ${e.message}")
 			error.emit(R.string.fail_save_matches)
 		}
 	}
 	suspend fun storeCustomMatchTypes(activity: Activity) {
-		logD("MatchStore.storeCustomMatchTypes")
+		logD{"MatchStore.storeCustomMatchTypes"}
 		try {
 			val customMatchTypesJson = JSONArray()
 			customMatchTypes.forEach { customMatchTypesJson.put(it.toJson()) }
 			store(activity, MTF, customMatchTypesJson)
 		} catch (e: Exception) {
-			logE("MatchStore.storeCustomMatchTypes Exception: " + e.message)
+			logE("MatchStore.storeCustomMatchTypes Exception: ${e.message}")
 			error.emit(R.string.fail_save_match_type)
 		}
 	}
@@ -125,7 +125,7 @@ object MatchStore {
 				val matchesJson = JSONArray(text)
 				CoroutineScope(Dispatchers.Main).launch {
 					for (i in 0..<matchesJson.length()) {
-						//logD("match: " + matchesJson.getJSONObject(i).toString())
+						//logD{"match: " + matchesJson.getJSONObject(i).toString())
 						val match = MatchData(
 							matchJson = matchesJson.getJSONObject(i),
 							checkTeamNames = true
@@ -137,12 +137,12 @@ object MatchStore {
 				}
 			}
 		} catch (e: Exception) {
-			logE("MatchStore.importMatches Exception: " + e.message)
+			logE("MatchStore.importMatches Exception: ${e.message}")
 			error.emit(R.string.fail_import)
 		}
 	}
 	fun deleteMatches(activity: Activity, matchIds: Set<Long>) {
-		logD("MatchStore.deleteMatches")
+		logD{"MatchStore.deleteMatches"}
 		matchIds.forEach { matchId ->
 			matches.removeIf { it.matchId == matchId }//this needs to happen on the UI thread
 			deletedMatches.add(matchId)
@@ -153,7 +153,7 @@ object MatchStore {
 		}
 	}
 	suspend fun exportMatches(activity: Activity, uri: Uri, matchIds: Set<Long>) {
-		logD("MatchStore.exportMatches")
+		logD{"MatchStore.exportMatches"}
 		try {
 			val matchesJson = JSONArray()
 			matches.forEach {
@@ -165,12 +165,12 @@ object MatchStore {
 				}
 			}
 		} catch (e: Exception) {
-			logE("MatchStore.exportMatches Exception: " + e.message)
+			logE("MatchStore.exportMatches Exception: ${e.message}")
 			error.emit(R.string.fail_export)
 		}
 	}
 	fun saveMatch(activity: Activity, matchData: MatchData) {
-		logD("MatchStore.saveMatch")
+		logD{"MatchStore.saveMatch"}
 		val index = matches.indexOfFirst { it.matchId == matchData.matchId }
 		if (index != -1) matches[index] = matchData//this needs to happen on the UI thread
 		else matches.add(matchData)//this needs to happen on the UI thread

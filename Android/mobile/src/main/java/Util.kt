@@ -18,7 +18,7 @@ import org.json.JSONObject
 
 const val LOG_TAG = "RugbyRefereeWatch"
 fun logE(message: String) = Log.e(LOG_TAG, message)
-fun logD(message: String) = Log.d(LOG_TAG, message)
+fun logD(message: () -> String) { if(BuildConfig.DEBUG) { Log.d(LOG_TAG, message()) } }
 
 fun Context.toast(message: Int) =
 	Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

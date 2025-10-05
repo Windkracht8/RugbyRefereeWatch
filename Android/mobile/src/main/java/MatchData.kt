@@ -209,7 +209,7 @@ class MatchData: Comparable<MatchData> {
 			logE("MatchData.toJson Exception: " + e.message)
 			error.emit(R.string.fail_read_matches)
 		}
-		//logD("MatchData.toJson result: " + ret);
+		//logD{"MatchData.toJson result: $ret"}
 		return ret
 	}
 	override fun compareTo(other: MatchData): Int = matchId.compareTo(other.matchId)

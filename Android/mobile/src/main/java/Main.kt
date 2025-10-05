@@ -66,7 +66,7 @@ class Main : ComponentActivity() {
 
 		lifecycleScope.launch {
 			Comms.status.collect { status ->
-				logD("Main: CommsBT status change: $status")
+				logD{"Main: CommsBT status change: $status"}
 				commsBTStatus = Comms.status.value
 				if (commsBTStatus == Comms.Status.CONNECTING) {
 					startActivity(Intent(this@Main, DeviceConnect::class.java))
@@ -129,7 +129,7 @@ class Main : ComponentActivity() {
 	}
 
 	fun onIconClick() {
-		logD("onIconClick: " + Comms.status.value)
+		logD{"onIconClick: ${Comms.status.value}"}
 		if (!Permissions.hasBT) {
 			startActivity(Intent(this, Permissions::class.java))
 		} else if (Comms.status.value == Comms.Status.DISCONNECTED) {
@@ -140,7 +140,7 @@ class Main : ComponentActivity() {
 	}
 	fun onImportClick() { importMatchesResult.launch(arrayOf("application/json")) }
 	val importMatchesResult = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-		logD("Main.importMatchesResult: $uri")
+		logD{"Main.importMatchesResult: $uri"}
 		if (uri == null) {
 			logE("Main.importMatchesResult empty uri")
 			toast(R.string.fail_import)
@@ -149,22 +149,22 @@ class Main : ComponentActivity() {
 		runInBackground { MatchStore.importMatches(this@Main, uri) }
 	}
 	fun deleteMatches(matchIds: Set<Long>) {
-		logD("Main.deleteMatches: $matchIds")
+		logD{"Main.deleteMatches: $matchIds"}
 		//run on UI, because it will update matches, and this need to happen on the UI thread
 		MatchStore.deleteMatches(this, matchIds)
 		Comms.syncIfConnected()
 	}
 	fun exportMatches(matchIds: Set<Long>) {
-		logD("Main.exportMatches: $matchIds")
+		logD{"Main.exportMatches: $matchIds"}
 		exportMatchIds = matchIds
 		exportMatchesResult.launch("matches.json")
 	}
 	var exportMatchIds: Set<Long>? = null
 	val exportMatchesResult = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-		logD("Main.exportMatchesResult: $uri")
+		logD{"Main.exportMatchesResult: $uri"}
 		val exportMatchIds2 = exportMatchIds
 		if (uri == null || exportMatchIds2 == null) {
-			logD("Main.exportMatchesResult empty uri")
+			logD{"Main.exportMatchesResult empty uri"}
 			toast(R.string.fail_export)
 			return@registerForActivityResult
 		}
@@ -174,7 +174,7 @@ class Main : ComponentActivity() {
 		}
 	}
 	fun shareMatch(matchId: Long, eventTypes: List<Boolean>) {
-		logD("Main.shareMatch: $matchId")
+		logD{"Main.shareMatch: $matchId"}
 		val match = MatchStore.matches.firstOrNull{ it.matchId == matchId }
 		if (match == null) {
 			logE("Main.shareMatch match not found: $matchId")
@@ -189,7 +189,7 @@ class Main : ComponentActivity() {
 		try {
 			startActivity(Intent.createChooser(intent, getString(R.string.share_report)))
 		} catch (e: java.lang.Exception) {
-			logE("Main.shareMatch Exception: " + e.message)
+			logE("Main.shareMatch Exception: ${e.message}")
 			toast(R.string.fail_share)
 		}
 	}
@@ -255,7 +255,7 @@ class Main : ComponentActivity() {
 			if(event.what == EventWhat.END) shareBody.append(" ${event.score}\n")
 			shareBody.append("\n")
 		}
-		//logD(shareBody.toString())
+		//logD{shareBody.toString()}
 		return shareBody.toString()
 	}
 	fun saveMatch(matchData: MatchData) {
@@ -264,7 +264,7 @@ class Main : ComponentActivity() {
 	}
 
 	fun onPrepareClicked() {
-		logD("onPrepareClicked")
+		logD{"onPrepareClicked"}
 		val settings = JSONObject()
 		settings.put("home_name", if(prepData.homeName == "") HOME_ID else prepData.homeName)
 		settings.put("home_color", prepData.homeColor)
@@ -290,7 +290,7 @@ class Main : ComponentActivity() {
 		Comms.sendRequestPrep(settings)
 	}
 	fun onSaveMatchType(name: String) {
-		logD("onSaveMatchType($name) " + matchType.toJson())
+		logD{"onSaveMatchType($name) ${matchType.toJson()}"}
 		if(!MatchStore.customMatchTypeNames.contains(name)) {
 			MatchStore.customMatchTypeNames.add(name)
 			MatchStore.customMatchTypeNames.sort()
@@ -304,7 +304,7 @@ class Main : ComponentActivity() {
 		}
 	}
 	fun onDeleteMatchType() {
-		logD("onDeleteMatchType")
+		logD{"onDeleteMatchType"}
 		MatchStore.customMatchTypeNames.remove(matchType.name)
 		MatchStore.customMatchTypes.removeIf { it.name == matchType.name }
 		matchType.name = "15s"

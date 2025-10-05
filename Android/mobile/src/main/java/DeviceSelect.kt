@@ -89,22 +89,22 @@ class DeviceSelect : ComponentActivity() {
 		}
 	}
 	fun onBTDeviceClick(device: BluetoothDevice) {
-		logD("onBTDeviceClick: " + device.name)
+		logD{"onBTDeviceClick: ${device.name}"}
 		runInBackground { Comms.connectBTDevice(device) }
 	}
 	fun onIQDeviceClick(device: IQDevice) {
-		logD("onIQDeviceClick: " + device.friendlyName)
+		logD{"onIQDeviceClick: ${device.friendlyName}"}
 		runInBackground { Comms.connectIQDevice(device) }
 	}
 	fun onNewBTDeviceClick() {
-		logD("onNewBTDeviceClick")
+		logD{"onNewBTDeviceClick"}
 		runInBackground {
 			bondedBTDevices = Comms.getBondedBTDevices()
 			showNewBTDevices = true
 		}
 	}
 	fun onNewIQDeviceClick() {
-		logD("onNewIQDeviceClick")
+		logD{"onNewIQDeviceClick"}
 		bondedIQDevices = Comms.getBondedIQDevices()
 		showNewIQDevices = true
 	}

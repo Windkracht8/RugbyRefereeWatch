@@ -85,7 +85,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 
 		sharedPreferences = context.getSharedPreferences("Comms", MODE_PRIVATE)
 		knownBTAddresses = sharedPreferences?.getStringSet("knownBTAddresses", null) ?: mutableSetOf()
-		logD("Comms.start " + knownBTAddresses.size + " known addresses")
+		logD{"Comms.start ${knownBTAddresses.size} known addresses"}
 		val bondedBTDevices = bluetoothAdapter?.bondedDevices ?: emptySet()
 		//Find and clean known devices
 		knownBTAddresses.forEach { checkKnownBTAddress(it, bondedBTDevices) }
@@ -104,7 +104,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		}
 		val knownIQIdsStrings = sharedPreferences?.getStringSet("knownIQIds", null) ?: mutableSetOf()
 		knownIQIdsStrings.forEach(Consumer { knownIQIds.add(it.toLong()) })
-		logD("Comms.start " + knownIQIds.size + " known IQ devices")
+		logD{"Comms.start ${knownIQIds.size} known IQ devices"}
 
 		if(connectIQ == null) {
 			connectIQ = ConnectIQ.getInstance(
@@ -324,7 +324,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		return bluetoothAdapter?.bondedDevices
 	}
 	fun connectBTDevice(device: BluetoothDevice) {
-		logD("Comms.connectBTDevice: " + device.name)
+		logD{"Comms.connectBTDevice: ${device.name}"}
 		if (bluetoothAdapter == null) {
 			onError(R.string.fail_BT_denied)
 			return
@@ -354,7 +354,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 
 	class CommsBTConnect(device: BluetoothDevice) : Thread() {
 		init {
-			logD("CommsBTConnect " + device.name)
+			logD{"CommsBTConnect ${device.name}"}
 			try {
 				bluetoothSocket = device.createRfcommSocketToServiceRecord(RRW_UUID)
 			} catch (e: Exception) {
@@ -368,7 +368,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				commsBTConnected = CommsBTConnected()
 				commsBTConnected?.start()
 			} catch (e: Exception) {
-				logD("CommsBTConnect.run failed: " + e.message)
+				logD{"CommsBTConnect.run failed: ${e.message}"}
 				tryIgnore { bluetoothSocket?.close() }
 				onCommsBTDisconnect()
 			}
@@ -378,7 +378,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		var inputStream: InputStream? = null
 		var outputStream: OutputStream? = null
 		init {
-			logD("CommsBTConnected")
+			logD{"CommsBTConnected"}
 			try {
 				inputStream = bluetoothSocket!!.inputStream
 				outputStream = bluetoothSocket!!.outputStream
@@ -388,7 +388,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 					storeKnownBTAddresses()
 				}
 			} catch (e: Exception) {
-				logE("CommsBTConnected init Exception: " + e.message)
+				logE("CommsBTConnected init Exception: ${e.message}")
 				onCommsBTDisconnect()
 			}
 		}
@@ -400,14 +400,14 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			while (!disconnect) {
 				try { outputStream!!.write("".toByteArray()) }
 				catch (_: Exception) {
-					logD("Connection closed")
+					logD{"Connection closed"}
 					break
 				}
 				sendNextRequest()
 				read()
 				delay(100)
 			}
-			logD("CommsBTConnected.process: close")
+			logD{"CommsBTConnected.process: close"}
 			tryIgnore { bluetoothSocket?.close() }
 			onCommsBTDisconnect()
 		}
@@ -417,7 +417,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				if (requestQueue.isEmpty() || lastRequest != null) return
 				lastRequest = requestQueue.first()
 				requestQueue.remove(lastRequest)
-				logD("CommsBTConnected.sendNextRequest: $lastRequest")
+				logD{"CommsBTConnected.sendNextRequest: $lastRequest"}
 				outputStream!!.write(lastRequest.toString().toByteArray())
 			} catch (e: Exception) {
 				logE("CommsBTConnected.sendNextRequest Exception: " + e.message)
@@ -447,14 +447,14 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 					val temp = String(buffer)
 					response += temp
 					if (isValidJSON(response)) {
-						logD("CommsBTConnected.read got message: $response")
+						logD{"CommsBTConnected.read got message: $response"}
 						gotResponse(JSONObject(response))
 						return
 					}
 				}
 				logE("CommsBTConnected.read no valid message and no new data after 3 sec: $response")
 			} catch (e: Exception) {
-				logE("CommsBTConnected.read Exception: " + e.message)
+				logE("CommsBTConnected.read Exception: ${e.message}")
 			}
 			lastRequest = null
 			onMessageError(R.string.fail_response)
@@ -473,11 +473,11 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	fun getBondedIQDevices(): List<IQDevice>? {
 		if(iQSdkStatus != IQSdkStatus.READY) return null
 		try { return connectIQ?.knownDevices }
-		catch(e: Exception) { logE("Comms.getBondedIQDevices exception: " + e.message) }
+		catch(e: Exception) { logE("Comms.getBondedIQDevices exception: ${e.message}") }
 		return null
 	}
 	fun connectIQDevice(device: IQDevice) {
-		logD("Comms.connectIQDevice: " + device.friendlyName + " status: " + device.status)
+		logD{"Comms.connectIQDevice: ${device.friendlyName} status: ${device.status}"}
 		if (bluetoothAdapter == null) {
 			onError(R.string.fail_BT_denied)
 			return
@@ -493,7 +493,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		iQDevice = device
 		try { connectIQ!!.getApplicationInfo(IQ_APP_ID, iQDevice, this) }
 		catch(e: Exception) {
-			logE("Comms.connectIQDevice exception: " + e.message)
+			logE("Comms.connectIQDevice exception: ${e.message}")
 			onError(R.string.fail_connect)
 		}
 	}
@@ -502,22 +502,22 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		try {
 			lastRequest = requestQueue.first()
 			requestQueue.remove(lastRequest)
-			logD("Comms.sendNextIQMessage: $lastRequest")
+			logD{"Comms.sendNextIQMessage: $lastRequest"}
 			connectIQ!!.sendMessage(iQDevice, iQApp, lastRequest.toString()) {
 				d: IQDevice?, a: IQApp?, messageStatus: ConnectIQ.IQMessageStatus? ->
-				logD("Comms.sendNextIQMessage.onMessageStatus status: " + messageStatus?.name)
+				logD{"Comms.sendNextIQMessage.onMessageStatus status: ${messageStatus?.name}"}
 				if(messageStatus != ConnectIQ.IQMessageStatus.SUCCESS)
 					onMessageError(R.string.fail_send_message)
 			}
 		} catch(e: java.lang.Exception) {
 			logE("Comms.sendNextIQMessage exception: $e")
-			logE("Comms.sendNextIQMessage exception: " + e.message)
+			logE("Comms.sendNextIQMessage exception: ${e.message}")
 			onMessageError(R.string.fail_send_message)
 		}
 	}
 	//ConnectIQListener
 	override fun onSdkReady() {
-		logD("Comms.onSdkReady")
+		logD{"Comms.onSdkReady"}
 		iQSdkStatus = IQSdkStatus.READY
 		//Resume IQ part of start
 		val bondedIQDevices = getBondedIQDevices()
@@ -535,7 +535,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		onIQStartDone()
 	}
 	override fun onInitializeError(errorStatus: ConnectIQ.IQSdkErrorStatus?) {
-		logD("Comms.onInitializeError: $errorStatus")
+		logD{"Comms.onInitializeError: $errorStatus"}
 		iQSdkStatus = when(errorStatus) {
 			ConnectIQ.IQSdkErrorStatus.GCM_NOT_INSTALLED -> IQSdkStatus.GCM_NOT_INSTALLED
 			ConnectIQ.IQSdkErrorStatus.GCM_UPGRADE_NEEDED -> IQSdkStatus.GCM_UPGRADE_NEEDED
@@ -545,12 +545,12 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		onIQStartDone()
 	}
 	override fun onSdkShutDown() {
-		logD("Comms.onSdkShutDown")
+		logD{"Comms.onSdkShutDown"}
 		iQSdkStatus = IQSdkStatus.UNAVAILABLE
 	}
 	//IQApplicationInfoListener
 	override fun onApplicationInfoReceived(app: IQApp?) {
-		logD("Comms.onApplicationInfoReceived $app")
+		logD{"Comms.onApplicationInfoReceived $app"}
 		if(status.value in listOf(Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
 		if(app?.status == IQApp.IQAppStatus.INSTALLED || EMULATOR_MODE) {
 			status.value = Status.CONNECTED_IQ
@@ -563,28 +563,28 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				sendRequest(Request(Request.Type.SYNC))
 			} catch(e: Exception) {
 				logE("Comms.onApplicationInfoReceived exception: $e")
-				logE("Comms.onApplicationInfoReceived exception: " + e.message)
+				logE("Comms.onApplicationInfoReceived exception: ${e.message}")
 				onError(R.string.fail_connect)
 			}
 		} else if(status.value == Status.CONNECTING) onError(R.string.fail_app_not_installed)
 	}
 	override fun onApplicationNotInstalled(applicationId: String?) {
-		logD("Comms.onApplicationNotInstalled $applicationId")
+		logD{"Comms.onApplicationNotInstalled $applicationId"}
 		onError(R.string.fail_app_not_installed)
 		iQDevice = null
 	}
 	override fun onDeviceStatusChanged(device: IQDevice?, statusNew: IQDevice.IQDeviceStatus?) {
-		logD("Comms.onApplicationNotInstalled device: $device statusNew: $statusNew")
+		logD{"Comms.onApplicationNotInstalled device: $device statusNew: $statusNew"}
 		if(statusNew == IQDevice.IQDeviceStatus.CONNECTED) {
 			if(status.value in listOf(Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
 			iQDevice = device
 			try {
-				logD("getApplicationInfo")
+				logD{"getApplicationInfo"}
 				connectIQ!!.getApplicationInfo(IQ_APP_ID, device, this)
 				//onApplicationInfoReceived/onApplicationNotInstalled will be called to make sure RRW is installed on the watch
 			} catch(e: Exception) {
 				logE("Comms.onApplicationInfoReceived exception: $e")
-				logE("Comms.onApplicationInfoReceived exception: " + e.message)
+				logE("Comms.onApplicationInfoReceived exception: ${e.message}")
 				onError(R.string.fail_unexpected)
 			}
 		} else if(status.value == Status.CONNECTED_IQ) status.value = Status.DISCONNECTED
@@ -593,7 +593,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	override fun onMessageReceived(
 		d: IQDevice?, a: IQApp?, data: List<Any?>?, status: ConnectIQ.IQMessageStatus?
 	) {
-		logD("Comms.onMessageReceived messageStatus: $status messageData: $data")
+		logD{"Comms.onMessageReceived messageStatus: $status messageData: $data"}
 		lastRequest = null
 		try {
 			if(status != ConnectIQ.IQMessageStatus.SUCCESS) throw Exception()
@@ -603,7 +603,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			}
 		} catch(e: Exception) {
 			logE("Comms.onMessageReceived exception: $e")
-			logE("Comms.onMessageReceived exception: " + e.message)
+			logE("Comms.onMessageReceived exception: ${e.message}")
 			onMessageError(R.string.fail_response)
 		}
 		sendNextIQMessage()

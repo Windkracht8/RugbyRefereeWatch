@@ -22,6 +22,9 @@ android {
         versionCode = 370
         versionName = "m4.2"
     }
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
