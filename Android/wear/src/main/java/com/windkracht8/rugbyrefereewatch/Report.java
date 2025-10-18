@@ -34,6 +34,10 @@ public class Report extends Activity{
             addItem(match.home.pen_tries + " pen. tries " + match.away.pen_tries);
         if(match.points_con > 0 && (match.home.cons > 0 || match.away.cons > 0))
             addItem(match.home.cons + " conv. " + match.away.cons);
+        if(match.points_goal > 0 && (match.home.drop_goals > 0 || match.away.drop_goals > 0))
+            addItem(match.home.drop_goals + " drop goals " + match.away.drop_goals);
+        if(match.points_goal > 0 && (match.home.pen_goals > 0 || match.away.pen_goals > 0))
+            addItem(match.home.pen_goals + " pen. goals " + match.away.pen_goals);
         if(match.points_goal > 0 && (match.home.goals > 0 || match.away.goals > 0))
             addItem(match.home.goals + " goals " + match.away.goals);
         addItem(match.home.tot + " score " + match.away.tot);
@@ -58,19 +62,22 @@ public class Report extends Activity{
                     break;
                 case "END":
                     text += getString(R.string.Result) + " " + Main.getPeriodName(this, event.period, match.period_count);
-                    if(event.score != null){
-                        text += " " + event.score;
+                    if(event.score != null) text += " " + event.score;
+                    break;
+                case "REPLACEMENT":
+                    if(event.team != null){
+                        text += Translator.getTeamLocal(this, event.team)
+                            + Utils.replacementString(this, event);
                     }
                     break;
                 default:
                     text += Translator.getEventTypeLocal(this, event.what);
+                    if(event.team != null){
+                        text += " " + Translator.getTeamLocal(this, event.team);
+                        if(event.who > 0) text += ' ' + Integer.toString(event.who);
+                        text += Utils.replacementString(this, event);
+                    }
                     break;
-            }
-            if(event.team != null){
-                text += " " + Translator.getTeamLocal(this, event.team);
-                if(event.who > 0){
-                    text += ' ' + Integer.toString(event.who);
-                }
             }
             addItem(text);
         }

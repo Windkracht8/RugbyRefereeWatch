@@ -22,7 +22,7 @@ public class MatchData{
     static final String HOME_ID = "home";
     static final String AWAY_ID = "away";
     long match_id;
-    private final static int FORMAT = 3;//April 2025; timer changed from ms to s
+    private final static int FORMAT = 4; //October 2025; REPLACEMENT added
     final ArrayList<Event> events = new ArrayList<>();
     Team home;
     Team away;
@@ -91,6 +91,8 @@ public class MatchData{
         home.cons = 0;
         home.pen_tries = 0;
         home.goals = 0;
+        home.drop_goals = 0;
+        home.pen_goals = 0;
         home.yellow_cards = 0;
         home.red_cards = 0;
         home.pens = 0;
@@ -102,6 +104,8 @@ public class MatchData{
         away.cons = 0;
         away.pen_tries = 0;
         away.goals = 0;
+        away.drop_goals = 0;
+        away.pen_goals = 0;
         away.yellow_cards = 0;
         away.red_cards = 0;
         away.pens = 0;
@@ -138,8 +142,11 @@ public class MatchData{
             case "PENALTY":
                 team_edit.pens--;
                 break;
-            case "GOAL":
-                team_edit.goals--;
+            case "DROP GOAL":
+                team_edit.drop_goals--;
+                break;
+            case "PENALTY GOAL":
+                team_edit.pen_goals--;
                 break;
         }
     }
@@ -167,8 +174,11 @@ public class MatchData{
             case "PENALTY":
                 team_edit.pens++;
                 break;
-            case "GOAL":
-                team_edit.goals++;
+            case "DROP GOAL":
+                team_edit.drop_goals++;
+                break;
+            case "PENALTY GOAL":
+                team_edit.pen_goals++;
                 break;
         }
     }
@@ -207,7 +217,9 @@ public class MatchData{
         int tries = 0;
         int cons = 0;
         int pen_tries = 0;
-        int goals = 0;
+        int goals = 0;//replaced by drop_goals/pen_goals in oct 2025
+        int drop_goals = 0;
+        int pen_goals = 0;
         int yellow_cards = 0;
         int red_cards = 0;
         int pens = 0;
@@ -226,9 +238,11 @@ public class MatchData{
             tries = team_js.getInt("tries");
             cons = team_js.getInt("cons");
             pen_tries = team_js.getInt("pen_tries");
-            goals = team_js.getInt("goals");
-            if(team_js.has("yellow_cards")) yellow_cards = team_js.getInt("yellow_cards");
-            if(team_js.has("yellow_cards")) red_cards = team_js.getInt("red_cards");
+            goals = team_js.optInt("goals");
+            drop_goals = team_js.optInt("drop_goals");
+            pen_goals = team_js.optInt("pen_goals");
+            yellow_cards = team_js.optInt("yellow_cards");
+            red_cards = team_js.optInt("red_cards");
             pens = team_js.getInt("pens");
             kickoff = team_js.getBoolean("kickoff");
         }
@@ -257,6 +271,8 @@ public class MatchData{
                 ret.put("cons", cons);
                 ret.put("pen_tries", pen_tries);
                 ret.put("goals", goals);
+                ret.put("drop_goals", drop_goals);
+                ret.put("pen_goals", pen_goals);
                 ret.put("yellow_cards", yellow_cards);
                 ret.put("red_cards", red_cards);
                 ret.put("pens", pens);
@@ -276,6 +292,8 @@ public class MatchData{
         int period;
         String team;
         int who;
+        int who_enter;
+        int who_leave;
         String score;
         boolean deleted = false;
         private Event(String what, long timestamp, String team){
@@ -293,9 +311,11 @@ public class MatchData{
             timer = event_json.getInt("timer");
             what = event_json.getString("what");
             period = event_json.getInt("period");
-            if(event_json.has("team")) team = event_json.getString("team");
-            if(event_json.has("who")) who = event_json.getInt("who");
-            if(event_json.has("score")) score = event_json.getString("score");
+            team = event_json.optString("team");
+            who = event_json.optInt("who");
+            who_enter = event_json.optInt("who_enter");
+            who_leave = event_json.optInt("who_leave");
+            score = event_json.optString("score");
         }
         private JSONObject toJson(Context context){
             JSONObject evt = new JSONObject();
@@ -307,13 +327,11 @@ public class MatchData{
                 evt.put("what", what);
                 if(team != null){
                     evt.put("team", team);
-                    if(who != 0){
-                        evt.put("who", who);
-                    }
+                    if(who != 0) evt.put("who", who);
+                    if(who_enter != 0) evt.put("who_enter", who_enter);
+                    if(who_leave != 0) evt.put("who_leave", who_leave);
                 }
-                if(score != null){
-                    evt.put("score", score);
-                }
+                if(score != null) evt.put("score", score);
             }catch(JSONException e){
                 Log.e(Main.LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();

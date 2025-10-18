@@ -89,9 +89,7 @@ class CommsBT{
             responseData.put("settings", Main.getSettings());
             FileStore.syncCustomMatchTypes(main, requestData.getJSONArray("custom_match_types"));
             sendResponse("sync", responseData);
-            //pre 2025 {"requestType":"sync","responseData":{"matches":[],"settings":{ settings }}}
-            //jun 2025 {"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
-            //next release {"version":2,"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
+            //{"version":2,"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "CommsBT.onReceiveSync Exception: " + e.getMessage());
             sendResponse("sync", main.getString(R.string.fail_unexpected));

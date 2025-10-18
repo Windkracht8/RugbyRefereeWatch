@@ -1,0 +1,20 @@
+<!--
+  ~ Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+  ~ This file is part of RugbyRefereeWatch
+  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+  <path
+      android:pathData="M72.59,57.08H151.35V28.95l45.11,39.38 -45.11,39.38V79.59H72.59Z"
+      android:fillColor="#fff"/>
+  <path
+      android:pathData="M129.28,128.86H50.51V100.73L5.4,140.11 50.51,179.5V151.36h78.76z"
+      android:fillColor="#fff"/>
+</vector>

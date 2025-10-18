@@ -205,12 +205,18 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		sendRequest(Request(Request.Type.PREPARE, settings = settings))
 	fun sendRequest(request: Request) {
 		requestQueue.add(request)
-		runInBackground(this::sendNextIQMessage)
+		runInBackground(::sendNextIQMessage)
 	}
 
 	suspend fun gotResponse(response: JSONObject) {
 		try {
 			val requestType = response.getString("requestType")
+			val version = response.optInt("version")
+			if(version > 2){
+				logE("Watch is on a newer version")
+				onError(R.string.update_mobile_app)
+				return
+			}
 			when (requestType) {
 				"sync" -> {
 					//{requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
@@ -244,7 +250,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 					when (response.getString("responseData")) {
 						"okilly dokilly" -> messageStatus = R.string.prep_done
 						"match ongoing" -> onMessageError(R.string.match_ongoing)
-						else -> throw Exception()
+						else -> throw Exception("unknown response for prepare")
 					}
 				}
 			}
@@ -383,8 +389,9 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				inputStream = bluetoothSocket!!.inputStream
 				outputStream = bluetoothSocket!!.outputStream
 				status.value = Status.CONNECTED_BT
-				knownBTDevices.add(bluetoothSocket!!.remoteDevice)
-				if (knownBTAddresses.add(bluetoothSocket!!.remoteDevice.address)) {
+				if (knownBTDevices.add(bluetoothSocket!!.remoteDevice) &&
+					knownBTAddresses.add(bluetoothSocket!!.remoteDevice.address)
+				) {
 					storeKnownBTAddresses()
 				}
 			} catch (e: Exception) {

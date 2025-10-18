@@ -25,12 +25,12 @@ class MatchData: Comparable<MatchData> {
 	companion object {
 		const val HOME_ID: String = "home"
 		const val AWAY_ID: String = "away"
-		const val FORMAT = 3 //April 2025; timer changed from ms to s
+		const val FORMAT = 4 //October 2025; replacements added
 	}
 
 	enum class EventWhat {
-		START, END, TRY, CONVERSION, PENALTY_TRY, GOAL, PENALTY_GOAL, DROP_GOAL,
-		YELLOW_CARD, RED_CARD, PENALTY, TIME_OFF, RESUME
+		START, END, TRY, CONVERSION, PENALTY_TRY, GOAL, DROP_GOAL, PENALTY_GOAL,
+		YELLOW_CARD, RED_CARD, PENALTY, TIME_OFF, RESUME, REPLACEMENT
 	}
 
 	var format: Int
@@ -150,8 +150,8 @@ class MatchData: Comparable<MatchData> {
 			team.cons = 0
 			team.penTries = 0
 			team.goals = 0
-			team.penGoals = 0
 			team.dropGoals = 0
+			team.penGoals = 0
 			team.yellowCards = 0
 			team.redCards = 0
 			team.pens = 0
@@ -167,8 +167,8 @@ class MatchData: Comparable<MatchData> {
 				EventWhat.CONVERSION -> team?.cons++
 				EventWhat.PENALTY_TRY -> team?.penTries++
 				EventWhat.GOAL -> team?.goals++
-				EventWhat.PENALTY_GOAL -> team?.penGoals++
 				EventWhat.DROP_GOAL -> team?.dropGoals++
+				EventWhat.PENALTY_GOAL -> team?.penGoals++
 				EventWhat.YELLOW_CARD -> team?.yellowCards++
 				EventWhat.RED_CARD -> team?.redCards++
 				EventWhat.PENALTY -> team?.pens++
@@ -179,9 +179,7 @@ class MatchData: Comparable<MatchData> {
 			team.tot = team.tries * pointsTry +
 					team.cons * pointsCon +
 					team.penTries * (pointsTry + pointsCon) +
-					team.goals * pointsGoal +
-					team.penGoals * pointsGoal +
-					team.dropGoals * pointsGoal
+					(team.goals + team.dropGoals + team.penGoals) * pointsGoal
 		}
 	}
 	suspend fun toJson(): JSONObject {
@@ -223,8 +221,8 @@ class MatchData: Comparable<MatchData> {
 		var cons: Int
 		var penTries: Int
 		var goals: Int
-		var penGoals: Int
 		var dropGoals: Int
+		var penGoals: Int
 		var yellowCards: Int
 		var redCards: Int
 		var pens: Int
@@ -238,8 +236,8 @@ class MatchData: Comparable<MatchData> {
 			cons = teamJson.optInt("cons", 0)
 			penTries = teamJson.optInt("pen_tries", 0)
 			goals = teamJson.optInt("goals", 0)
-			penGoals = teamJson.optInt("pen_goals", 0)
 			dropGoals = teamJson.optInt("drop_goals", 0)
+			penGoals = teamJson.optInt("pen_goals", 0)
 			yellowCards = teamJson.optInt("yellow_cards", 0)
 			redCards = teamJson.optInt("red_cards", 0)
 			pens = teamJson.optInt("pens", 0)
@@ -257,8 +255,8 @@ class MatchData: Comparable<MatchData> {
 			cons = original.cons
 			penTries = original.penTries
 			goals = original.goals
-			penGoals = original.penGoals
 			dropGoals = original.dropGoals
+			penGoals = original.penGoals
 			yellowCards = original.yellowCards
 			redCards = original.redCards
 			pens = original.pens
@@ -275,8 +273,8 @@ class MatchData: Comparable<MatchData> {
 				ret.put("cons", cons)
 				ret.put("pen_tries", penTries)
 				ret.put("goals", goals)
-				ret.put("pen_goals", penGoals)
 				ret.put("drop_goals", dropGoals)
+				ret.put("pen_goals", penGoals)
 				ret.put("yellow_cards", yellowCards)
 				ret.put("red_cards", redCards)
 				ret.put("pens", pens)
@@ -298,6 +296,8 @@ class MatchData: Comparable<MatchData> {
 		var isHome: Boolean? by mutableStateOf(null)
 		val teamName: String?
 		var who: Int? by mutableStateOf(null)
+		var whoEnter: Int? by mutableStateOf(null)
+		var whoLeave: Int? by mutableStateOf(null)
 		val score: String
 		var reason: String? by mutableStateOf(null)
 
@@ -310,6 +310,8 @@ class MatchData: Comparable<MatchData> {
 					else eventJson.optString("team") == HOME_ID
 			teamName = isHome?.let { if(it) home.team else away.team }
 			who = eventJson.getIntOrNull("who")
+			whoEnter = eventJson.getIntOrNull("who_enter")
+			whoLeave = eventJson.getIntOrNull("who_leave")
 			reason = eventJson.getStringOrNull("reason")
 			when(eventJson.optString("what", "")){
 				"TRY" -> {
@@ -332,13 +334,13 @@ class MatchData: Comparable<MatchData> {
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
-				"PENALTY GOAL" -> {
-					what = EventWhat.PENALTY_GOAL
+				"DROP GOAL" -> {
+					what = EventWhat.DROP_GOAL
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
-				"DROP GOAL" -> {
-					what = EventWhat.DROP_GOAL
+				"PENALTY GOAL" -> {
+					what = EventWhat.PENALTY_GOAL
 					if(isHome == true) calcScoreHome += pointsGoal
 					else calcScoreAway += pointsGoal
 				}
@@ -349,6 +351,7 @@ class MatchData: Comparable<MatchData> {
 				"PENALTY" -> what = EventWhat.PENALTY
 				"TIME OFF" -> what = EventWhat.TIME_OFF
 				"RESUME" -> what = EventWhat.RESUME
+				"REPLACEMENT" -> what = EventWhat.REPLACEMENT
 				else -> what = EventWhat.START
 			}
 			score = eventJson.getStringOrNull("score") ?: "$calcScoreHome:$calcScoreAway"
@@ -362,6 +365,8 @@ class MatchData: Comparable<MatchData> {
 			isHome = original.isHome
 			teamName = original.teamName
 			who = original.who
+			whoEnter = original.whoEnter
+			whoLeave = original.whoLeave
 			score = original.score
 			reason = original.reason
 		}
@@ -424,6 +429,8 @@ class MatchData: Comparable<MatchData> {
 				if (isHome != null) {
 					evt.put("team", if(isHome == true) HOME_ID else AWAY_ID)
 					if (who != null) { evt.put("who", who) }
+					if (whoEnter != null) { evt.put("who_enter", whoEnter) }
+					if (whoLeave != null) { evt.put("who_leave", whoLeave) }
 				}
 				evt.put("score", score)
 			} catch (e: JSONException) {
@@ -445,11 +452,12 @@ fun EventWhat.pretty(): String {//TODO pull from string.xml, but needs Context
 		EventWhat.CONVERSION -> "Conversion"
 		EventWhat.PENALTY_TRY -> "Penalty try"
 		EventWhat.GOAL -> "Goal"
-		EventWhat.PENALTY_GOAL -> "Penalty goal"
 		EventWhat.DROP_GOAL -> "Drop goal"
+		EventWhat.PENALTY_GOAL -> "Penalty goal"
 		EventWhat.YELLOW_CARD -> "Yellow card"
 		EventWhat.RED_CARD -> "Red card"
 		EventWhat.PENALTY -> "Penalty"
+		EventWhat.REPLACEMENT -> "Replacement"
 	}
 }
 fun String.toEventWhat(): EventWhat {
@@ -462,11 +470,12 @@ fun String.toEventWhat(): EventWhat {
 		"Conversion" -> EventWhat.CONVERSION
 		"Penalty try" -> EventWhat.PENALTY_TRY
 		"Goal" -> EventWhat.GOAL
-		"Penalty goal" -> EventWhat.PENALTY_GOAL
 		"Drop goal" -> EventWhat.DROP_GOAL
+		"Penalty goal" -> EventWhat.PENALTY_GOAL
 		"Yellow card" -> EventWhat.YELLOW_CARD
 		"Red card" -> EventWhat.RED_CARD
 		"Penalty" -> EventWhat.PENALTY
+		"Replacement" -> EventWhat.REPLACEMENT
 		else -> EventWhat.START
 	}
 }

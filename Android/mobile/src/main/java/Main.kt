@@ -220,8 +220,8 @@ class Main : ComponentActivity() {
 		scoreLine(match.home.cons, match.away.cons, R.string.conversions)
 		scoreLine(match.home.penTries, match.away.penTries, R.string.pen_tries)
 		scoreLine(match.home.goals, match.away.goals, R.string.goals)
-		scoreLine(match.home.penGoals, match.away.penGoals, R.string.pen_goals)
 		scoreLine(match.home.dropGoals, match.away.dropGoals, R.string.drop_goals)
+		scoreLine(match.home.penGoals, match.away.penGoals, R.string.pen_goals)
 		scoreLine(match.home.yellowCards, match.away.yellowCards, R.string.yellow_cards)
 		scoreLine(match.home.redCards, match.away.redCards, R.string.red_cards)
 		if (eventTypes[1]) scoreLine(match.home.pens, match.away.pens, R.string.penalties)
@@ -251,6 +251,8 @@ class Main : ComponentActivity() {
 
 			event.teamName?.let { shareBody.append(" $it") }
 			event.who?.let { shareBody.append(" $it") }
+			shareBody.append(replacementString(event))
+
 			event.reason?.let { shareBody.append("\n      $it") }
 			if(event.what == EventWhat.END) shareBody.append(" ${event.score}\n")
 			shareBody.append("\n")

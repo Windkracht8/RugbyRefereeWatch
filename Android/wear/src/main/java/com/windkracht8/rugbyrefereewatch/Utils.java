@@ -8,6 +8,8 @@
 
 package com.windkracht8.rugbyrefereewatch;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,4 +34,13 @@ class Utils{
         }
     }
 
+    static String replacementString(Context context, MatchData.Event event){
+        if(event.who_enter > 0 || event.who_leave > 0)
+            return " " + context.getString(
+                    R.string.replaced,
+                    event.who_enter == 0 ? "?" : event.who_enter,
+                    event.who_leave == 0 ? "?" : event.who_leave
+            );
+        return "";
+    }
 }

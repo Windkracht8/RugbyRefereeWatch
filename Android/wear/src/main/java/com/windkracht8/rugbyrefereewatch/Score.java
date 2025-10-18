@@ -12,16 +12,20 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class Score extends LinearLayout{
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+public class Score extends ConstraintLayout{
     MatchData.Team team;
 
     private final TextView score_try;
     private final TextView score_con;
-    private final TextView score_goal;
-    private final TextView foul_play;
+    private final TextView score_goal_drop;
+    private final TextView score_goal_pen;
+    private final ImageButton foul_play;
+    private final ImageButton replacement;
 
     public Score(Context context, AttributeSet attrs){
         super(context, attrs);
@@ -29,19 +33,33 @@ public class Score extends LinearLayout{
                 .inflate(R.layout.score, this, true);
         score_try = findViewById(R.id.score_try);
         score_con = findViewById(R.id.score_con);
-        score_goal = findViewById(R.id.score_goal);
+        score_goal_drop = findViewById(R.id.score_goal_drop);
+        score_goal_drop.getLayoutParams().width = Main.vw50;
+        score_goal_pen = findViewById(R.id.score_goal_pen);
+        score_goal_pen.getLayoutParams().width = Main.vw50;
         foul_play = findViewById(R.id.foul_play);
+        foul_play.getLayoutParams().width = Main.vw50;
+        replacement = findViewById(R.id.replacement);
+        replacement.getLayoutParams().width = Main.vw50;
     }
     void onCreateMain(Main main){
         score_try.setOnClickListener(v->main.tryClick());
         score_con.setOnClickListener(v->main.conversionClick());
-        score_goal.setOnClickListener(v->main.goalClick());
+        score_goal_drop.setOnClickListener(v->main.goalClick(true));
+        score_goal_pen.setOnClickListener(v->main.goalClick(false));
         foul_play.setOnClickListener(v->main.foulPlayClick());
-        if(Main.isScreenRound) foul_play.setPadding(Main.vh25, 0, Main.vh25, Main.vh5);
+        replacement.setOnClickListener(v->main.replacementClick());
+        if(Main.isScreenRound){
+            ((LayoutParams)foul_play.getLayoutParams()).setMargins(0, 0, 0, Main.vh5);
+            ((LayoutParams)replacement.getLayoutParams()).setMargins(0, 0, 0, Main.vh5);
+            score_goal_drop.setPadding(Main.vh10, 0, 0, 0);
+            score_goal_pen.setPadding(0, 0, Main.vh10, 0);
+        }
     }
     void update(){//Thread: UI
         score_try.setVisibility(Main.match.points_try == 0 ? View.GONE : View.VISIBLE);
         score_con.setVisibility(Main.match.points_con == 0 ? View.GONE : View.VISIBLE);
-        score_goal.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
+        score_goal_drop.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
+        score_goal_pen.setVisibility(Main.match.points_goal == 0 ? View.GONE : View.VISIBLE);
     }
 }

@@ -112,6 +112,7 @@ public class Main extends Activity{
     private static int vh45;
     private static int vh50;
     static int vh75;
+    static int vw50;
     static int _10dp;
 
     //Timer
@@ -184,7 +185,7 @@ public class Main extends Activity{
         vh50 = heightPixels/2;
         vh75 = (int) (heightPixels*.75);
         int vw30 = (int) (widthPixels*.3);
-        int vw50 = widthPixels/2;
+        vw50 = widthPixels/2;
         _10dp = getResources().getDimensionPixelSize(R.dimen._10dp);
 
         if(Build.VERSION.SDK_INT >= 31){
@@ -209,9 +210,9 @@ public class Main extends Activity{
                 R.id.bStart, R.id.bMatchLog, R.id.bBottom, R.id.bConf,
                 R.id.confirm_no, R.id.confirm_yes,
                 R.id.confWatch,
-                R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal,
-                R.id.foulPlay, R.id.foul_play, R.id.card_yellow,
-                R.id.penaltyTry, R.id.card_red,
+                R.id.score, R.id.score_try, R.id.score_con, R.id.score_goal_drop,
+                R.id.score_goal_pen, R.id.foulPlay, R.id.foul_play, R.id.replacement,
+                R.id.card_yellow, R.id.penaltyTry, R.id.card_red,
                 R.id.b_0, R.id.b_1, R.id.b_2, R.id.b_3, R.id.b_4, R.id.b_5, R.id.b_6, R.id.b_7,
                 R.id.b_8, R.id.b_9, R.id.b_back, R.id.b_done,
                 R.id.extraTime, R.id.extra_time_up, R.id.extra_time_2min, R.id.extra_time_5min,
@@ -742,7 +743,7 @@ public class Main extends Activity{
                     conversionClick();
                     break;
                 case PK:
-                    goalClick();
+                    goalClick(false);
                     break;
             }
             confirm.setVisibility(View.GONE);
@@ -773,7 +774,7 @@ public class Main extends Activity{
                     conversionClick();
                     break;
                 case PK:
-                    goalClick();
+                    goalClick(false);
                     break;
             }
             confirm.setVisibility(View.GONE);
@@ -1147,7 +1148,7 @@ public class Main extends Activity{
         score.team.tries++;
         updateScore();
         MatchData.Event event = match.logEvent("TRY", score.team.id, 0);
-        if(record_player) playerNo.show(event, null);
+        if(record_player) playerNo.show(event, 0, null);
         if(score.team.isHome()){
             kickClockType_home = KickClockTypes.CON;
             kickClockHomeShow(R.string.conversion, match.clock_con);
@@ -1162,7 +1163,7 @@ public class Main extends Activity{
         score.team.cons++;
         updateScore();
         MatchData.Event event = match.logEvent("CONVERSION", score.team.id, 0);
-        if(record_player) playerNo.show(event, null);
+        if(record_player) playerNo.show(event, 0, null);
         if(score.team.isHome()){
             kickClockHomeDone();
         }else{
@@ -1170,12 +1171,14 @@ public class Main extends Activity{
         }
         score.setVisibility(View.GONE);
     }
-    void goalClick(){
+    void goalClick(Boolean isDrop){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
-        score.team.goals++;
+        if(isDrop) score.team.drop_goals++;
+        else score.team.pen_goals++;
         updateScore();
-        MatchData.Event event = match.logEvent("GOAL", score.team.id, 0);
-        if(record_player) playerNo.show(event, null);
+        String what = isDrop ? "DROP GOAL" : "PENALTY GOAL";
+        MatchData.Event event = match.logEvent(what, score.team.id, 0);
+        if(record_player) playerNo.show(event, 0, null);
         if(score.team.isHome()){
             kickClockHomeDone();
         }else{
@@ -1187,12 +1190,12 @@ public class Main extends Activity{
         match.home.tot = match.home.tries*match.points_try +
                 match.home.cons*match.points_con +
                 match.home.pen_tries*(match.points_try + match.points_con) +
-                match.home.goals*match.points_goal;
+                (match.home.drop_goals+match.home.pen_goals)*match.points_goal;
         score_home.setText(String.valueOf(match.home.tot));
         match.away.tot = match.away.tries*match.points_try +
                 match.away.cons*match.points_con +
                 match.away.pen_tries*(match.points_try + match.points_con) +
-                match.away.goals*match.points_goal;
+                (match.away.drop_goals+match.away.pen_goals)*match.points_goal;
         score_away.setText(String.valueOf(match.away.tot));
 
         bPenHome.setText(String.valueOf(match.home.pens));
@@ -1201,6 +1204,13 @@ public class Main extends Activity{
     void foulPlayClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         foulPlay.setVisibility(View.VISIBLE);
+        score.setVisibility(View.GONE);
+    }
+    void replacementClick(){
+        if(draggingEnded+100 > System.currentTimeMillis()) return;
+        MatchData.Event event = match.logEvent("REPLACEMENT", score.team.id, 0);
+        playerNo.show(event, PlayerNo.TYPE_ENTER, null);
+        playerNo.show(event, PlayerNo.TYPE_LEAVE, null);
         score.setVisibility(View.GONE);
     }
     void penaltyTryClick(){
@@ -1223,13 +1233,13 @@ public class Main extends Activity{
         score.team.yellow_cards++;
         score.team.pens++;
         updateScore();
-        playerNo.show(event, sinbin);
+        playerNo.show(event, 0, sinbin);
         foulPlay.setVisibility(View.GONE);
     }
     void card_redClick(){
         if(draggingEnded+100 > System.currentTimeMillis()) return;
         MatchData.Event event = match.logEvent("RED CARD", score.team.id, 0);
-        playerNo.show(event, null);
+        playerNo.show(event, 0, null);
         score.team.red_cards++;
         score.team.pens++;
         updateScore();

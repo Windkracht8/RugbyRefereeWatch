@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -51,45 +52,43 @@ fun TabHistory(
 	var confirmDel by remember { mutableStateOf(false) }
 	Column(Modifier.fillMaxSize()) {
 		LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
-			matches.reversed().forEach { match ->
-				item {
-					HorizontalDivider()
-					Text(
-						modifier = Modifier
-							.fillMaxWidth()
-							.padding(vertical = 5.dp)
-							.background(
-								color = if (selected.contains(match.matchId)) {
-									colorScheme.surfaceVariant
-								} else {
-									colorScheme.surface
-								}
-							)
-							.combinedClickable(
-								true,
-								onClick = {
-									if (selected.isNotEmpty()) {
-										selected = if (selected.contains(match.matchId)) {
-											selected - match.matchId
-										} else {
-											selected + match.matchId
-										}
-									} else {
-										onMatchClick(match.matchId)
-									}
-								},
-								onLongClick = {
+			items(matches.reversed()) { match ->
+				HorizontalDivider()
+				Text(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(vertical = 5.dp)
+						.background(
+							color = if (selected.contains(match.matchId)) {
+								colorScheme.surfaceVariant
+							} else {
+								colorScheme.surface
+							}
+						)
+						.combinedClickable(
+							true,
+							onClick = {
+								if (selected.isNotEmpty()) {
 									selected = if (selected.contains(match.matchId)) {
 										selected - match.matchId
 									} else {
 										selected + match.matchId
 									}
-								}),
-						text = matchTitle(match),
-						maxLines = 1,
-						overflow = TextOverflow.Ellipsis
-					)
-				}
+								} else {
+									onMatchClick(match.matchId)
+								}
+							},
+							onLongClick = {
+								selected = if (selected.contains(match.matchId)) {
+									selected - match.matchId
+								} else {
+									selected + match.matchId
+								}
+							}),
+					text = matchTitle(match),
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
 			}
 		}
 		Row {

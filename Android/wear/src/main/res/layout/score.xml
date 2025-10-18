@@ -7,45 +7,88 @@
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
         android:id="@+id/score_try"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="0dp"
         android:autoSizeTextType="uniform"
         android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
-        android:text="@string/score_try_text" />
+        android:text="@string/score_try_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/score_con"/>
     <TextView
         android:id="@+id/score_con"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="0dp"
         android:autoSizeTextType="uniform"
         android:autoSizeMaxTextSize="30sp"
         android:gravity="center"
-        android:text="@string/score_con_text" />
+        android:text="@string/score_con_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_try"
+        app:layout_constraintBottom_toTopOf="@id/score_goal_drop"/>
     <TextView
-        android:id="@+id/score_goal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:id="@+id/score_goal_drop"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
         android:autoSizeTextType="uniform"
         android:autoSizeMaxTextSize="30sp"
+        android:maxLines="1"
         android:gravity="center"
-        android:text="@string/score_goal_text" />
+        android:text="@string/score_goal_drop_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/score_goal_pen"
+        app:layout_constraintTop_toBottomOf="@id/score_con"
+        app:layout_constraintBottom_toTopOf="@id/foul_play" />
     <TextView
+        android:id="@+id/score_goal_pen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="10dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="30sp"
+        android:maxLines="1"
+        android:gravity="center"
+        android:text="@string/score_goal_pen_text"
+        app:layout_constraintStart_toEndOf="@id/score_goal_drop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_con"
+        app:layout_constraintBottom_toTopOf="@id/foul_play" />
+    <ImageButton
         android:id="@+id/foul_play"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMaxTextSize="30sp"
-        android:gravity="center"
-        android:text="@string/foul_play_text" />
-</LinearLayout>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:background="#0000"
+        android:contentDescription="@string/foul_play_text"
+        android:scaleType="fitEnd"
+        android:src="@drawable/icon_cards"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/replacement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_goal_drop" />
+    <ImageButton
+        android:id="@+id/replacement"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:background="#0000"
+        android:src="@drawable/icon_replacement"
+        android:scaleType="fitStart"
+        android:contentDescription="@string/replacement_desc"
+        app:layout_constraintStart_toEndOf="@id/foul_play"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/score_goal_drop"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

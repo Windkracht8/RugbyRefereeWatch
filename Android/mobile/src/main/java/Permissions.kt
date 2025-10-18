@@ -21,7 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -55,7 +55,7 @@ class Permissions : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		if(hasBT) finishAndRemoveTask()
 		enableEdgeToEdge()
-		setContent { W8Theme { Surface { PermissionsScreen(this::onNearbyClick) } } }
+		setContent { W8Theme { Surface { PermissionsScreen(::onNearbyClick) } } }
 	}
 	fun onNearbyClick() {
 		if(hasBT) return
@@ -74,7 +74,7 @@ fun Context.hasPermission(permission: String): Boolean =
 
 @Composable
 fun PermissionsScreen(onNearbyClick: () -> Unit) {
-	Column(Modifier.fillMaxWidth().safeContentPadding()) {
+	Column(Modifier.fillMaxWidth().safeDrawingPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
 			text = stringResource(R.string.permission_title),

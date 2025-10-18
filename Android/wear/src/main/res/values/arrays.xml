@@ -33,10 +33,11 @@
         <item>CONVERSION</item>
         <item>PENALTY TRY</item>
         <item>GOAL</item>
-        <item>PENALTY GOAL</item>
         <item>DROP GOAL</item>
+        <item>PENALTY GOAL</item>
         <item>YELLOW CARD</item>
         <item>RED CARD</item>
         <item>PENALTY</item>
+        <item>REPLACEMENT</item>
     </string-array>
 </resources>

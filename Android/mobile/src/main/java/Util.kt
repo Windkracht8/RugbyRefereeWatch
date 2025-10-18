@@ -36,3 +36,10 @@ fun JSONArray.getJSONObjectOrEmpty(key: Int): JSONObject =
 
 fun tryIgnore(block: () -> Unit) = try { block() } catch (_: Exception) {}
 fun runInBackground(block: suspend () -> Unit) = CoroutineScope(Dispatchers.Default).launch { block() }
+
+fun Context.replacementString(event: MatchData.Event): String {
+	val whoEnter = if((event.whoEnter ?: 0) == 0) "?" else event.whoEnter
+	val whoLeave = if((event.whoLeave ?: 0) == 0) "?" else event.whoLeave
+	if (whoEnter == "?" && whoLeave == "?") return ""
+	return " " + getString(R.string.replaced, whoEnter, whoLeave)
+}

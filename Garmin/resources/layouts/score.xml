@@ -5,7 +5,9 @@
   ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<layout id="Score" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+<layout id="Score"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
 	<text-area
 		id="score_try"
 		x="center"
@@ -25,13 +27,22 @@
 		font="Gfx.FONT_LARGE"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 	<text-area
-		id="score_goal"
-		x="center"
+		id="score_goal_drop"
+		x="left"
 		y="50%"
-		width="100%"
+		width="50%"
 		height="25%"
-		text="@Strings.goal"
-		font="Gfx.FONT_LARGE"
+		text="@Strings.goal_drop"
+		font="Gfx.FONT_MEDIUM"
+		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+	<text-area
+		id="score_goal_pen"
+		x="right"
+		y="50%"
+		width="50%"
+		height="25%"
+		text="@Strings.goal_pen"
+		font="Gfx.FONT_MEDIUM"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
 	<text-area
 		id="foul_play"

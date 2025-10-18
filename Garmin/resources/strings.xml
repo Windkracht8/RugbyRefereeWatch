@@ -57,10 +57,11 @@
 	<string id="restart">restart</string>
 
 	<!-- Score -->
-	<string id="_try">Try</string>
-	<string id="con">Conversion</string>
-	<string id="goal">Goal</string>
-	<string id="foul_play">Foul play</string>
+	<string id="_try">try</string>
+	<string id="con">conversion</string>
+	<string id="goal_drop">drop goal</string>
+	<string id="goal_pen">pen goal</string>
+	<string id="foul_play">foul play</string>
 
 	<!-- Foul play -->
 	<string id="card_yellow">Yellow</string>

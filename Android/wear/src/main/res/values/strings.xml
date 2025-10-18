@@ -69,6 +69,8 @@
     <string name="confirm_second_yellow">2nd yellow for this player, convert to red?</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
+    <string name="leaving">leaving</string>
+    <string name="entering">entering</string>
 
     <!-- notification -->
     <string name="match_ongoing">Match ongoing</string>
@@ -80,8 +82,10 @@
     <!-- score screen -->
     <string name="score_try_text">try</string>
     <string name="score_con_text">conversion</string>
-    <string name="score_goal_text">goal</string>
+    <string name="score_goal_drop_text">drop goal</string>
+    <string name="score_goal_pen_text">pen goal</string>
     <string name="foul_play_text">foul play</string>
+    <string name="replacement_desc">replacement button</string>
 
     <!-- foul play screen -->
     <string name="card_yellow">yellow</string>
@@ -92,6 +96,7 @@
     <string name="report_title">Report</string>
     <string name="Start">Start</string>
     <string name="Result">Result</string>
+    <string name="replaced">%s replaced %s</string>
 
     <!-- match log screen -->
     <string name="match_log_title">Log</string>
@@ -163,11 +168,12 @@
         <item>CONVERSION</item>
         <item>PENALTY TRY</item>
         <item>GOAL</item>
-        <item>PENALTY GOAL</item>
         <item>DROP GOAL</item>
+        <item>PENALTY GOAL</item>
         <item>YELLOW CARD</item>
         <item>RED CARD</item>
         <item>PENALTY</item>
+        <item>REPLACEMENT</item>
     </string-array>
 
     <!-- help screen -->

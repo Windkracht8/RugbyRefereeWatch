@@ -23,19 +23,22 @@ class Score extends View{
 			var itemHeight = MainView._50vh;
 			resizeView("score_try", itemHeight, 0);
 			hideView("score_con");
-			hideView("score_goal");
+			hideView("score_goal_drop");
+			hideView("score_goal_pen");
 			resizeView("foul_play", itemHeight, itemHeight);
 		}else if(hide_con){
 			var itemHeight = Math.floor(MainView._33vh);
 			resizeView("score_try", itemHeight, 0);
 			hideView("score_con");
-			resizeView("score_goal", itemHeight, itemHeight);
+			resizeView("score_goal_drop", itemHeight, itemHeight);
+			resizeView("score_goal_pen", itemHeight, itemHeight);
 			resizeView("foul_play", itemHeight, itemHeight*2);
 		}else if(hide_goal){
 			var itemHeight = Math.floor(MainView._33vh);
 			resizeView("score_try", itemHeight, 0);
 			resizeView("score_con", itemHeight, itemHeight);
-			hideView("score_goal");
+			hideView("score_goal_drop");
+			hideView("score_goal_pen");
 			resizeView("foul_play", itemHeight, itemHeight*2);
 		}
 	}
@@ -97,10 +100,11 @@ class ScoreDelegate extends BehaviorDelegate{
 			}
 		}else if(y < end_y_goal){//goal
 			popView(SLIDE_UP);
+			var isDrop = evt.getCoordinates()[0] < MainView._50vw;
 			if(isHome){
-				MainView.main.goalHome();
+				MainView.main.goalHome(isDrop);
 			}else{
-				MainView.main.goalAway();
+				MainView.main.goalAway(isDrop);
 			}
 		}else{//foul play
 			switchToView(MainView.main.foul_play, MainView.main.foul_play_delegate, SLIDE_UP);

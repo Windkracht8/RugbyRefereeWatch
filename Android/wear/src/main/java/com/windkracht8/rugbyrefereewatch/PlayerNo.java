@@ -19,6 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class PlayerNo extends ConstraintLayout{
+    private int type = 0;
+    static final int TYPE_LEAVE = 1;
+    static final int TYPE_ENTER = 2;
     private final TextView player_no;
     private final TextView b_back;
     private int player_no_int = 0;
@@ -47,7 +50,18 @@ public class PlayerNo extends ConstraintLayout{
     }
     void onCreateMain(Main main){
         findViewById(R.id.b_done).setOnClickListener(v->{
-            event.who = player_no_int;
+            switch(type){
+                case TYPE_LEAVE:
+                    event.who_leave = player_no_int;
+                    break;
+                case TYPE_ENTER:
+                    event.who_enter = player_no_int;
+                    break;
+                default:
+                    event.who = player_no_int;
+                    break;
+            }
+
             if(event.what.equals("YELLOW CARD") && Main.match.alreadyHasYellow(event)){
                 main.confirm_label.setText(R.string.confirm_second_yellow);
                 main.confirm_label.setLines(2);
@@ -63,12 +77,14 @@ public class PlayerNo extends ConstraintLayout{
                 sinbin.who = player_no_int;
                 main.updateSinbins();
             }
-            setVisibility(View.GONE);
+            if(type == TYPE_LEAVE) show(event, TYPE_ENTER, null);
+            else setVisibility(View.GONE);
         });
         ((LayoutParams)findViewById(R.id.b_0).getLayoutParams()).setMargins(Main.vh10, 0, Main.vh10, 0);
     }
-    void show(MatchData.Event event, MatchData.Sinbin sinbin){
+    void show(MatchData.Event event, int type, MatchData.Sinbin sinbin){
         this.event = event;
+        this.type = type;
         this.sinbin = sinbin;
         player_no_int = 0;
         showNumber();
@@ -80,7 +96,13 @@ public class PlayerNo extends ConstraintLayout{
     }
     private void showNumber(){
         if(player_no_int == 0){
-            player_no.setText(R.string.no0);
+            if(type == TYPE_LEAVE) {
+                player_no.setText(R.string.leaving);
+            }else if(type == TYPE_ENTER){
+                player_no.setText(R.string.entering);
+            }else {
+                player_no.setText(R.string.no0);
+            }
             player_no.setTextColor(getResources().getColor(R.color.hint, null));
             b_back.setTextColor(getResources().getColor(R.color.hint, null));
         }else{

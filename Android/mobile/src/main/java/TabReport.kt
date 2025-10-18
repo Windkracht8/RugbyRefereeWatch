@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -83,8 +85,8 @@ fun TabReport(
 	val showCons = match.home.cons > 0 || match.away.cons > 0
 	val showPenTries = match.home.penTries > 0 || match.away.penTries > 0
 	val showGoals = match.home.goals > 0 || match.away.goals > 0
-	val showPenGoals = match.home.penGoals > 0 || match.away.penGoals > 0
 	val showDropGoals = match.home.dropGoals > 0 || match.away.dropGoals > 0
+	val showPenGoals = match.home.penGoals > 0 || match.away.penGoals > 0
 	val showYellowCards = match.home.yellowCards > 0 || match.away.yellowCards > 0
 	val showRedCards = match.home.redCards > 0 || match.away.redCards > 0
 	val showPens = match.home.pens > 0 || match.away.pens > 0
@@ -128,8 +130,8 @@ fun TabReport(
 					if(showCons) Text(R.string.conversions)
 					if(showPenTries) Text(R.string.pen_tries)
 					if(showGoals) Text(R.string.goals)
-					if(showPenGoals) Text(R.string.pen_goals)
 					if(showDropGoals) Text(R.string.drop_goals)
+					if(showPenGoals) Text(R.string.pen_goals)
 					if(showYellowCards) Text(R.string.yellow_cards)
 					if(showRedCards) Text(R.string.red_cards)
 					if(showPens) Text(R.string.penalties)
@@ -142,8 +144,8 @@ fun TabReport(
 					if(showCons) Text(match.home.cons.toString())
 					if(showPenTries) Text(match.home.penTries.toString())
 					if(showGoals) Text(match.home.goals.toString())
-					if(showPenGoals) Text(match.home.penGoals.toString())
 					if(showDropGoals) Text(match.home.dropGoals.toString())
+					if(showPenGoals) Text(match.home.penGoals.toString())
 					if(showYellowCards) Text(match.home.yellowCards.toString())
 					if(showRedCards) Text(match.home.redCards.toString())
 					if(showPens) Text(match.home.pens.toString())
@@ -158,8 +160,8 @@ fun TabReport(
 					if(showCons) Text(R.string.conversions)
 					if(showPenTries) Text(R.string.pen_tries)
 					if(showGoals) Text(R.string.goals)
-					if(showPenGoals) Text(R.string.pen_goals)
 					if(showDropGoals) Text(R.string.drop_goals)
+					if(showPenGoals) Text(R.string.pen_goals)
 					if(showYellowCards) Text(R.string.yellow_cards)
 					if(showRedCards) Text(R.string.red_cards)
 					if(showPens) Text(R.string.penalties)
@@ -172,8 +174,8 @@ fun TabReport(
 					if(showCons) Text(match.away.cons.toString())
 					if(showPenTries) Text(match.away.penTries.toString())
 					if(showGoals) Text(match.away.goals.toString())
-					if(showPenGoals) Text(match.away.penGoals.toString())
 					if(showDropGoals) Text(match.away.dropGoals.toString())
+					if(showPenGoals) Text(match.away.penGoals.toString())
 					if(showYellowCards) Text(match.away.yellowCards.toString())
 					if(showRedCards) Text(match.away.redCards.toString())
 					if(showPens) Text(match.away.pens.toString())
@@ -190,8 +192,8 @@ fun TabReport(
 				val scoreWidth = getMaxWidth(match.events) { it.score }
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimer() } + 14.dp
 				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
-					match.events.forEach {
-						item { ReportEventStandard(it, scoreWidth, timerWidth) }
+					items(match.events.filter { it.what != EventWhat.REPLACEMENT} ) {
+						 ReportEventStandard(it, scoreWidth, timerWidth)
 					}
 				}
 			}
@@ -199,8 +201,8 @@ fun TabReport(
 				val timeWidth = getMaxWidth(match.events) { it.time } + 5.dp
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimerFull() } + 5.dp
 				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
-					match.events.forEach {
-						item { ReportEventFull(it, timeWidth, timerWidth) }
+					items(match.events) {
+						ReportEventFull(it, timeWidth, timerWidth)
 					}
 				}
 			}
@@ -210,10 +212,10 @@ fun TabReport(
 				}
 				val topPadding = TextFieldDefaults.contentPaddingWithoutLabel().calculateTopPadding()
 				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
-					matchEdit.events.forEach {
-						if(it.what in setOf(EventWhat.TIME_OFF, EventWhat.RESUME, EventWhat.START, EventWhat.END)) return@forEach
-						item { ReportEventEdit(it, eventTypes, topPadding) }
-					}
+					items(matchEdit.events.filter {
+						it.what !in setOf(EventWhat.TIME_OFF, EventWhat.RESUME, EventWhat.START,
+							EventWhat.END, EventWhat.REPLACEMENT)
+					}) { ReportEventEdit(it, eventTypes, topPadding) }
 				}
 			}
 		}
@@ -344,8 +346,9 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 				Text(
 					modifier = Modifier.width(scoreWidth),
 					text = event.score,
-					textAlign = if(event.score.indexOf(':') == 2) TextAlign.Start
-								else TextAlign.Center
+					textAlign =
+						if(event.score.indexOf(':') == 2) TextAlign.Start
+						else TextAlign.Center
 				)
 				Text(
 					modifier = Modifier.width(timerWidth).padding(start = 6.dp),
@@ -377,6 +380,7 @@ fun ReportEventFull(event: MatchData.Event, timeWidth: Dp, timerWidth: Dp) {
 	}
 	event.teamName?.let { what += " $it" }
 	event.who?.let { what += " $it" }
+	what += LocalContext.current.replacementString(event)
 
 	Row(Modifier.fillMaxWidth()){
 		Text(
@@ -513,7 +517,7 @@ fun getMaxWidth(events: SnapshotStateList<MatchData.Event>, text: (MatchData.Eve
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
 fun PreviewTabReport() {
-	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1741956291026,\"time\":\"13:44:51\",\"timer\":0,\"period\":1,\"what\":\"START\",\"team\":\"home\"},{\"id\":1741956391525,\"time\":\"13:46:31\",\"timer\":99,\"period\":1,\"what\":\"TRY\",\"team\":\"away\",\"who\":123},{\"id\":1741956418149,\"time\":\"13:46:58\",\"timer\":126,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":6},{\"id\":1741956520348,\"time\":\"13:48:40\",\"timer\":228,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":2},{\"id\":1741956537051,\"time\":\"13:48:57\",\"timer\":245,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956598237,\"time\":\"13:49:58\",\"timer\":306,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":5},{\"id\":1741956609468,\"time\":\"13:50:09\",\"timer\":317,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956736219,\"time\":\"13:52:16\",\"timer\":444,\"period\":1,\"what\":\"END\",\"score\":\"14:7\"},{\"id\":1741956813839,\"time\":\"13:53:33\",\"timer\":420,\"period\":2,\"what\":\"START\",\"team\":\"away\"},{\"id\":1741956878692,\"time\":\"13:54:38\",\"timer\":484,\"period\":2,\"what\":\"TRY\",\"team\":\"away\",\"who\":3},{\"id\":1741956888114,\"time\":\"13:54:48\",\"timer\":494,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":5},{\"id\":1741956939965,\"time\":\"13:55:39\",\"timer\":545,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":11},{\"id\":1741956946243,\"time\":\"13:55:46\",\"timer\":552,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741957001427,\"time\":\"13:56:41\",\"timer\":607,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":4},{\"id\":1741957123119,\"time\":\"13:58:43\",\"timer\":729,\"period\":2,\"what\":\"YELLOW CARD\",\"team\":\"home\",\"who\":10},{\"id\":1741957256934,\"time\":\"14:00:56\",\"timer\":861,\"period\":2,\"what\":\"END\",\"score\":\"26:14\"}]}")))
+	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1741956291026,\"time\":\"13:44:51\",\"timer\":0,\"period\":1,\"what\":\"START\",\"team\":\"home\"},{\"id\":1741956391525,\"time\":\"13:46:31\",\"timer\":99,\"period\":1,\"what\":\"TRY\",\"team\":\"away\",\"who\":123},{\"id\":1741956418149,\"time\":\"13:46:58\",\"timer\":126,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":6},{\"id\":1741956520348,\"time\":\"13:48:40\",\"timer\":228,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":2},{\"id\":1741956537051,\"time\":\"13:48:57\",\"timer\":245,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956598237,\"time\":\"13:49:58\",\"timer\":306,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":5},{\"id\":1741956609468,\"time\":\"13:50:09\",\"timer\":317,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956736219,\"time\":\"13:52:16\",\"timer\":444,\"period\":1,\"what\":\"END\",\"score\":\"14:7\"},{\"id\":1741956813839,\"time\":\"13:53:33\",\"timer\":420,\"period\":2,\"what\":\"START\",\"team\":\"away\"},{\"id\":1741956878692,\"time\":\"13:54:38\",\"timer\":484,\"period\":2,\"what\":\"TRY\",\"team\":\"away\",\"who\":3},{\"id\":1741956888114,\"time\":\"13:54:48\",\"timer\":494,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":5},{\"id\":1741956939965,\"time\":\"13:55:39\",\"timer\":545,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":11},{\"id\":1741956946243,\"time\":\"13:55:46\",\"timer\":552,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741957001427,\"time\":\"13:56:41\",\"timer\":607,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":4},{\"id\":1741957002427,\"time\":\"13:56:42\",\"timer\":608,\"period\":2,\"what\":\"REPLACEMENT\",\"team\":\"home\",\"who_leave\":4,\"who_enter\":22},{\"id\":1741957123119,\"time\":\"13:58:43\",\"timer\":729,\"period\":2,\"what\":\"YELLOW CARD\",\"team\":\"home\",\"who\":10},{\"id\":1741957256934,\"time\":\"14:00:56\",\"timer\":861,\"period\":2,\"what\":\"END\",\"score\":\"26:14\"}]}")))
 	W8Theme { Surface { TabReport(null, {_: Long, _: List<Boolean> ->}) {} } }
 }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)

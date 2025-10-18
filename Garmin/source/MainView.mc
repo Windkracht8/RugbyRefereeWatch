@@ -479,13 +479,13 @@ class MainView extends View{
 		match.home.tot = match.home.tries*match.points_try +
 				match.home.cons*match.points_con +
 				match.home.pen_tries*(match.points_try + match.points_con) +
-				match.home.goals*match.points_goal;
+				(match.home.drop_goals+match.home.pen_goals)*match.points_goal;
 		v_score_home.setText(match.home.tot.toString());
 
 		match.away.tot = match.away.tries*match.points_try +
 				match.away.cons*match.points_con +
 				match.away.pen_tries*(match.points_try + match.points_con) +
-				match.away.goals*match.points_goal;
+				(match.away.drop_goals+match.away.pen_goals)*match.points_goal;
 		v_score_away.setText(match.away.tot.toString());
 		if(record_pens){
 			var pens_home = match.home.pens + match.home.yellow_cards +
@@ -797,19 +797,23 @@ class MainView extends View{
 		}
 		kickClockAwayDone();
 	}
-	function goalHome(){
-		match.home.goals++;
+	function goalHome(isDrop){
+		if(isDrop){match.home.drop_goals++;}
+		else{match.home.pen_goals++;}
 		updateScore();
-		var event = match.logEvent("GOAL", MatchData.HOME_ID);
+		var what = isDrop ? "DROP GOAL" : "PENALTY GOAL";
+		var event = match.logEvent(what, MatchData.HOME_ID);
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		kickClockHomeDone();
 	}
-	function goalAway(){
-		match.away.goals++;
+	function goalAway(isDrop){
+		if(isDrop){match.away.drop_goals++;}
+		else{match.away.pen_goals++;}
 		updateScore();
-		var event = match.logEvent("GOAL", MatchData.AWAY_ID);
+		var what = isDrop ? "DROP GOAL" : "PENALTY GOAL";
+		var event = match.logEvent(what, MatchData.AWAY_ID);
 		if(record_player){
 			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
@@ -892,9 +896,9 @@ class MainView extends View{
 	function kickClockConfirm(kickClockType, isHome){
 		if(kickClockType == KICK_CLOCK_TYPE_PK){
 			if(isHome){
-				goalHome();
+				goalHome(false);
 			}else{
-				goalAway();
+				goalAway(false);
 			}
 		}else if(kickClockType == KICK_CLOCK_TYPE_CON){
 			if(isHome){

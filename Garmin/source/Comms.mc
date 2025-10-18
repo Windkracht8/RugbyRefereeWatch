@@ -52,7 +52,8 @@ class Comms{
 		}
 	}
 	function onReceiveSync(request){
-		//{"version":2,"requestType":"sync","requestData":{"deleted_matches":[],"custom_match_types":[]}}
+		//{"version":2,"requestType":"sync","requestData":{"custom_match_types":[]}}
+		//custom_match_type: {"name":"U18","period_time":30,"period_count":2,"sinbin":8,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0}
 		var custom_match_types = Utils.getJsonArray("custom_match_types", request);
 		var custom_match_types_array = [];
 		while(custom_match_types.length() > 0){

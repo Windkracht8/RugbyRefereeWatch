@@ -62,6 +62,8 @@ class MatchData{
 		home.cons = 0;
 		home.pen_tries = 0;
 		home.goals = 0;
+		home.drop_goals = 0;
+		home.pen_goals = 0;
 		home.yellow_cards = 0;
 		home.red_cards = 0;
 		home.pens = 0;
@@ -228,11 +230,18 @@ class MatchData{
 					team.pens++;
 				}
 				break;
-			case "GOAL":
+			case "DROP GOAL":
 				if(event.deleted){
-					team.goals--;
+					team.drop_goals--;
 				}else{
-					team.goals++;
+					team.drop_goals++;
+				}
+				break;
+			case "PENALTY GOAL":
+				if(event.deleted){
+					team.pen_goals--;
+				}else{
+					team.pen_goals++;
 				}
 				break;
 		}
@@ -248,6 +257,8 @@ class MatchData{
 		var cons = 0;
 		var pen_tries = 0;
 		var goals = 0;
+		var drop_goals = 0;
+		var pen_goals = 0;
 		var yellow_cards = 0;
 		var red_cards = 0;
 		var pens = 0;
@@ -266,6 +277,8 @@ class MatchData{
 			cons = team_dict.get("cons");
 			pen_tries = team_dict.get("pen_tries");
 			goals = team_dict.get("goals");
+			drop_goals = team_dict.get("drop_goals");
+			pen_goals = team_dict.get("pen_goals");
 			yellow_cards = team_dict.get("yellow_cards");
 			red_cards = team_dict.get("red_cards");
 			pens = team_dict.get("pens");
@@ -280,6 +293,8 @@ class MatchData{
 				"cons" => cons,
 				"pen_tries" => pen_tries,
 				"goals" => goals,
+				"drop_goals" => drop_goals,
+				"pen_goals" => pen_goals,
 				"yellow_cards" => yellow_cards,
 				"red_cards" => red_cards,
 				"pens" => pens

@@ -26,6 +26,12 @@ class Report extends View{
 		if(match.points_goal > 0 && (match.home.goals > 0 || match.away.goals > 0)){
 			messages.add(match.home.goals + " goals " + match.away.goals);
 		}
+		if(match.points_goal > 0 && (match.home.drop_goals > 0 || match.away.drop_goals > 0)){
+			messages.add(match.home.drop_goals + " drop goals " + match.away.drop_goals);
+		}
+		if(match.points_goal > 0 && (match.home.pen_goals > 0 || match.away.pen_goals > 0)){
+			messages.add(match.home.pen_goals + " pen. goals " + match.away.pen_goals);
+		}
 		messages.add(match.home.tot + " score " + match.away.tot);
 		messages.add("");
 

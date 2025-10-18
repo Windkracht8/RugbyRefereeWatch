@@ -92,9 +92,13 @@ public class Correct extends ScrollView{
         }
         String text = Utils.prettyTimer(event.timer) + " " + Translator.getEventTypeLocal(main, event.what);
         if(event.team != null){
-            text += " " + Translator.getTeamLocal(main, event.team);
-            if(event.who > 0){
-                text += " " + event.who;
+            if(event.what.equals("REPLACEMENT")){
+                text = Utils.prettyTimer(event.timer) + " "
+                        + Translator.getTeamLocal(main, event.team)
+                        + Utils.replacementString(main, event);
+            }else{
+                text += " " + Translator.getTeamLocal(main, event.team);
+                if(event.who > 0) text += " " + event.who;
             }
         }
         item.setText(text);

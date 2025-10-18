@@ -21,8 +21,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
@@ -75,10 +76,10 @@ class DeviceSelect : ComponentActivity() {
 			W8Theme {
 				Surface {
 					DeviceSelectScreen(
-						onBTDeviceClick = this::onBTDeviceClick,
-						onIQDeviceClick = this::onIQDeviceClick,
-						onNewBTDeviceClick = this::onNewBTDeviceClick,
-						onNewIQDeviceClick = this::onNewIQDeviceClick,
+						onBTDeviceClick = ::onBTDeviceClick,
+						onIQDeviceClick = ::onIQDeviceClick,
+						onNewBTDeviceClick = ::onNewBTDeviceClick,
+						onNewIQDeviceClick = ::onNewIQDeviceClick,
 						showNewBTDevices = showNewBTDevices,
 						showNewIQDevices = showNewIQDevices,
 						bondedBTDevices = bondedBTDevices,
@@ -125,7 +126,7 @@ fun DeviceSelectScreen(
 	val longPressTimeoutMillis = LocalViewConfiguration.current.longPressTimeoutMillis
 	var confirmDelDevice by remember { mutableStateOf(null as Any?) }
 	var showNewWatch by remember { mutableStateOf(true) }
-	LazyColumn(Modifier.fillMaxSize().safeContentPadding()) {
+	LazyColumn(Modifier.fillMaxSize().safeDrawingPadding()) {
 		item {
 			Text(
 				modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
@@ -134,57 +135,53 @@ fun DeviceSelectScreen(
 				textAlign = TextAlign.Center
 			)
 		}
-		Comms.knownBTDevices.forEach { device ->
-			item {
-				var isShort = true
-				val interactionSource = remember { MutableInteractionSource() }
-				LaunchedEffect(interactionSource) {
-					interactionSource.interactions.collectLatest { interaction ->
-						when (interaction) {
-							is PressInteraction.Press -> {
-								isShort = true
-								delay(longPressTimeoutMillis)
-								isShort = false
-								confirmDelDevice = device.address
-							}
-							is PressInteraction.Release -> if (isShort) onBTDeviceClick(device)
+		items(Comms.knownBTDevices.toList()) { device ->
+			var isShort = true
+			val interactionSource = remember { MutableInteractionSource() }
+			LaunchedEffect(interactionSource) {
+				interactionSource.interactions.collectLatest { interaction ->
+					when (interaction) {
+						is PressInteraction.Press -> {
+							isShort = true
+							delay(longPressTimeoutMillis)
+							isShort = false
+							confirmDelDevice = device.address
 						}
+						is PressInteraction.Release -> if (isShort) onBTDeviceClick(device)
 					}
 				}
-				OutlinedButton(
-					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
-					interactionSource = interactionSource,
-					onClick = {}
-				) { Text(device.name ?: "<no name>") }
 			}
+			Button(
+				modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
+				interactionSource = interactionSource,
+				onClick = {}
+			) { Text(device.name ?: "<no name>") }
 		}
-		Comms.knownIQDevices.forEach { device ->
-			item {
-				var isShort = true
-				val interactionSource = remember { MutableInteractionSource() }
-				LaunchedEffect(interactionSource) {
-					interactionSource.interactions.collectLatest { interaction ->
-						when (interaction) {
-							is PressInteraction.Press -> {
-								isShort = true
-								delay(longPressTimeoutMillis)
-								isShort = false
-								confirmDelDevice = device.deviceIdentifier
-							}
-							is PressInteraction.Release -> if (isShort) onIQDeviceClick(device)
+		items(Comms.knownIQDevices.toList()) { device ->
+			var isShort = true
+			val interactionSource = remember { MutableInteractionSource() }
+			LaunchedEffect(interactionSource) {
+				interactionSource.interactions.collectLatest { interaction ->
+					when (interaction) {
+						is PressInteraction.Press -> {
+							isShort = true
+							delay(longPressTimeoutMillis)
+							isShort = false
+							confirmDelDevice = device.deviceIdentifier
 						}
+						is PressInteraction.Release -> if (isShort) onIQDeviceClick(device)
 					}
 				}
-				OutlinedButton(
-					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
-					interactionSource = interactionSource,
-					onClick = {}
-				) { Text(device.friendlyName ?: "<no name>") }
 			}
+			Button(
+				modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
+				interactionSource = interactionSource,
+				onClick = {}
+			) { Text(device.friendlyName ?: "<no name>") }
 		}
 		if (showNewWatch) {
 			item {
-				Button(
+				OutlinedButton(
 					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
 					onClick = {
 						showNewWatch = false
@@ -193,7 +190,7 @@ fun DeviceSelectScreen(
 				) { Text(R.string.device_select_new) }
 			}
 			item {
-				Button(
+				OutlinedButton(
 					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
 					onClick = {
 						showNewWatch = false
@@ -206,8 +203,8 @@ fun DeviceSelectScreen(
 			if (bondedBTDevices?.isEmpty() ?: true) {
 				item { Text(R.string.device_select_none) }
 			}
-			bondedBTDevices?.forEach { device ->
-				item {
+			if(bondedBTDevices != null){
+				items(bondedBTDevices.toList()) { device ->
 					OutlinedButton(
 						modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
 						onClick = { onBTDeviceClick(device) }
@@ -223,8 +220,8 @@ fun DeviceSelectScreen(
 						else -> R.string.device_select_garmin_none
 				} ) }
 			}
-			bondedIQDevices?.forEach { device ->
-				item {
+			if(bondedIQDevices != null){
+				items(bondedIQDevices.toList()) { device ->
 					OutlinedButton(
 						modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
 						onClick = { onIQDeviceClick(device) }
