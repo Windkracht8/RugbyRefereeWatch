@@ -167,7 +167,7 @@ class MainView extends View{
 
 		Utils.init();
 		setLayout(Rez.Layouts.Main(dc));
-		v_conf_watch = findDrawableById("conf_watch");
+		v_conf_watch = findDrawableById("conf_watch") as Bitmap;
 		v_battery = findDrawableById("battery");
 		v_time = findDrawableById("time");
 		v_home_bg = findDrawableById("home_bg_green");
@@ -188,15 +188,15 @@ class MainView extends View{
 		v_pen_home = findDrawableById("pen_home");
 		v_pen = findDrawableById("pen");
 		v_pen_away = findDrawableById("pen_away");
-		v_start = findDrawableById("start");
-		v_match_log = findDrawableById("match_log");
-		v_conf = findDrawableById("conf");
-		v_resume = findDrawableById("resume");
-		v_end = findDrawableById("end");
-		v_next = findDrawableById("next");
-		v_finish = findDrawableById("finish");
-		v_report = findDrawableById("report");
-		v_clear = findDrawableById("clear");
+		v_start = findDrawableById("start") as TextArea;
+		v_match_log = findDrawableById("match_log") as Bitmap;
+		v_conf = findDrawableById("conf") as Bitmap;
+		v_resume = findDrawableById("resume") as TextArea;
+		v_end = findDrawableById("end") as TextArea;
+		v_next = findDrawableById("next") as TextArea;
+		v_finish = findDrawableById("finish") as TextArea;
+		v_report = findDrawableById("report") as TextArea;
+		v_clear = findDrawableById("clear") as TextArea;
 
 		if(highcolor){
 			//show the larger icons
@@ -464,7 +464,7 @@ class MainView extends View{
 		}
 		return sinbins_count_new;
 	}
-	function getSinbinText(sinbin, remaining) as Lang.String{
+	function getSinbinText(sinbin, remaining) as String{
 		var tmp = Utils.prettyTimer(remaining);
 		if(sinbin.who != null && sinbin.who > 0){
 			if(sinbin.team_is_home){
@@ -762,7 +762,7 @@ class MainView extends View{
 		updateScore();
 		var event = match.logEvent("TRY", MatchData.HOME_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		if(match.points_con > 0 && match.clock_con > 0){
 			kickClockHomeShow(KICK_CLOCK_TYPE_CON);
@@ -773,7 +773,7 @@ class MainView extends View{
 		updateScore();
 		var event = match.logEvent("TRY", MatchData.AWAY_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		if(match.points_con > 0 && match.clock_con > 0){
 			kickClockAwayShow(KICK_CLOCK_TYPE_CON);
@@ -784,7 +784,7 @@ class MainView extends View{
 		updateScore();
 		var event = match.logEvent("CONVERSION", MatchData.HOME_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		kickClockHomeDone();
 	}
@@ -793,7 +793,7 @@ class MainView extends View{
 		updateScore();
 		var event = match.logEvent("CONVERSION", MatchData.AWAY_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		kickClockAwayDone();
 	}
@@ -804,7 +804,7 @@ class MainView extends View{
 		var what = isDrop ? "DROP GOAL" : "PENALTY GOAL";
 		var event = match.logEvent(what, MatchData.HOME_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		kickClockHomeDone();
 	}
@@ -815,31 +815,39 @@ class MainView extends View{
 		var what = isDrop ? "DROP GOAL" : "PENALTY GOAL";
 		var event = match.logEvent(what, MatchData.AWAY_ID);
 		if(record_player){
-			pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+			pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 		}
 		kickClockAwayDone();
+	}
+	function replacementHome(){
+		var event = match.logEvent("REPLACEMENT", MatchData.HOME_ID);
+		pushView(player_no.setType(PlayerNo.TYPE_LEAVE), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+	}
+	function replacementAway(){
+		var event = match.logEvent("REPLACEMENT", MatchData.AWAY_ID);
+		pushView(player_no.setType(PlayerNo.TYPE_LEAVE), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 	}
 	function yellowHome(){
 		match.home.yellow_cards++;
 		var event = match.logEvent("YELLOW CARD", MatchData.HOME_ID);
 		var sinbin = match.home.addSinBin(event.id, getDurationFull() + (match.sinbin*60), true);
-		pushView(player_no, new PlayerNoDelegate(player_no, event, sinbin), SLIDE_UP);
+		pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, sinbin), SLIDE_UP);
 	}
 	function yellowAway(){
 		match.away.yellow_cards++;
 		var event = match.logEvent("YELLOW CARD", MatchData.AWAY_ID);
 		var sinbin = match.away.addSinBin(event.id, getDurationFull() + (match.sinbin*60), false);
-		pushView(player_no, new PlayerNoDelegate(player_no, event, sinbin), SLIDE_UP);
+		pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, sinbin), SLIDE_UP);
 	}
 	function redHome(){
 		match.home.red_cards++;
 		var event = match.logEvent("RED CARD", MatchData.HOME_ID);
-		pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+		pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 	}
 	function redAway(){
 		match.away.red_cards++;
 		var event = match.logEvent("RED CARD", MatchData.AWAY_ID);
-		pushView(player_no, new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+		pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
 	}
 	function penTryHome(){
 		match.home.pen_tries++;

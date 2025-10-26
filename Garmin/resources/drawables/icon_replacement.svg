@@ -1,0 +1,19 @@
+<!--
+  ~ Copyright 2020-2025 Bart Vullings <dev@windkracht8.com>
+  ~ This file is part of RugbyRefereeWatch
+  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 80 80"
+   xmlns="http://www.w3.org/2000/svg">
+  <path
+     style="fill:#ffffff;stroke:none"
+     d="M 29.615559,22.728879 H 58.472022 V 12.423 L 75,26.851231 58.472022,41.279461 V 30.973582 H 29.615559 Z" />
+  <path
+     style="fill:#ffffff;stroke:none"
+     d="M 50.384435,49.026212 H 21.527975 V 38.720333 L 5,53.148561 21.527975,67.576794 v -10.30588 h 28.85646 z" />
+</svg>

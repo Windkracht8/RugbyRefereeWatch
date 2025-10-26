@@ -64,11 +64,14 @@ class Report extends View{
 				case "RED CARD":
 					text += "RED";
 					break;
+				case "REPLACEMENT":
+					text += event.team + " " + Utils.replacementString(event);
+					break;
 				default:
 					text += event.what;
 					break;
 			}
-			if(event.team != null){
+			if(!event.what.equals("REPLACEMENT") && event.team != null){
 				text += " " + event.team;
 				if(event.who != null && event.who > 0){text += " " + event.who;}
 			}

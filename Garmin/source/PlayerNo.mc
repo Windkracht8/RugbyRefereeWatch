@@ -9,27 +9,46 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 
 class PlayerNo extends View{
+	enum TYPE{TYPE_DEFAULT, TYPE_LEAVE, TYPE_ENTER}
+	var type = TYPE_DEFAULT;
 	var v_player_no;
 	var b_back;
+	var placeholder = "#0";
 	function initialize(){View.initialize();}
 	function onLayout(dc as Dc) as Void{
 		setLayout(Rez.Layouts.PlayerNo(dc));
-		v_player_no = findDrawableById("player_no");
+		v_player_no = findDrawableById("player_no") as TextArea;
 		b_back = findDrawableById("b_back");
 		b_back.setLocation(0, b_back.locY+(MainView.height_pixels-b_back.height)/2);
 		var b_done = findDrawableById("b_done");
 		b_done.setLocation(MainView.width_pixels-b_done.width, b_done.locY+(MainView.height_pixels-b_done.height)/2);
+		v_player_no.setText(placeholder);
 	}
 	function setPlayerNo(value){
-		v_player_no.setText("" + value);
 		if(value > 0){
+			v_player_no.setText("" + value);
 			v_player_no.setColor(color_text);
 			b_back.setBitmap(Rez.Drawables.ic_back);
 		}else{
+			v_player_no.setText(placeholder);
 			v_player_no.setColor(color_disabled);
 			b_back.setBitmap(Rez.Drawables.ic_back_disable);
 		}
 		requestUpdate();
+	}
+	function setType(type) as PlayerNo{
+		self.type = type;
+		switch(type){
+			case TYPE_LEAVE:
+				placeholder = "leaving";
+				break;
+			case TYPE_ENTER:
+				placeholder = "entering";
+				break;
+			default:
+				placeholder = "#0";
+		}
+		return self;
 	}
 }
 
@@ -37,10 +56,10 @@ class PlayerNoDelegate extends BehaviorDelegate{
 	var event;
 	var sinbin;
 	var value = 0;
-	var v_player_no;
-	function initialize(v_player_no, event, sinbin){
+	var player_no;
+	function initialize(player_no, event, sinbin){
 		BehaviorDelegate.initialize();
-		self.v_player_no = v_player_no;
+		self.player_no = player_no;
 		self.event = event;
 		self.sinbin = sinbin;
 	}
@@ -62,16 +81,27 @@ class PlayerNoDelegate extends BehaviorDelegate{
 				popView(SLIDE_UP);
 				return true;
 			}
-			event.who = value;
-			if(sinbin != null){
-				sinbin.who = value;
-				if(MainView.main.match.alreadyHasYellow(event)){
-					switchToView(new Confirm(Rez.Strings.second_yellow), new SecondYellowConfirmDelegate(event), SLIDE_UP);
-					return true;
-				}
-				MainView.main.updateSinbins();
+			switch(player_no.type){
+				case PlayerNo.TYPE_LEAVE:
+					event.who_leave = value;
+					switchToView(player_no.setType(PlayerNo.TYPE_ENTER), new PlayerNoDelegate(player_no, event, null), SLIDE_UP);
+					break;
+				case PlayerNo.TYPE_ENTER:
+					event.who_enter = value;
+					popView(SLIDE_UP);
+					break;
+				default:
+					event.who = value;
+					if(sinbin != null){
+						sinbin.who = value;
+						if(MainView.main.match.alreadyHasYellow(event)){
+							switchToView(new Confirm(Rez.Strings.second_yellow), new SecondYellowConfirmDelegate(event), SLIDE_UP);
+							return true;
+						}
+						MainView.main.updateSinbins();
+					}
+					popView(SLIDE_UP);
 			}
-			popView(SLIDE_UP);
 			return true;
 		}else if(y < MainView._20vh*2){//1 2 3
 			value *= 10;
@@ -103,7 +133,7 @@ class PlayerNoDelegate extends BehaviorDelegate{
 		}else{//0
 			value *= 10;
 		}
-		v_player_no.setPlayerNo(value);
+		player_no.setPlayerNo(value);
 		return true;
 	}
 }

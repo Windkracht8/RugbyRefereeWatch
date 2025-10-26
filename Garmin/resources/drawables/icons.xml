@@ -10,6 +10,8 @@
 	<bitmap id="ic_conf_watch_high" x="center" y="top" filename="icon_conf_watch-high.svg" />
 	<bitmap id="ic_match_log_high" x="50%" y="50%" filename="icon_match_log-high.svg" />
 	<bitmap id="ic_conf_high" x="center" y="bottom" filename="icon_conf-high.svg" />
+	<bitmap id="ic_cards_high" x="center" y="75%" filename="icon_cards-high.svg" />
+	<bitmap id="ic_replacement_high" x="53%" y="75%" filename="icon_replacement-high.svg" />
 
 	<bitmap id="ic_back" filename="icon_back.svg" />
 	<bitmap id="ic_back_disable" filename="icon_back_disable.svg" />

@@ -83,7 +83,7 @@ class Comms{
 		FileStore.delCustomMatchType(name);
 	}
 	(:typecheck(false))//Check fails on FileStore.match_ids
-	function buildSyncResponse() as Lang.String{
+	function buildSyncResponse() as String{
 		var syncResponse = "{\"requestType\":\"sync\",\"responseData\":{\"match_ids\":[";
 		for(var i=0; i<FileStore.match_ids.size(); i++){
 			if(i>0){syncResponse += ",";}

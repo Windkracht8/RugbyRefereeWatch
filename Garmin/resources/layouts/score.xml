@@ -44,13 +44,14 @@
 		text="@Strings.goal_pen"
 		font="Gfx.FONT_MEDIUM"
 		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
-	<text-area
+	<bitmap
 		id="foul_play"
 		x="center"
-		y="73%"
-		width="100%"
-		height="25%"
-		text="@Strings.foul_play"
-		font="Gfx.FONT_LARGE"
-		justification="Gfx.TEXT_JUSTIFY_CENTER|Gfx.TEXT_JUSTIFY_VCENTER" />
+		y="75%"
+		filename="../drawables/icon_cards.svg" />
+	<bitmap
+		id="replacement"
+		x="53%"
+		y="75%"
+		filename="../drawables/icon_replacement.svg" />
 </layout>

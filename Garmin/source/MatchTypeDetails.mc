@@ -58,7 +58,7 @@ class MatchTypeDetailsDelegate extends Menu2InputDelegate{
 	function onSelect(item){
 		item_id = item.getId();
 		var player_no = new PlayerNo();//reuse PlayerNo to capture a number
-		pushView(player_no, new PlayerNoDelegate(player_no, null, self), SLIDE_UP);
+		pushView(player_no.setType(PlayerNo.TYPE_DEFAULT), new PlayerNoDelegate(player_no, null, self), SLIDE_UP);
 	}
 	function gotNumber(value){
 		MainView.main.match.match_type = "custom";

@@ -61,7 +61,8 @@
 	<string id="con">conversion</string>
 	<string id="goal_drop">drop goal</string>
 	<string id="goal_pen">pen goal</string>
-	<string id="foul_play">foul play</string>
+	<string id="leaving">leaving</string>
+	<string id="entering">entering</string>
 
 	<!-- Foul play -->
 	<string id="card_yellow">Yellow</string>

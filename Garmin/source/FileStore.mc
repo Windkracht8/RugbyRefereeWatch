@@ -14,10 +14,10 @@ class FileStore{
 	static var customMatchTypes as Array<String> = [];
 	static function read(){
 		match_ids = Storage.getValue("match_ids") as Array<Long>;
-		if(match_ids == null){match_ids = [] as Array<Long>;}
+		if(match_ids == null){match_ids = [] as Array<Long>;}//the compiler complains this is not reachable, but the app craches without it
 		//System.println("FileStore.read match_ids: " + match_ids);
 		customMatchTypes = Storage.getValue("customMatchTypes") as Array<String>;
-		if(customMatchTypes == null){customMatchTypes = [] as Array<String>;}
+		if(customMatchTypes == null){customMatchTypes = [] as Array<String>;}//the compiler complains this is not reachable, but the app craches without it
 		//System.println("FileStore.read customMatchTypes: " + customMatchTypes);
 	}
 	static function readMatch(match_id as Long) as MatchData{

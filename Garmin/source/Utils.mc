@@ -76,7 +76,7 @@ class Utils{
 			return minus + minutes + ":" + secs;
 		}
 	}
-	static function getPeriodName(period, period_count, long) as Lang.String{
+	static function getPeriodName(period, period_count, long) as String{
 		if(period > period_count){
 			var ret = WatchUi.loadResource(long ? Rez.Strings.extra_time : Rez.Strings.extra);
 			if(period > period_count+1){
@@ -105,6 +105,11 @@ class Utils{
 			}
 			return long ? ret + WatchUi.loadResource(Rez.Strings.period) : ret;
 		}
+	}
+	static function replacementString(event) as String{
+		var who_leave = event.who_leave != null && event.who_leave > 0 ? event.who_leave : "?";
+		var who_enter = event.who_enter != null && event.who_enter > 0 ? event.who_enter : "?";
+		return who_enter + " replaced " + who_leave;
 	}
 	static function getFontColor(teamColor){
 		switch(teamColor){

@@ -45,8 +45,8 @@ class Help extends View{
 		size = titles.size();
 		v_up = findDrawableById("up");
 		v_down = findDrawableById("down");
-		v_title = findDrawableById("title");
-		v_content = findDrawableById("content");
+		v_title = findDrawableById("title") as TextArea;
+		v_content = findDrawableById("content") as TextArea;
 		if(showWelcome){
 			v_title.setText("Welcome");
 			v_content.setText("Here are a few tips to get you familiar with this app.");

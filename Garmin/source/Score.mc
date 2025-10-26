@@ -19,27 +19,64 @@ class Score extends View{
 
 	function onLayout(dc as Dc) as Void{
 		setLayout(Rez.Layouts.Score(dc));
+		var v_foul_play = findDrawableById("foul_play") as Bitmap;
+		var v_replacement = findDrawableById("replacement") as Bitmap;
+		if(highcolor){
+			v_foul_play.setBitmap(Rez.Drawables.ic_cards_high);
+			v_replacement.setBitmap(Rez.Drawables.ic_replacement_high);
+		}
+
+		var icon_size = v_foul_play.height;
 		if(hide_con && hide_goal){
 			var itemHeight = MainView._50vh;
 			resizeView("score_try", itemHeight, 0);
 			hideView("score_con");
 			hideView("score_goal_drop");
 			hideView("score_goal_pen");
-			resizeView("foul_play", itemHeight, itemHeight);
+			var icon_padding = (itemHeight - icon_size) / 2;
+			v_foul_play.setLocation(
+				MainView._50vw-icon_size-icon_padding,
+				itemHeight+icon_padding
+			);
+			v_replacement.setLocation(
+				MainView._50vw+icon_padding,
+				itemHeight+icon_padding
+			);
 		}else if(hide_con){
 			var itemHeight = Math.floor(MainView._33vh);
 			resizeView("score_try", itemHeight, 0);
 			hideView("score_con");
 			resizeView("score_goal_drop", itemHeight, itemHeight);
 			resizeView("score_goal_pen", itemHeight, itemHeight);
-			resizeView("foul_play", itemHeight, itemHeight*2);
+			var icon_padding = (itemHeight - icon_size) / 2;
+			v_foul_play.setLocation(
+				MainView._50vw-icon_size-icon_padding,
+				itemHeight*2+icon_padding
+			);
+			v_replacement.setLocation(
+				MainView._50vw+icon_padding,
+				itemHeight*2+icon_padding
+			);
 		}else if(hide_goal){
 			var itemHeight = Math.floor(MainView._33vh);
 			resizeView("score_try", itemHeight, 0);
 			resizeView("score_con", itemHeight, itemHeight);
 			hideView("score_goal_drop");
 			hideView("score_goal_pen");
-			resizeView("foul_play", itemHeight, itemHeight*2);
+			var icon_padding = (itemHeight - icon_size) / 2;
+			v_foul_play.setLocation(
+				MainView._50vw-icon_size-icon_padding,
+				itemHeight*2+icon_padding
+			);
+			v_replacement.setLocation(
+				MainView._50vw+icon_padding,
+				itemHeight*2+icon_padding
+			);
+		}else{
+			v_foul_play.setLocation(
+				Math.floor(MainView.width_pixels*.47)-icon_size,
+				v_foul_play.locY
+			);
 		}
 	}
 	function hideView(viewId){
@@ -106,8 +143,17 @@ class ScoreDelegate extends BehaviorDelegate{
 			}else{
 				MainView.main.goalAway(isDrop);
 			}
-		}else{//foul play
-			switchToView(MainView.main.foul_play, MainView.main.foul_play_delegate, SLIDE_UP);
+		}else{
+			popView(SLIDE_UP);
+			if(evt.getCoordinates()[0] < MainView._50vw){
+				pushView(MainView.main.foul_play, MainView.main.foul_play_delegate, SLIDE_UP);
+			}else{
+				if(isHome){
+					MainView.main.replacementHome();
+				}else{
+					MainView.main.replacementAway();
+				}
+			}
 		}
 		return true;
 	}

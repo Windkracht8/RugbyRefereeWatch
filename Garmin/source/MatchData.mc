@@ -337,6 +337,8 @@ class MatchData{
 		var period;
 		var team;
 		var who = 0;
+		var who_leave = 0;
+		var who_enter = 0;
 		var score;
 		var deleted = false;
 		function initialize(what, team){
@@ -355,6 +357,8 @@ class MatchData{
 			what = event_dict.get("what");
 			team = event_dict.get("team");
 			who = event_dict.get("who");
+			who_leave = event_dict.get("who_leave");
+			who_enter = event_dict.get("who_enter");
 			score = event_dict.get("score");
 		}
 
@@ -370,6 +374,12 @@ class MatchData{
 				if(who > 0){
 					event_dict.put("who", who);
 				}
+				if(who_leave > 0){
+					event_dict.put("who_leave", who_leave);
+				}
+				if(who_enter > 0){
+					event_dict.put("who_enter", who_enter);
+				}
 			}
 			if(score != null){
 				event_dict.put("score", score);
@@ -384,6 +394,8 @@ class MatchData{
 			json += ",\"what\":\"" + what + "\"";
 			if(team != null){json += ",\"team\":\"" + team + "\"";}
 			if(who != null && who > 0){json += ",\"who\":" + who;}
+			if(who_leave != null && who_leave > 0){json += ",\"who_leave\":" + who_leave;}
+			if(who_enter != null && who_enter > 0){json += ",\"who_enter\":" + who_enter;}
 			json += "}";
 			return json;
 		}

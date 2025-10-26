@@ -20,7 +20,9 @@ class Correct extends Menu2{
 				continue;
 			}
 			var label = Utils.prettyTimer(event.timer) + " " + event.what;
-			if(event.team != null){
+			if(event.what.equals("REPLACEMENT")){
+				label = Utils.prettyTimer(event.timer) + " " + event.team + " " + Utils.replacementString(event);
+			}else if(event.team != null){
 				label += " " + event.team;
 				if(event.who > 0){
 					label += " " + event.who;
