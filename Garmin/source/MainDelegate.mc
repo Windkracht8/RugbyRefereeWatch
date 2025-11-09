@@ -35,27 +35,29 @@ class MainDelegate extends BehaviorDelegate{
 	}
 	function onTap(evt){
 		var y = evt.getCoordinates()[1];
-		if(y < MainView._25vh){
+		var isLeft = evt.getCoordinates()[0] < MainView._50vw;
+		if(y < MainView._25vh){//Top quarter
 			onConfWatchTap();
-		}else if(y < MainView._50vh){
-			if(evt.getCoordinates()[0] < MainView._50vw){
-				onHomeTap();
+		}else if(y < MainView._50vh){//Home/away row
+			if(isLeft){onHomeTap();}
+			else{onAwayTap();}
+		}else if(y < MainView._80vh){//Timer row
+			if(isLeft){onOverTimerLeftTap();}
+			else{onOverTimerRightTap();}
+		}else{//Penalties row
+			if(main.timer_status == STATUS_RUNNING){
+				if(main.record_pens){
+					if(isLeft){main.penHome();}
+					else{main.penAway();}
+				}else if(isLeft && main.kickClockType_home != KICK_CLOCK_TYPE_NONE){
+					main.kickClockHomeClick();
+				}else if(!isLeft && main.kickClockType_away != KICK_CLOCK_TYPE_NONE){
+					main.kickClockAwayClick();
+				}else{
+					onBottomTap();
+				}
 			}else{
-				onAwayTap();
-			}
-		}else if(y < MainView._75vh){
-			if(evt.getCoordinates()[0] < MainView._50vw){
-				onOverTimerLeftTap();
-			}else{
-				onOverTimerRightTap();
-			}
-		}else if(y < MainView._85vh){
-			onBottomTap();
-		}else{
-			if(evt.getCoordinates()[0] < MainView._50vw){
-				onPenHomeTap();
-			}else{
-				onPenAwayTap();
+				onBottomTap();
 			}
 		}
 		return true;
@@ -99,7 +101,7 @@ class MainDelegate extends BehaviorDelegate{
 	function onOverTimerLeftTap(){
 		if(main.timer_status == STATUS_CONF){
 			main.start();
-		}else if(main.kickClockType_home != KICK_CLOCK_TYPE_NONE){
+		}else if(main.timer_status == STATUS_RUNNING && main.kickClockType_home != KICK_CLOCK_TYPE_NONE){
 			main.kickClockHomeClick();
 		}else{
 			onOverTimerTap();
@@ -109,7 +111,7 @@ class MainDelegate extends BehaviorDelegate{
 		if(main.timer_status == STATUS_CONF){
 			var matchLog = new MatchLog();
 			pushView(matchLog, new MatchLogDelegate(matchLog), SLIDE_UP);
-		}else if(main.kickClockType_away != KICK_CLOCK_TYPE_NONE){
+		}else if(main.timer_status == STATUS_RUNNING && main.kickClockType_away != KICK_CLOCK_TYPE_NONE){
 			main.kickClockAwayClick();
 		}else{
 			onOverTimerTap();
@@ -158,20 +160,6 @@ class MainDelegate extends BehaviorDelegate{
 				break;
 			case STATUS_FINISHED:
 				main.clear();
-		}
-	}
-	function onPenHomeTap(){
-		if(main.timer_status == STATUS_RUNNING){
-			main.penHome();
-		}else{
-			onBottomTap();
-		}
-	}
-	function onPenAwayTap(){
-		if(main.timer_status == STATUS_RUNNING){
-			main.penAway();
-		}else{
-			onBottomTap();
 		}
 	}
 }

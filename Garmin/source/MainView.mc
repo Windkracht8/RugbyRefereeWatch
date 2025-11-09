@@ -103,11 +103,15 @@ class MainView extends View{
 	var record_player = false;
 	var record_pens = false;
 	var delay_end = true;
-	const HELP_VERSION = 1;
+	var track_activity = false;
+	const HELP_VERSION = 2;
 
 	//Buzz
 	var VIBE_PROFILE_1;
 	var VIBE_PROFILE_3;
+
+	//ActivityRecording
+	var activitySession = null;
 
 	function initialize(){
 		View.initialize();
@@ -143,6 +147,7 @@ class MainView extends View{
 			if(settings.hasKey("record_player")){record_player = settings.get("record_player");}
 			if(settings.hasKey("record_pens")){record_pens = settings.get("record_pens");}
 			if(settings.hasKey("delay_end")){delay_end = settings.get("delay_end");}
+			if(settings.hasKey("track_activity")){track_activity = settings.get("track_activity");}
 		}
 		Help.showWelcome = settings == null || !settings.hasKey("help_version") || settings.get("help_version") as Number < HELP_VERSION;
 	}
@@ -243,7 +248,9 @@ class MainView extends View{
 
 	function onShow() as Void{
 		updateAfterConfig();
-		if(timer_status != STATUS_CONF){
+		if(timer_status == STATUS_CONF || timer_status == STATUS_FINISHED){
+			if(!comms.isRegistered){comms.start();}
+		}else{
 			updateScore();
 		}
 	}
@@ -542,6 +549,7 @@ class MainView extends View{
 			"record_player" => record_player,
 			"record_pens" => record_pens,
 			"delay_end" => delay_end,
+			"track_activity" => track_activity,
 			"help_version" => HELP_VERSION
 		});
 	}
@@ -587,6 +595,22 @@ class MainView extends View{
 		v_finish.setVisible(false);
 		requestUpdate();
 		comms.stop();
+
+		if(track_activity && Toybox has :ActivityRecording && activitySession == null){
+			var monkeyVersion = System.getDeviceSettings().monkeyVersion;
+			var sport = Activity.SPORT_GENERIC;
+			if(
+				monkeyVersion[0] > 4 ||
+				(monkeyVersion[0] == 4 && monkeyVersion[1] > 1) ||
+				(monkeyVersion[0] == 4 && monkeyVersion[1] == 1 && monkeyVersion[2] >= 6)
+			){ sport = Activity.SPORT_RUGBY; }
+			activitySession = ActivityRecording.createSession({
+				:name => "Rugby referee",
+				:sport => sport,
+				:subSport => Activity.SUB_SPORT_GENERIC
+			});
+			activitySession.start();
+		}
 	}
 	function timeOff(){
 		//System.println("MainView.timeOff");
@@ -710,6 +734,12 @@ class MainView extends View{
 
 		FileStore.storeMatch(match);
 		comms.start();
+
+		if(activitySession != null && activitySession.isRecording()) {
+			activitySession.stop();
+			activitySession.save();
+			activitySession = null;
+		}
 	}
 	function clear(){
 		//System.println("MainView.clear");

@@ -25,6 +25,9 @@ class Conf extends Menu2{
 		addItem(new MenuItem(Rez.Strings.record_player, MainView.main.record_player ? Rez.Strings.on : Rez.Strings.off, "record_player", {}));
 		addItem(new MenuItem(Rez.Strings.record_pens, MainView.main.record_pens ? Rez.Strings.on : Rez.Strings.off, "record_pens", {}));
 		addItem(new MenuItem(Rez.Strings.delay_end, MainView.main.delay_end ? Rez.Strings.on : Rez.Strings.off, "delay_end", {}));
+		if(Toybox has :ActivityRecording){
+			addItem(new MenuItem(Rez.Strings.track_activity, MainView.main.track_activity ? Rez.Strings.on : Rez.Strings.off, "track_activity", {}));
+		}
 		addItem(new MenuItem(Rez.Strings.help, null, "help", {}));
 	}
 	function onShow(){
@@ -70,6 +73,10 @@ class ConfDelegate extends Menu2InputDelegate{
 			case "delay_end":
 				main.delay_end = !main.delay_end;
 				item.setSubLabel(main.delay_end ? Rez.Strings.on : Rez.Strings.off);
+				break;
+			case "track_activity":
+				main.track_activity = !main.track_activity;
+				item.setSubLabel(main.track_activity ? Rez.Strings.on : Rez.Strings.off);
 				break;
 			case "help":
 				var help = new Help();

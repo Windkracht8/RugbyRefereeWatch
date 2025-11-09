@@ -10,13 +10,16 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class Comms{
+	var isRegistered = false;
 	function start(){
 		//System.println("Comms.start");
 		Communications.registerForPhoneAppMessages(method(:gotRequest));
+		isRegistered = true;
 	}
 	function stop(){
 		//System.println("Comms.stop");
 		Communications.registerForPhoneAppMessages(null);
+		isRegistered = false;
 	}
 
 	function gotRequest(message as Communications.PhoneAppMessage) as Void{

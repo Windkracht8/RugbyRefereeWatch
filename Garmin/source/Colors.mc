@@ -23,10 +23,10 @@ class Colors extends Menu2{
 	}
 }
 
-class ColorsDelegate extends MenuInputDelegate{
+class ColorsDelegate extends Menu2InputDelegate{
 	var isHome;
 	function initialize(isHome){
-		MenuInputDelegate.initialize();
+		Menu2InputDelegate.initialize();
 		self.isHome = isHome;
 	}
 	function onSelect(item){

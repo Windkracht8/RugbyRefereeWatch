@@ -76,6 +76,7 @@ class Main : ComponentActivity() {
 		lifecycleScope.launch { Comms.watchMatch.collect {
 			if(MatchStore.matches.any { it2 -> it2.matchId == it.matchId }) return@collect
 			MatchStore.matches.add(it)
+			MatchStore.matches.sort()
 			runInBackground { MatchStore.storeMatches(this@Main) }
 		} }
 		lifecycleScope.launch { Comms.watchSettings.collect {

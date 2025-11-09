@@ -16,6 +16,7 @@ class Help extends View{
 	var v_content;
 
 	var titles as Array<String> = [
+		"Track activity",
 		"Kick clock",
 		"Custom matches",
 		"Penalty try",
@@ -26,6 +27,7 @@ class Help extends View{
 		"Get help"
 	];
 	var contents as Array<String> = [
+		"Do you want to know how much you run during a match? Enable activity tracking in the settings. If you don't see it, your device does not support it.",
 		"A kick clock starts when you enter a try or penalty. The clock hides automatically. You can tap the clock to confirm success or miss.",
 		"In the settings you can select the standard match types. If you want to change anything (like duration), tap \'Match type details\'.",
 		"Looking for penalty try? Check under foul play.",

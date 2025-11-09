@@ -511,7 +511,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			requestQueue.remove(lastRequest)
 			logD{"Comms.sendNextIQMessage: $lastRequest"}
 			connectIQ!!.sendMessage(iQDevice, iQApp, lastRequest.toString()) {
-				d: IQDevice?, a: IQApp?, messageStatus: ConnectIQ.IQMessageStatus? ->
+				_: IQDevice?, _: IQApp?, messageStatus: ConnectIQ.IQMessageStatus? ->
 				logD{"Comms.sendNextIQMessage.onMessageStatus status: ${messageStatus?.name}"}
 				if(messageStatus != ConnectIQ.IQMessageStatus.SUCCESS)
 					onMessageError(R.string.fail_send_message)
