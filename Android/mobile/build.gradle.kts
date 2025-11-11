@@ -19,7 +19,7 @@ android {
         applicationId = "com.windkracht8.rugbyrefereewatch"
         minSdk = 26
         targetSdk = 36
-        versionCode = 374
+        versionCode = 375
         versionName = "m4.4"
     }
     buildFeatures {
