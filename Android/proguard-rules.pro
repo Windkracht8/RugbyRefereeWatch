@@ -5,7 +5,7 @@
     public static *** v(...);
 }
 
--assumenosideeffects class com.windkracht8.wearmusicplayer.UtilKt {
+-assumenosideeffects class com.windkracht8.rugbyrefereewatch.UtilKt {
     public static final void logI(...);
     public static final void logD(...);
 }

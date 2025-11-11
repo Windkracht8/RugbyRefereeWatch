@@ -157,7 +157,8 @@ object MatchStore {
 		try {
 			val matchesJson = JSONArray()
 			matches.forEach {
-				if (matchIds.contains(it.matchId)) matchesJson.put(it.toJson())
+				if (matchIds.isEmpty() || matchIds.contains(it.matchId))
+					matchesJson.put(it.toJson())
 			}
 			activity.contentResolver.openOutputStream(uri)?.use { os ->
 				BufferedWriter(OutputStreamWriter(os)).use { writer ->

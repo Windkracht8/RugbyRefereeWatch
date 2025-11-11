@@ -171,5 +171,6 @@
     <string name="fail_save_matches">Failed to save matches</string>
     <string name="fail_save_match_type">Failed to save match type</string>
     <string name="fail_app_not_installed">RugbyRefereeWatch is not installed on the watch, go install it</string>
+    <string name="fail_message_timeout">No response from watch, reconnect and try again</string>
 
 </resources>

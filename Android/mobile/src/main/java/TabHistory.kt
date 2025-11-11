@@ -112,20 +112,10 @@ fun TabHistory(
 			TextButton(
 				modifier = Modifier.weight(1f),
 				onClick = {
-					if(selected.isEmpty()) {
-						context.toast(R.string.select_match)
-					} else {
-						exportMatches(selected)
-						selected = setOf()
-					}
+					exportMatches(selected)
+					selected = setOf()
 				}
-			) {
-				Text(
-					text = stringResource(R.string.export),
-					color = if(selected.isNotEmpty()) colorScheme.primary
-							else colorScheme.primary.copy(alpha = 0.5f)
-				)
-			}
+			) { Text(R.string.export) }
 		}
 	}
 	if (confirmDel) {

@@ -28,6 +28,7 @@ import com.garmin.android.connectiq.ConnectIQ.IQApplicationInfoListener
 import com.garmin.android.connectiq.ConnectIQ.IQDeviceEventListener
 import com.garmin.android.connectiq.IQApp
 import com.garmin.android.connectiq.IQDevice
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +62,8 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 
 	enum class IQSdkStatus { UNAVAILABLE, READY, GCM_NOT_INSTALLED, GCM_UPGRADE_NEEDED, ERROR }
 	var iQSdkStatus: IQSdkStatus = IQSdkStatus.UNAVAILABLE
-	private var iQDevice: IQDevice? = null
+	var iQDevice: IQDevice? = null
+	var iQMessageTimeoutJob: Job? = null
 
 	enum class Status { STARTING, DISCONNECTED, CONNECTING, CONNECTED_BT, CONNECTED_IQ, ERROR }
 	val status = MutableStateFlow(null as Status?)
@@ -504,7 +506,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			onError(R.string.fail_connect)
 		}
 	}
-	private fun sendNextIQMessage() {
+	fun sendNextIQMessage() {
 		if(status.value != Status.CONNECTED_IQ || requestQueue.isEmpty() || lastRequest != null) return
 		try {
 			lastRequest = requestQueue.first()
@@ -515,6 +517,12 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				logD{"Comms.sendNextIQMessage.onMessageStatus status: ${messageStatus?.name}"}
 				if(messageStatus != ConnectIQ.IQMessageStatus.SUCCESS)
 					onMessageError(R.string.fail_send_message)
+			}
+			iQMessageTimeoutJob = runInBackground {
+				delay(60000)
+				logE("Comms.sendNextIQMessage: No response received in 1 minute")
+				lastRequest = null
+				onMessageError(R.string.fail_message_timeout)
 			}
 		} catch(e: java.lang.Exception) {
 			logE("Comms.sendNextIQMessage exception: $e")
@@ -594,13 +602,20 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				logE("Comms.onApplicationInfoReceived exception: ${e.message}")
 				onError(R.string.fail_unexpected)
 			}
-		} else if(status.value == Status.CONNECTED_IQ) status.value = Status.DISCONNECTED
+		} else if(status.value == Status.CONNECTED_IQ){
+			status.value = Status.DISCONNECTED
+			requestQueue.clear()
+			lastRequest = null
+			deviceName = ""
+			messageStatus = -1
+		}
 	}
 	//IQApplicationEventListener
 	override fun onMessageReceived(
 		d: IQDevice?, a: IQApp?, data: List<Any?>?, status: ConnectIQ.IQMessageStatus?
 	) {
 		logD{"Comms.onMessageReceived messageStatus: $status messageData: $data"}
+		iQMessageTimeoutJob?.cancel()
 		lastRequest = null
 		try {
 			if(status != ConnectIQ.IQMessageStatus.SUCCESS) throw Exception()

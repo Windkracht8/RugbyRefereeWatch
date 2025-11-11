@@ -74,7 +74,7 @@ fun Home(
 	val navController = rememberNavController()
 	var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 	LaunchedEffect(navController) {
-		navController.addOnDestinationChangedListener { c, destination, a ->
+		navController.addOnDestinationChangedListener { _, destination, _ ->
 			when (destination.route) {
 				"history" -> selectedTabIndex = TAB_INDEX_HISTORY
 				"report/{matchId}" -> selectedTabIndex = TAB_INDEX_REPORT
