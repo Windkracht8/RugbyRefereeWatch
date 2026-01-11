@@ -16,7 +16,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,8 +53,7 @@ class Permissions : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		if(hasBT) finishAndRemoveTask()
-		enableEdgeToEdge()
-		setContent { W8Theme { Surface { PermissionsScreen(::onNearbyClick) } } }
+		setContent { W8Theme (window, resources) { Surface { PermissionsScreen(::onNearbyClick) } } }
 	}
 	fun onNearbyClick() {
 		if(hasBT) return
@@ -108,7 +106,7 @@ fun PermissionsScreen(onNearbyClick: () -> Unit) {
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
-fun PreviewPermissions() { W8Theme { Surface { PermissionsScreen {} } } }
+fun PreviewPermissions() { W8Theme (null, null) { Surface { PermissionsScreen {} } } }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
-fun PreviewPermissionsDay() { W8Theme { Surface { PermissionsScreen {} } } }
+fun PreviewPermissionsDay() { W8Theme (null, null) { Surface { PermissionsScreen {} } } }

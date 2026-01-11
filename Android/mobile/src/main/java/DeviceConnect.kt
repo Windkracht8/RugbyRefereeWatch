@@ -11,7 +11,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
@@ -44,8 +43,7 @@ class DeviceConnect : ComponentActivity() {
 		lifecycleScope.launch { Comms.status.collect {
 			if (it != Comms.Status.CONNECTING) finishAndRemoveTask()
 		} }
-		enableEdgeToEdge()
-		setContent { W8Theme { Surface { DeviceConnectScreen() } } }
+		setContent { W8Theme (window, resources) { Surface { DeviceConnectScreen() } } }
 	}
 }
 
@@ -86,10 +84,10 @@ fun DeviceConnectScreen() {
 @Composable
 fun PreviewDeviceConnect() {
 	Comms
-	W8Theme { Surface { DeviceConnectScreen() } }
+	W8Theme (null, null) { Surface { DeviceConnectScreen() } }
 }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
 fun PreviewDeviceConnectDay() {
-	W8Theme { Surface { DeviceConnectScreen() } }
+	W8Theme (null, null) { Surface { DeviceConnectScreen() } }
 }

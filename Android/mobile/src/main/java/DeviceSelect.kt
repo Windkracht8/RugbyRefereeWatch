@@ -14,7 +14,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,9 +70,8 @@ class DeviceSelect : ComponentActivity() {
 			}
 		}
 
-		enableEdgeToEdge()
 		setContent {
-			W8Theme {
+			W8Theme (window, resources) {
 				Surface {
 					DeviceSelectScreen(
 						onBTDeviceClick = ::onBTDeviceClick,
@@ -258,7 +256,7 @@ fun DeviceSelectScreen(
 @Composable
 fun PreviewDeviceSelect() {
 	Comms
-	W8Theme { Surface { DeviceSelectScreen(
+	W8Theme (null, null) { Surface { DeviceSelectScreen(
 		{}, {}, {}, {},
 		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }
@@ -266,7 +264,7 @@ fun PreviewDeviceSelect() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
 fun PreviewDeviceSelectDay() {
-	W8Theme { Surface { DeviceSelectScreen(
+	W8Theme (null, null) { Surface { DeviceSelectScreen(
 		{}, {}, {}, {},
 		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }

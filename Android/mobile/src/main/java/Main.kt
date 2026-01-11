@@ -15,7 +15,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
@@ -41,14 +40,13 @@ class Main : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		installSplashScreen()
-		enableEdgeToEdge()
 		super.onCreate(savedInstanceState)
 		val sharedPreferences = getPreferences(MODE_PRIVATE)
 		matchType = MatchType(sharedPreferences)
 		prepData = PrepData(sharedPreferences)
 
 		setContent {
-			W8Theme { Surface { Home(
+			W8Theme (window, resources) { Surface { Home(
 				commsBTStatus,
 				::onIconClick,
 				::onImportClick,

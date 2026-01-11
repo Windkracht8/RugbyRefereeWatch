@@ -349,7 +349,7 @@ fun measureWidth(label: Int): Dp =
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
 @Composable
 fun PreviewTabPrepare() {
-	W8Theme { Surface { TabPrepare(
+	W8Theme (null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
 		MatchType("15s"), PrepData(),
 		{}, {}, {}
@@ -358,7 +358,7 @@ fun PreviewTabPrepare() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
 fun PreviewTabPrepareDay() {
-	W8Theme { Surface { TabPrepare(
+	W8Theme (null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
 		MatchType("10s"), PrepData(),
 		{}, {}, {}

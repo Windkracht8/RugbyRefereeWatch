@@ -193,7 +193,7 @@ fun Text(text: Int) = Text(stringResource(text))
 @Composable
 fun PreviewHome() {
 	Comms.deviceName = "Test"
-	W8Theme { Surface {
+	W8Theme (null, null) { Surface {
 		Home(
 			commsBTStatus = Comms.Status.CONNECTING,
 			{}, {}, {}, {},
@@ -206,7 +206,7 @@ fun PreviewHome() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
 fun PreviewHomeDay() {
-	W8Theme { Surface {
+	W8Theme (null, null) { Surface {
 		Home(
 			commsBTStatus = Comms.Status.CONNECTING,
 			{}, {}, {}, {},
