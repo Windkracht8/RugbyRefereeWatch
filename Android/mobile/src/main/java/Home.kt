@@ -205,14 +205,4 @@ fun PreviewHome() {
 }
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
 @Composable
-fun PreviewHomeDay() {
-	W8Theme (null, null) { Surface {
-		Home(
-			commsBTStatus = Comms.Status.CONNECTING,
-			{}, {}, {}, {},
-			shareMatch = {_: Long, _: List<Boolean> ->}, {},
-			MatchType("15s"), PrepData(),
-			{}, {}, {}
-		)
-	} }
-}
+fun PreviewHomeDay() { PreviewHome() }

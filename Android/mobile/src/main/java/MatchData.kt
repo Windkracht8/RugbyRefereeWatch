@@ -649,25 +649,9 @@ class MatchType {
 class PrepData {
 	var manualUpdate = false
 	var homeName by mutableStateOf("")
-	fun homeName(value: String) {
-		homeName = value
-		manualUpdate = true
-	}
 	var homeColor by mutableStateOf("red")
-	fun homeColor(value: String) {
-		homeColor = value
-		manualUpdate = true
-	}
 	var awayName by mutableStateOf("")
-	fun awayName(value: String) {
-		awayName = value
-		manualUpdate = true
-	}
 	var awayColor by mutableStateOf("blue")
-	fun awayColor(value: String) {
-		awayColor = value
-		manualUpdate = true
-	}
 
 	var manualUpdateWatch = false
 	var showWatchSettings by mutableStateOf(false)

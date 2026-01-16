@@ -78,12 +78,12 @@
 
     <!-- prepare -->
     <string name="send_to_watch">Send to watch</string>
-    <string name="home_name">Home name</string>
-    <string name="home_name_hint">Home team name</string>
-    <string name="home_color">Home color</string>
-    <string name="away_name">Away name</string>
-    <string name="away_name_hint">Away team name</string>
-    <string name="away_color">Away color</string>
+    <string name="home_name">Home team name</string>
+    <string name="home_color">Home team color</string>
+    <string name="home_players">Home players</string>
+    <string name="away_name">Away team name</string>
+    <string name="away_color">Away team color</string>
+    <string name="away_players">Away players</string>
     <string name="match_type">Match type</string>
     <string name="match_type_show">Show match type details</string>
     <string name="match_type_hide">Hide match type details</string>
