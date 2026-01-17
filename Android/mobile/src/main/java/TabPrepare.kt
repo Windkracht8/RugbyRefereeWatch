@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedButton
@@ -27,7 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,16 +51,18 @@ fun TabPrepare(
 	onDeleteMatchType: () -> Unit
 ) {
 	val context: Context = LocalContext.current
-	var saveMatchType by remember { mutableStateOf(false) }
+	val saveMatchType = remember { mutableStateOf(false) }
 	var showMatchTypeDetails by remember { mutableStateOf(false) }
-	var changeTeam by remember { mutableStateOf(true) }
-	var changeTeamName by remember { mutableStateOf(false) }
+	var changeTeamIsHome by remember { mutableStateOf(true) }
+	val changeTeamName = remember { mutableStateOf(false) }
 	var changeTeamColor by remember { mutableStateOf(false) }
 	var changeMatchType by remember { mutableStateOf(false) }
-	var changeValue by remember { mutableStateOf(false) }
+	val changeValue = remember { mutableStateOf(false) }
 	var changeValueType by remember { mutableStateOf<ValueTypes?>(null) }
 	var changeValueValue by remember { mutableIntStateOf(0) }
 	var changeValueCanBe0 by remember { mutableStateOf(true) }
+	var showManagePlayers by remember { mutableStateOf(false) }
+	var managePlayersIsHome by remember { mutableStateOf(true) }
 
 	val teamColors = stringArrayResource(R.array.team_colors)
 	val standardMatchTypes = stringArrayResource(R.array.match_types)
@@ -82,32 +82,70 @@ fun TabPrepare(
 				text = stringResource(R.string.send_to_watch),
 				color =
 					if (commsBTStatus in setOf(Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ)) colorScheme.primary
-				else colorScheme.primary.copy(alpha = 0.5f)
+					else colorScheme.primary.copy(alpha = 0.5f)
 			)
 		} }
 		item {
 			Row (modifier = Modifier.fillMaxWidth()) {
 				Column (modifier = Modifier.weight(1f)){
 					Setting(R.string.home_name, prepData.homeName) {
-						changeTeam = true
-						changeTeamName = true
+						changeTeamIsHome = true
+						changeTeamName.value = true
 					}
 					Setting(R.string.home_color, prepData.homeColor) {
-						changeTeam = true
+						changeTeamIsHome = true
 						changeTeamColor = true
 					}
-					Setting(R.string.home_players, "0") {}
+					val frontRowCount = prepData.homePlayers.count { it.frontRow }
+					Setting(
+						title = R.string.home_players,
+						subTitle =
+							if(prepData.homePlayers.isEmpty()) "0"
+							else if(frontRowCount > 0) stringResource(
+								R.string.x_players_x_fr,
+								prepData.homePlayers.size,
+								frontRowCount
+							)
+							else stringResource(
+								R.string.x_players,
+								prepData.homePlayers.size
+							),
+						onClick = {
+							managePlayersIsHome = true
+							showManagePlayers = true
+						}
+					)
 				}
 				Column (modifier = Modifier.weight(1f)){
 					Setting(R.string.away_name, prepData.awayName, 2) {
-						changeTeam = false
-						changeTeamName = true
+						changeTeamIsHome = false
+						changeTeamName.value = true
 					}
 					Setting(R.string.away_color, prepData.awayColor, 2) {
-						changeTeam = false
+						changeTeamIsHome = false
 						changeTeamColor = true
 					}
-					Setting(R.string.away_players, "0", 2) {}
+					val frontRowCount = prepData.awayPlayers.count { it.frontRow }
+					Setting(
+						title = R.string.away_players,
+						subTitle =
+							if(prepData.awayPlayers.isEmpty()) "0"
+							else if(frontRowCount > 0) stringResource(
+								R.string.x_players_x_fr,
+								prepData.awayPlayers.size,
+								frontRowCount
+							)
+							else stringResource(
+								R.string.x_players,
+								prepData.awayPlayers.size
+							),
+						align = 2,
+						onClick = {
+							managePlayersIsHome = false
+							showManagePlayers = true
+						}
+					)
+
 				}
 			}
 		}
@@ -127,14 +165,14 @@ fun TabPrepare(
 			onClick = { showMatchTypeDetails = !showMatchTypeDetails }
 		) {
 			Text(if (showMatchTypeDetails) R.string.match_type_hide
-					else R.string.match_type_show
+			else R.string.match_type_show
 			)
 		} }
 		if(showMatchTypeDetails) {
 			item {
 				OutlinedButton(
 					modifier = Modifier.fillMaxWidth(),
-					onClick = { saveMatchType = true }
+					onClick = { saveMatchType.value = true }
 				) { Text(R.string.save_match_type) }
 			}
 			item {
@@ -145,7 +183,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.PeriodTime
 						changeValueValue = matchType.periodTime
 						changeValueCanBe0 = false
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -157,7 +195,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.PeriodCount
 						changeValueValue = matchType.periodCount
 						changeValueCanBe0 = false
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -169,7 +207,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.Sinbin
 						changeValueValue = matchType.sinbin
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -181,7 +219,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.PointsTry
 						changeValueValue = matchType.pointsTry
 						changeValueCanBe0 = false
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -193,7 +231,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.PointsCon
 						changeValueValue = matchType.pointsCon
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -205,7 +243,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.PointsGoal
 						changeValueValue = matchType.pointsGoal
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -217,7 +255,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.ClockPK
 						changeValueValue = matchType.clockPK
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -229,7 +267,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.ClockCon
 						changeValueValue = matchType.clockCon
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -241,7 +279,7 @@ fun TabPrepare(
 						changeValueType = ValueTypes.ClockRestart
 						changeValueValue = matchType.clockRestart
 						changeValueCanBe0 = true
-						changeValue = true
+						changeValue.value = true
 					}
 				)
 			}
@@ -299,34 +337,15 @@ fun TabPrepare(
 			}
 		}
 	}
-	if (changeTeamName) {
-		var newName by remember {
-			mutableStateOf(if(changeTeam) prepData.homeName else prepData.awayName)
-		}
-		AlertDialog(
-			title = { Text(if(changeTeam) R.string.home_name else R.string.away_name) },
-			text = {
-				TextField(
-					onValueChange = { newName = it },
-					value = newName,
-					singleLine = true
-				)
-			},
-			confirmButton = {
-				TextButton(
-					onClick = {
-						if(changeTeam) prepData.homeName = newName
-						else prepData.awayName = newName
-						prepData.manualUpdate = true
-						changeTeamName = false
-					}
-				) { Text(R.string.save) }
-			},
-			onDismissRequest = { changeTeamName = false },
-			dismissButton = {
-				TextButton(
-					onClick = { changeTeamName = false }
-				) { Text(R.string.cancel) }
+	if (changeTeamName.value) {
+		StringInput(
+			show = changeTeamName,
+			title = if(changeTeamIsHome) R.string.home_name else R.string.away_name,
+			value = if(changeTeamIsHome) prepData.homeName else prepData.awayName,
+			onSave = { name ->
+				if(changeTeamIsHome) prepData.homeName = name
+				else prepData.awayName = name
+				prepData.manualUpdate = true
 			}
 		)
 	}
@@ -337,7 +356,7 @@ fun TabPrepare(
 					TextButton(
 						modifier = Modifier.requiredHeight(48.dp),
 						onClick = {
-							if(changeTeam) prepData.homeColor = color
+							if(changeTeamIsHome) prepData.homeColor = color
 							else prepData.awayColor = color
 							prepData.manualUpdate = true
 							changeTeamColor = false
@@ -364,94 +383,70 @@ fun TabPrepare(
 			}
 		}
 	}
-	if (saveMatchType) {
-		var name by remember { mutableStateOf("") }
-		if(!standardMatchTypes.contains(matchType.name)) name = matchType.name
-		AlertDialog(
-			title = { Text(R.string.save_match_type) },
-			text = {
-				TextField(
-					onValueChange = { name = it },
-					value = name,
-					singleLine = true,
-					placeholder = { Text(R.string.enter_name) }
-				)
-			},
-			confirmButton = {
-				TextButton(
-					onClick = {
-						if(name.isEmpty()) {
-							context.toast(R.string.fail_empty_name)
-						} else if(standardMatchTypes.contains(name)){
-							context.toast(R.string.fail_standard_match_type)
-						} else {
-							onSaveMatchType(name)
-							saveMatchType = false
-						}
-					}
-				) { Text(R.string.save) }
-			},
-			onDismissRequest = { saveMatchType = false },
-			dismissButton = {
-				TextButton(
-					onClick = { saveMatchType = false }
-				) { Text(R.string.cancel) }
+	if (saveMatchType.value) {
+		StringInput(
+			show = saveMatchType,
+			title = R.string.save_match_type,
+			value = if (standardMatchTypes.contains(matchType.name)) "" else matchType.name,
+			onSave = { name ->
+				if (name.isEmpty()) {
+					context.toast(R.string.fail_empty_name)
+				} else if (standardMatchTypes.contains(name)) {
+					context.toast(R.string.fail_standard_match_type)
+				} else {
+					onSaveMatchType(name)
+				}
 			}
 		)
 	}
-	if (changeValue) {
-		AlertDialog(
-			title = {
-				Text(
-					when(changeValueType) {
-						ValueTypes.PeriodTime -> R.string.period_time
-						ValueTypes.PeriodCount -> R.string.period_count
-						ValueTypes.Sinbin -> R.string.sinbin
-						ValueTypes.PointsTry -> R.string.points_try
-						ValueTypes.PointsCon -> R.string.points_con
-						ValueTypes.PointsGoal -> R.string.points_goal
-						ValueTypes.ClockPK -> R.string.clock_pk
-						ValueTypes.ClockCon -> R.string.clock_con
-						ValueTypes.ClockRestart -> R.string.clock_restart
-						else -> R.string.period_time
+	if (changeValue.value) {
+		IntInput(
+			show = changeValue,
+			title =
+				when(changeValueType) {
+					ValueTypes.PeriodTime -> R.string.period_time
+					ValueTypes.PeriodCount -> R.string.period_count
+					ValueTypes.Sinbin -> R.string.sinbin
+					ValueTypes.PointsTry -> R.string.points_try
+					ValueTypes.PointsCon -> R.string.points_con
+					ValueTypes.PointsGoal -> R.string.points_goal
+					ValueTypes.ClockPK -> R.string.clock_pk
+					ValueTypes.ClockCon -> R.string.clock_con
+					ValueTypes.ClockRestart -> R.string.clock_restart
+					else -> R.string.period_time
+				},
+			value = changeValueValue,
+			onSave = { newValue ->
+				if(changeValueCanBe0 || newValue > 0) {
+					when (changeValueType) {
+						ValueTypes.PeriodTime -> matchType.periodTime = newValue
+						ValueTypes.PeriodCount -> matchType.periodCount = newValue
+						ValueTypes.Sinbin -> matchType.sinbin = newValue
+						ValueTypes.PointsTry -> matchType.pointsTry = newValue
+						ValueTypes.PointsCon -> matchType.pointsCon = newValue
+						ValueTypes.PointsGoal -> matchType.pointsGoal = newValue
+						ValueTypes.ClockPK -> matchType.clockPK = newValue
+						ValueTypes.ClockCon -> matchType.clockCon = newValue
+						ValueTypes.ClockRestart -> matchType.clockRestart = newValue
+						else -> {}
 					}
-				)
-			},
-			text = {
-				IntField(
-					onValueChange = { changeValueValue = it },
-					value = changeValueValue,
-					canBe0 = changeValueCanBe0
-				)
-			},
-			confirmButton = {
-				TextButton(
-					onClick = {
-						if(changeValueCanBe0 || changeValueValue > 0) {
-							when (changeValueType) {
-								ValueTypes.PeriodTime -> matchType.periodTime = changeValueValue
-								ValueTypes.PeriodCount -> matchType.periodCount = changeValueValue
-								ValueTypes.Sinbin -> matchType.sinbin = changeValueValue
-								ValueTypes.PointsTry -> matchType.pointsTry = changeValueValue
-								ValueTypes.PointsCon -> matchType.pointsCon = changeValueValue
-								ValueTypes.PointsGoal -> matchType.pointsGoal = changeValueValue
-								ValueTypes.ClockPK -> matchType.clockPK = changeValueValue
-								ValueTypes.ClockCon -> matchType.clockCon = changeValueValue
-								ValueTypes.ClockRestart -> matchType.clockRestart = changeValueValue
-								else -> {}
-							}
-							prepData.manualUpdate = true
-						}
-						changeValue = false
+					prepData.manualUpdate = true
+				} else {
+					when (changeValueType) {
+						ValueTypes.PeriodTime -> context.toast(R.string.time_period_empty)
+						ValueTypes.PeriodCount -> context.toast(R.string.period_count_empty)
+						ValueTypes.PointsTry -> context.toast(R.string.points_try_empty)
+						else -> {}
 					}
-				) { Text(R.string.save) }
-			},
-			onDismissRequest = { changeValue = false },
-			dismissButton = {
-				TextButton(
-					onClick = { changeValue = false }
-				) { Text(R.string.cancel) }
+				}
 			}
+		)
+	}
+	if (showManagePlayers) {
+		ManagePlayers(
+			prepData = prepData,
+			isHome = managePlayersIsHome,
+			close = { showManagePlayers = false }
 		)
 	}
 }
@@ -518,9 +513,18 @@ fun SettingSwitch(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewTabPrepare() {
+	val prepData = PrepData()
+	val tempPlayers = mutableListOf<MatchData.Player>()
+	for (i in 1..23) {
+		val player = MatchData.Player(i)
+		player.frontRow = i < 4
+		player.captain = i == 7
+		tempPlayers.add(player)
+	}
+	prepData.homePlayers = tempPlayers
 	W8Theme (null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
-		MatchType("15s"), PrepData(),
+		MatchType("15s"), prepData,
 		{}, {}, {}
 	) } }
 }

@@ -24,7 +24,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -37,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -260,25 +260,25 @@ fun TabReport(
 			text = {
 				Column {
 					Row(verticalAlignment = Alignment.CenterVertically) {
-						Checkbox(checked = time, onCheckedChange = { time = it })
 						Text(
-							modifier = Modifier.clickable(enabled = true, onClick = { time = !time }),
+							modifier = Modifier.weight(1f).clickable(enabled = true, onClick = { time = !time }),
 							text = stringResource(R.string.share_dialog_time)
 						)
+						Switch(checked = time, onCheckedChange = { time = it })
 					}
 					Row(verticalAlignment = Alignment.CenterVertically) {
-						Checkbox(checked = pens, onCheckedChange = { pens = it })
 						Text(
-							modifier = Modifier.clickable(enabled = true, onClick = { pens = !pens }),
+							modifier = Modifier.weight(1f).clickable(enabled = true, onClick = { pens = !pens }),
 							text = stringResource(R.string.share_dialog_pens)
 						)
+						Switch(checked = pens, onCheckedChange = { pens = it })
 					}
 					Row(verticalAlignment = Alignment.CenterVertically) {
-						Checkbox(checked = clock, onCheckedChange = { clock = it })
 						Text(
-							modifier = Modifier.clickable(enabled = true, onClick = { clock = !clock }),
+							modifier = Modifier.weight(1f).clickable(enabled = true, onClick = { clock = !clock }),
 							text = stringResource(R.string.share_dialog_clock)
 						)
+						Switch(checked = clock, onCheckedChange = { clock = it })
 					}
 				}
 			},

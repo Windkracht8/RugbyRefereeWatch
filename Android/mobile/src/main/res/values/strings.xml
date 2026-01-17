@@ -107,6 +107,19 @@
     <string name="record_player">Record player #</string>
     <string name="record_pens">Record penalties</string>
     <string name="delay_end">Delay end of period</string>
+    <string name="manage_players_intro">Tab the number, name, front row and captain buttons to edit
+        the players</string>
+    <string name="got_it">got it</string>
+    <string name="add_player">Add player</string>
+    <string name="reset">reset</string>
+    <string name="no_name">no name</string>
+    <string name="front_row">front row</string>
+    <string name="captain">captain</string>
+    <string name="enter_player_number">Enter player number</string>
+    <string name="player_number_exists">Player number already exists</string>
+    <string name="enter_player_name">Enter player name</string>
+    <string name="x_players">%d players</string>
+    <string name="x_players_x_fr">%d players %d front row</string>
 
     <string name="time_period_empty">Time/period can\'t be empty</string>
     <string name="period_count_empty">Period count can\'t be empty</string>
