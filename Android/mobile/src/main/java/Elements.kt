@@ -8,7 +8,13 @@
 
 package com.windkracht8.rugbyrefereewatch
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -19,7 +25,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun StringInput(
@@ -88,4 +96,57 @@ fun IntInput(
 			) { Text(R.string.cancel) }
 		}
 	)
+}
+
+@Composable
+fun IntField(modifier: Modifier = Modifier, value: Int, onValueChange: (Int) -> Unit, canBe0: Boolean){
+	var isError by remember { mutableStateOf(false) }
+	TextField(
+		modifier = modifier,
+		value = if(value == 0) "" else value.toString(),
+		onValueChange = {
+			try {
+				onValueChange(it.toInt())
+				isError = false
+			}
+			catch(_: Exception) {
+				onValueChange(0)
+				if(!canBe0) isError = true
+			}
+		},
+		maxLines = 1,
+		isError = isError,
+		keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+	)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Spinner(
+	modifier: Modifier = Modifier,
+	options: Array<String>,
+	value: String, onSelected: (String) -> Unit
+) {
+	var expanded by remember { mutableStateOf(false) }
+	ExposedDropdownMenuBox(
+		modifier = modifier,
+		expanded = expanded,
+		onExpandedChange = { expanded = !expanded }
+	) {
+		OutlinedTextField(
+			modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+			value = value,
+			onValueChange = {},
+			readOnly = true,
+			maxLines = 1
+		)
+		ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+			options.forEach { selected ->
+				DropdownMenuItem(
+					text = { Text(selected) },
+					onClick = { onSelected(selected); expanded = false }
+				)
+			}
+		}
+	}
 }

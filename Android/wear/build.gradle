@@ -20,6 +20,11 @@ android{
         versionName = 'w3.27'
     }
     buildTypes{
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-d"
+            resValue("string", "app_name", "Rugby Referee Watch (debug)")
+        }
         release{
             shrinkResources = true
             minifyEnabled = true

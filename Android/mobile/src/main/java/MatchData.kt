@@ -227,7 +227,6 @@ class MatchData: Comparable<MatchData> {
 		var redCards: Int
 		var pens: Int
 		val kickoff: Boolean
-		var players: List<Player> = emptyList()
 
 		constructor(teamJson: JSONObject, checkName: Boolean = false) {
 			id = teamJson.optString("id", HOME_ID)
@@ -246,11 +245,6 @@ class MatchData: Comparable<MatchData> {
 
 			var name = teamJson.optString("team", id)
 			team = if(checkName && name.equals(id)) color else name
-
-			val playersJson = teamJson.getJSONArrayOrEmpty("players")
-			players = (0 until playersJson.length()).map {
-				Player(playersJson.getJSONObject(it))
-			}.sorted()
 		}
 		constructor(original: Team) {
 			id = original.id
@@ -267,7 +261,6 @@ class MatchData: Comparable<MatchData> {
 			redCards = original.redCards
 			pens = original.pens
 			kickoff = original.kickoff
-			players = original.players.map { Player(it) }.sorted()
 		}
 		suspend fun toJson(): JSONObject {
 			val ret = JSONObject()
@@ -286,10 +279,6 @@ class MatchData: Comparable<MatchData> {
 				ret.put("red_cards", redCards)
 				ret.put("pens", pens)
 				ret.put("kickoff", kickoff)
-				
-				val playersJson = JSONArray()
-				for (player in players) playersJson.put(player.toJson())
-				ret.put("players", playersJson)
 			} catch (e: JSONException) {
 				logE("MatchData.match.toJson Exception: " + e.message)
 				error.emit(R.string.fail_save_matches)
@@ -452,41 +441,6 @@ class MatchData: Comparable<MatchData> {
 		}
 	}
 
-	class Player : Comparable<Player>{
-		var number by mutableIntStateOf(0)
-		var name by mutableStateOf("")
-		var frontRow by mutableStateOf(false)
-		var captain by mutableStateOf(false)
-		constructor(number: Int) { this.number = number }
-		constructor(playerJson: JSONObject){
-			number = playerJson.optInt("number", 0)
-			name = playerJson.optString("name", "")
-			frontRow = playerJson.optBoolean("front_row", false)
-			captain = playerJson.optBoolean("captain", false)
-		}
-		constructor(original: Player) {
-			number = original.number
-			name = original.name
-			frontRow = original.frontRow
-			captain = original.captain
-		}
-
-		suspend fun toJson(): JSONObject {
-			val ret = JSONObject()
-			try {
-				ret.put("number", number)
-				ret.put("name", name)
-				ret.put("front_row", frontRow)
-				ret.put("captain", captain)
-			} catch (e: JSONException) {
-				logE("Player.toJson Exception: " + e.message)
-				error.emit(R.string.fail_save_matches)
-			}
-			return ret
-		}
-
-		override fun compareTo(other: Player): Int = number.compareTo(other.number)
-	}
 }
 
 fun String?.isHome(): Boolean = this == HOME_ID
@@ -698,10 +652,8 @@ class PrepData {
 	var manualUpdate = false
 	var homeName by mutableStateOf("")
 	var homeColor by mutableStateOf("red")
-	var homePlayers: List<MatchData.Player> = emptyList()
 	var awayName by mutableStateOf("")
 	var awayColor by mutableStateOf("blue")
-	var awayPlayers: List<MatchData.Player> = emptyList()
 
 	var manualUpdateWatch = false
 	var showWatchSettings by mutableStateOf(false)

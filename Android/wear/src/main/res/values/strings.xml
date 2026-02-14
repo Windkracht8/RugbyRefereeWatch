@@ -181,8 +181,6 @@
     <string name="help_welcome_text">Here are a few tips to get you familiar with this app.</string>
 
     <string-array name="help_topics_title">
-        <item>New: Player# step</item>
-        <item>New: Kick clock</item>
         <item>Bluetooth</item>
         <item>Custom matches</item>
         <item>Penalty try</item>
@@ -193,16 +191,12 @@
         <item>Get help</item>
     </string-array>
     <string-array name="help_topics_text">
-        <item>Entering the player number is now a separate step.</item>
-        <item>When you enter a try, the conversion kick clock starts. When you add a penalty, the
-            PK clock starts. The kick clock closes automatically when the time is up. You can tap
-            the clock to confirm success or miss.</item>
         <item>Connection to the Rugby Referee Watch app on your phone works via Bluetooth. You do
             need to approve permission.</item>
         <item>In the settings you can select the standard match types. If you want to change
             anything (like duration), tap \'Match type details\'. Do this in the phone app to store
             your custom match type.</item>
-        <item>Looking for penalty try? Check under foul play.</item>
+        <item>Looking for penalty try? You find it after tapping the cards button.</item>
         <item>During a game, swipe back to open the correction screen. On this screen you can tap
             the event you want to undo, or redo.</item>
         <item>Before the game starts you can set which team will kick off by tapping the home or
@@ -225,6 +219,5 @@
     <string name="fail_store_settings">Failed to store settings</string>
     <string name="fail_read_settings">Failed to read settings</string>
     <string name="fail_receive_settings">Failed to receive settings</string>
-    <string name="fail_read_match">Failed to read match</string>
     <string name="fail_show_log">Failed to show log</string>
 </resources>

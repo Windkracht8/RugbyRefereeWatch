@@ -77,7 +77,7 @@ public class MatchData{
             ret.put("events", events_json);
         }catch(JSONException e){
             Log.e(Main.LOG_TAG, "MatchData.toJson Exception: " + e.getMessage());
-            Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.fail_store_match, Toast.LENGTH_SHORT).show();
         }
         //Log.d(Main.LOG_TAG, "MatchData.toJson result: " + ret);
         return ret;
@@ -279,7 +279,7 @@ public class MatchData{
                 ret.put("kickoff", kickoff);
             }catch(JSONException e){
                 Log.e(Main.LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
-                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.fail_store_match, Toast.LENGTH_SHORT).show();
             }
             return ret;
         }
@@ -334,7 +334,7 @@ public class MatchData{
                 if(score != null) evt.put("score", score);
             }catch(JSONException e){
                 Log.e(Main.LOG_TAG, "MatchData.event.toJson Exception: " + e.getMessage());
-                Toast.makeText(context, R.string.fail_read_match, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.fail_store_match, Toast.LENGTH_SHORT).show();
             }
             return evt;
         }

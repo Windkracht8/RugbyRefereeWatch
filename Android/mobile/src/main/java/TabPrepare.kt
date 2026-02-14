@@ -61,8 +61,6 @@ fun TabPrepare(
 	var changeValueType by remember { mutableStateOf<ValueTypes?>(null) }
 	var changeValueValue by remember { mutableIntStateOf(0) }
 	var changeValueCanBe0 by remember { mutableStateOf(true) }
-	var showManagePlayers by remember { mutableStateOf(false) }
-	var managePlayersIsHome by remember { mutableStateOf(true) }
 
 	val teamColors = stringArrayResource(R.array.team_colors)
 	val standardMatchTypes = stringArrayResource(R.array.match_types)
@@ -71,12 +69,7 @@ fun TabPrepare(
 	LazyColumn(Modifier.fillMaxSize().padding(horizontal = 5.dp)) {
 		item { OutlinedButton(
 			modifier = Modifier.fillMaxWidth(),
-			onClick = {
-				if(matchType.periodTime == 0) context.toast(R.string.time_period_empty)
-				else if(matchType.periodCount == 0) context.toast(R.string.period_count_empty)
-				else if(matchType.pointsTry == 0) context.toast(R.string.points_try_empty)
-				else onPrepareClicked()
-			}
+			onClick = onPrepareClicked
 		) {
 			Text(
 				text = stringResource(R.string.send_to_watch),
@@ -85,6 +78,11 @@ fun TabPrepare(
 					else colorScheme.primary.copy(alpha = 0.5f)
 			)
 		} }
+		item {
+			Setting(R.string.match_type, matchType.name, 1) {
+				changeMatchType = true
+			}
+		}
 		item {
 			Row (modifier = Modifier.fillMaxWidth()) {
 				Column (modifier = Modifier.weight(1f)){
@@ -96,25 +94,6 @@ fun TabPrepare(
 						changeTeamIsHome = true
 						changeTeamColor = true
 					}
-					val frontRowCount = prepData.homePlayers.count { it.frontRow }
-					Setting(
-						title = R.string.home_players,
-						subTitle =
-							if(prepData.homePlayers.isEmpty()) "0"
-							else if(frontRowCount > 0) stringResource(
-								R.string.x_players_x_fr,
-								prepData.homePlayers.size,
-								frontRowCount
-							)
-							else stringResource(
-								R.string.x_players,
-								prepData.homePlayers.size
-							),
-						onClick = {
-							managePlayersIsHome = true
-							showManagePlayers = true
-						}
-					)
 				}
 				Column (modifier = Modifier.weight(1f)){
 					Setting(R.string.away_name, prepData.awayName, 2) {
@@ -125,33 +104,7 @@ fun TabPrepare(
 						changeTeamIsHome = false
 						changeTeamColor = true
 					}
-					val frontRowCount = prepData.awayPlayers.count { it.frontRow }
-					Setting(
-						title = R.string.away_players,
-						subTitle =
-							if(prepData.awayPlayers.isEmpty()) "0"
-							else if(frontRowCount > 0) stringResource(
-								R.string.x_players_x_fr,
-								prepData.awayPlayers.size,
-								frontRowCount
-							)
-							else stringResource(
-								R.string.x_players,
-								prepData.awayPlayers.size
-							),
-						align = 2,
-						onClick = {
-							managePlayersIsHome = false
-							showManagePlayers = true
-						}
-					)
-
 				}
-			}
-		}
-		item {
-			Setting(R.string.match_type, matchType.name, 1) {
-				changeMatchType = true
 			}
 		}
 		if (!standardMatchTypes.contains(matchType.name)) {
@@ -442,13 +395,6 @@ fun TabPrepare(
 			}
 		)
 	}
-	if (showManagePlayers) {
-		ManagePlayers(
-			prepData = prepData,
-			isHome = managePlayersIsHome,
-			close = { showManagePlayers = false }
-		)
-	}
 }
 
 enum class ValueTypes{
@@ -513,18 +459,9 @@ fun SettingSwitch(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewTabPrepare() {
-	val prepData = PrepData()
-	val tempPlayers = mutableListOf<MatchData.Player>()
-	for (i in 1..23) {
-		val player = MatchData.Player(i)
-		player.frontRow = i < 4
-		player.captain = i == 7
-		tempPlayers.add(player)
-	}
-	prepData.homePlayers = tempPlayers
 	W8Theme (null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
-		MatchType("15s"), prepData,
+		MatchType("15s"), PrepData(),
 		{}, {}, {}
 	) } }
 }
