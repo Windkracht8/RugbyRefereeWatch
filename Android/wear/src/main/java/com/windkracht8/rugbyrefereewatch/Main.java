@@ -50,6 +50,7 @@ import androidx.wear.ongoing.Status;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,6 +100,7 @@ public class Main extends Activity{
     private Score score;
     private FoulPlay foulPlay;
     private PlayerNo playerNo;
+    private PlayerList playerList;
     private ExtraTime extraTime;
     private Correct correct;
     private View touchView;
@@ -263,6 +265,8 @@ public class Main extends Activity{
         foulPlay.onCreateMain(this);
         playerNo = findViewById(R.id.playerNo);
         playerNo.onCreateMain(this);
+        playerList = findViewById(R.id.playerList);
+        playerList.onCreateMain(this);
         correct = findViewById(R.id.correct);
         correct.setOnClickListener(v->correctClicked());
         correct.onCreateMain();
@@ -1326,6 +1330,21 @@ public class Main extends Activity{
                 record_pens = settings.getBoolean("record_pens");
             if(settings.has("delay_end"))
                 delay_end = settings.getBoolean("delay_end");
+
+            if(settings.has("home_players")){
+                JSONArray home_players = settings.getJSONArray("home_players");
+                match.home.players.clear();
+                for(int i = 0; i < home_players.length(); i++){
+                    match.home.players.add(new MatchData.Player(home_players.getJSONObject(i)));
+                }
+            }
+            if(settings.has("away_players")){
+                JSONArray away_players = settings.getJSONArray("away_players");
+                match.away.players.clear();
+                for(int i = 0; i < away_players.length(); i++){
+                    match.away.players.add(new MatchData.Player(away_players.getJSONObject(i)));
+                }
+            }
         }catch(Exception e){
             Log.e(Main.LOG_TAG, "Main.incomingSettings Exception: " + e.getMessage());
             runOnUiThread(()->Toast.makeText(this, R.string.fail_receive_settings, Toast.LENGTH_SHORT).show());

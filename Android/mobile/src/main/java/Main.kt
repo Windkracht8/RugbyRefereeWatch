@@ -27,6 +27,7 @@ import com.windkracht8.rugbyrefereewatch.MatchData.Companion.HOME_ID
 import com.windkracht8.rugbyrefereewatch.MatchData.EventWhat
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -287,6 +288,12 @@ class Main : ComponentActivity() {
 		if(sendWatchSettings) settings.put("record_player", prepData.recordPlayer)
 		if(sendWatchSettings) settings.put("record_pens", prepData.recordPens)
 		if(sendWatchSettings) settings.put("delay_end", prepData.delayEnd)
+		val homePlayersJson = JSONArray()
+		for (player in prepData.homePlayers) homePlayersJson.put(player.toJson())
+		settings.put("home_players", homePlayersJson)
+		val awayPlayersJson = JSONArray()
+		for (player in prepData.awayPlayers) awayPlayersJson.put(player.toJson())
+		settings.put("away_players", awayPlayersJson)
 
 		Comms.sendRequestPrep(settings)
 	}

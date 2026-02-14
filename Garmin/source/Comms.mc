@@ -161,6 +161,8 @@ class Comms{
 		MainView.main.record_player = Utils.getJsonBoolean("record_player", request, MainView.main.record_player);
 		MainView.main.record_pens = Utils.getJsonBoolean("record_pens", request, MainView.main.record_pens);
 		MainView.main.delay_end = Utils.getJsonBoolean("delay_end", request, MainView.main.delay_end);
+		//TODO home_players
+		//TODO away_players
 		sendResponse("{\"requestType\":\"prepare\",\"responseData\":\"okilly dokilly\"}");
 		MainView.main.updateAfterConfig();
 	}

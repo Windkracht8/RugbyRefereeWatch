@@ -16,6 +16,7 @@
     <string name="tTimer_placeholder" translatable="false">00:00</string>
     <string name="b_back" translatable="false">↤</string>
     <string name="b_done" translatable="false">✓</string>
+    <string name="b_keypad" translatable="false">𐧿</string>
     <string name="_0" translatable="false">0</string>
     <string name="_1" translatable="false">1</string>
     <string name="_2" translatable="false">2</string>
@@ -86,6 +87,9 @@
     <string name="score_goal_pen_text">pen goal</string>
     <string name="foul_play_text">foul play</string>
     <string name="replacement_desc">replacement button</string>
+    <string name="no_name">no name</string>
+    <string name="front_row">front row</string>
+    <string name="captain">captain</string>
 
     <!-- foul play screen -->
     <string name="card_yellow">yellow</string>
@@ -219,5 +223,6 @@
     <string name="fail_store_settings">Failed to store settings</string>
     <string name="fail_read_settings">Failed to read settings</string>
     <string name="fail_receive_settings">Failed to receive settings</string>
+    <string name="fail_read_match">Failed to read match</string>
     <string name="fail_show_log">Failed to show log</string>
 </resources>

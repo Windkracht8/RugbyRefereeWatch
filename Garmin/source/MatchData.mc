@@ -69,6 +69,7 @@ class MatchData{
 		home.pens = 0;
 		home.sinbins = [];
 		home.kickoff = false;
+		home.players = [];
 		away.team = AWAY_ID;
 		away.tot = 0;
 		away.tries = 0;
@@ -80,6 +81,7 @@ class MatchData{
 		away.pens = 0;
 		away.sinbins = [];
 		away.kickoff = false;
+		away.players = [];
 	}
 	function toDictionary() as Dictionary{
 		var events_dict = [];
@@ -264,6 +266,7 @@ class MatchData{
 		var pens = 0;
 		var sinbins as Array<Sinbin> = [];
 		var kickoff = false;
+		var players as Array<Player> = [];
 		function initialize(id, team, color){
 			self.id = id;
 			self.team = team;
@@ -283,8 +286,18 @@ class MatchData{
 			red_cards = team_dict.get("red_cards");
 			pens = team_dict.get("pens");
 			kickoff = team_dict.get("kickoff");
+			var players_dict = team_dict.get("players") as Array;
+			for(var i=0; i<players_dict.size(); i++){
+				var player = new MatchData.Player();
+				player.fromDictionary(players_dict[i]);
+				players.add(player);
+			}
 		}
 		function toDictionary() as Dictionary{
+			var players_dict = [];
+			for(var i=0; i<players.size(); i++){
+				players_dict.add(players[i].toDictionary());
+			}
 			return {
 				"id" => id,
 				"team" => team,
@@ -299,7 +312,8 @@ class MatchData{
 				"yellow_cards" => yellow_cards,
 				"red_cards" => red_cards,
 				"pens" => pens,
-				"kickoff" => kickoff
+				"kickoff" => kickoff,
+				"players" => players_dict
 			};
 		}
 		function toJson() as String{
@@ -314,6 +328,11 @@ class MatchData{
 			json += ",\"red_cards\":" + red_cards;
 			json += ",\"pens\":" + pens;
 			json += ",\"kickoff\":" + kickoff;
+			json += ",\"players\":[";
+			for(var i=0; i<players.size(); i++){
+				if(i>0){json += ",";}
+				json += players[i].toJson();
+			}
 			json += "]}";
 			return json;
 		}
@@ -414,6 +433,33 @@ class MatchData{
 			id = timestamp;
 			self.end = end;
 			self.team_is_home = team_is_home;
+		}
+	}
+	class Player{
+		var number;
+		var name;
+		var front_row;
+		var captain;
+		function fromDictionary(player_dict){
+			number = player_dict.get("number");
+			name = player_dict.get("name");
+			front_row = player_dict.get("front_row");
+			captain = player_dict.get("captain");
+		}
+		function toDictionary() as Dictionary{
+			return {
+				"number" => number,
+				"name" => name,
+				"front_row" => front_row,
+				"captain" => captain
+			};
+		}
+		function toJson() as String{
+			var json = "{\"number\":" + number;
+			json += ",\"name\":\"" + name + "\"";
+			json += ",\"front_row\":" + front_row;
+			json += ",\"captain\":" + captain + "}";
+			return json;
 		}
 	}
 }

@@ -61,6 +61,8 @@ fun TabPrepare(
 	var changeValueType by remember { mutableStateOf<ValueTypes?>(null) }
 	var changeValueValue by remember { mutableIntStateOf(0) }
 	var changeValueCanBe0 by remember { mutableStateOf(true) }
+	var showManagePlayers by remember { mutableStateOf(false) }
+	var managePlayersIsHome by remember { mutableStateOf(true) }
 
 	val teamColors = stringArrayResource(R.array.team_colors)
 	val standardMatchTypes = stringArrayResource(R.array.match_types)
@@ -94,6 +96,14 @@ fun TabPrepare(
 						changeTeamIsHome = true
 						changeTeamColor = true
 					}
+					Setting(
+						title = R.string.home_players,
+						subTitle = getPlayerCountText(prepData.homePlayers) ?: "-",
+						onClick = {
+							managePlayersIsHome = true
+							showManagePlayers = true
+						}
+					)
 				}
 				Column (modifier = Modifier.weight(1f)){
 					Setting(R.string.away_name, prepData.awayName, 2) {
@@ -104,6 +114,16 @@ fun TabPrepare(
 						changeTeamIsHome = false
 						changeTeamColor = true
 					}
+					Setting(
+						title = R.string.away_players,
+						subTitle = getPlayerCountText(prepData.awayPlayers) ?: "-",
+						align = 2,
+						onClick = {
+							managePlayersIsHome = false
+							showManagePlayers = true
+						}
+					)
+
 				}
 			}
 		}
@@ -395,6 +415,17 @@ fun TabPrepare(
 			}
 		)
 	}
+	if (showManagePlayers) {
+		ManagePlayers(
+			players = if(managePlayersIsHome) prepData.homePlayers else prepData.awayPlayers,
+			isHome = managePlayersIsHome,
+			save = { players ->
+				if(managePlayersIsHome) prepData.homePlayers = players
+				else prepData.awayPlayers = players
+			},
+			close = { showManagePlayers = false }
+		)
+	}
 }
 
 enum class ValueTypes{
@@ -459,9 +490,18 @@ fun SettingSwitch(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewTabPrepare() {
+	val prepData = PrepData()
+	val tempPlayers = mutableListOf<MatchData.Player>()
+	for (i in 1..23) {
+		val player = MatchData.Player(i)
+		player.frontRow = i < 4
+		player.captain = i == 7
+		tempPlayers.add(player)
+	}
+	prepData.homePlayers = tempPlayers
 	W8Theme (null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
-		MatchType("15s"), PrepData(),
+		MatchType("15s"), prepData,
 		{}, {}, {}
 	) } }
 }

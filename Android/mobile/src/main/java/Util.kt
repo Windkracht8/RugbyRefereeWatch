@@ -10,6 +10,9 @@ package com.windkracht8.rugbyrefereewatch
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.windkracht8.rugbyrefereewatch.MatchData.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,4 +45,12 @@ fun Context.replacementString(event: MatchData.Event): String {
 	val whoLeave = if((event.whoLeave ?: 0) == 0) "?" else event.whoLeave
 	if (whoEnter == "?" && whoLeave == "?") return ""
 	return " " + getString(R.string.replaced, whoEnter, whoLeave)
+}
+
+@Composable
+fun getPlayerCountText(players: List<Player>): String?{
+	if(players.isEmpty()) return null
+	val frontRowCount = players.count { it.frontRow }
+	return if(frontRowCount > 0) stringResource(R.string.x_players_x_fr, players.size, frontRowCount)
+	else stringResource(R.string.x_players, players.size)
 }

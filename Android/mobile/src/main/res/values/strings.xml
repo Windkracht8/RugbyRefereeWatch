@@ -10,6 +10,7 @@
     <string name="app_name" translatable="false">Rugby Referee Watch</string>
 
     <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
     <string name="delete">Delete</string>
 
     <!-- home -->
@@ -80,8 +81,10 @@
     <string name="send_to_watch">Send to watch</string>
     <string name="home_name">Home team name</string>
     <string name="home_color">Home team color</string>
+    <string name="home_players">Home players</string>
     <string name="away_name">Away team name</string>
     <string name="away_color">Away team color</string>
+    <string name="away_players">Away players</string>
     <string name="match_type">Match type</string>
     <string name="match_type_show">Show match type details</string>
     <string name="match_type_hide">Hide match type details</string>
@@ -105,6 +108,19 @@
     <string name="record_player">Record player #</string>
     <string name="record_pens">Record penalties</string>
     <string name="delay_end">Delay end of period</string>
+    <string name="manage_players_intro">Tab the number, name, front row and captain buttons to edit
+        the players</string>
+    <string name="got_it">got it</string>
+    <string name="add_player">Add player</string>
+    <string name="reset">reset</string>
+    <string name="no_name">no name</string>
+    <string name="front_row">front row</string>
+    <string name="captain">captain</string>
+    <string name="enter_player_number">Enter player number</string>
+    <string name="player_number_exists">Player number already exists</string>
+    <string name="enter_player_name">Enter player name</string>
+    <string name="x_players">%d players</string>
+    <string name="x_players_x_fr">%d players %d front row</string>
 
     <string name="time_period_empty">Time/period can\'t be empty</string>
     <string name="period_count_empty">Period count can\'t be empty</string>
@@ -113,6 +129,7 @@
     <!-- prepare.custom match type -->
     <string name="del_match_type">Delete match type</string>
     <string name="save_match_type">Save custom match type</string>
+    <string name="enter_name">Enter name</string>
     <string name="fail_empty_name">Name cannot be empty</string>
     <string name="fail_standard_match_type">Cannot override standard match type</string>
 

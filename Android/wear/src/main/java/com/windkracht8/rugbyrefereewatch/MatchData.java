@@ -98,6 +98,7 @@ public class MatchData{
         home.pens = 0;
         home.sinbins.clear();
         home.kickoff = false;
+        home.players.clear();
         away.team = AWAY_ID;
         away.tot = 0;
         away.tries = 0;
@@ -111,6 +112,7 @@ public class MatchData{
         away.pens = 0;
         away.sinbins.clear();
         away.kickoff = false;
+        away.players.clear();
     }
     void removeEvent(Event event){
         event.deleted = true;
@@ -225,6 +227,7 @@ public class MatchData{
         int pens = 0;
         final ArrayList<Sinbin> sinbins = new ArrayList<>();
         boolean kickoff = false;
+        final ArrayList<Player> players = new ArrayList<>();
         private Team(String id, String team, String color){
             this.id = id;
             this.team = team;
@@ -245,6 +248,10 @@ public class MatchData{
             red_cards = team_js.optInt("red_cards");
             pens = team_js.getInt("pens");
             kickoff = team_js.getBoolean("kickoff");
+            JSONArray players_json = team_js.getJSONArray("events");
+            for(int i = 0; i < players_json.length(); i++){
+                players.add(new Player(players_json.getJSONObject(i)));
+            }
         }
         boolean isHome(){return id.equals(HOME_ID);}
         Sinbin addSinbin(long timestamp, int end, String team){
@@ -277,6 +284,9 @@ public class MatchData{
                 ret.put("red_cards", red_cards);
                 ret.put("pens", pens);
                 ret.put("kickoff", kickoff);
+                JSONArray players_json = new JSONArray();
+                for(Player player : players) players_json.put(player.toJson(context));
+                ret.put("players", players_json);
             }catch(JSONException e){
                 Log.e(Main.LOG_TAG, "MatchData.match.toJson Exception: " + e.getMessage());
                 Toast.makeText(context, R.string.fail_store_match, Toast.LENGTH_SHORT).show();
@@ -350,6 +360,31 @@ public class MatchData{
             id = timestamp;
             this.end = end;
             team_is_home = team.equals(HOME_ID);
+        }
+    }
+    static class Player{
+        private final int number;
+        private final String name;
+        private final boolean front_row;
+        private final boolean captain;
+        Player(JSONObject player_js) throws JSONException{
+            number = player_js.getInt("number");
+            name = player_js.getString("name");
+            front_row = player_js.getBoolean("front_row");
+            captain = player_js.getBoolean("captain");
+        }
+        private JSONObject toJson(Context context){
+            JSONObject ret = new JSONObject();
+            try{
+                ret.put("number", number);
+                ret.put("name", name);
+                ret.put("front_row", front_row);
+                ret.put("captain", captain);
+            }catch(JSONException e){
+                Log.e(Main.LOG_TAG, "MatchData.player.toJson Exception: " + e.getMessage());
+                Toast.makeText(context, R.string.fail_store_match, Toast.LENGTH_SHORT).show();
+            }
+            return ret;
         }
     }
 }

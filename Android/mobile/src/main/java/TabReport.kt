@@ -85,6 +85,8 @@ fun TabReport(
 	val showPens = match.home.pens > 0 || match.away.pens > 0
 
 	var shareDialog by remember { mutableStateOf(false) }
+	var showManagePlayers by remember { mutableStateOf(false) }
+	var managePlayersIsHome by remember { mutableStateOf(true) }
 
 	Column(Modifier.fillMaxSize()) {
 		Row(Modifier.fillMaxWidth()) {
@@ -114,6 +116,39 @@ fun TabReport(
 					fontWeight = FontWeight.Bold,
 					textAlign = TextAlign.Center
 				)
+			}
+		}
+		Row(Modifier.fillMaxWidth()) {
+			if(viewType == VIEW_TYPE_EDIT) {
+				TextButton(
+					modifier = Modifier.weight(1f),
+					onClick = {
+						managePlayersIsHome = true
+						showManagePlayers = true
+					}
+				) { Text(getPlayerCountText(match.home.players) ?: stringResource(R.string.home_players)) }
+				TextButton(
+					modifier = Modifier.weight(1f),
+					onClick = {
+						managePlayersIsHome = false
+						showManagePlayers = true
+					}
+				) { Text(getPlayerCountText(match.away.players) ?: stringResource(R.string.away_players)) }
+			} else if(match.home.players.isNotEmpty() || match.away.players.isNotEmpty()) {
+				TextButton(
+					modifier = Modifier.weight(1f),
+					onClick = {
+						managePlayersIsHome = true
+						showManagePlayers = true
+					}
+				) { Text(getPlayerCountText(match.home.players) ?: "-") }
+				TextButton(
+					modifier = Modifier.weight(1f),
+					onClick = {
+						managePlayersIsHome = false
+						showManagePlayers = true
+					}
+				) { Text(getPlayerCountText(match.away.players) ?: "-") }
 			}
 		}
 		if(viewType != VIEW_TYPE_EDIT) {
@@ -287,6 +322,18 @@ fun TabReport(
 			dismissButton = {
 				TextButton(onClick = { shareDialog = false }) { Text(R.string.cancel) }
 			}
+		)
+	}
+	if (showManagePlayers) {
+		ManagePlayers(
+			players = if(managePlayersIsHome) match.home.players else match.away.players,
+			isHome = managePlayersIsHome,
+			isEdit = viewType == VIEW_TYPE_EDIT,
+			save = { players ->
+				if(managePlayersIsHome) matchEdit.home.players = players
+				else matchEdit.away.players = players
+			},
+			close = { showManagePlayers = false }
 		)
 	}
 }

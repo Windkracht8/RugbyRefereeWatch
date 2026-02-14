@@ -431,6 +431,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+    <com.windkracht8.rugbyrefereewatch.PlayerList
+        android:id="@+id/playerList"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
     <com.windkracht8.rugbyrefereewatch.ExtraTime
         android:id="@+id/extraTime"
         android:visibility="gone"

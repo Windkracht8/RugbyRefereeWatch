@@ -66,7 +66,7 @@ class CommsBT{
                     break;
                 case "prepare":
                     //{"version":2,"requestType":"prepare","requestData":{ settings }}
-                    //settings: {"home_name":"home","home_color":"white","away_name":"away","away_color":"orange","match_type":"15s","period_time":40,"period_count":2,"sinbin":10,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0,"screen_on":true,"timer_type":1,"record_player":false,"record_pens":false,"delay_end":false}
+                    //settings: {"home_name":"home","home_color":"white","away_name":"away","away_color":"orange","match_type":"15s","period_time":40,"period_count":2,"sinbin":10,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0,"screen_on":true,"timer_type":1,"record_player":false,"record_pens":false,"delay_end":false,"home_players":[{"number":1,"name:"Fred",front_row:true,captain:false}],"away_players":[]}
                     onReceivePrepare(requestMessage.getJSONObject("requestData"));
                     break;
                 default:
