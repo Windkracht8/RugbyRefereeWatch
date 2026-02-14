@@ -282,6 +282,7 @@ class MatchData{
 			yellow_cards = team_dict.get("yellow_cards");
 			red_cards = team_dict.get("red_cards");
 			pens = team_dict.get("pens");
+			kickoff = team_dict.get("kickoff");
 		}
 		function toDictionary() as Dictionary{
 			return {
@@ -297,7 +298,8 @@ class MatchData{
 				"pen_goals" => pen_goals,
 				"yellow_cards" => yellow_cards,
 				"red_cards" => red_cards,
-				"pens" => pens
+				"pens" => pens,
+				"kickoff" => kickoff
 			};
 		}
 		function toJson() as String{
@@ -311,7 +313,8 @@ class MatchData{
 			json += ",\"yellow_cards\":" + yellow_cards;
 			json += ",\"red_cards\":" + red_cards;
 			json += ",\"pens\":" + pens;
-			json += ",\"kickoff\":" + kickoff + "}";
+			json += ",\"kickoff\":" + kickoff;
+			json += "]}";
 			return json;
 		}
 		public function isHome(){return id == MatchData.HOME_ID;}
