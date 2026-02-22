@@ -252,7 +252,7 @@ fun DeviceSelectScreen(
 	}
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewDeviceSelect() {
 	Comms
@@ -261,11 +261,6 @@ fun PreviewDeviceSelect() {
 		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }
 }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
+@Preview(device = Devices.PIXEL_8)
 @Composable
-fun PreviewDeviceSelectDay() {
-	W8Theme (null, null) { Surface { DeviceSelectScreen(
-		{}, {}, {}, {},
-		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
-	) } }
-}
+fun PreviewDeviceSelectDay() { PreviewDeviceSelect() }

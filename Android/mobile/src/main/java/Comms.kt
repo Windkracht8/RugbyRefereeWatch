@@ -221,7 +221,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			}
 			when (requestType) {
 				"sync" -> {
-					//{requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
+					//{"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
 					//settings: {"home_name":"home","home_color":"white","away_name":"away","away_color":"orange","match_type":"15s","period_time":40,"period_count":2,"sinbin":10,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0,"screen_on":true,"timer_type":1,"record_player":false,"record_pens":false,"delay_end":false,"help_version":6}
 					val responseData = response.getJSONObject("responseData")
 					val matchIdsJson = responseData.getJSONArray("match_ids")

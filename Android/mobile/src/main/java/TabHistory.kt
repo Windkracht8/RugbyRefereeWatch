@@ -152,15 +152,14 @@ fun matchTitle(match: MatchData): String {
 	return "$date ${match.home.team} v ${match.away.team} ${match.home.tot}:${match.away.tot}"
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewTabHistory() {
+	MatchStore.matches.clear()
 	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[]}")))
 	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1743850855028,\"format\":3,\"settings\":{\"match_type\":\"custom\",\"period_time\":25,\"period_count\":2,\"sinbin\":7,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"clock_pk\":60,\"clock_con\":60,\"clock_restart\":0},\"home\":{\"id\":\"home\",\"team\":\"U14 Donau\",\"color\":\"white\",\"tot\":56,\"tries\":8,\"cons\":8,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":true,\"pen_goals\":0,\"drop_goals\":0},\"away\":{\"id\":\"away\",\"team\":\"Celtics\",\"color\":\"blue\",\"tot\":7,\"tries\":1,\"cons\":1,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":false,\"pen_goals\":0,\"drop_goals\":0},\"events\":[]}")))
 	W8Theme (null, null) { Surface { TabHistory({},{},{},{}) } }
 }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
+@Preview(device = Devices.PIXEL_8)
 @Composable
-fun PreviewTabHistoryDay() {
-	W8Theme (null, null) { Surface { TabHistory({},{},{},{}) } }
-}
+fun PreviewTabHistoryDay() { PreviewTabHistory() }

@@ -456,7 +456,7 @@ fun SettingSwitch(
 	}
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewTabPrepare() {
 	W8Theme (null, null) { Surface { TabPrepare(
@@ -465,6 +465,6 @@ fun PreviewTabPrepare() {
 		{}, {}, {}
 	) } }
 }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(device = Devices.PIXEL_8)
 @Composable
 fun PreviewTabPrepareDay() { PreviewTabPrepare() }

@@ -68,9 +68,8 @@ fun Home(
 	onSaveMatchType: (String) -> Unit,
 	onDeleteMatchType: () -> Unit
 ){
-	val iconWatchConnecting =
-		AnimatedImageVector.animatedVectorResource(R.drawable.icon_watch_connecting)
-	var iconWatchConnectingAtEnd by remember { mutableStateOf(false) }
+	val iconAnimation = AnimatedImageVector.animatedVectorResource(R.drawable.watch_connecting)
+	var iconAnimationAtEnd by remember { mutableStateOf(false) }
 	val navController = rememberNavController()
 	var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 	LaunchedEffect(navController) {
@@ -92,16 +91,16 @@ fun Home(
 					Image(
 						modifier = Modifier.size(70.dp).clickable { onIconClick() },
 						painter = rememberAnimatedVectorPainter(
-							iconWatchConnecting,
-							iconWatchConnectingAtEnd
+							iconAnimation,
+							iconAnimationAtEnd
 						),
 						contentDescription = "watch icon"
 					)
-					iconWatchConnectingAtEnd = true
+					iconAnimationAtEnd = true
 				} else {
 					Icon(
 						modifier = Modifier.size(70.dp).clickable { onIconClick() },
-						imageVector = ImageVector.vectorResource(R.drawable.icon_watch),
+						imageVector = ImageVector.vectorResource(R.drawable.watch),
 						tint = when (commsBTStatus) {
 							Comms.Status.DISCONNECTED, null -> colorScheme.onBackground.copy(alpha = 0.38f)
 							Comms.Status.ERROR -> colorScheme.error
@@ -189,7 +188,7 @@ fun Home(
 @Composable
 fun Text(text: Int) = Text(stringResource(text))
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewHome() {
 	Comms.deviceName = "Test"
@@ -203,6 +202,6 @@ fun PreviewHome() {
 		)
 	} }
 }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
+@Preview(device = Devices.PIXEL_8)
 @Composable
 fun PreviewHomeDay() { PreviewHome() }

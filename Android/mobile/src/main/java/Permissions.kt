@@ -104,9 +104,9 @@ fun PermissionsScreen(onNearbyClick: () -> Unit) {
 	}
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewPermissions() { W8Theme (null, null) { Surface { PermissionsScreen {} } } }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
+@Preview(device = Devices.PIXEL_8)
 @Composable
-fun PreviewPermissionsDay() { W8Theme (null, null) { Surface { PermissionsScreen {} } } }
+fun PreviewPermissionsDay() { PreviewPermissions() }

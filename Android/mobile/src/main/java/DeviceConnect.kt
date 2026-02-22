@@ -49,9 +49,8 @@ class DeviceConnect : ComponentActivity() {
 
 @Composable
 fun DeviceConnectScreen() {
-	val iconWatchConnecting =
-		AnimatedImageVector.animatedVectorResource(R.drawable.icon_watch_connecting)
-	var iconWatchConnectingAtEnd by remember { mutableStateOf(false) }
+	val iconAnimation = AnimatedImageVector.animatedVectorResource(R.drawable.watch_connecting)
+	var iconAnimationAtEnd by remember { mutableStateOf(false) }
 	Column(Modifier.fillMaxSize().safeDrawingPadding()) {
 		Text(
 			modifier = Modifier.fillMaxWidth(),
@@ -70,24 +69,19 @@ fun DeviceConnectScreen() {
 		)
 		Image(
 			modifier = Modifier.fillMaxSize(),
-			painter = rememberAnimatedVectorPainter(
-				iconWatchConnecting,
-				iconWatchConnectingAtEnd
-			),
+			painter = rememberAnimatedVectorPainter(iconAnimation, iconAnimationAtEnd),
 			contentDescription = "watch icon"
 		)
-		iconWatchConnectingAtEnd = true
+		iconAnimationAtEnd = true
 	}
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, apiLevel = 35)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewDeviceConnect() {
 	Comms
 	W8Theme (null, null) { Surface { DeviceConnectScreen() } }
 }
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, apiLevel = 35)
+@Preview(device = Devices.PIXEL_8)
 @Composable
-fun PreviewDeviceConnectDay() {
-	W8Theme (null, null) { Surface { DeviceConnectScreen() } }
-}
+fun PreviewDeviceConnectDay() { PreviewDeviceConnect() }
