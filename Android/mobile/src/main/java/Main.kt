@@ -2,16 +2,19 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.windkracht8.rugbyrefereewatch
 
+import android.Manifest.permission.BLUETOOTH
+import android.Manifest.permission.BLUETOOTH_CONNECT
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +28,12 @@ import androidx.lifecycle.lifecycleScope
 import com.windkracht8.rugbyrefereewatch.MatchData.Companion.AWAY_ID
 import com.windkracht8.rugbyrefereewatch.MatchData.Companion.HOME_ID
 import com.windkracht8.rugbyrefereewatch.MatchData.EventWhat
+import com.windkracht8.rugbyrefereewatch.ui.DeviceConnect
+import com.windkracht8.rugbyrefereewatch.ui.DeviceSelect
+import com.windkracht8.rugbyrefereewatch.ui.Home
+import com.windkracht8.rugbyrefereewatch.ui.Permissions
+import com.windkracht8.rugbyrefereewatch.ui.W8Theme
+import com.windkracht8.rugbyrefereewatch.ui.hasPermission
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -37,6 +46,15 @@ class Main : ComponentActivity() {
 	var commsBTStatus by mutableStateOf(Comms.status.value)
 	lateinit var matchType: MatchType
 	lateinit var prepData: PrepData
+	companion object {
+		var hasBT by mutableStateOf(false)
+		fun hasBT(context: Context): Boolean {
+			hasBT =
+				if(Build.VERSION.SDK_INT >= 31) context.hasPermission(BLUETOOTH_CONNECT)
+				else context.hasPermission(BLUETOOTH)
+			return hasBT
+		}
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		installSplashScreen()
@@ -46,27 +64,31 @@ class Main : ComponentActivity() {
 		prepData = PrepData(sharedPreferences)
 
 		setContent {
-			W8Theme (window, resources) { Surface { Home(
-				commsBTStatus,
-				::onIconClick,
-				::onImportClick,
-				::deleteMatches,
-				::exportMatches,
-				::shareMatch,
-				::saveMatch,
-				matchType,
-				prepData,
-				::onPrepareClicked,
-				::onSaveMatchType,
-				::onDeleteMatchType
-			) } }
+			W8Theme(window, resources) {
+				Surface {
+					Home(
+						commsBTStatus,
+						::onIconClick,
+						::onImportClick,
+						::deleteMatches,
+						::exportMatches,
+						::shareMatch,
+						::saveMatch,
+						matchType,
+						prepData,
+						::onPrepareClicked,
+						::onSaveMatchType,
+						::onDeleteMatchType
+					)
+				}
+			}
 		}
 
 		lifecycleScope.launch {
 			Comms.status.collect { status ->
 				logD{"Main: CommsBT status change: $status"}
 				commsBTStatus = Comms.status.value
-				if (commsBTStatus == Comms.Status.CONNECTING) {
+				if(commsBTStatus == Comms.Status.CONNECTING) {
 					startActivity(Intent(this@Main, DeviceConnect::class.java))
 				}
 			}
@@ -84,19 +106,18 @@ class Main : ComponentActivity() {
 		lifecycleScope.launch { error.collect { toast(it) } }
 		runInBackground { MatchStore.read(this@Main) }
 
-		Permissions.checkPermissions(this)
-		if (!Permissions.hasBT) startActivity(
+		if(!hasBT(this)) startActivity(
 			Intent(this, Permissions::class.java)
 		)
 	}
 	override fun onResume() {
 		super.onResume()
-		if (Permissions.hasBT) {
+		if(hasBT(this)) {
 			registerReceiver(
 				btBroadcastReceiver,
 				IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
 			)
-			if (Comms.status.value == null) runInBackground { Comms.start(this@Main) }
+			if(Comms.status.value == null) runInBackground { Comms.start(this@Main) }
 		}
 	}
 	override fun onPause() {
@@ -115,12 +136,12 @@ class Main : ComponentActivity() {
 	}
 	val btBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent) {
-			if (BluetoothAdapter.ACTION_STATE_CHANGED == intent.action) {
+			if(BluetoothAdapter.ACTION_STATE_CHANGED == intent.action) {
 				val btState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)
-				if (btState == BluetoothAdapter.STATE_TURNING_OFF) {
+				if(btState == BluetoothAdapter.STATE_TURNING_OFF) {
 					Comms.onError(R.string.fail_BT_off)
 					Comms.stop()
-				} else if (btState == BluetoothAdapter.STATE_ON) {
+				} else if(btState == BluetoothAdapter.STATE_ON) {
 					runInBackground { Comms.start(this@Main) }
 				}
 			}
@@ -129,9 +150,9 @@ class Main : ComponentActivity() {
 
 	fun onIconClick() {
 		logD{"onIconClick: ${Comms.status.value}"}
-		if (!Permissions.hasBT) {
+		if(!hasBT(this)) {
 			startActivity(Intent(this, Permissions::class.java))
-		} else if (Comms.status.value == Comms.Status.DISCONNECTED) {
+		} else if(Comms.status.value == Comms.Status.DISCONNECTED) {
 			startActivity(Intent(this, DeviceSelect::class.java))
 		} else {
 			Comms.stop()
@@ -140,7 +161,7 @@ class Main : ComponentActivity() {
 	fun onImportClick() { importMatchesResult.launch(arrayOf("application/json")) }
 	val importMatchesResult = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
 		logD{"Main.importMatchesResult: $uri"}
-		if (uri == null) {
+		if(uri == null) {
 			logE("Main.importMatchesResult empty uri")
 			toast(R.string.fail_import)
 			return@registerForActivityResult
@@ -162,7 +183,7 @@ class Main : ComponentActivity() {
 	val exportMatchesResult = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
 		logD{"Main.exportMatchesResult: $uri"}
 		val exportMatchIds2 = exportMatchIds
-		if (uri == null || exportMatchIds2 == null) {
+		if(uri == null || exportMatchIds2 == null) {
 			logD{"Main.exportMatchesResult empty uri"}
 			toast(R.string.fail_export)
 			return@registerForActivityResult
@@ -174,8 +195,8 @@ class Main : ComponentActivity() {
 	}
 	fun shareMatch(matchId: Long, eventTypes: List<Boolean>) {
 		logD{"Main.shareMatch: $matchId"}
-		val match = MatchStore.matches.firstOrNull{ it.matchId == matchId }
-		if (match == null) {
+		val match = MatchStore.matches.find{ it.matchId == matchId }
+		if(match == null) {
 			logE("Main.shareMatch match not found: $matchId")
 			toast(R.string.fail_share)
 			return
@@ -187,8 +208,8 @@ class Main : ComponentActivity() {
 		intent.putExtra(Intent.EXTRA_TEXT, getShareBody(match, eventTypes))
 		try {
 			startActivity(Intent.createChooser(intent, getString(R.string.share_report)))
-		} catch (e: java.lang.Exception) {
-			logE("Main.shareMatch Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("Main.shareMatch: ${e.message}")
 			toast(R.string.fail_share)
 		}
 	}
@@ -205,15 +226,15 @@ class Main : ComponentActivity() {
 		shareBody.append(getShareSubject(match)).append("\n\n")
 
 		val scoreHome = StringBuilder()
-		scoreHome.append("${match.home.team}\n  " + getString(R.string.tries) + ": ${match.home.tries}\n")
+		scoreHome.append("${match.home.team}\n	" + getString(R.string.tries) + ": ${match.home.tries}\n")
 
 		val scoreAway = StringBuilder()
-		scoreAway.append("${match.away.team}\n  " + getString(R.string.tries) + ": ${match.away.tries}\n")
+		scoreAway.append("${match.away.team}\n	" + getString(R.string.tries) + ": ${match.away.tries}\n")
 
 		fun scoreLine(home: Int, away: Int, label: Int) {
-			if (home > 0 || away > 0) {
-				scoreHome.append("  " + getString(label) + ": $home\n")
-				scoreAway.append("  " + getString(label) + ": $away\n")
+			if(home > 0 || away > 0) {
+				scoreHome.append("	" + getString(label) + ": $home\n")
+				scoreAway.append("	" + getString(label) + ": $away\n")
 			}
 		}
 		scoreLine(match.home.cons, match.away.cons, R.string.conversions)
@@ -223,26 +244,26 @@ class Main : ComponentActivity() {
 		scoreLine(match.home.penGoals, match.away.penGoals, R.string.pen_goals)
 		scoreLine(match.home.yellowCards, match.away.yellowCards, R.string.yellow_cards)
 		scoreLine(match.home.redCards, match.away.redCards, R.string.red_cards)
-		if (eventTypes[1]) scoreLine(match.home.pens, match.away.pens, R.string.penalties)
+		if(eventTypes[1]) scoreLine(match.home.pens, match.away.pens, R.string.penalties)
 
-		scoreHome.append("  " + getString(R.string.total) + ": ${match.home.tot}\n")
-		scoreAway.append("  " + getString(R.string.total) + ": ${match.away.tot}\n")
+		scoreHome.append("	" + getString(R.string.total) + ": ${match.home.tot}\n")
+		scoreAway.append("	" + getString(R.string.total) + ": ${match.away.tot}\n")
 
 		shareBody.append(scoreHome).append("\n").append(scoreAway).append("\n")
 
 		val doubleDigitTime = match.periodTime >= 10
 		match.events.forEach { event ->
-			if ((!eventTypes[0] && event.what in setOf(EventWhat.TIME_OFF, EventWhat.RESUME)) ||
+			if((!eventTypes[0] && event.what in setOf(EventWhat.TIME_OFF, EventWhat.RESUME)) ||
 				(!eventTypes[2] && event.what == EventWhat.PENALTY)
 			) return@forEach
 
-			if (eventTypes[1]) shareBody.append("${event.time}  ")
+			if(eventTypes[1]) shareBody.append("${event.time}	")
 
 			val timer = event.prettyTimerFull()
-			if (doubleDigitTime && timer.length == 4) shareBody.append("0")
-			shareBody.append("$timer  ")
+			if(doubleDigitTime && timer.length == 4) shareBody.append("0")
+			shareBody.append("$timer	")
 
-			if (event.what in setOf(EventWhat.START, EventWhat.END)) {
+			if(event.what in setOf(EventWhat.START, EventWhat.END)) {
 				shareBody.append(event.prettyPeriod())
 			} else {
 				shareBody.append(event.what.pretty())
@@ -252,7 +273,7 @@ class Main : ComponentActivity() {
 			event.who?.let { shareBody.append(" $it") }
 			shareBody.append(replacementString(event))
 
-			event.reason?.let { shareBody.append("\n      $it") }
+			event.reason?.let { shareBody.append("\n		$it") }
 			if(event.what == EventWhat.END) shareBody.append(" ${event.score}\n")
 			shareBody.append("\n")
 		}

@@ -1,62 +1,61 @@
 <!--
-  ~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
-  ~ This file is part of RugbyRefereeWatch
-  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
+	~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
+	~ This file is part of RugbyRefereeWatch
+	~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+	~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	~ You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt">
-    <aapt:attr name="android:drawable">
-        <vector
-            android:height="200dp"
-            android:width="200dp"
-            android:viewportHeight="200"
-            android:viewportWidth="200">
-            <path
-                android:pathData="M100.25,100m-62.5,0a62.5,62.5 0,1 1,125 0a62.5,62.5 0,1 1,-125 0"
-                android:strokeWidth="12.5"
-                android:strokeColor="#fff"/>
-            <path
-                android:pathData="m50.25,62.5c20.22,-30.22 76.21,-39.72 100,0L137.75,0H62.75Z"
-                android:fillColor="#fff"/>
-            <path
-                android:pathData="m50.25,137.5c20.22,30.22 76.21,39.72 100,0L137.75,200H62.75Z"
-                android:fillColor="#fff"/>
-            <group
-                android:name="rotationGroup"
-                android:pivotX="100"
-                android:pivotY="100"
-                android:rotation="0">
-                <path android:pathData="M72.5,52.37A55,55 0,0 1,100 45v55z">
-                    <aapt:attr name="android:fillColor">
-                        <gradient
-                            android:startX="87.7"
-                            android:startY="77.63"
-                            android:endX="100"
-                            android:endY="72.5"
-                            android:type="linear">
-                            <item
-                                android:offset="0"
-                                android:color="#0000"/>
-                            <item
-                                android:offset="1"
-                                android:color="#FF2BD2E3"/>
-                        </gradient>
-                    </aapt:attr>
-                </path>
-            </group>
-        </vector>
-    </aapt:attr>
-    <target android:name="rotationGroup">
-        <aapt:attr name="android:animation">
-            <objectAnimator
-                android:duration="1000"
-                android:repeatCount="infinite"
-                android:propertyName="rotation"
-                android:valueFrom="0"
-                android:valueTo="360"/>
-        </aapt:attr>
-    </target>
+	xmlns:aapt="http://schemas.android.com/aapt">
+	<aapt:attr name="android:drawable">
+		<vector
+			android:height="200dp"
+			android:width="200dp"
+			android:viewportHeight="200"
+			android:viewportWidth="200">
+			<path
+				android:pathData="M100.25,100m-62.5,0a62.5,62.5 0,1 1,125 0a62.5,62.5 0,1 1,-125 0"
+				android:strokeWidth="12.5"
+				android:strokeColor="#fff"/>
+			<path
+				android:pathData="m50.25,62.5c20.22,-30.22 76.21,-39.72 100,0L137.75,0H62.75Z"
+				android:fillColor="#fff"/>
+			<path
+				android:pathData="m50.25,137.5c20.22,30.22 76.21,39.72 100,0L137.75,200H62.75Z"
+				android:fillColor="#fff"/>
+			<group
+				android:name="rotationGroup"
+				android:pivotX="100"
+				android:pivotY="100"
+				android:rotation="0">
+				<path android:pathData="M72.5,52.37A55,55 0,0 1,100 45v55z">
+					<aapt:attr name="android:fillColor">
+						<gradient
+							android:startX="87.7"
+							android:startY="77.63"
+							android:endX="100"
+							android:endY="72.5"
+							android:type="linear">
+							<item
+								android:offset="0"
+								android:color="#0000"/>
+							<item
+								android:offset="1"
+								android:color="#FF2BD2E3"/>
+						</gradient>
+					</aapt:attr>
+				</path>
+			</group>
+		</vector>
+	</aapt:attr>
+	<target android:name="rotationGroup">
+		<aapt:attr name="android:animation">
+			<objectAnimator
+				android:duration="1000"
+				android:repeatCount="infinite"
+				android:propertyName="rotation"
+				android:valueFrom="0"
+				android:valueTo="360"/>
+		</aapt:attr>
+	</target>
 </animated-vector>

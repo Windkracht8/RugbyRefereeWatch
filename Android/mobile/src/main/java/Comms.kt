@@ -2,8 +2,8 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.windkracht8.rugbyrefereewatch
 
@@ -41,7 +41,6 @@ import java.io.OutputStream
 import java.util.UUID
 import java.util.function.Consumer
 
-@SuppressLint("MissingPermission")//handled by Permissions
 object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoListener, IQDeviceEventListener {
 	const val EMULATOR_MODE = false//false = release; true = testing in emulators
 	val RRW_UUID: UUID = UUID.fromString("8b16601b-5c76-4151-a930-2752849f4552")
@@ -66,7 +65,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	var iQMessageTimeoutJob: Job? = null
 
 	enum class Status { STARTING, DISCONNECTED, CONNECTING, CONNECTED_BT, CONNECTED_IQ, ERROR }
-	val status = MutableStateFlow(null as Status?)
+	val status = MutableStateFlow<Status?>(null)
 	var error by mutableIntStateOf(-1)
 	var messageStatus by mutableIntStateOf(-1)
 	val messageError = MutableSharedFlow<Int>()
@@ -77,13 +76,14 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	val requestQueue: MutableSet<Request> = mutableSetOf()
 	var lastRequest: Request? = null
 
+	@SuppressLint("MissingPermission")// Is checked with Main.hasBT
 	fun start(context: Context) {
-		if (!Permissions.hasBT) return onError(R.string.fail_BT_denied)
+		if(!Main.hasBT(context)) return onError(R.string.fail_BT_denied)
 		status.value = Status.STARTING
 
 		val bm = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 		bluetoothAdapter = bm.adapter
-		if (!(bluetoothAdapter?.isEnabled ?: false)) return onError(R.string.fail_BT_off)
+		if(!(bluetoothAdapter?.isEnabled ?: false)) return onError(R.string.fail_BT_off)
 
 		sharedPreferences = context.getSharedPreferences("Comms", MODE_PRIVATE)
 		knownBTAddresses = sharedPreferences?.getStringSet("knownBTAddresses", null) ?: mutableSetOf()
@@ -91,10 +91,10 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		val bondedBTDevices = bluetoothAdapter?.bondedDevices ?: emptySet()
 		//Find and clean known devices
 		knownBTAddresses.forEach { checkKnownBTAddress(it, bondedBTDevices) }
-		//Try to connect to known device
-		if (knownBTDevices.isNotEmpty()) {
-			connectBTDevice(knownBTDevices.first())
-			return //having multiple watches is rare, user will have to select from DeviceSelect
+		//Try to connect to first known device, having multiple watches is rare, user will have to select from DeviceSelect
+		if(knownBTDevices.isNotEmpty()) {
+			connectBTDevice(context, knownBTDevices.first())
+			return
 		}
 		//Check if Garmin connect app is installed
 		try {
@@ -122,8 +122,8 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	}
 
 	fun checkKnownBTAddress(knownAddress: String, bondedDevices: Set<BluetoothDevice>) {
-		for (device in bondedDevices) {
-			if (device.address == knownAddress) {
+		for(device in bondedDevices) {
+			if(device.address == knownAddress) {
 				knownBTDevices.add(device)
 				return
 			}
@@ -131,11 +131,11 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		delKnownBTAddress(knownAddress)
 	}
 	fun delKnownBTAddress(address: String) {
-		if (knownBTAddresses.remove(address)) storeKnownBTAddresses()
+		if(knownBTAddresses.remove(address)) storeKnownBTAddresses()
 	}
 	fun storeKnownBTAddresses() {
 		sharedPreferences?.edit {
-			if (knownBTAddresses.isEmpty()) {
+			if(knownBTAddresses.isEmpty()) {
 				remove("knownBTAddresses")
 			} else {
 				putStringSet("knownBTAddresses", knownBTAddresses)
@@ -170,7 +170,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	}
 	fun storeKnownIQIds() {
 		sharedPreferences?.edit {
-			if (knownIQIds.isEmpty()) {
+			if(knownIQIds.isEmpty()) {
 				remove("knownIQIds")
 			} else {
 				putStringSet("knownIQIds", knownIQIds.map { it.toString() }.toSet())
@@ -219,14 +219,14 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				onError(R.string.update_mobile_app)
 				return
 			}
-			when (requestType) {
+			when(requestType) {
 				"sync" -> {
 					//{"requestType":"sync","responseData":{"match_ids":[],"settings":{ settings }}}
 					//settings: {"home_name":"home","home_color":"white","away_name":"away","away_color":"orange","match_type":"15s","period_time":40,"period_count":2,"sinbin":10,"points_try":5,"points_con":2,"points_goal":3,"clock_pk":60,"clock_con":60,"clock_restart":0,"screen_on":true,"timer_type":1,"record_player":false,"record_pens":false,"delay_end":false,"help_version":6}
 					val responseData = response.getJSONObject("responseData")
 					val matchIdsJson = responseData.getJSONArray("match_ids")
 					val matchIds: MutableSet<Long> = HashSet()
-					for (i in 0..<matchIdsJson.length()) {
+					for(i in 0..<matchIdsJson.length()) {
 						matchIds.add(matchIdsJson.getLong(i))
 					}
 					gotMatchIds(matchIds)
@@ -249,16 +249,15 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				"prepare" -> {
 					//{"requestType":"prepare","responseData":"okilly dokilly"}
 					//{"requestType":"prepare","responseData":"match ongoing"}
-					when (response.getString("responseData")) {
+					when(response.getString("responseData")) {
 						"okilly dokilly" -> messageStatus = R.string.prep_done
 						"match ongoing" -> onMessageError(R.string.match_ongoing)
 						else -> throw Exception("unknown response for prepare")
 					}
 				}
 			}
-		} catch (e: Exception) {
-			logE("Comms.gotResponse: $e")
-			logE("Comms.gotResponse: " + e.message)
+		} catch(e: Exception) {
+			logE("Comms.gotResponse: ${e.message}\n$e")
 			onMessageError(R.string.fail_response)
 		}
 		lastRequest = null
@@ -267,7 +266,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		matchIds.forEach { matchId ->
 			if(MatchStore.deletedMatches.contains(matchId)) {
 				sendRequest(Request(Request.Type.DEL_MATCH, matchId))
-			} else if (MatchStore.matches.none { it.matchId == matchId }) {
+			} else if(MatchStore.matches.none { it.matchId == matchId }) {
 				sendRequest(Request(Request.Type.GET_MATCH, matchId))
 			}
 		}
@@ -279,7 +278,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		override fun toString(): String {
 			val request = JSONObject()
 			request.put("version", 2)//Jun 2025, removed deleted_matches from SYNC
-			when (type) {
+			when(type) {
 				Type.SYNC -> {
 					//{"version":2,"requestType":"sync","requestData":{"custom_match_types":[]}}
 					request.put("requestType", "sync")
@@ -320,28 +319,31 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		messageStatus = message
 		runInBackground { messageError.emit(message) }
 	}
-	fun getBondedBTDevices(): Set<BluetoothDevice>? {
-		if (bluetoothAdapter == null) {
+	@SuppressLint("MissingPermission")// Is checked with Main.hasBT
+	fun getBondedBTDevices(context: Context): Set<BluetoothDevice>? {
+		if(!Main.hasBT(context) || bluetoothAdapter == null) {
 			onError(R.string.fail_BT_denied)
 			return null
 		}
-		if (bluetoothAdapter?.isEnabled != true) {
+		if(bluetoothAdapter?.isEnabled != true) {
 			onError(R.string.fail_BT_off)
 			return null
 		}
 		return bluetoothAdapter?.bondedDevices
 	}
-	fun connectBTDevice(device: BluetoothDevice) {
-		logD{"Comms.connectBTDevice: ${device.name}"}
-		if (bluetoothAdapter == null) {
+	@SuppressLint("MissingPermission")// Is checked with Main.hasBT
+	fun connectBTDevice(context: Context, device: BluetoothDevice) {
+		if(!Main.hasBT(context)) return onError(R.string.fail_BT_denied)
+		logD{"Comms.connectBTDevice: $deviceName"}
+		if(bluetoothAdapter == null) {
 			onError(R.string.fail_BT_denied)
 			return
 		}
-		if (bluetoothAdapter?.isEnabled != true) {
+		if(bluetoothAdapter?.isEnabled != true) {
 			onError(R.string.fail_BT_off)
 			return
 		}
-		if (status.value in listOf(Status.CONNECTING, Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
+		if(status.value in listOf(Status.CONNECTING, Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
 		disconnect = false
 		deviceName = device.name ?: "<no name>"
 		status.value = Status.CONNECTING
@@ -362,11 +364,11 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 
 	class CommsBTConnect(device: BluetoothDevice) : Thread() {
 		init {
-			logD{"CommsBTConnect ${device.name}"}
+			logD{"CommsBTConnect $deviceName"}
 			try {
 				bluetoothSocket = device.createRfcommSocketToServiceRecord(RRW_UUID)
-			} catch (e: Exception) {
-				logE("CommsBTConnect Exception: " + e.message)
+			} catch(e: Exception) {
+				logE("CommsBTConnect: ${e.message}")
 				onCommsBTDisconnect()
 			}
 		}
@@ -375,13 +377,14 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				bluetoothSocket?.connect()
 				commsBTConnected = CommsBTConnected()
 				commsBTConnected?.start()
-			} catch (e: Exception) {
-				logD{"CommsBTConnect.run failed: ${e.message}"}
+			} catch(e: Exception) {
+				logD{"CommsBTConnect.run: ${e.message}"}
 				tryIgnore { bluetoothSocket?.close() }
 				onCommsBTDisconnect()
 			}
 		}
 	}
+	@Suppress("BlockingMethodInNonBlockingContext")//only called in background thread
 	class CommsBTConnected : Thread() {
 		var inputStream: InputStream? = null
 		var outputStream: OutputStream? = null
@@ -391,13 +394,13 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				inputStream = bluetoothSocket!!.inputStream
 				outputStream = bluetoothSocket!!.outputStream
 				status.value = Status.CONNECTED_BT
-				if (knownBTDevices.add(bluetoothSocket!!.remoteDevice) &&
+				if(knownBTDevices.add(bluetoothSocket!!.remoteDevice) &&
 					knownBTAddresses.add(bluetoothSocket!!.remoteDevice.address)
 				) {
 					storeKnownBTAddresses()
 				}
-			} catch (e: Exception) {
-				logE("CommsBTConnected init Exception: ${e.message}")
+			} catch(e: Exception) {
+				logE("CommsBTConnected init: ${e.message}")
 				onCommsBTDisconnect()
 			}
 		}
@@ -406,9 +409,9 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 			runBlocking { process() }
 		}
 		suspend fun process() {
-			while (!disconnect) {
+			while(!disconnect) {
 				try { outputStream!!.write("".toByteArray()) }
-				catch (_: Exception) {
+				catch(_: Exception) {
 					logD{"Connection closed"}
 					break
 				}
@@ -423,54 +426,54 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 		fun sendNextRequest() {
 			try {
 				outputStream!!.write("".toByteArray())
-				if (requestQueue.isEmpty() || lastRequest != null) return
+				if(requestQueue.isEmpty() || lastRequest != null) return
 				lastRequest = requestQueue.first()
 				requestQueue.remove(lastRequest)
 				logD{"CommsBTConnected.sendNextRequest: $lastRequest"}
 				outputStream!!.write(lastRequest.toString().toByteArray())
-			} catch (e: Exception) {
-				logE("CommsBTConnected.sendNextRequest Exception: " + e.message)
+			} catch(e: Exception) {
+				logE("CommsBTConnected.sendNextRequest: ${e.message}")
 				onMessageError(R.string.fail_send_message)
 				disconnect = true
 			}
 		}
 		suspend fun read() {
 			try {
-				if (inputStream!!.available() < 5) return
+				if(inputStream!!.available() < 5) return
 				var lastReadTime = System.currentTimeMillis()
 				var response = ""
-				while (System.currentTimeMillis() - lastReadTime < 3000) {
-					if (inputStream!!.available() == 0) {
+				while(System.currentTimeMillis() - lastReadTime < 3000) {
+					if(inputStream!!.available() == 0) {
 						delay(100)
 						continue
 					}
 					val buffer = ByteArray(inputStream!!.available())
 					val numBytes = inputStream!!.read(buffer)
-					if (numBytes < 0) {
+					if(numBytes < 0) {
 						logE("CommsBTConnected.read read error, response: $response")
 						lastRequest = null
 						return onMessageError(R.string.fail_response)
-					} else if (numBytes > 0) {
+					} else if(numBytes > 0) {
 						lastReadTime = System.currentTimeMillis()
 					}
 					val temp = String(buffer)
 					response += temp
-					if (isValidJSON(response)) {
+					if(isValidJSON(response)) {
 						logD{"CommsBTConnected.read got message: $response"}
 						gotResponse(JSONObject(response))
 						return
 					}
 				}
 				logE("CommsBTConnected.read no valid message and no new data after 3 sec: $response")
-			} catch (e: Exception) {
-				logE("CommsBTConnected.read Exception: ${e.message}")
+			} catch(e: Exception) {
+				logE("CommsBTConnected.read: ${e.message}")
 			}
 			lastRequest = null
 			onMessageError(R.string.fail_response)
 		}
 		fun isValidJSON(json: String): Boolean {
-			if (!json.endsWith("}")) return false
-			try { JSONObject(json)} catch (_: JSONException) { return false }
+			if(!json.endsWith("}")) return false
+			try { JSONObject(json)} catch(_: JSONException) { return false }
 			return true
 		}
 	}
@@ -482,27 +485,27 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 	fun getBondedIQDevices(): List<IQDevice>? {
 		if(iQSdkStatus != IQSdkStatus.READY) return null
 		try { return connectIQ?.knownDevices }
-		catch(e: Exception) { logE("Comms.getBondedIQDevices exception: ${e.message}") }
+		catch(e: Exception) { logE("Comms.getBondedIQDevices: ${e.message}") }
 		return null
 	}
 	fun connectIQDevice(device: IQDevice) {
 		logD{"Comms.connectIQDevice: ${device.friendlyName} status: ${device.status}"}
-		if (bluetoothAdapter == null) {
+		if(bluetoothAdapter == null) {
 			onError(R.string.fail_BT_denied)
 			return
 		}
-		if (bluetoothAdapter?.isEnabled != true) {
+		if(bluetoothAdapter?.isEnabled != true) {
 			onError(R.string.fail_BT_off)
 			return
 		}
-		if (status.value in listOf(Status.CONNECTING, Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
+		if(status.value in listOf(Status.CONNECTING, Status.CONNECTED_BT, Status.CONNECTED_IQ)) return
 		disconnect = false
 		deviceName = device.friendlyName
 		status.value = Status.CONNECTING
 		iQDevice = device
 		try { connectIQ!!.getApplicationInfo(IQ_APP_ID, iQDevice, this) }
 		catch(e: Exception) {
-			logE("Comms.connectIQDevice exception: ${e.message}")
+			logE("Comms.connectIQDevice: ${e.message}")
 			onError(R.string.fail_connect)
 		}
 	}
@@ -525,8 +528,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				onMessageError(R.string.fail_message_timeout)
 			}
 		} catch(e: java.lang.Exception) {
-			logE("Comms.sendNextIQMessage exception: $e")
-			logE("Comms.sendNextIQMessage exception: ${e.message}")
+			logE("Comms.sendNextIQMessage: ${e.message}\n$e")
 			onMessageError(R.string.fail_send_message)
 		}
 	}
@@ -577,8 +579,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				addKnownIQDevice(iQDevice!!)
 				sendRequest(Request(Request.Type.SYNC))
 			} catch(e: Exception) {
-				logE("Comms.onApplicationInfoReceived exception: $e")
-				logE("Comms.onApplicationInfoReceived exception: ${e.message}")
+				logE("Comms.onApplicationInfoReceived: ${e.message}\n$e")
 				onError(R.string.fail_connect)
 			}
 		} else if(status.value == Status.CONNECTING) onError(R.string.fail_app_not_installed)
@@ -598,8 +599,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				connectIQ!!.getApplicationInfo(IQ_APP_ID, device, this)
 				//onApplicationInfoReceived/onApplicationNotInstalled will be called to make sure RRW is installed on the watch
 			} catch(e: Exception) {
-				logE("Comms.onApplicationInfoReceived exception: $e")
-				logE("Comms.onApplicationInfoReceived exception: ${e.message}")
+				logE("Comms.onApplicationInfoReceived: ${e.message}\n$e")
 				onError(R.string.fail_unexpected)
 			}
 		} else if(status.value == Status.CONNECTED_IQ){
@@ -624,8 +624,7 @@ object Comms: ConnectIQListener, IQApplicationEventListener, IQApplicationInfoLi
 				runInBackground { gotResponse(messageJson) }
 			}
 		} catch(e: Exception) {
-			logE("Comms.onMessageReceived exception: $e")
-			logE("Comms.onMessageReceived exception: ${e.message}")
+			logE("Comms.onMessageReceived: ${e.message}\n$e")
 			onMessageError(R.string.fail_response)
 		}
 		sendNextIQMessage()

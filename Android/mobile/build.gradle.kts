@@ -2,8 +2,8 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 plugins {
@@ -46,16 +46,16 @@ android {
     }
 }
 dependencies {
-    implementation("androidx.activity:activity-compose:1.12.4")
+    implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.compose.animation:animation-graphics-android:1.10.3")
-    implementation("androidx.compose.runtime:runtime-android:1.10.3")
+    implementation("androidx.compose.animation:animation-graphics-android:1.10.5")
+    implementation("androidx.compose.runtime:runtime-android:1.10.5")
     implementation("androidx.compose.material:material-icons-core:1.7.8")
     implementation("androidx.compose.material3:material3-android:1.4.0")
     implementation("androidx.navigation:navigation-compose:2.9.7")
     implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.3.0@aar")
 
     //actually only for debug, but release won't compile without it
-    implementation("androidx.compose.ui:ui-tooling-preview:1.10.3")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.10.3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.10.5")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.10.5")
 }

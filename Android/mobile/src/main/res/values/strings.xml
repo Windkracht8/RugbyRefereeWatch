@@ -1,173 +1,172 @@
 <!--
-  ~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
-  ~ This file is part of RugbyRefereeWatch
-  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
+	~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
+	~ This file is part of RugbyRefereeWatch
+	~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+	~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	~ You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
 <resources>
-    <string name="app_name" translatable="false">Rugby Referee Watch</string>
+	<string name="app_name" translatable="false">Rugby Referee Watch</string>
 
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
+	<string name="cancel">Cancel</string>
+	<string name="delete">Delete</string>
 
-    <!-- home -->
-    <string name="disconnected">Disconnected, tap icon to connect</string>
-    <string name="starting">Looking for known watch</string>
-    <string name="no_permission">Tap icon to allow permission</string>
-    <string name="history">History</string>
-    <string name="report">Report</string>
-    <string name="prepare">Prepare</string>
-    <string name="select_match">Select (long press) at least one match first</string>
+	<!-- home -->
+	<string name="disconnected">Disconnected, tap icon to connect</string>
+	<string name="starting">Looking for known watch</string>
+	<string name="no_permission">Tap icon to allow permission</string>
+	<string name="history">History</string>
+	<string name="report">Report</string>
+	<string name="prepare">Prepare</string>
+	<string name="select_match">Select (long press) at least one match first</string>
 
-    <!-- permission -->
-    <string name="permission_title">Permissions required</string>
-    <string name="permission_nearby_title">Nearby devices is needed to connect to your watch</string>
-    <string name="permission_nearby">Allow nearby devices</string>
-    <string name="permission_explain">If clicking allow on this screen does nothing, you will need
-        to allow the permission in your phone\'s settings manually.</string>
+	<!-- permission -->
+	<string name="permission_title">Permissions required</string>
+	<string name="permission_nearby_title">Nearby devices is needed to connect to your watch</string>
+	<string name="permission_nearby">Allow nearby devices</string>
+	<string name="permission_explain">If clicking allow on this screen does nothing, you will need
+		to allow the permission in your phone\'s settings manually.</string>
 
-    <!-- device select/connect -->
-    <string name="device_select_title">To connect, open the app on the watch, don\'t start a match,
-        and select your watch from the list below</string>
-    <string name="device_select_new">New WearOS watch</string>
-    <string name="device_select_none">No Bluetooth device found, first pair your watch</string>
-    <string name="device_select_garmin_new">New Garmin watch</string>
-    <string name="device_select_garmin_none">No Garmin watch found, first pair your watch with the Garmin Connect app</string>
-    <string name="device_select_garmin_not">The Garmin Connect app is not found, install that first</string>
-    <string name="device_select_garmin_update">You need to update the Garmin Connect app</string>
-    <string name="delete_device">Delete device?</string>
-    <string name="device_connect_instruct">keep the app on the watch open while trying to
-        connect, and don\'t start a match</string>
+	<!-- device select/connect -->
+	<string name="device_select_title">To connect, open the app on the watch, don\'t start a match,
+		and select your watch from the list below</string>
+	<string name="device_select_new">New WearOS watch</string>
+	<string name="device_select_none">No Bluetooth device found, first pair your watch</string>
+	<string name="device_select_garmin_new">New Garmin watch</string>
+	<string name="device_select_garmin_none">No Garmin watch found, first pair your watch with the Garmin Connect app</string>
+	<string name="device_select_garmin_not">The Garmin Connect app is not found, install that first</string>
+	<string name="device_select_garmin_update">You need to update the Garmin Connect app</string>
+	<string name="delete_device">Delete device?</string>
+	<string name="device_connect_instruct">keep the app on the watch open while trying to
+		connect, and don\'t start a match</string>
 
-    <!-- history -->
-    <string name="_import">import</string>
-    <string name="export">export</string>
-    <string name="delete_matches">Delete matches?</string>
+	<!-- history -->
+	<string name="_import">import</string>
+	<string name="export">export</string>
+	<string name="delete_matches">Delete matches?</string>
 
-    <!-- report -->
-    <string name="no_match">I don\'t seem to have a match to show you</string>
-    <string name="tries">Tries</string>
-    <string name="conversions">Conversions</string>
-    <string name="pen_tries">Penalty tries</string>
-    <string name="goals">Goals</string>
-    <string name="drop_goals">Drop goals</string>
-    <string name="pen_goals">Penalty goals</string>
-    <string name="yellow_cards">Yellow cards</string>
-    <string name="red_cards">Red cards</string>
-    <string name="penalties">Penalties</string>
-    <string name="save">save</string>
-    <string name="edit">edit</string>
-    <string name="view">view</string>
-    <string name="share">share</string>
-    <string name="replaced">%s replaced %s</string>
+	<!-- report -->
+	<string name="no_match">I don\'t seem to have a match to show you</string>
+	<string name="tries">Tries</string>
+	<string name="conversions">Conversions</string>
+	<string name="pen_tries">Penalty tries</string>
+	<string name="goals">Goals</string>
+	<string name="drop_goals">Drop goals</string>
+	<string name="pen_goals">Penalty goals</string>
+	<string name="yellow_cards">Yellow cards</string>
+	<string name="red_cards">Red cards</string>
+	<string name="penalties">Penalties</string>
+	<string name="save">save</string>
+	<string name="edit">edit</string>
+	<string name="view">view</string>
+	<string name="share">share</string>
+	<string name="replaced">%s replaced %s</string>
 
-    <!-- report.share -->
-    <string name="share_dialog_title">What to include?</string>
-    <string name="share_dialog_time">Time off/on</string>
-    <string name="share_dialog_pens">Penalties</string>
-    <string name="share_dialog_clock">Clock time</string>
+	<!-- report.share -->
+	<string name="share_dialog_title">What to include?</string>
+	<string name="share_dialog_time">Time off/on</string>
+	<string name="share_dialog_pens">Penalties</string>
+	<string name="share_dialog_clock">Clock time</string>
 
-    <string name="share_report">Share match report</string>
-    <string name="match_report">Match report</string>
-    <string name="total">Total</string>
+	<string name="share_report">Share match report</string>
+	<string name="match_report">Match report</string>
+	<string name="total">Total</string>
 
-    <!-- report.edit -->
-    <string name="reason_hint">reason for card</string>
+	<!-- report.edit -->
+	<string name="reason_hint">reason for card</string>
 
-    <!-- prepare -->
-    <string name="send_to_watch">Send to watch</string>
-    <string name="home_name">Home team name</string>
-    <string name="home_color">Home team color</string>
-    <string name="away_name">Away team name</string>
-    <string name="away_color">Away team color</string>
-    <string name="match_type">Match type</string>
-    <string name="match_type_show">Show match type details</string>
-    <string name="match_type_hide">Hide match type details</string>
-    <string name="period_time">Time/period</string>
-    <string name="period_count">Period count</string>
-    <string name="sinbin">Sinbin</string>
-    <string name="points_try">Points for Try</string>
-    <string name="points_con">Points for Conversion</string>
-    <string name="points_goal">Points for Goal</string>
-    <string name="clock_pk">Penalty kick clock</string>
-    <string name="clock_con">Conversion kick clock</string>
-    <string name="clock_restart">Restart kick clock</string>
-    <string name="watch_settings_show">Show watch settings</string>
-    <string name="watch_settings_hide">Hide watch settings</string>
-    <string name="screen">Screen</string>
-    <string name="keep_on">keep on</string>
-    <string name="auto_off">auto off</string>
-    <string name="timer_type">Timer type</string>
-    <string name="timer_type_up">count up</string>
-    <string name="timer_type_down">count down</string>
-    <string name="record_player">Record player #</string>
-    <string name="record_pens">Record penalties</string>
-    <string name="delay_end">Delay end of period</string>
+	<!-- prepare -->
+	<string name="send_to_watch">Send to watch</string>
+	<string name="home_name">Home team name</string>
+	<string name="home_color">Home team color</string>
+	<string name="away_name">Away team name</string>
+	<string name="away_color">Away team color</string>
+	<string name="match_type">Match type</string>
+	<string name="match_type_show">Show match type details</string>
+	<string name="match_type_hide">Hide match type details</string>
+	<string name="period_time">Time/period</string>
+	<string name="period_count">Period count</string>
+	<string name="sinbin">Sinbin</string>
+	<string name="points_try">Points for Try</string>
+	<string name="points_con">Points for Conversion</string>
+	<string name="points_goal">Points for Goal</string>
+	<string name="clock_pk">Penalty kick clock</string>
+	<string name="clock_con">Conversion kick clock</string>
+	<string name="clock_restart">Restart kick clock</string>
+	<string name="watch_settings_show">Show watch settings</string>
+	<string name="watch_settings_hide">Hide watch settings</string>
+	<string name="screen">Screen</string>
+	<string name="keep_on">keep on</string>
+	<string name="auto_off">auto off</string>
+	<string name="timer_type">Timer type</string>
+	<string name="timer_type_up">count up</string>
+	<string name="timer_type_down">count down</string>
+	<string name="record_player">Record player #</string>
+	<string name="record_pens">Record penalties</string>
+	<string name="delay_end">Delay end of period</string>
 
-    <string name="time_period_empty">Time/period can\'t be empty</string>
-    <string name="period_count_empty">Period count can\'t be empty</string>
-    <string name="points_try_empty">Points for Try can\'t be empty</string>
+	<string name="time_period_empty">Time/period can\'t be empty</string>
+	<string name="period_count_empty">Period count can\'t be empty</string>
+	<string name="points_try_empty">Points for Try can\'t be empty</string>
 
-    <!-- prepare.custom match type -->
-    <string name="del_match_type">Delete match type</string>
-    <string name="save_match_type">Save custom match type</string>
-    <string name="fail_empty_name">Name cannot be empty</string>
-    <string name="fail_standard_match_type">Cannot override standard match type</string>
+	<!-- prepare.custom match type -->
+	<string name="del_match_type">Delete match type</string>
+	<string name="save_match_type">Save custom match type</string>
+	<string name="fail_empty_name">Name cannot be empty</string>
+	<string name="fail_standard_match_type">Cannot override standard match type</string>
 
-    <string-array name="team_colors">
-        <item>black</item>
-        <item>blue</item>
-        <item>brown</item>
-        <item>gold</item>
-        <item>green</item>
-        <item>orange</item>
-        <item>pink</item>
-        <item>purple</item>
-        <item>red</item>
-        <item>white</item>
-    </string-array>
+	<string-array name="team_colors">
+		<item>black</item>
+		<item>blue</item>
+		<item>brown</item>
+		<item>gold</item>
+		<item>green</item>
+		<item>orange</item>
+		<item>pink</item>
+		<item>purple</item>
+		<item>red</item>
+		<item>white</item>
+	</string-array>
 
-    <string-array name="match_types">
-        <item>15s</item>
-        <item>10s</item>
-        <item>7s</item>
-        <item>beach 7s</item>
-        <item>beach 5s</item>
-    </string-array>
+	<string-array name="match_types">
+		<item>15s</item>
+		<item>10s</item>
+		<item>7s</item>
+		<item>beach 7s</item>
+		<item>beach 5s</item>
+	</string-array>
 
-    <!-- Comms -->
-    <string name="connecting_to">Connecting to %s</string>
-    <string name="connected_to">Connected to %s</string>
+	<!-- Comms -->
+	<string name="connecting_to">Connecting to %s</string>
+	<string name="connected_to">Connected to %s</string>
 
-    <string name="sync">Synchronizing</string>
-    <string name="sync_done">Synchronized with watch</string>
-    <string name="prep">Preparing</string>
-    <string name="get_match">Receiving new match</string>
-    <string name="del_match">Deleting old match from watch</string>
-    <string name="prep_done">Match prepared</string>
+	<string name="sync">Synchronizing</string>
+	<string name="sync_done">Synchronized with watch</string>
+	<string name="prep">Preparing</string>
+	<string name="get_match">Receiving new match</string>
+	<string name="del_match">Deleting old match from watch</string>
+	<string name="prep_done">Match prepared</string>
 
-    <string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
-    <string name="fail_BT_off">Bluetooth turned off</string>
-    <string name="fail_connect">That did not work, you might need to restart the watch app, tap the
-        icon to try again</string>
+	<string name="fail_BT_denied">No Bluetooth permission. Allow nearby devices, try again.</string>
+	<string name="fail_BT_off">Bluetooth turned off</string>
+	<string name="fail_connect">That did not work, you might need to restart the watch app, tap the
+		icon to try again</string>
 
-    <string name="update_mobile_app">Phone app is outdated, update in the store</string>
-    <string name="match_ongoing">Match already started, can\'t prepare anymore</string>
-    <string name="fail_unexpected">Unexpected technical error</string>
+	<string name="update_mobile_app">Phone app is outdated, update in the store</string>
+	<string name="match_ongoing">Match already started, can\'t prepare anymore</string>
+	<string name="fail_unexpected">Unexpected technical error</string>
 
-    <!-- fail -->
-    <string name="fail_send_message">Failed to send message to watch</string>
-    <string name="fail_response">Problem with response from watch</string>
-    <string name="fail_import">Failed to import matches</string>
-    <string name="fail_export">Failed to export matches</string>
-    <string name="fail_share">Failed to share</string>
-    <string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
-    <string name="fail_read_matches">Failed to read matches from storage</string>
-    <string name="fail_save_matches">Failed to save matches</string>
-    <string name="fail_save_match_type">Failed to save match type</string>
-    <string name="fail_app_not_installed">RugbyRefereeWatch is not installed on the watch, go install it</string>
-    <string name="fail_message_timeout">No response from watch, reconnect and try again</string>
+	<!-- fail -->
+	<string name="fail_send_message">Failed to send message to watch</string>
+	<string name="fail_response">Problem with response from watch</string>
+	<string name="fail_import">Failed to import matches</string>
+	<string name="fail_export">Failed to export matches</string>
+	<string name="fail_share">Failed to share</string>
+	<string name="fail_read_custom_match_types">Failed to read custom match types from storage</string>
+	<string name="fail_read_matches">Failed to read matches from storage</string>
+	<string name="fail_save_matches">Failed to save matches</string>
+	<string name="fail_save_match_type">Failed to save match type</string>
+	<string name="fail_app_not_installed">RugbyRefereeWatch is not installed on the watch, go install it</string>
+	<string name="fail_message_timeout">No response from watch, reconnect and try again</string>
 
 </resources>

@@ -2,8 +2,8 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.windkracht8.rugbyrefereewatch
 
@@ -55,9 +55,9 @@ class MatchData: Comparable<MatchData> {
 	constructor(matchJson: JSONObject, checkTeamNames: Boolean = false) {
 		matchId = matchJson.optLong("matchid", 0)
 		val format: Int = matchJson.optInt("format", 0)
-		if (format > 4) runInBackground { error.emit(R.string.update_mobile_app) }
-		if (format < 2) updateFormat1to2(matchJson)
-		if (format < 3) updateFormat2to3(matchJson)
+		if(format > 4) runInBackground { error.emit(R.string.update_mobile_app) }
+		if(format < 2) updateFormat1to2(matchJson)
+		if(format < 3) updateFormat2to3(matchJson)
 		this.format = FORMAT
 
 		home = Team(matchJson.getJSONObjectOrEmpty(HOME_ID), checkTeamNames)
@@ -76,7 +76,7 @@ class MatchData: Comparable<MatchData> {
 		clockRestart = settings.optInt("clock_restart", 0)
 
 		val eventsJson = matchJson.getJSONArrayOrEmpty("events")
-		for (i in 0..<eventsJson.length()) {
+		for(i in 0..<eventsJson.length()) {
 			events.add(Event(eventsJson.getJSONObjectOrEmpty(i)))
 		}
 	}
@@ -105,17 +105,17 @@ class MatchData: Comparable<MatchData> {
 		var homeRedCards = 0
 		var awayRedCards = 0
 		val events = match.getJSONArray("events")
-		for (i in 0..<events.length()) {
+		for(i in 0..<events.length()) {
 			val event = events.getJSONObject(i)
-			if (event.getString("what") == "YELLOW CARD") {
-				if (event.getString("team").isHome()) {
+			if(event.getString("what") == "YELLOW CARD") {
+				if(event.getString("team").isHome()) {
 					homeYellowCards++
 				} else {
 					awayYellowCards++
 				}
 			}
-			if (event.getString("what") == "RED CARD") {
-				if (event.getString("team").isHome()) {
+			if(event.getString("what") == "RED CARD") {
+				if(event.getString("team").isHome()) {
 					homeRedCards++
 				} else {
 					awayRedCards++
@@ -135,7 +135,7 @@ class MatchData: Comparable<MatchData> {
 	fun updateFormat2to3(match: JSONObject) {
 		//Format 3; April 2025; change timer from ms to s
 		val events = match.getJSONArray("events")
-		for (i in 0..<events.length()) {
+		for(i in 0..<events.length()) {
 			tryIgnore {
 				val event = events.getJSONObject(i)
 				val timer = event.getLong("timer")
@@ -157,7 +157,7 @@ class MatchData: Comparable<MatchData> {
 			team.pens = 0
 		}
 		events.forEach {
-			val team = when (it.isHome) {
+			val team = when(it.isHome) {
 				true -> home
 				false -> away
 				null -> null
@@ -203,8 +203,8 @@ class MatchData: Comparable<MatchData> {
 			val eventsJson = JSONArray()
 			for(event in events) eventsJson.put(event.toJson())
 			ret.put("events", eventsJson)
-		} catch (e: JSONException) {
-			logE("MatchData.toJson Exception: " + e.message)
+		} catch(e: JSONException) {
+			logE("MatchData.toJson: ${e.message}")
 			error.emit(R.string.fail_save_matches)
 		}
 		//logD{"MatchData.toJson result: $ret"}
@@ -279,8 +279,8 @@ class MatchData: Comparable<MatchData> {
 				ret.put("red_cards", redCards)
 				ret.put("pens", pens)
 				ret.put("kickoff", kickoff)
-			} catch (e: JSONException) {
-				logE("MatchData.match.toJson Exception: " + e.message)
+			} catch(e: JSONException) {
+				logE("MatchData.match.toJson: ${e.message}")
 				error.emit(R.string.fail_save_matches)
 			}
 			return ret
@@ -301,7 +301,7 @@ class MatchData: Comparable<MatchData> {
 		val score: String
 		var reason: String? by mutableStateOf(null)
 
-		constructor (eventJson: JSONObject) {
+		constructor(eventJson: JSONObject) {
 			id = eventJson.optLong("id", 0)
 			time = eventJson.optString("time", "00:00:00")
 			timer = eventJson.optInt("timer", 0)
@@ -356,7 +356,7 @@ class MatchData: Comparable<MatchData> {
 			}
 			score = eventJson.getStringOrNull("score") ?: "$calcScoreHome:$calcScoreAway"
 		}
-		constructor (original: Event) {
+		constructor(original: Event) {
 			id = original.id
 			time = original.time
 			timer = original.timer
@@ -376,7 +376,7 @@ class MatchData: Comparable<MatchData> {
 		fun prettyTimer(): String {
 			val minutes = Math.floorDiv(timer, 60)
 			var timer = minutes.toString()
-			if (minutes > periodTime.toLong() * periodCount) {
+			if(minutes > periodTime.toLong() * periodCount) {
 				timer = (periodTime * periodCount).toString()
 				val over = minutes - (periodTime.toLong() * periodCount)
 				timer += "+$over"
@@ -387,28 +387,28 @@ class MatchData: Comparable<MatchData> {
 			val minutes = Math.floorDiv(timer, 60)
 			val seconds = timer - minutes * 60
 			var timer = minutes.toString()
-			if (minutes > periodTime.toLong() * periodCount) {
+			if(minutes > periodTime.toLong() * periodCount) {
 				timer = (periodTime * periodCount).toString()
 				val over = minutes - (periodTime.toLong() * periodCount)
 				timer += "+$over"
 			}
-			return if (seconds < 10) "$timer'0$seconds" else "$timer'$seconds"
+			return if(seconds < 10) "$timer'0$seconds" else "$timer'$seconds"
 		}
 		fun prettyPeriod(): String {
 			val ret = if(what == EventWhat.START) "Start" else "Result"
-			if (period > periodCount) {
-				return if (period == periodCount + 1) {
+			if(period > periodCount) {
+				return if(period == periodCount + 1) {
 					"$ret extra time"
 				} else {
 					"$ret extra time " + (period - periodCount)
 				}
-			} else if (periodCount == 2) {
-				when (period) {
+			} else if(periodCount == 2) {
+				when(period) {
 					1 -> return "$ret first half"
 					2 -> return "$ret second half"
 				}
 			} else {
-				when (period) {
+				when(period) {
 					1 -> return "$ret 1st"
 					2 -> return "$ret 2nd"
 					3 -> return "$ret 3rd"
@@ -426,15 +426,15 @@ class MatchData: Comparable<MatchData> {
 					.put("timer", timer)
 					.put("period", period)
 					.put("what", what.name.replace("_", " "))
-				if (isHome != null) {
+				if(isHome != null) {
 					ret.put("team", if(isHome == true) HOME_ID else AWAY_ID)
-					if (who != null) { ret.put("who", who) }
-					if (whoEnter != null) { ret.put("who_enter", whoEnter) }
-					if (whoLeave != null) { ret.put("who_leave", whoLeave) }
+					if(who != null) { ret.put("who", who) }
+					if(whoEnter != null) { ret.put("who_enter", whoEnter) }
+					if(whoLeave != null) { ret.put("who_leave", whoLeave) }
 				}
 				ret.put("score", score)
-			} catch (e: JSONException) {
-				logE("MatchData.event.toJson Exception: " + e.message)
+			} catch(e: JSONException) {
+				logE("MatchData.event.toJson: ${e.message}")
 				error.emit(R.string.fail_save_matches)
 			}
 			return ret
@@ -552,7 +552,7 @@ class MatchType {
 				clockRestart = 0
 			}
 			else -> {
-				MatchStore.customMatchTypes.firstOrNull { it.name == name }?.let {
+				MatchStore.customMatchTypes.find { it.name == name }?.let {
 					periodTime = it.periodTime
 					periodCount = it.periodCount
 					sinbin = it.sinbin
@@ -566,11 +566,11 @@ class MatchType {
 			}
 		}
 	}
-	constructor (name: String) {
+	constructor(name: String) {
 		this.name = name
 		updateFields()
 	}
-	constructor (original: MatchType) {
+	constructor(original: MatchType) {
 		name = original.name
 		periodTime = original.periodTime
 		periodCount = original.periodCount
@@ -582,7 +582,7 @@ class MatchType {
 		clockCon = original.clockCon
 		clockRestart = original.clockRestart
 	}
-	constructor (matchTypeJson: JSONObject) {
+	constructor(matchTypeJson: JSONObject) {
 		name = matchTypeJson.optString("name", "15s")
 		periodTime = matchTypeJson.optInt("period_time", 40)
 		periodCount = matchTypeJson.optInt("period_count", 2)
@@ -594,7 +594,7 @@ class MatchType {
 		clockCon = matchTypeJson.optInt("clock_con", 60)
 		clockRestart = matchTypeJson.optInt("clock_restart", 0)
 	}
-	constructor (sp: SharedPreferences) {
+	constructor(sp: SharedPreferences) {
 		name = sp.getString("name", null) ?: name
 		periodTime = sp.getInt("periodTime", periodTime)
 		periodCount = sp.getInt("periodCount", periodCount)
@@ -631,7 +631,7 @@ class MatchType {
 				.put("clock_pk", clockPK)
 				.put("clock_con", clockCon)
 				.put("clock_restart", clockRestart)
-		} catch (e: Exception) { logE("MatchType.toJson Exception: " + e.message) }
+		} catch(e: Exception) { logE("MatchType.toJson: ${e.message}") }
 		return JSONObject()
 	}
 	fun gotWatchSettings(settings: JSONObject) {
@@ -684,7 +684,7 @@ class PrepData {
 	}
 
 	constructor()
-	constructor (sp: SharedPreferences) {
+	constructor(sp: SharedPreferences) {
 		homeName = sp.getString("homeName", null) ?: homeName
 		homeColor = sp.getString("homeColor", null) ?: homeColor
 		awayName = sp.getString("awayName", null) ?: awayName

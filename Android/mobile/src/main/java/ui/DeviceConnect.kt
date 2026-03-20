@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -31,19 +31,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.windkracht8.rugbyrefereewatch.Comms
+import com.windkracht8.rugbyrefereewatch.R
 import kotlinx.coroutines.launch
 
 class DeviceConnect : ComponentActivity() {
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		if (Comms.status.value != Comms.Status.CONNECTING) finishAndRemoveTask()
+		if(Comms.status.value != Comms.Status.CONNECTING) finishAndRemoveTask()
 		lifecycleScope.launch { Comms.status.collect {
-			if (it != Comms.Status.CONNECTING) finishAndRemoveTask()
+			if(it != Comms.Status.CONNECTING) finishAndRemoveTask()
 		} }
-		setContent { W8Theme (window, resources) { Surface { DeviceConnectScreen() } } }
+		setContent { W8Theme(window, resources) { Surface { DeviceConnectScreen() } } }
 	}
 }
 
@@ -80,7 +83,7 @@ fun DeviceConnectScreen() {
 @Composable
 fun PreviewDeviceConnect() {
 	Comms
-	W8Theme (null, null) { Surface { DeviceConnectScreen() } }
+	W8Theme(null, null) { Surface { DeviceConnectScreen() } }
 }
 @Preview(device = Devices.PIXEL_8)
 @Composable

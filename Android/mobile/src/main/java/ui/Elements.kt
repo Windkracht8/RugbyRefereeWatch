@@ -2,12 +2,13 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -26,8 +27,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import com.windkracht8.rugbyrefereewatch.R
+
+@Composable
+fun Text(@StringRes text: Int) = Text(stringResource(text))
+@Composable
+fun Text(@StringRes text: Int, color: Color) = Text(stringResource(text), color = color)
 
 @Composable
 fun StringInput(
@@ -73,7 +81,7 @@ fun IntInput(
 ){
 	var newValue by remember { mutableIntStateOf(value) }
 	AlertDialog(
-		title = { if(title != null) Text(stringResource(title)) },
+		title = { if(title != null) Text(title) },
 		text = {
 			IntField(
 				onValueChange = { newValue = it },

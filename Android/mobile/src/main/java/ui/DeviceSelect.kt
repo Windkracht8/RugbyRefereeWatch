@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -14,8 +14,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,29 +22,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.garmin.android.connectiq.IQDevice
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
+import com.windkracht8.rugbyrefereewatch.Comms
+import com.windkracht8.rugbyrefereewatch.Main
+import com.windkracht8.rugbyrefereewatch.R
+import com.windkracht8.rugbyrefereewatch.logD
+import com.windkracht8.rugbyrefereewatch.runInBackground
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission") //Handled by Permissions
@@ -56,11 +61,11 @@ class DeviceSelect : ComponentActivity() {
 	var bondedIQDevices: List<IQDevice>? = null
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		if (!Permissions.hasBT) finishAndRemoveTask()
+		if(!Main.hasBT(this)) finishAndRemoveTask()
 
 		lifecycleScope.launch {
 			Comms.status.collect { status ->
-				when (status) {
+				when(status) {
 					Comms.Status.CONNECTING ->
 						startActivity(Intent(this@DeviceSelect, DeviceConnect::class.java))
 					Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ, Comms.Status.ERROR ->
@@ -71,7 +76,7 @@ class DeviceSelect : ComponentActivity() {
 		}
 
 		setContent {
-			W8Theme (window, resources) {
+			W8Theme(window, resources) {
 				Surface {
 					DeviceSelectScreen(
 						onBTDeviceClick = ::onBTDeviceClick,
@@ -88,22 +93,22 @@ class DeviceSelect : ComponentActivity() {
 		}
 	}
 	fun onBTDeviceClick(device: BluetoothDevice) {
-		logD{"onBTDeviceClick: ${device.name}"}
-		runInBackground { Comms.connectBTDevice(device) }
+		logD { "onBTDeviceClick: ${device.name}" }
+		runInBackground { Comms.connectBTDevice(this, device) }
 	}
 	fun onIQDeviceClick(device: IQDevice) {
-		logD{"onIQDeviceClick: ${device.friendlyName}"}
+		logD { "onIQDeviceClick: ${device.friendlyName}" }
 		runInBackground { Comms.connectIQDevice(device) }
 	}
 	fun onNewBTDeviceClick() {
-		logD{"onNewBTDeviceClick"}
+		logD { "onNewBTDeviceClick" }
 		runInBackground {
-			bondedBTDevices = Comms.getBondedBTDevices()
+			bondedBTDevices = Comms.getBondedBTDevices(this)
 			showNewBTDevices = true
 		}
 	}
 	fun onNewIQDeviceClick() {
-		logD{"onNewIQDeviceClick"}
+		logD { "onNewIQDeviceClick" }
 		bondedIQDevices = Comms.getBondedIQDevices()
 		showNewIQDevices = true
 	}
@@ -121,8 +126,7 @@ fun DeviceSelectScreen(
 	bondedBTDevices: Set<BluetoothDevice>?,
 	bondedIQDevices: List<IQDevice>?
 ) {
-	val longPressTimeoutMillis = LocalViewConfiguration.current.longPressTimeoutMillis
-	var confirmDelDevice by remember { mutableStateOf(null as Any?) }
+	var confirmDelDevice by remember { mutableStateOf<Any?>(null) }
 	var showNewWatch by remember { mutableStateOf(true) }
 	LazyColumn(Modifier.fillMaxSize().safeDrawingPadding()) {
 		item {
@@ -134,50 +138,28 @@ fun DeviceSelectScreen(
 			)
 		}
 		items(Comms.knownBTDevices.toList()) { device ->
-			var isShort = true
-			val interactionSource = remember { MutableInteractionSource() }
-			LaunchedEffect(interactionSource) {
-				interactionSource.interactions.collectLatest { interaction ->
-					when (interaction) {
-						is PressInteraction.Press -> {
-							isShort = true
-							delay(longPressTimeoutMillis)
-							isShort = false
-							confirmDelDevice = device.address
-						}
-						is PressInteraction.Release -> if (isShort) onBTDeviceClick(device)
-					}
+			Row {
+				Button(
+					modifier = Modifier.weight(1f).height(60.dp).padding(10.dp),
+					onClick = { onBTDeviceClick(device) }
+				) { Text(device.name ?: "<no name>") }
+				IconButton(onClick = { confirmDelDevice = device.address }){
+					Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
 				}
 			}
-			Button(
-				modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
-				interactionSource = interactionSource,
-				onClick = {}
-			) { Text(device.name ?: "<no name>") }
 		}
 		items(Comms.knownIQDevices.toList()) { device ->
-			var isShort = true
-			val interactionSource = remember { MutableInteractionSource() }
-			LaunchedEffect(interactionSource) {
-				interactionSource.interactions.collectLatest { interaction ->
-					when (interaction) {
-						is PressInteraction.Press -> {
-							isShort = true
-							delay(longPressTimeoutMillis)
-							isShort = false
-							confirmDelDevice = device.deviceIdentifier
-						}
-						is PressInteraction.Release -> if (isShort) onIQDeviceClick(device)
-					}
+			Row {
+				Button(
+					modifier = Modifier.weight(1f).height(60.dp).padding(10.dp),
+					onClick = { onIQDeviceClick(device) }
+				) { Text(device.friendlyName ?: "<no name>") }
+				IconButton(onClick = { confirmDelDevice = device.deviceIdentifier }){
+					Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
 				}
 			}
-			Button(
-				modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
-				interactionSource = interactionSource,
-				onClick = {}
-			) { Text(device.friendlyName ?: "<no name>") }
 		}
-		if (showNewWatch) {
+		if(showNewWatch) {
 			item {
 				OutlinedButton(
 					modifier = Modifier.fillMaxWidth().height(60.dp).padding(10.dp),
@@ -197,8 +179,8 @@ fun DeviceSelectScreen(
 				) { Text(R.string.device_select_garmin_new) }
 			}
 		}
-		if (showNewBTDevices) {
-			if (bondedBTDevices?.isEmpty() ?: true) {
+		if(showNewBTDevices) {
+			if(bondedBTDevices?.isEmpty() ?: true) {
 				item { Text(R.string.device_select_none) }
 			}
 			if(bondedBTDevices != null){
@@ -210,13 +192,17 @@ fun DeviceSelectScreen(
 				}
 			}
 		}
-		if (showNewIQDevices) {
-			if (bondedIQDevices?.isEmpty() ?: true) {
-				item { Text(when(Comms.iQSdkStatus) {
-						Comms.IQSdkStatus.GCM_NOT_INSTALLED -> R.string.device_select_garmin_not
-						Comms.IQSdkStatus.GCM_UPGRADE_NEEDED -> R.string.device_select_garmin_update
-						else -> R.string.device_select_garmin_none
-				} ) }
+		if(showNewIQDevices) {
+			if(bondedIQDevices?.isEmpty() ?: true) {
+				item {
+					Text(
+						when(Comms.iQSdkStatus) {
+							Comms.IQSdkStatus.GCM_NOT_INSTALLED -> R.string.device_select_garmin_not
+							Comms.IQSdkStatus.GCM_UPGRADE_NEEDED -> R.string.device_select_garmin_update
+							else -> R.string.device_select_garmin_none
+						}
+					)
+				}
 			}
 			if(bondedIQDevices != null){
 				items(bondedIQDevices.toList()) { device ->
@@ -227,7 +213,7 @@ fun DeviceSelectScreen(
 				}
 			}
 		}
-		if (confirmDelDevice != null) {
+		if(confirmDelDevice != null) {
 			item {
 				AlertDialog(
 					title = { Text(R.string.delete_device) },
@@ -256,7 +242,7 @@ fun DeviceSelectScreen(
 @Composable
 fun PreviewDeviceSelect() {
 	Comms
-	W8Theme (null, null) { Surface { DeviceSelectScreen(
+	W8Theme(null, null) { Surface { DeviceSelectScreen(
 		{}, {}, {}, {},
 		showNewBTDevices = false, showNewIQDevices = false, bondedBTDevices = null, bondedIQDevices = null
 	) } }

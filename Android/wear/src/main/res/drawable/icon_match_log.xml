@@ -1,38 +1,38 @@
 <!--
-  ~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
-  ~ This file is part of RugbyRefereeWatch
-  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+	~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
+	~ This file is part of RugbyRefereeWatch
+	~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+	~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	~ You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
 
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="200dp"
-    android:height="200dp"
-    android:viewportWidth="200"
-    android:viewportHeight="200">
-  <path
-      android:pathData="m56.25,58.75h122.5"
-      android:strokeWidth="17.5"
-      android:strokeColor="@color/w8blue"
-      android:strokeLineCap="round"/>
-  <path
-      android:pathData="m56.25,99.58h122.5"
-      android:strokeWidth="17.5"
-      android:strokeColor="@color/w8blue"
-      android:strokeLineCap="round"/>
-  <path
-      android:pathData="m56.25,140.42h122.5"
-      android:strokeWidth="17.5"
-      android:strokeColor="@color/w8blue"
-      android:strokeLineCap="round"/>
-  <path
-      android:pathData="M21.25,58.75m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
-      android:fillColor="@color/w8blue"/>
-  <path
-      android:pathData="M21.25,99.58m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
-      android:fillColor="@color/w8blue"/>
-  <path
-      android:pathData="M21.25,140.42m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
-      android:fillColor="@color/w8blue"/>
+	android:width="200dp"
+	android:height="200dp"
+	android:viewportWidth="200"
+	android:viewportHeight="200">
+	<path
+		android:pathData="m56.25,58.75h122.5"
+		android:strokeWidth="17.5"
+		android:strokeColor="@color/w8blue"
+		android:strokeLineCap="round"/>
+	<path
+		android:pathData="m56.25,99.58h122.5"
+		android:strokeWidth="17.5"
+		android:strokeColor="@color/w8blue"
+		android:strokeLineCap="round"/>
+	<path
+		android:pathData="m56.25,140.42h122.5"
+		android:strokeWidth="17.5"
+		android:strokeColor="@color/w8blue"
+		android:strokeLineCap="round"/>
+	<path
+		android:pathData="M21.25,58.75m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
+		android:fillColor="@color/w8blue"/>
+	<path
+		android:pathData="M21.25,99.58m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
+		android:fillColor="@color/w8blue"/>
+	<path
+		android:pathData="M21.25,140.42m-8.75,0a8.75,8.75 0,1 1,17.5 0a8.75,8.75 0,1 1,-17.5 0"
+		android:fillColor="@color/w8blue"/>
 </vector>

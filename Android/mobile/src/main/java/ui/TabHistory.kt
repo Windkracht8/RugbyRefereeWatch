@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -32,8 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.windkracht8.rugbyrefereewatch.MatchData
+import com.windkracht8.rugbyrefereewatch.MatchStore
+import com.windkracht8.rugbyrefereewatch.R
+import com.windkracht8.rugbyrefereewatch.toast
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -59,7 +64,7 @@ fun TabHistory(
 						.fillMaxWidth()
 						.padding(vertical = 5.dp)
 						.background(
-							color = if (selected.contains(match.matchId)) {
+							color = if(selected.contains(match.matchId)) {
 								colorScheme.surfaceVariant
 							} else {
 								colorScheme.surface
@@ -68,8 +73,8 @@ fun TabHistory(
 						.combinedClickable(
 							true,
 							onClick = {
-								if (selected.isNotEmpty()) {
-									selected = if (selected.contains(match.matchId)) {
+								if(selected.isNotEmpty()) {
+									selected = if(selected.contains(match.matchId)) {
 										selected - match.matchId
 									} else {
 										selected + match.matchId
@@ -79,7 +84,7 @@ fun TabHistory(
 								}
 							},
 							onLongClick = {
-								selected = if (selected.contains(match.matchId)) {
+								selected = if(selected.contains(match.matchId)) {
 									selected - match.matchId
 								} else {
 									selected + match.matchId
@@ -118,7 +123,7 @@ fun TabHistory(
 			) { Text(R.string.export) }
 		}
 	}
-	if (confirmDel) {
+	if(confirmDel) {
 		AlertDialog(
 			title = { Text(R.string.delete_matches) },
 			onDismissRequest = {
@@ -158,7 +163,7 @@ fun PreviewTabHistory() {
 	MatchStore.matches.clear()
 	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[]}")))
 	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1743850855028,\"format\":3,\"settings\":{\"match_type\":\"custom\",\"period_time\":25,\"period_count\":2,\"sinbin\":7,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"clock_pk\":60,\"clock_con\":60,\"clock_restart\":0},\"home\":{\"id\":\"home\",\"team\":\"U14 Donau\",\"color\":\"white\",\"tot\":56,\"tries\":8,\"cons\":8,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":true,\"pen_goals\":0,\"drop_goals\":0},\"away\":{\"id\":\"away\",\"team\":\"Celtics\",\"color\":\"blue\",\"tot\":7,\"tries\":1,\"cons\":1,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":false,\"pen_goals\":0,\"drop_goals\":0},\"events\":[]}")))
-	W8Theme (null, null) { Surface { TabHistory({},{},{},{}) } }
+	W8Theme(null, null) { Surface { TabHistory({},{},{},{}) } }
 }
 @Preview(device = Devices.PIXEL_8)
 @Composable

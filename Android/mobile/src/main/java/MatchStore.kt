@@ -2,8 +2,8 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.windkracht8.rugbyrefereewatch
 
@@ -35,7 +35,7 @@ object MatchStore {
 			val text = activity.openFileInput(MF).bufferedReader().use { it.readText() }
 			val matchesJson = JSONArray(text)
 			CoroutineScope(Dispatchers.Main).launch {
-				for (i in 0..<matchesJson.length()) {
+				for(i in 0..<matchesJson.length()) {
 					matchesJson.optJSONObject(i)?.let { matchJson ->
 						val match = MatchData(matchJson)
 						if(matches.none { it.matchId == match.matchId }) matches.add(match)
@@ -43,22 +43,22 @@ object MatchStore {
 				}
 				matches.sort()
 			}
-		} catch (_: FileNotFoundException) {
+		} catch(_: FileNotFoundException) {
 			storeMatches(activity)
-		} catch (e: Exception) {
-			logE("MatchStore.read matches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.read matches: ${e.message}")
 			error.emit(R.string.fail_read_matches)
 			return
 		}
 		try {
 			val text = activity.openFileInput(DMF).bufferedReader().use { it.readText() }
 			val deletedMatchesJson = JSONArray(text)
-			for (i in 0..<deletedMatchesJson.length())
+			for(i in 0..<deletedMatchesJson.length())
 				deletedMatches.add(deletedMatchesJson.getLong(i))
-		} catch (_: FileNotFoundException) {
+		} catch(_: FileNotFoundException) {
 			storeDeletedMatches(activity)
-		} catch (e: Exception) {
-			logE("MatchStore.read deletedMatches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.read deletedMatches: ${e.message}")
 		}
 		try {
 			val text = activity.openFileInput(MTF).bufferedReader().use { it.readText() }
@@ -72,10 +72,10 @@ object MatchStore {
 				customMatchTypes.forEach { customMatchTypeNames.add(it.name) }
 				customMatchTypeNames.sort()
 			}
-		} catch (_: FileNotFoundException) {
+		} catch(_: FileNotFoundException) {
 			storeCustomMatchTypes(activity)
-		} catch (e: Exception) {
-			logE("MatchStore.read customMatchTypes Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.read customMatchTypes: ${e.message}")
 			error.emit(R.string.fail_read_custom_match_types)
 		}
 	}
@@ -85,8 +85,8 @@ object MatchStore {
 			val matchesJson = JSONArray()
 			matches.forEach { matchesJson.put(it.toJson()) }
 			store(activity, MF, matchesJson)
-		} catch (e: Exception) {
-			logE("MatchStore.storeMatches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.storeMatches: ${e.message}")
 			error.emit(R.string.fail_save_matches)
 		}
 	}
@@ -96,8 +96,8 @@ object MatchStore {
 			val deletedMatchesJson = JSONArray()
 			deletedMatches.forEach { deletedMatchesJson.put(it) }
 			store(activity, DMF, deletedMatchesJson)
-		} catch (e: Exception) {
-			logE("MatchStore.storeDeletedMatches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.storeDeletedMatches: ${e.message}")
 			error.emit(R.string.fail_save_matches)
 		}
 	}
@@ -107,8 +107,8 @@ object MatchStore {
 			val customMatchTypesJson = JSONArray()
 			customMatchTypes.forEach { customMatchTypesJson.put(it.toJson()) }
 			store(activity, MTF, customMatchTypesJson)
-		} catch (e: Exception) {
-			logE("MatchStore.storeCustomMatchTypes Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.storeCustomMatchTypes: ${e.message}")
 			error.emit(R.string.fail_save_match_type)
 		}
 	}
@@ -124,20 +124,20 @@ object MatchStore {
 				val text = inputStream.bufferedReader().use { it.readText() }
 				val matchesJson = JSONArray(text)
 				CoroutineScope(Dispatchers.Main).launch {
-					for (i in 0..<matchesJson.length()) {
+					for(i in 0..<matchesJson.length()) {
 						//logD{"match: " + matchesJson.getJSONObject(i).toString())
 						val match = MatchData(
 							matchJson = matchesJson.getJSONObject(i),
 							checkTeamNames = true
 						)
-						if (matches.none { it.matchId == match.matchId }) matches.add(match)
+						if(matches.none { it.matchId == match.matchId }) matches.add(match)
 					}
 					matches.sort()
 					runInBackground { storeMatches(activity) }
 				}
 			}
-		} catch (e: Exception) {
-			logE("MatchStore.importMatches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.importMatches: ${e.message}")
 			error.emit(R.string.fail_import)
 		}
 	}
@@ -157,7 +157,7 @@ object MatchStore {
 		try {
 			val matchesJson = JSONArray()
 			matches.forEach {
-				if (matchIds.isEmpty() || matchIds.contains(it.matchId))
+				if(matchIds.isEmpty() || matchIds.contains(it.matchId))
 					matchesJson.put(it.toJson())
 			}
 			activity.contentResolver.openOutputStream(uri)?.use { os ->
@@ -165,15 +165,15 @@ object MatchStore {
 					writer.write(matchesJson.toString())
 				}
 			}
-		} catch (e: Exception) {
-			logE("MatchStore.exportMatches Exception: ${e.message}")
+		} catch(e: Exception) {
+			logE("MatchStore.exportMatches: ${e.message}")
 			error.emit(R.string.fail_export)
 		}
 	}
 	fun saveMatch(activity: Activity, matchData: MatchData) {
 		logD{"MatchStore.saveMatch"}
 		val index = matches.indexOfFirst { it.matchId == matchData.matchId }
-		if (index != -1) matches[index] = matchData//this needs to happen on the UI thread
+		if(index != -1) matches[index] = matchData//this needs to happen on the UI thread
 		else matches.add(matchData)//this needs to happen on the UI thread
 		runInBackground { storeMatches(activity) }
 	}

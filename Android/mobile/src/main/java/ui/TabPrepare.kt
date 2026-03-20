@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.content.Context
 import android.content.res.Configuration
@@ -37,9 +37,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.windkracht8.rugbyrefereewatch.Comms
+import com.windkracht8.rugbyrefereewatch.MatchStore
+import com.windkracht8.rugbyrefereewatch.MatchType
+import com.windkracht8.rugbyrefereewatch.PrepData
+import com.windkracht8.rugbyrefereewatch.R
+import com.windkracht8.rugbyrefereewatch.toast
+import kotlin.collections.contains
 
 @Composable
 fun TabPrepare(
@@ -71,11 +79,9 @@ fun TabPrepare(
 			modifier = Modifier.fillMaxWidth(),
 			onClick = onPrepareClicked
 		) {
-			Text(
-				text = stringResource(R.string.send_to_watch),
-				color =
-					if (commsBTStatus in setOf(Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ)) colorScheme.primary
-					else colorScheme.primary.copy(alpha = 0.5f)
+			Text(R.string.send_to_watch, color =
+				if(commsBTStatus in setOf(Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ)) colorScheme.primary
+				else colorScheme.primary.copy(alpha = 0.5f)
 			)
 		} }
 		item {
@@ -84,8 +90,8 @@ fun TabPrepare(
 			}
 		}
 		item {
-			Row (modifier = Modifier.fillMaxWidth()) {
-				Column (modifier = Modifier.weight(1f)){
+			Row(Modifier.fillMaxWidth()) {
+				Column(Modifier.weight(1f)){
 					Setting(R.string.home_name, prepData.homeName) {
 						changeTeamIsHome = true
 						changeTeamName.value = true
@@ -95,7 +101,7 @@ fun TabPrepare(
 						changeTeamColor = true
 					}
 				}
-				Column (modifier = Modifier.weight(1f)){
+				Column(Modifier.weight(1f)){
 					Setting(R.string.away_name, prepData.awayName, 2) {
 						changeTeamIsHome = false
 						changeTeamName.value = true
@@ -107,18 +113,19 @@ fun TabPrepare(
 				}
 			}
 		}
-		if (!standardMatchTypes.contains(matchType.name)) {
+		if(!standardMatchTypes.contains(matchType.name)) {
 			item { OutlinedButton(
 				modifier = Modifier.fillMaxWidth(),
 				onClick = onDeleteMatchType
-			) { Text(stringResource(R.string.del_match_type), color = colorScheme.error) } }
+			) { Text(R.string.del_match_type, colorScheme.error) } }
 		}
 		item { TextButton(
 			modifier = Modifier.fillMaxWidth(),
 			onClick = { showMatchTypeDetails = !showMatchTypeDetails }
 		) {
-			Text(if (showMatchTypeDetails) R.string.match_type_hide
-			else R.string.match_type_show
+			Text(
+				if(showMatchTypeDetails) R.string.match_type_hide
+				else R.string.match_type_show
 			)
 		} }
 		if(showMatchTypeDetails) {
@@ -243,7 +250,7 @@ fun TabPrepare(
 			onClick = { prepData.showWatchSettings = !prepData.showWatchSettings }
 		) {
 			Text(
-				if (prepData.showWatchSettings) R.string.watch_settings_hide
+				if(prepData.showWatchSettings) R.string.watch_settings_hide
 				else R.string.watch_settings_show
 			)
 		} }
@@ -253,7 +260,7 @@ fun TabPrepare(
 				Setting(
 					title = R.string.screen,
 					subTitle =
-						if (prepData.keepScreenOn) stringResource(R.string.keep_on)
+						if(prepData.keepScreenOn) stringResource(R.string.keep_on)
 						else stringResource(R.string.auto_off),
 					onClick = prepData::toggleKeepScreenOn
 				)
@@ -262,7 +269,7 @@ fun TabPrepare(
 				Setting(
 					title = R.string.timer_type,
 					subTitle =//TIMER_TYPE_UP = 0
-						if (prepData.timerType) stringResource(R.string.timer_type_down)
+						if(prepData.timerType) stringResource(R.string.timer_type_down)
 						else stringResource(R.string.timer_type_up),
 					onClick = prepData::toggleTimerType
 				)
@@ -290,7 +297,7 @@ fun TabPrepare(
 			}
 		}
 	}
-	if (changeTeamName.value) {
+	if(changeTeamName.value) {
 		StringInput(
 			show = changeTeamName,
 			title = if(changeTeamIsHome) R.string.home_name else R.string.away_name,
@@ -302,9 +309,9 @@ fun TabPrepare(
 			}
 		)
 	}
-	if (changeTeamColor) {
+	if(changeTeamColor) {
 		Dialog(onDismissRequest = { changeTeamColor = false }){
-			LazyColumn (modifier = Modifier.background(color = colorScheme.background)){
+			LazyColumn(Modifier.background(color = colorScheme.background)){
 				items(teamColors) { color ->
 					TextButton(
 						modifier = Modifier.requiredHeight(48.dp),
@@ -319,9 +326,9 @@ fun TabPrepare(
 			}
 		}
 	}
-	if (changeMatchType) {
+	if(changeMatchType) {
 		Dialog(onDismissRequest = { changeMatchType = false }){
-			LazyColumn (modifier = Modifier.background(color = colorScheme.background)){
+			LazyColumn(Modifier.background(color = colorScheme.background)){
 				items(matchTypeNames) { matchTypeName ->
 					TextButton(
 						modifier = Modifier.requiredHeight(48.dp),
@@ -336,15 +343,15 @@ fun TabPrepare(
 			}
 		}
 	}
-	if (saveMatchType.value) {
+	if(saveMatchType.value) {
 		StringInput(
 			show = saveMatchType,
 			title = R.string.save_match_type,
-			value = if (standardMatchTypes.contains(matchType.name)) "" else matchType.name,
+			value = if(standardMatchTypes.contains(matchType.name)) "" else matchType.name,
 			onSave = { name ->
-				if (name.isEmpty()) {
+				if(name.isEmpty()) {
 					context.toast(R.string.fail_empty_name)
-				} else if (standardMatchTypes.contains(name)) {
+				} else if(standardMatchTypes.contains(name)) {
 					context.toast(R.string.fail_standard_match_type)
 				} else {
 					onSaveMatchType(name)
@@ -352,7 +359,7 @@ fun TabPrepare(
 			}
 		)
 	}
-	if (changeValue.value) {
+	if(changeValue.value) {
 		IntInput(
 			show = changeValue,
 			title =
@@ -371,7 +378,7 @@ fun TabPrepare(
 			value = changeValueValue,
 			onSave = { newValue ->
 				if(changeValueCanBe0 || newValue > 0) {
-					when (changeValueType) {
+					when(changeValueType) {
 						ValueTypes.PeriodTime -> matchType.periodTime = newValue
 						ValueTypes.PeriodCount -> matchType.periodCount = newValue
 						ValueTypes.Sinbin -> matchType.sinbin = newValue
@@ -385,7 +392,7 @@ fun TabPrepare(
 					}
 					prepData.manualUpdate = true
 				} else {
-					when (changeValueType) {
+					when(changeValueType) {
 						ValueTypes.PeriodTime -> context.toast(R.string.time_period_empty)
 						ValueTypes.PeriodCount -> context.toast(R.string.period_count_empty)
 						ValueTypes.PointsTry -> context.toast(R.string.points_try_empty)
@@ -459,7 +466,7 @@ fun SettingSwitch(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewTabPrepare() {
-	W8Theme (null, null) { Surface { TabPrepare(
+	W8Theme(null, null) { Surface { TabPrepare(
 		commsBTStatus = Comms.Status.CONNECTED_BT,
 		MatchType("15s"), PrepData(),
 		{}, {}, {}

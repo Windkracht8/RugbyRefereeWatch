@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.graphics.res.animatedVectorResource
@@ -41,12 +41,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.windkracht8.rugbyrefereewatch.Comms
+import com.windkracht8.rugbyrefereewatch.Main
+import com.windkracht8.rugbyrefereewatch.MatchData
+import com.windkracht8.rugbyrefereewatch.MatchType
+import com.windkracht8.rugbyrefereewatch.PrepData
+import com.windkracht8.rugbyrefereewatch.R
+import kotlin.collections.contains
 
 const val TAB_INDEX_HISTORY = 0
 const val TAB_INDEX_REPORT = 1
@@ -74,7 +82,7 @@ fun Home(
 	var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 	LaunchedEffect(navController) {
 		navController.addOnDestinationChangedListener { _, destination, _ ->
-			when (destination.route) {
+			when(destination.route) {
 				"history" -> selectedTabIndex = TAB_INDEX_HISTORY
 				"report/{matchId}" -> selectedTabIndex = TAB_INDEX_REPORT
 				"prepare" -> selectedTabIndex = TAB_INDEX_PREPARE
@@ -87,7 +95,7 @@ fun Home(
 				modifier = Modifier.size(70.dp),
 				contentAlignment = Alignment.Center
 			) {
-				if (commsBTStatus in listOf(Comms.Status.CONNECTING, Comms.Status.STARTING)) {
+				if(commsBTStatus in listOf(Comms.Status.CONNECTING, Comms.Status.STARTING)) {
 					Image(
 						modifier = Modifier.size(70.dp).clickable { onIconClick() },
 						painter = rememberAnimatedVectorPainter(
@@ -101,7 +109,7 @@ fun Home(
 					Icon(
 						modifier = Modifier.size(70.dp).clickable { onIconClick() },
 						imageVector = ImageVector.vectorResource(R.drawable.watch),
-						tint = when (commsBTStatus) {
+						tint = when(commsBTStatus) {
 							Comms.Status.DISCONNECTED, null -> colorScheme.onBackground.copy(alpha = 0.38f)
 							Comms.Status.ERROR -> colorScheme.error
 							else -> colorScheme.onBackground
@@ -113,7 +121,7 @@ fun Home(
 			Column(Modifier.fillMaxWidth()) {
 				Text(
 					modifier = Modifier.fillMaxWidth(),
-					text = when (commsBTStatus) {
+					text = when(commsBTStatus) {
 						Comms.Status.DISCONNECTED ->
 							stringResource(R.string.disconnected)
 						Comms.Status.CONNECTING ->
@@ -121,7 +129,7 @@ fun Home(
 						Comms.Status.CONNECTED_BT, Comms.Status.CONNECTED_IQ ->
 							stringResource(R.string.connected_to, Comms.deviceName)
 						Comms.Status.STARTING, null ->
-							if (Permissions.hasBT) stringResource(R.string.starting)
+							if(Main.hasBT) stringResource(R.string.starting)
 							else stringResource(R.string.no_permission)
 						Comms.Status.ERROR -> stringResource(Comms.error)
 					},
@@ -129,7 +137,7 @@ fun Home(
 				)
 				Text(
 					modifier = Modifier.fillMaxWidth(),
-					text = if (Comms.messageStatus <= 0) ""
+					text = if(Comms.messageStatus <= 0) ""
 						else stringResource(Comms.messageStatus),
 					fontSize = 14.sp
 				)
@@ -185,14 +193,11 @@ fun Home(
 	}
 }
 
-@Composable
-fun Text(text: Int) = Text(stringResource(text))
-
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewHome() {
 	Comms.deviceName = "Test"
-	W8Theme (null, null) { Surface {
+	W8Theme(null, null) { Surface {
 		Home(
 			commsBTStatus = Comms.Status.CONNECTING,
 			{}, {}, {}, {},

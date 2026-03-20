@@ -2,10 +2,10 @@
  * Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
  * This file is part of RugbyRefereeWatch
  * RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
- * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.windkracht8.rugbyrefereewatch
+package com.windkracht8.rugbyrefereewatch.ui
 
 import android.content.res.Configuration
 import androidx.compose.foundation.border
@@ -50,10 +50,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.windkracht8.rugbyrefereewatch.MatchData
 import com.windkracht8.rugbyrefereewatch.MatchData.EventWhat
+import com.windkracht8.rugbyrefereewatch.MatchStore
+import com.windkracht8.rugbyrefereewatch.R
+import com.windkracht8.rugbyrefereewatch.pretty
+import com.windkracht8.rugbyrefereewatch.replacementString
+import com.windkracht8.rugbyrefereewatch.toEventWhat
 import org.json.JSONObject
 
 const val VIEW_TYPE_STANDARD = 0
@@ -184,7 +191,7 @@ fun TabReport(
 			VIEW_TYPE_STANDARD -> {
 				val scoreWidth = getMaxWidth(match.events) { it.score }
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimer() } + 14.dp
-				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
 					items(match.events.filter { it.what != EventWhat.REPLACEMENT} ) {
 						 ReportEventStandard(it, scoreWidth, timerWidth)
 					}
@@ -193,7 +200,7 @@ fun TabReport(
 			VIEW_TYPE_FULL -> {
 				val timeWidth = getMaxWidth(match.events) { it.time } + 5.dp
 				val timerWidth = getMaxWidth(match.events) { it.prettyTimerFull() } + 5.dp
-				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
 					items(match.events) {
 						ReportEventFull(it, timeWidth, timerWidth)
 					}
@@ -204,7 +211,7 @@ fun TabReport(
 					EventWhat.entries[it+2].pretty()
 				}
 				val topPadding = TextFieldDefaults.contentPaddingWithoutLabel().calculateTopPadding()
-				LazyColumn (Modifier.fillMaxWidth().weight(1f)) {
+				LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
 					items(matchEdit.events.filter {
 						it.what !in setOf(EventWhat.TIME_OFF, EventWhat.RESUME, EventWhat.START,
 							EventWhat.END, EventWhat.REPLACEMENT)
@@ -235,7 +242,7 @@ fun TabReport(
 				) { Text(R.string.edit) }
 				TextButton(
 					modifier = Modifier.weight(1f),
-					onClick = { viewType = if (viewType == VIEW_TYPE_FULL) VIEW_TYPE_STANDARD else VIEW_TYPE_FULL }
+					onClick = { viewType = if(viewType == VIEW_TYPE_FULL) VIEW_TYPE_STANDARD else VIEW_TYPE_FULL }
 				) { Text(R.string.view) }
 				TextButton(
 					modifier = Modifier.weight(1f),
@@ -244,7 +251,7 @@ fun TabReport(
 			}
 		}
 	}
-	if (shareDialog) {
+	if(shareDialog) {
 		var time by remember { mutableStateOf(false) }
 		var pens by remember { mutableStateOf(false) }
 		var clock by remember { mutableStateOf(false) }
@@ -323,17 +330,17 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 			Spacer(Modifier.height(12.dp))
 		}
 		else -> {
-			val whatWithWho = if (event.who == null) event.what.pretty()
+			val whatWithWho = if(event.who == null) event.what.pretty()
 								else event.what.pretty() + " ${event.who}"
 			Row(Modifier.fillMaxWidth()) {
 				Text(
 					modifier = Modifier.weight(1f),
-					text = if (event.isHome == true) whatWithWho else "",
+					text = if(event.isHome == true) whatWithWho else "",
 					textAlign = TextAlign.End
 				)
 				Text(
 					modifier = Modifier.width(timerWidth).padding(end = 6.dp),
-					text = if (event.isHome == true) event.prettyTimer() else "",
+					text = if(event.isHome == true) event.prettyTimer() else "",
 					textAlign = TextAlign.End
 				)
 				Text(
@@ -345,15 +352,15 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 				)
 				Text(
 					modifier = Modifier.width(timerWidth).padding(start = 6.dp),
-					text = if (event.isHome == false) event.prettyTimer() else ""
+					text = if(event.isHome == false) event.prettyTimer() else ""
 				)
 				Text(
 					modifier = Modifier.weight(1f),
-					text = if (event.isHome == false) whatWithWho else ""
+					text = if(event.isHome == false) whatWithWho else ""
 				)
 			}
 			val reason = event.reason
-			if (reason != null) {
+			if(reason != null) {
 				Text(
 					modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
 					text = reason,
@@ -366,7 +373,7 @@ fun ReportEventStandard(event: MatchData.Event, scoreWidth: Dp, timerWidth: Dp) 
 
 @Composable
 fun ReportEventFull(event: MatchData.Event, timeWidth: Dp, timerWidth: Dp) {
-	var what = when (event.what) {
+	var what = when(event.what) {
 		EventWhat.START -> event.prettyPeriod()
 		EventWhat.END -> event.prettyPeriod() + " ${event.score}"
 		else -> event.what.pretty()
@@ -421,7 +428,7 @@ fun ReportEventEdit(event: MatchData.Event, eventTypes: Array<String>, topPaddin
 				.border(1.dp, colorScheme.outline, MaterialTheme.shapes.small)
 				.padding(vertical = topPadding)
 				.clickable { event.isHome = !(event.isHome ?: true) },
-			text = if (event.isHome ?: true) MatchData.HOME_ID else MatchData.AWAY_ID,
+			text = if(event.isHome ?: true) MatchData.HOME_ID else MatchData.AWAY_ID,
 			textAlign = TextAlign.Center
 		)
 		IntField(
@@ -447,7 +454,7 @@ fun getMaxWidth(events: SnapshotStateList<MatchData.Event>, text: (MatchData.Eve
 	var maxWidth = 0
 	events.forEach {
 		val textLayoutResult = textMeasurer.measure(text = text(it), style = LocalTextStyle.current)
-		if (textLayoutResult.size.width > maxWidth) maxWidth = textLayoutResult.size.width
+		if(textLayoutResult.size.width > maxWidth) maxWidth = textLayoutResult.size.width
 	}
 	return with(LocalDensity.current) { maxWidth.toDp() }
 }
@@ -455,8 +462,14 @@ fun getMaxWidth(events: SnapshotStateList<MatchData.Event>, text: (MatchData.Eve
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_8)
 @Composable
 fun PreviewTabReport() {
-	MatchStore.matches.add(MatchData(JSONObject("{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1741956291026,\"time\":\"13:44:51\",\"timer\":0,\"period\":1,\"what\":\"START\",\"team\":\"home\"},{\"id\":1741956391525,\"time\":\"13:46:31\",\"timer\":99,\"period\":1,\"what\":\"TRY\",\"team\":\"away\",\"who\":123},{\"id\":1741956418149,\"time\":\"13:46:58\",\"timer\":126,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":6},{\"id\":1741956520348,\"time\":\"13:48:40\",\"timer\":228,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":2},{\"id\":1741956537051,\"time\":\"13:48:57\",\"timer\":245,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956598237,\"time\":\"13:49:58\",\"timer\":306,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":5},{\"id\":1741956609468,\"time\":\"13:50:09\",\"timer\":317,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956736219,\"time\":\"13:52:16\",\"timer\":444,\"period\":1,\"what\":\"END\",\"score\":\"14:7\"},{\"id\":1741956813839,\"time\":\"13:53:33\",\"timer\":420,\"period\":2,\"what\":\"START\",\"team\":\"away\"},{\"id\":1741956878692,\"time\":\"13:54:38\",\"timer\":484,\"period\":2,\"what\":\"TRY\",\"team\":\"away\",\"who\":3},{\"id\":1741956888114,\"time\":\"13:54:48\",\"timer\":494,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":5},{\"id\":1741956939965,\"time\":\"13:55:39\",\"timer\":545,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":11},{\"id\":1741956946243,\"time\":\"13:55:46\",\"timer\":552,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741957001427,\"time\":\"13:56:41\",\"timer\":607,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":4},{\"id\":1741957002427,\"time\":\"13:56:42\",\"timer\":608,\"period\":2,\"what\":\"REPLACEMENT\",\"team\":\"home\",\"who_leave\":4,\"who_enter\":22},{\"id\":1741957123119,\"time\":\"13:58:43\",\"timer\":729,\"period\":2,\"what\":\"YELLOW CARD\",\"team\":\"home\",\"who\":10},{\"id\":1741957256934,\"time\":\"14:00:56\",\"timer\":861,\"period\":2,\"what\":\"END\",\"score\":\"26:14\"}]}")))
-	W8Theme (null, null) { Surface { TabReport(null, {_: Long, _: List<Boolean> ->}) {} } }
+	MatchStore.matches.add(
+		MatchData(
+			JSONObject(
+				"{\"matchid\":1741956291022,\"format\":3,\"settings\":{\"match_type\":\"7s\",\"period_time\":7,\"period_count\":2,\"sinbin\":2,\"points_try\":5,\"points_con\":2,\"points_goal\":3,\"pk_clock\":30,\"conv_clock\":30,\"restart_clock\":30},\"home\":{\"id\":\"home\",\"team\":\"RSA\",\"color\":\"green\",\"tot\":26,\"tries\":4,\"cons\":3,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":1,\"red_cards\":0,\"pens\":0,\"kickoff\":true},\"away\":{\"id\":\"away\",\"team\":\"FRA\",\"color\":\"blue\",\"tot\":14,\"tries\":2,\"cons\":2,\"pen_tries\":0,\"goals\":0,\"yellow_cards\":0,\"red_cards\":0,\"pens\":0,\"kickoff\":false},\"events\":[{\"id\":1741956291026,\"time\":\"13:44:51\",\"timer\":0,\"period\":1,\"what\":\"START\",\"team\":\"home\"},{\"id\":1741956391525,\"time\":\"13:46:31\",\"timer\":99,\"period\":1,\"what\":\"TRY\",\"team\":\"away\",\"who\":123},{\"id\":1741956418149,\"time\":\"13:46:58\",\"timer\":126,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":6},{\"id\":1741956520348,\"time\":\"13:48:40\",\"timer\":228,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":2},{\"id\":1741956537051,\"time\":\"13:48:57\",\"timer\":245,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956598237,\"time\":\"13:49:58\",\"timer\":306,\"period\":1,\"what\":\"TRY\",\"team\":\"home\",\"who\":5},{\"id\":1741956609468,\"time\":\"13:50:09\",\"timer\":317,\"period\":1,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741956736219,\"time\":\"13:52:16\",\"timer\":444,\"period\":1,\"what\":\"END\",\"score\":\"14:7\"},{\"id\":1741956813839,\"time\":\"13:53:33\",\"timer\":420,\"period\":2,\"what\":\"START\",\"team\":\"away\"},{\"id\":1741956878692,\"time\":\"13:54:38\",\"timer\":484,\"period\":2,\"what\":\"TRY\",\"team\":\"away\",\"who\":3},{\"id\":1741956888114,\"time\":\"13:54:48\",\"timer\":494,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"away\",\"who\":5},{\"id\":1741956939965,\"time\":\"13:55:39\",\"timer\":545,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":11},{\"id\":1741956946243,\"time\":\"13:55:46\",\"timer\":552,\"period\":2,\"what\":\"CONVERSION\",\"team\":\"home\",\"who\":6},{\"id\":1741957001427,\"time\":\"13:56:41\",\"timer\":607,\"period\":2,\"what\":\"TRY\",\"team\":\"home\",\"who\":4},{\"id\":1741957002427,\"time\":\"13:56:42\",\"timer\":608,\"period\":2,\"what\":\"REPLACEMENT\",\"team\":\"home\",\"who_leave\":4,\"who_enter\":22},{\"id\":1741957123119,\"time\":\"13:58:43\",\"timer\":729,\"period\":2,\"what\":\"YELLOW CARD\",\"team\":\"home\",\"who\":10},{\"id\":1741957256934,\"time\":\"14:00:56\",\"timer\":861,\"period\":2,\"what\":\"END\",\"score\":\"26:14\"}]}"
+			)
+		)
+	)
+	W8Theme(null, null) { Surface { TabReport(null, {_: Long, _: List<Boolean> ->}) {} } }
 }
 @Preview(device = Devices.PIXEL_8)
 @Composable

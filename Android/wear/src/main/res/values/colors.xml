@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
-  ~ This file is part of RugbyRefereeWatch
-  ~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-  ~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  ~ You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+	~ Copyright 2020-2026 Bart Vullings <dev@windkracht8.com>
+	~ This file is part of RugbyRefereeWatch
+	~ RugbyRefereeWatch is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+	~ RugbyRefereeWatch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+	~ You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
 
 <resources>
-    <color name="w8blue">#2BD2E3</color>
-    <color name="bg_partial">#A000</color>
-    <color name="bg_item">#222</color>
-    <color name="transparent">#0000</color>
-    <color name="hint">#AAA</color>
+	<color name="w8blue">#2BD2E3</color>
+	<color name="bg_partial">#A000</color>
+	<color name="bg_item">#222</color>
+	<color name="transparent">#0000</color>
+	<color name="hint">#AAA</color>
 
-    <color name="black">#000</color>
-    <color name="blue">#00009E</color>
-    <color name="brown">#623412</color>
-    <color name="gold">#FFD700</color>
-    <color name="green">#0F0</color>
-    <color name="orange">#F98128</color>
-    <color name="pink">#FFC0CB</color>
-    <color name="purple">#750075</color>
-    <color name="red">#9E0000</color>
-    <color name="white">#FFF</color>
+	<color name="black">#000</color>
+	<color name="blue">#00009E</color>
+	<color name="brown">#623412</color>
+	<color name="gold">#FFD700</color>
+	<color name="green">#0F0</color>
+	<color name="orange">#F98128</color>
+	<color name="pink">#FFC0CB</color>
+	<color name="purple">#750075</color>
+	<color name="red">#9E0000</color>
+	<color name="white">#FFF</color>
 </resources>
